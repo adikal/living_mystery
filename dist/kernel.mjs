@@ -10,6 +10,7 @@
 //
 // See schema.mjs for the typed contracts (Model, Kernel, Event, Belief).
 
+import {validateClaim} from './claims.mjs';
 export const VERSION = 1;
 export const copy = (x) => structuredClone(x);
 export const timeLabel = (m) =>
@@ -137,14 +138,16 @@ export function createKernel(model) {
   function addEvidence(s, clue, cause, source) {
     if (has(s, clue)) return false;
     const d = CLUES[clue], event = nextId(s);
-    commit(s, { kind: 'evidence', title: `Recorded: ${d.title}`, actor: 'player', parents: [cause], data: { clue, source: source ?? d.source }, changes: { 'player.evidence': [...s.world.player.evidence, { clue, eventId: event, minute: s.world.minute, source: source ?? d.source }] }, playerText: `${d.title}\n${d.text}` });
+    const testimony=model.testimonyClues?.includes(clue)?s.events.find(e=>e.id===cause)?.data.assertion:null;
+    const text=testimony??d.text;
+    commit(s, { kind: 'evidence', title: `Recorded: ${d.title}`, actor: 'player', parents: [cause], data: { clue, source: source ?? d.source, claims: model.testimonyClues?.includes(clue)?(s.events.find(e=>e.id===cause)?.data.claims??model.evidenceClaims?.[clue]??[]):(model.evidenceClaims?.[clue]??[]) }, changes: { 'player.evidence': [...s.world.player.evidence, { clue, eventId: event, minute: s.world.minute, source: source ?? d.source,...(testimony?{text}:{}) }] }, playerText: `${d.title}\n${text}` });
     return true;
   }
   function reject(s, title, text, cause, data = {}) {
     return commit(s, { kind: 'rejected', title, actor: 'player', parents: [cause], data: { reason: text, ...data }, playerText: text });
   }
   function speech(s, id, text, cause, data = {}) {
-    const e = commit(s, { kind: 'speech', title: `${PEOPLE[id].name} speaks to you`, actor: id, parents: [cause], data: { listener: 'player', assertion: text, ...data }, playerText: `${PEOPLE[id].name}\n“${text}”` });
+    const e = commit(s, { kind: 'speech', title: `${PEOPLE[id].name} speaks to you`, actor: id, parents: [cause,...(data.sourceEvents??[])], data: { listener: 'player', assertion: text, ...data }, playerText: `${PEOPLE[id].name}\n“${text}”` });
     remember(s, id, e);
     return e;
   }
@@ -191,6 +194,7 @@ export function createKernel(model) {
     const actors = ['player', 'world', ...Object.keys(PEOPLE)];
     for (const [i, e] of s.events.entries()) {
       if (!e || e.id !== `e${String(i + 1).padStart(5, '0')}` || e.index !== i || !eventKinds.has(e.kind) || !actors.includes(e.actor) || !Array.isArray(e.changes) || !Array.isArray(e.parents) || !Number.isFinite(e.minute) || e.minute < 480 || typeof e.title !== 'string' || !e.data || typeof e.data !== 'object' || (e.playerText !== null && typeof e.playerText !== 'string')) throw Error('Malformed event in save.');
+      if(e.data.claims!==undefined&&(!Array.isArray(e.data.claims)||!e.data.claims.every(validateClaim)))throw Error('Malformed structured claim in save.');
       for (const p of e.changes) if (typeof p.path !== 'string' || !p.path.split('.').every((k) => k && !unsafe.has(k)) || !stateRoots.includes(p.path.split('.')[0])) throw Error('Invalid state change in save.');
     }
     const out = { version: s.version, seed: s.seed, events: s.events, world: s.world };

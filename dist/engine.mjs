@@ -8,6 +8,7 @@
 // Architecture: kernel (mechanics) ← engine (this file: assembly + generic
 // action router) → case (content + policy + dialogue). See schema.mjs.
 
+import {claimsAt} from './claims.mjs';
 import { createKernel, VERSION, copy, timeLabel } from './kernel.mjs';
 import * as ActiveCase from './cases/last-bell.mjs';
 
@@ -31,6 +32,8 @@ export const importSession = K.importSession;
 
 // --- Case behavior (re-exported) ------------------------------------------
 export const parseCommand = B.parseCommand;
+export const followupOptions=B.followupOptions;
+export const playerClaims=(s,index=s.events.length-1)=>claimsAt(s,index,ActiveCase.model.evidenceClaims);
 export const checkCase = B.checkCase;
 export const caseHealth = B.caseHealth;
 
@@ -47,6 +50,19 @@ export function createSession(seed = 17) {
 export function dispatch(s, action) {
   if (!action || typeof action.type !== 'string') throw Error('Expected a typed action.');
   const start = commit(s, { kind: 'command', title: action.label || B.commandLabel(action), actor: 'player', data: { action: copy(action) } });
+  // Engagement is replayable state: only the addressed NPC pauses autonomous work.
+  const previous = s.world.player.conversation ?? null;
+  const talking = action.type === 'ask' ? B.canAsk(s, action.person, action.topic || 'night')
+    : action.type === 'present' && K.local(s, action.person) && K.has(s, action.clue);
+  const releases = ['wait', 'endConversation'].includes(action.type)
+    || action.type === 'move' && Boolean(LOCATIONS[action.to]) && action.to !== s.world.player.location
+    || action.type === 'inspect' && Boolean(OBJECTS[action.object]) && LOCATIONS[s.world.player.location]?.objects.includes(action.object)
+    || action.type === 'accuse' && K.local(s, 'bell');
+  const next = talking ? action.person : releases ? null : previous;
+  if (s.world.status !== 'solved' && previous !== next) {
+    const engagement = commit(s, { kind: 'action', title: next ? `You engage ${PEOPLE[next].name} in conversation` : 'You end the conversation', actor: 'player', parents: [start], data: { conversation: next }, changes: { 'player.conversation': next } });
+    if (previous) B.decide(s, previous, engagement);
+  }
   if (s.world.status === 'solved' && !['pin', 'note', 'look'].includes(action.type)) {
     K.reject(s, 'The case is closed', 'The case is closed. You can review the notebook and inspect the full history, or begin again.', start);
   } else switch (action.type) {
@@ -73,6 +89,7 @@ export function dispatch(s, action) {
       K.advance(s, 3, start);
       break;
     }
+    case 'endConversation': break;
     case 'ask': B.ask(s, action.person, action.topic || 'night', start); break;
     case 'present': B.present(s, action.person, action.clue, action.tone || 'private', start); break;
     case 'wait': { const n = Math.max(1, Math.min(60, Math.round(Number(action.minutes) || 10))); commit(s, { kind: 'observation', title: `You wait ${n} minutes`, actor: 'player', parents: [start], playerText: `You wait for ${n} minutes. The village continues around you.` }); K.advance(s, n, start); break; }
@@ -99,6 +116,6 @@ export function dispatch(s, action) {
 
 export function playerView(s) {
   const w = s.world, at = w.player.location;
-  return { minute: w.minute, status: w.status, location: at, scene: LOCATIONS[at], people: Object.entries(w.npcs).filter(([, p]) => p.location === at).map(([id]) => ({ id, ...publicPerson(id) })), evidence: w.player.evidence.map((e) => ({ ...e, ...CLUES[e.clue] })), pins: copy(w.player.pins), notes: copy(w.player.notes), lastSeen: copy(w.player.lastSeen), transcript: s.events.filter((e) => e.playerText).map((e) => ({ id: e.id, minute: e.minute, kind: e.kind, text: e.playerText, actor: e.actor })), ending: copy(w.ending) };
+  return { minute: w.minute, status: w.status, location: at, scene: LOCATIONS[at], people: Object.entries(w.npcs).filter(([, p]) => p.location === at).map(([id]) => ({ id, ...publicPerson(id) })), evidence: w.player.evidence.map((e) => ({ ...e, ...CLUES[e.clue],text:e.text??CLUES[e.clue].text })), pins: copy(w.player.pins), notes: copy(w.player.notes), lastSeen: copy(w.player.lastSeen), transcript: s.events.filter((e) => e.playerText).map((e) => ({ id: e.id, minute: e.minute, kind: e.kind, text: e.playerText, actor: e.actor })), ending: copy(w.ending) };
 }
 export const publicPerson = (id) => ({ name: PEOPLE[id].name, initials: PEOPLE[id].initials, role: PEOPLE[id].role, color: PEOPLE[id].color, public: PEOPLE[id].public });

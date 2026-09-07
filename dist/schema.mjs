@@ -82,7 +82,7 @@
  * @property {string[]} [evidence]       accuse: selected clue ids.
  */
 
-/** @typedef {'move'|'inspect'|'ask'|'present'|'wait'|'pin'|'note'|'accuse'|'look'} PlayerActionType */
+/** @typedef {'move'|'inspect'|'ask'|'present'|'wait'|'pin'|'note'|'accuse'|'look'|'endConversation'} PlayerActionType */
 
 // ---------------------------------------------------------------------------
 // Case / Kernel interfaces
@@ -169,6 +169,7 @@ export const ACTIONS = Object.freeze({
   pin:     { required: ['clue'],                      optional: [],            advancesTime: false, summary: 'Pin/unpin a clue for the accusation.' },
   note:    { required: ['text'],                      optional: [],            advancesTime: false, summary: 'Record a hypothesis.' },
   accuse:  { required: ['suspect', 'method', 'motive'], optional: ['evidence'], advancesTime: false, summary: 'Present a final accusation to the constable.' },
+  endConversation: { required: [], optional: [], advancesTime: false, summary: 'End the conversation and release the speaker to their plans.' },
   look:    { required: [],                           optional: [],            advancesTime: false, summary: 'Re-read the current scene.' },
 });
 
@@ -191,3 +192,21 @@ export function validateAction(action) {
 
 /** Event kinds that represent a world-changing effect (vs. a marker/log). */
 export const EFFECT_KINDS = Object.freeze(['belief', 'memory', 'observation', 'movement', 'action', 'evidence', 'relationship', 'emotion', 'resolution', 'notebook']);
+
+/**
+ * A claim is an attributed assertion, never an automatic world fact.
+ * Intervals are inclusive minute offsets on the authored case-night clock;
+ * simulation acquisition time is recorded separately on the source event.
+ * @typedef {Object} Claim
+ * @property {string} key
+ * @property {string} subject
+ * @property {string} predicate
+ * @property {string|number} value
+ * @property {{start:number,end:number}|null} interval
+ * @property {number} confidence Authored confidence, not calibrated probability.
+ * @property {string} attribution Observation, inference, record, or testimony description.
+ * @property {string} [claimant] Speaker whose account is being recorded/revised.
+ *
+ * @typedef {{intent:string,basis:string|null,disclosure:'withhold_or_mislead'|'stated_account'}} CommunicativePlan
+ */
+export {validateClaim} from './claims.mjs';

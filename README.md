@@ -4,7 +4,7 @@ A first playable, text-based Bellweather mystery with a visual simulation inspec
 
 ## Play
 
-The browser application is in `dist/` and has no runtime dependencies, external services, or API keys. Serve that directory with any static HTTP server. (An optional, off-by-default AI-voiced dialogue mode can restyle characters' lines via a local Bedrock proxy — see `server/llm_proxy.py`; the game stays deterministic and offline without it.) A command-line adapter uses the same engine:
+The browser application is in `dist/` and has no runtime dependencies, external services, or API keys. Serve that directory with any static HTTP server. (An optional, off-by-default AI-dialogue mode generates varied lines checked by a separate critic via a local Bedrock proxy — see `server/llm_proxy.py`; the game stays deterministic and offline without it.) A command-line adapter uses the same engine:
 
 ```sh
 python3 -m http.server 8000 --bind 127.0.0.1 --directory dist
@@ -17,14 +17,31 @@ node --test tests/*.test.mjs
 
 The browser saves progress on the current device. Export/import includes the complete event history and current world. This is one authored case, **The Last Bell**. Seeds vary schedules; they do not generate a new culprit or crime.
 
+## Optional AI delivery
+
+1. Install `boto3` in the Python environment used for the proxy and configure AWS credentials with Bedrock access.
+2. Run `python3 server/llm_proxy.py` (restart it after code changes).
+3. Serve the game at `http://127.0.0.1:8000` or `http://localhost:8000`, open the game menu → AI-voiced dialogue, and enable endpoint `http://127.0.0.1:8787`.
+4. Ask a new question. In Inspector, select its speech event and open **Dialogue audit** to see the displayed output, generation, critic request/verdict, or fallback reason. Export/import retains completed attempts and the words shown.
+
+AI produces free-form wording. Deterministic checks reject changed numeric tokens and known names/places; a separate critic request checks added/omitted claims, certainty, attribution, negation, alibis, and disclosures relative to the authored line—even when that line is a lie. Only a strict passing verdict releases the candidate; rejection, malformed output, or timeout uses the authored line. Both stages currently use the configured model in separate requests. This reduces risk but is not a guarantee of semantic equivalence. Completed attempts survive save/reload; model availability is not required for play.
+
+The proxy is loopback-only and permits explicit game origins, valid Host headers, JSON payloads, and the `X-Living-Mystery: dialogue-v2` request header. For another local game port, set `LM_ALLOWED_ORIGINS` to the exact origin(s). These checks are not authentication against local programs; this is a development proxy, not a public service.
+
+Tests: `node --test tests/*.test.mjs` and `python3 -m unittest discover -s tests -p 'test_*.py'`. Proxy tests use a stub model client and need neither AWS credentials nor boto3. Real Bedrock behavior is a separate integration check.
+
 ## Implemented
 
 - Six locations, six characters, three suspects, and fifteen evidence entries.
+- Evidence-gated cross-examination, source questions tied to the preceding reply, persistent alibi revisions, refusals, and character-specific evidence reactions. Follow-ups require the relevant account to have been discussed.
+- Conversation partners stay engaged across questions and evidence presentations. Closing the conversation or taking another valid world action releases their plans; other NPCs continue moving.
+- A Claims notebook with attributed statements, case-night intervals, conflicting/consistent accounts, historical revisions, and source links.
+- Knowledge-driven correction/reporting: Ada can seek Bell to correct her rumor; a cooperative Clara can report witnessing the folio retrieval.
 - A clock that advances only on consequential actions, with travel and NPC routines.
 - Bounded deterministic choices with recorded alternative scores and reasons.
 - Structured beliefs with confidence, provenance, and explicit observation/testimony distinctions.
 - Local NPC witnesses record arrivals and departures as causal observations and retained memories, including player movement.
-- A replay-aware Memories tab shows time, location, and belief/dialogue content in acquisition order, linking each memory to its source event.
+- A replay-aware Memories tab shows time, location, and sensory observation/dialogue content in acquisition order, linking each memory to its source event.
 - Clear scene-change banners, five recent transcript entries in chronological order, and paged full observed history.
 - Inspect, Talk, and Wait action groups with explicit character-specific questions and highlighted local people.
 - Previously completed inspection, question, and evidence-presentation options remain clickable with a Done marker derived from saved command history.
@@ -41,14 +58,18 @@ The browser saves progress on the current device. Export/import includes the com
 
 | File | Role |
 | --- | --- |
+| `dist/claims.mjs` | Claim validation, player-visible claim history, revisions, and limited consistency relations |
+| `dist/cases/last-bell-claims.mjs` | Authored evidence/testimony claims for this case |
+| `tests/claims.test.mjs` | Cross-examination, revision, privacy, correction/report plans, and legacy-save scenarios |
 | `dist/schema.mjs` | Typed contracts (JSDoc): Action/Effect/Belief/Event, the Model/Kernel/Case interfaces, and a declarative action catalog + `validateAction` |
 | `dist/kernel.mjs` | Generic, case-agnostic simulation kernel: event log, reversible patches, replay, save/load, diagnostics, and the neutral verbs (`createKernel(model)` with an injected `decide` policy) |
 | `dist/cases/last-bell.mjs` | The Last Bell as a Case: initial world, NPC decision policy, and authored dialogue (`model` + `baseWorld` + `createBehavior(kernel)`) |
 | `dist/case.mjs` | Authored data tables: locations, characters, evidence, hidden history, case rubrics |
 | `dist/engine.mjs` | Thin façade: assembles kernel + active case, hosts the generic action router, and re-exports the stable public API |
 | `dist/inspector.mjs` | Read-only character sighting and missed-opportunity projections at a replay cursor |
-| `dist/ui.mjs` | Game and visual inspector adapters (+ optional LLM-voiced dialogue overlay) |
-| `dist/llm.mjs` | Optional, boundary-respecting LLM dialogue realization (restyle-only, deterministic fallback) |
+| `dist/ui.mjs` | Game and visual inspector adapters (+ persisted optional AI delivery audit) |
+| `dist/dialogue-save.mjs` | Saves and validates dialogue presentation audits separately from deterministic world state |
+| `dist/llm.mjs` | Free-form AI dialogue with entity/number checks, a separate semantic critic, and audited fallback |
 | `dist/styles.css` | Responsive text-game and inspector presentation |
 | `server/llm_proxy.py` | Local Bedrock (Converse) proxy for AI-voiced dialogue; holds AWS creds server-side |
 | `cli.mjs` | Terminal adapter using the same engine |
@@ -61,9 +82,9 @@ The browser saves progress on the current device. Export/import includes the com
 
 ## Current boundaries
 
-The engine is authoritative within this single-player client, not a secure server. Source and exported saves include the solution. The inspector intentionally reveals it. An optional, off-by-default AI voice restyles dialogue only — it never changes facts, evidence, or world state, and falls back to the written line — so play stays fully deterministic and offline without it. There is still no LLM authority over state, ASP/SMT solver, arbitrary natural-language conversation, procedural crime generation, automatic branching, graphics, or cloud save synchronization in this version.
+The engine is authoritative within this single-player client, not a secure server. Source and exported saves include the solution. The inspector intentionally reveals it. An optional, off-by-default AI dialogue mode generates varied wording, checks known entities and numeric tokens, and asks a separate model critic to compare it with the authored statement. Rejected output or failures fall back to the written line. The critic can miss semantic errors; AI never changes engine state — so play stays fully deterministic and offline without it. There is still no LLM authority over state, ASP/SMT solver, arbitrary natural-language conversation, procedural crime generation, automatic branching, graphics, or cloud save synchronization in this version.
 
-Most evidence/person combinations still use a generic acknowledgement; only selected combinations have authored reactions. Movement memories are inspectable and can be recounted in dialogue (the “sightings” topic), but do not yet inform NPC planning. A Done marker means an option has been used successfully, not that repeating it cannot yield new information.
+Dialogue remains authored and bounded, with specific reactions for relevant evidence and explicit knowledge limits otherwise. Movement memories can be recounted through sightings; selected witnessed actions and learned corrections drive reporting plans. Claims cover selected assertions and support limited temporal/location comparisons, not a solver-backed proof of coherence. A Done marker means an option has been used successfully, not that repeating it cannot yield new information.
 
 The evidence rubric is authored. It validates a playable case; it is not a proof of general logical solvability, evidence independence, or legal sufficiency. NPC policies cover a few explicit situations rather than a general planning system. Confidence values are authored scores, not calibrated probabilities. Initial social relationships are fixed; trust toward the player changes through interaction.
 

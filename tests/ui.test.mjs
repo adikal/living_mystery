@@ -3,22 +3,25 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import * as engine from '../dist/engine.mjs';
+import * as claims from '../dist/claims.mjs';
 import * as inspector from '../dist/inspector.mjs';
 import * as llm from '../dist/llm.mjs';
+import * as dialogueSave from '../dist/dialogue-save.mjs';
 
 // Exercise the adapter's rendering and handlers without pretending to test browser layout.
-function adapter(){
+function adapter(saved=null,overrides={}){
+  let savedText=saved;
   const nodes=new Map(),listeners={};
   const node=selector=>{
     if(!nodes.has(selector))nodes.set(selector,{innerHTML:'',scrollTop:0,dataset:{},addEventListener(){},setAttribute(){},focus(){},showModal(){this.open=true},classList:{add(){},remove(){}}});
     return nodes.get(selector);
   };
-  const context=vm.createContext({...engine,...inspector,...llm,structuredClone,setTimeout,clearTimeout,setInterval,clearInterval,
+  const context=vm.createContext({...engine,...inspector,...claims,...llm,...dialogueSave,URL,structuredClone,setTimeout,clearTimeout,setInterval,clearInterval,
     fetch:async()=>({ok:false,json:async()=>({})}),AbortController,
-    localStorage:{getItem(){return null},setItem(){}},
-    document:{querySelector:node,addEventListener(type,fn){listeners[type]=fn},body:{dataset:{}}}});
+    localStorage:{getItem(key){return key==='living-mystery.bellweather.v1'?savedText:null},setItem(key,value){if(key==='living-mystery.bellweather.v1')savedText=value}},
+    document:{querySelector:node,addEventListener(type,fn){listeners[type]=fn},body:{dataset:{}}},...overrides});
   vm.runInContext(readFileSync(new URL('../dist/ui.mjs',import.meta.url),'utf8').replace(/^import .*;\n/gm,''),context);
-  return {run:code=>vm.runInContext(code,context),node,click(action){listeners.click({target:{closest(){return {dataset:{do:action}}}}})}};
+  return {saved:()=>savedText,run:code=>vm.runInContext(code,context),node,click(action){listeners.click({target:{closest(){return {dataset:{do:action}}}}})}};
 }
 
 test('Recent history stays bounded and chronological; full history pages preserve order',()=>{
@@ -91,4 +94,24 @@ test('Hiding missed-opportunity spoilers also dismisses the contextual detail pa
   ui.click('hide-missed');
   assert.doesNotMatch(ui.node('#app').innerHTML,/id="character-panel"/);
   assert.match(ui.node('#app').innerHTML,/Reveal missed opportunities/);
+});
+
+test('Completed AI delivery persists across reload and is visible in event audit',async()=>{
+  const ui=adapter(null,{llmActive:()=>true,realizeDialogue:payload=>llm.realizeDialogue(payload,{store:{getItem:k=>k.endsWith('.enabled')?'1':'http://127.0.0.1:8787'},fetchImpl:async(url,init)=>({ok:true,json:async()=>({text:JSON.parse(init.body).system.includes('independent')?'{"verdict":"pass","violations":[]}':'Well. '+payload.authoredLine})})})});
+  ui.run("act({type:'ask',person:'bell',topic:'case'})");
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(ui.run('dialogueAudit.size'),1);
+  const restored=adapter(ui.saved());
+  assert.equal(restored.run('dialogueAudit.size'),1);
+  assert.equal(restored.run('realized.size'),1);
+  assert.match(restored.node('#app').innerHTML,/Well\./);
+  const details=restored.run("cursor=session.events.find(e=>e.kind==='speech'&&e.data.listener==='player').index;eventDetail()");
+  assert.match(details,/Dialogue audit/);assert.match(details,/accepted/);
+});
+
+test('Claims notebook and evidence-gated follow-ups are available without opening the inspector',()=>{
+  const ui=adapter();ui.run("dispatch(session,{type:'move',to:'vestry'});dispatch(session,{type:'ask',person:'silas',topic:'alibi'});dispatch(session,{type:'inspect',object:'delivery'});notebook='claims';render()");
+  assert.match(ui.node('#app').innerHTML,/Conflicting accounts/);
+  assert.match(ui.node('#app').innerHTML,/Read source/);
+  const menu=ui.run("chat='silas';conversation(playerView(session))");assert.match(menu,/challenge_delivery/);assert.match(menu,/What is your account based on/);
 });

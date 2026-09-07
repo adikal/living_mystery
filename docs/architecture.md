@@ -18,6 +18,18 @@ The simulation is split into three layers so that content and generation can gro
 
 This is the foundation for the roadmap's harder phases: generation produces a new Case `model`; verification checks the event log + action catalog; and an LLM may (later, behind validation) propose typed actions rather than only restyle dialogue.
 
+## Generated dialogue, critic, and audit
+
+The generator freely rewrites the authored statement using character persona and event-time mood. Deterministic checks first enforce matching numeric tokens and presence/absence of known person/place terms. These checks intentionally reject some harmless paraphrases (e.g. converting numeric times to words) and do not detect all semantic changes. A second, separate-context model call compares source and candidate for added or omitted claims, changed certainty, negation, attribution, alibis, or disclosures. The authored statement is the reference even when it is a deliberate lie. Both requests currently use the same configured model; this is not an independent formal verifier.
+
+Only a strictly parsed passing verdict with an empty violations list releases a changed response. Rejection, malformed verdicts, either request failing, or the combined 16-second timeout returns the authored line. An exactly unchanged response skips the critic. A model critic can still approve an incorrect paraphrase; future structured assertions, solver-backed constraints, and empirical critic evaluations remain necessary. The current mocked tests verify orchestration and rejection behavior, not model judgment accuracy.
+
+`realizeDialogue` returns versioned presentation metadata: generation request/response, critic request/response/verdict, actual displayed text, and status/reason. Completed attempts are attached to save envelopes as optional `dialogue` metadata, separate from deterministic events and beliefs. Restore checks the source speech, deterministic anchors, and saved critic verdict before redisplaying a rewrite; it does not call a model. Saved verdicts are not authenticated against local save editing. Older saves without audits remain readable. Reloaded in-flight attempts are not resumed and retain authored lines. Disabling AI affects future requests and retains completed historical output.
+
+Inspector speech details expose Dialogue audit separately from the engine statement. Requests include public persona, authored dialogue, and private mood/delivery cues, excluding the canonical solution and private backstory. The critic receives only authored/candidate text and its validation instructions. UI text is escaped. Async updates preserve unfinished command and hypothesis text.
+
+The loopback-only Python proxy checks exact Origin, Host, custom request header, content type, and bounded request shape. SDK timeouts are bounded and retries disabled. These browser-origin restrictions are not authentication against local programs or a production security boundary. Offline tests stub model calls; real Bedrock and critic-quality evaluations remain separate integration work.
+
 ## Event model
 
 Every simulation mutation passes through `commit`. An event contains:
@@ -45,7 +57,7 @@ The current implementation reconstructs from the start, which is sufficient for 
 
 Beliefs record proposition keys, human-readable content, confidence, source type and event, acquisition time, and an inspector-only relation to authored case truth. Observation, testimony, inference, and speech assertions remain distinguishable. A false statement never becomes a physical world fact.
 
-Movement perception is emitted at each arrival or departure boundary, including the detective’s initial arrival. Every other stationary NPC at that location receives an internal observation linked to the movement, then a memory event retaining that observation ID. Witnesses record the subject, arrival/departure phase, and observed location; they do not acquire the route, destination, or private purpose. Transit is not a shared perceptible location. Events within the same minute follow stable character iteration order. These observations do not yet drive dialogue or planning.
+Movement perception is emitted at each arrival or departure boundary, including the detective’s initial arrival. Every other stationary NPC at that location receives an internal observation linked to the movement, then a memory event retaining that observation ID. Witnesses record the subject, arrival/departure phase, and observed location; they do not acquire the route, destination, or private purpose. Transit is not a shared perceptible location. Events within the same minute follow stable character iteration order. Movement observations can be recounted through sightings. A local folio-retrieval observation creates a belief that can enable Clara’s reporting plan; knowledge of a mistaken report enables Ada’s correction plan.
 
 The inspector’s Memories tab reads the selected replay world’s retained IDs (currently capped at 80 per character), while the full timeline preserves all historical observations. Existing version-1 saves remain readable; past movement observations are not backfilled.
 
@@ -59,7 +71,7 @@ The main transcript renders only the five most recent player-visible entries, ol
 
 Scene changes show a from/to banner and arrivals have a distinct transcript treatment. Inspect, Talk, and Wait expose supported actions directly; the text parser remains optional. Local character highlights use the public projection. Question labels map to the deterministic engine's authored topics, with evidence presentation available separately.
 
-Done markers are derived from matching command events without a directly caused rejection. Inspections match the object, questions match person/topic, and presentations match person/clue/tone. These markers work with existing saves and typed commands, do not disable actions, and do not imply an exhausted topic. Most evidence presentations still use a generic response pending more authored communicative behavior.
+Done markers are derived from matching command events without a directly caused rejection. Inspections match the object, questions match person/topic, and presentations match person/clue/tone. These markers work with existing saves and typed commands, do not disable actions, and do not imply an exhausted topic. Relevant evidence has case-authored reactions, with explicit limits for unsupported interpretations. Follow-ups are gated by acquired evidence, previous dialogue, and the recipient’s beliefs.
 
 Memories display oldest to newest in acquisition order, with timestamps, locations, event IDs, and belief or speech content where available. Repeated conversations remain distinct episodes. An arrival followed immediately by departure may share a simulation minute because reading and choosing do not advance time; event order resolves that sequence. The debugger's full event timeline remains newest first.
 
@@ -81,12 +93,20 @@ Missed opportunities require a separate spoiler reveal. They include unacquired 
 
 See [roadmap.md](roadmap.md) for the staged plan and manual acceptance checklist.
 
+## Structured claims and case dialogue
+
+`claims.mjs` validates attributed assertions and compares selected predicates. `last-bell-claims.mjs` supplies case-night presence intervals, document facts, and testimony. Acquisition time is separate from the asserted time. Speech contains an authored communicative plan (intent, belief basis, disclosure policy); LLM realization does not choose state changes.
+
+The notebook processes only player-visible events. It preserves old assertions and marks earlier claims by the same claimant/key as superseded. Overlapping location assertions with different values conflict; matching values agree. Disjoint death windows conflict. A planned appointment is a distinct predicate and does not establish presence. These are bounded comparisons, not a semantic solver, a confidence calculation, or proof of independent corroboration.
+
+Claims are optional event metadata so version-1 saves remain readable. New claim payloads are validated on import. Older acquired evidence can be projected using the case catalog, without changing the saved history; old speech is not parsed retrospectively. Selected testimony notebook entries preserve actual source speech. Both claim revisions and retained original notebook evidence remain accessible as historical records.
+
+Knowledge-driven correction/report actions compete with existing routines/warnings/concealment using recorded scores. Ada’s correction reaches Bell only after travel and speech; Clara’s report requires an actual local observation and sufficient trust. Perception does not reveal Silas’s intent or later object location. No broadcast correction or omniscient belief update is performed.
+
 ## Next milestones
 
-1. Playtest the current case; inspect stalls and unintended deductions using exported traces.
-2. Extend local movement perception to other visible actions and make witnessed history available to typed communicative plans. Replace remaining direct dialogue conditionals with those plans.
-3. Build a shared typed action and inference schema before introducing a solver. Add an independent reference suite so shared semantic mistakes are detectable.
-4. Use runtime execution to construct pre-game histories and derive traces, then introduce a small family of generated cases.
-5. Add replay checkpoints, branch-from-command-boundary, and run comparison once histories and policies become complex enough to need them.
-6. Integrate bounded language realization, preserving critical assertions. The current deterministic adapter remains the regression oracle.
-7. Add a top-down town view with coordinates and animation while retaining the text view and inspector.
+See [roadmap.md](roadmap.md) for implementation status, the manual case checklist, and the eleven-part sequence toward richer cognition, symbolic validation, executable prehistory, improved deduction, and eventually procedural generation.
+
+Conversation engagement is stored in `player.conversation` through event patches. The addressed NPC defers autonomous decisions across questions and evidence presentations while the rest of the town advances. Ending the conversation, switching speakers, or taking a valid movement, inspection, wait, or local accusation action releases the previous speaker and reevaluates their plans. Notebook and inspector browsing do not end engagement. Legacy saves without this optional field start disengaged.
+
+Rejected movement, inspection, and unavailable follow-up requests preserve engagement. Source replies link to the preceding substantive speech event and explain that account; repeating a source question retains the same referent. Identity and coat follow-ups require prior relevant testimony, not merely any conversation with that NPC.

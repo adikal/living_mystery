@@ -139,3 +139,8 @@ dialog{background:#1a262e;color:var(--text);border:1px solid #56636a;border-radi
 
 /* Concise belief/memory counts under each character in the World-view grid. */
 .town-person .npc-counts{display:block;color:var(--muted);font-size:.72rem;margin-top:4px;font-variant-numeric:tabular-nums}
+.claim-card{border:1px solid var(--line);padding:12px;margin:10px 0;border-radius:5px;font-size:.875rem}
+.claim-card p{margin:8px 0}.claim-card small{display:block;color:var(--muted)}
+.claim-card.superseded{border-style:dashed;opacity:.7}
+.claim-conflict{border-left:3px solid var(--gold);padding-left:10px;margin-bottom:20px}
+.notebook-panel>.small-tabs{flex-wrap:wrap;gap:12px}

@@ -5,7 +5,7 @@ export function perspectiveAt(session,index,person){
   const world=worldAt(session,index),seen={};
   if(!world.npcs[person])throw Error('Unknown perspective');
   for(const event of session.events.slice(0,index+1)){
-    if(event.actor!==person||event.kind!=='observation'||!event.data.subject)continue;
+    if(event.actor!==person||event.kind!=='observation'||!event.data.subject||!['arrival','departure'].includes(event.data.phase))continue;
     seen[event.data.subject]={location:event.location,minute:event.minute,departed:event.data.phase==='departure',sourceId:event.id};
   }
   return {self:world.npcs[person],seen,beliefs:world.npcs[person].beliefs};
