@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11191f">
+  <meta name="description" content="Investigate a death in Bellweather. Follow evidence, question a changing village, and inspect the simulation’s complete causal history.">
+  <title>Living Mystery · The Last Bell</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2311191f'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia' font-size='35' fill='%23dfba79'%3EL%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="app"><main class="boot"><div class="wordmark">Living Mystery</div><p>Opening the Bellweather case file…</p></main></div>
+  <dialog id="modal" aria-label="Case dialog"></dialog>
+  <input type="file" id="import-file" accept="application/json,.json" hidden aria-label="Import a saved investigation">
+  <div id="toast" role="status" aria-live="polite"></div>
+  <noscript><p>This text adventure needs JavaScript to run the village simulation.</p></noscript>
+  <script type="module" src="./ui.mjs"></script>
+</body>
+</html>
