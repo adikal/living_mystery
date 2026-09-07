@@ -4,7 +4,7 @@ A first playable, text-based Bellweather mystery with a visual simulation inspec
 
 ## Play
 
-The browser application is in `dist/` and has no runtime dependencies, external services, or API keys. Serve that directory with any static HTTP server. A command-line adapter uses the same engine:
+The browser application is in `dist/` and has no runtime dependencies, external services, or API keys. Serve that directory with any static HTTP server. (An optional, off-by-default AI-voiced dialogue mode can restyle characters' lines via a local Bedrock proxy — see `server/llm_proxy.py`; the game stays deterministic and offline without it.) A command-line adapter uses the same engine:
 
 ```sh
 python3 -m http.server 8000 --bind 127.0.0.1 --directory dist
@@ -61,9 +61,9 @@ The browser saves progress on the current device. Export/import includes the com
 
 ## Current boundaries
 
-The engine is authoritative within this single-player client, not a secure server. Source and exported saves include the solution. The inspector intentionally reveals it. There is no live LLM, ASP/SMT solver, arbitrary natural-language conversation, procedural crime generation, automatic branching, graphics, or cloud save synchronization in this version.
+The engine is authoritative within this single-player client, not a secure server. Source and exported saves include the solution. The inspector intentionally reveals it. An optional, off-by-default AI voice restyles dialogue only — it never changes facts, evidence, or world state, and falls back to the written line — so play stays fully deterministic and offline without it. There is still no LLM authority over state, ASP/SMT solver, arbitrary natural-language conversation, procedural crime generation, automatic branching, graphics, or cloud save synchronization in this version.
 
-Most evidence/person combinations still use a generic acknowledgement; only selected combinations have authored reactions. Movement memories are inspectable but do not yet inform dialogue or planning. A Done marker means an option has been used successfully, not that repeating it cannot yield new information.
+Most evidence/person combinations still use a generic acknowledgement; only selected combinations have authored reactions. Movement memories are inspectable and can be recounted in dialogue (the “sightings” topic), but do not yet inform NPC planning. A Done marker means an option has been used successfully, not that repeating it cannot yield new information.
 
 The evidence rubric is authored. It validates a playable case; it is not a proof of general logical solvability, evidence independence, or legal sufficiency. NPC policies cover a few explicit situations rather than a general planning system. Confidence values are authored scores, not calibrated probabilities. Initial social relationships are fixed; trust toward the player changes through interaction.
 
