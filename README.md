@@ -41,15 +41,22 @@ The browser saves progress on the current device. Export/import includes the com
 
 | File | Role |
 | --- | --- |
-| `dist/case.mjs` | Authored locations, characters, evidence, hidden history, case rubrics |
-| `dist/engine.mjs` | Simulation, action execution, event records, replay, projections, save validation |
+| `dist/schema.mjs` | Typed contracts (JSDoc): Action/Effect/Belief/Event, the Model/Kernel/Case interfaces, and a declarative action catalog + `validateAction` |
+| `dist/kernel.mjs` | Generic, case-agnostic simulation kernel: event log, reversible patches, replay, save/load, diagnostics, and the neutral verbs (`createKernel(model)` with an injected `decide` policy) |
+| `dist/cases/last-bell.mjs` | The Last Bell as a Case: initial world, NPC decision policy, and authored dialogue (`model` + `baseWorld` + `createBehavior(kernel)`) |
+| `dist/case.mjs` | Authored data tables: locations, characters, evidence, hidden history, case rubrics |
+| `dist/engine.mjs` | Thin façade: assembles kernel + active case, hosts the generic action router, and re-exports the stable public API |
 | `dist/inspector.mjs` | Read-only character sighting and missed-opportunity projections at a replay cursor |
-| `dist/ui.mjs` | Game and visual inspector adapters |
+| `dist/ui.mjs` | Game and visual inspector adapters (+ optional LLM-voiced dialogue overlay) |
+| `dist/llm.mjs` | Optional, boundary-respecting LLM dialogue realization (restyle-only, deterministic fallback) |
 | `dist/styles.css` | Responsive text-game and inspector presentation |
+| `server/llm_proxy.py` | Local Bedrock (Converse) proxy for AI-voiced dialogue; holds AWS creds server-side |
 | `cli.mjs` | Terminal adapter using the same engine |
 | `tests/inspector.test.mjs` | Perspective boundaries, replay-aware missed clues, and evidence relocation |
 | `tests/ui.test.mjs` | Adapter regression tests for history, completion markers, scene rendering, and memories (no browser layout testing) |
 | `tests/engine.test.mjs` | Investigative, causal, information-boundary, replay, and save scenarios |
+| `tests/schema.test.mjs` | Action-catalog coverage and `validateAction` shape checks |
+| `tests/llm.test.mjs` | Prompt building, output sanitization, and offline/error fallback for LLM realization |
 | `docs/architecture.md` | Design boundaries, debugger model, and next implementation steps |
 
 ## Current boundaries

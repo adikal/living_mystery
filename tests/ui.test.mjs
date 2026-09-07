@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import * as engine from '../dist/engine.mjs';
 import * as inspector from '../dist/inspector.mjs';
+import * as llm from '../dist/llm.mjs';
 
 // Exercise the adapter's rendering and handlers without pretending to test browser layout.
 function adapter(){
@@ -12,7 +13,8 @@ function adapter(){
     if(!nodes.has(selector))nodes.set(selector,{innerHTML:'',scrollTop:0,dataset:{},addEventListener(){},setAttribute(){},focus(){},showModal(){this.open=true},classList:{add(){},remove(){}}});
     return nodes.get(selector);
   };
-  const context=vm.createContext({...engine,...inspector,structuredClone,setTimeout,clearTimeout,setInterval,clearInterval,
+  const context=vm.createContext({...engine,...inspector,...llm,structuredClone,setTimeout,clearTimeout,setInterval,clearInterval,
+    fetch:async()=>({ok:false,json:async()=>({})}),AbortController,
     localStorage:{getItem(){return null},setItem(){}},
     document:{querySelector:node,addEventListener(type,fn){listeners[type]=fn},body:{dataset:{}}}});
   vm.runInContext(readFileSync(new URL('../dist/ui.mjs',import.meta.url),'utf8').replace(/^import .*;\n/gm,''),context);
@@ -48,7 +50,7 @@ test('Movement updates the scene and local people; memories render in acquisitio
   ui.run("notebook='people';act({type:'move',to:'manor'})");
   assert.match(ui.node('#app').innerHTML,/scene-transition/);
   assert.match(ui.node('#app').innerHTML,/Here with you/);
-  assert.ok(ui.run("const seen=[];const old=memoryCard;memoryCard=id=>{seen.push(id);return old(id)};person='clara';personTab='memories';characterPanel(session.world);memoryCard=old;JSON.stringify(seen)===JSON.stringify(session.world.npcs.clara.memories)"));
+  assert.ok(ui.run("const exp=session.world.npcs.clara.memories.map(id=>session.events.find(e=>e.id===id)).filter(e=>e&&(e.kind==='observation'||e.kind==='speech')).map(e=>e.id);const seen=[];const old=memoryCard;memoryCard=id=>{seen.push(id);return old(id)};person='clara';personTab='memories';characterPanel(session.world);memoryCard=old;JSON.stringify(seen)===JSON.stringify(exp)"));
   for(const person of Object.keys(engine.PEOPLE))assert.doesNotThrow(()=>ui.run(`chat=${JSON.stringify(person)};conversation(playerView(session))`));
 });
 

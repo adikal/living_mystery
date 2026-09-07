@@ -6,6 +6,18 @@ This version prioritizes a complete investigation and a causal debugger. It uses
 
 The deterministic engine and case data are ES modules independent of the DOM. The browser and terminal are adapters. The browser renders `playerView(session)` during play; inspector code deliberately reads full state. Source secrecy is not a goal for this local single-player prototype.
 
+## Module architecture (kernel / case / engine)
+
+The simulation is split into three layers so that content and generation can grow without touching mechanics:
+
+- **Kernel** (`dist/kernel.mjs`) — generic, case-agnostic mechanics: the append-only event log, reversible patches, deterministic replay (`worldAt`), save/load + integrity checks (`diagnostics`), and the neutral "simulation verbs" (`commit`, `believe`, `speech`, `witnessMovement`, `advance`, …). It knows nothing about a specific mystery. `createKernel(model)` binds it to a case's data tables and world factory; the NPC decision policy is **injected** via `kernel.decide` so the clock can drive character behavior without the kernel importing any content.
+- **Case** (`dist/cases/last-bell.mjs`, data in `dist/case.mjs`) — one mystery as data + behavior: `model` (people/locations/clues/objects/case), `baseWorld(seed)`, and `createBehavior(kernel)` returning the policy (`decide`, `routineDestination`), the authored dialogue (`ask`, `present`), session seeding, `checkCase`/`caseHealth`, and the command parser. A second or **procedurally generated** case is another module of this exact shape.
+- **Engine** (`dist/engine.mjs`) — a thin façade that assembles kernel + active case, hosts the generic action router (`dispatch`), and re-exports the stable public API the adapters and tests use. Swapping the active case is a one-line change here.
+
+**Typed contracts** live in `dist/schema.mjs` (JSDoc typedefs — no build step): `Event`, `Belief`, `Action`, `Model`, `Kernel`, `CaseBehavior`, `Case`, plus a declarative `ACTIONS` catalog and `validateAction()`. This is the shared vocabulary a generator, a symbolic verifier, and an LLM action-proposer target: a proposed action can be shape-validated against the catalog before the kernel executes it. Deeper semantic/precondition validation still lives in the kernel/case.
+
+This is the foundation for the roadmap's harder phases: generation produces a new Case `model`; verification checks the event log + action catalog; and an LLM may (later, behind validation) propose typed actions rather than only restyle dialogue.
+
 ## Event model
 
 Every simulation mutation passes through `commit`. An event contains:

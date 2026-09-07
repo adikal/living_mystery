@@ -155,3 +155,44 @@ test('NPC movement produces exactly the local witnesses at each event boundary',
   dispatch(restored,{type:'wait',minutes:30});dispatch(s,{type:'wait',minutes:30});
   assert.deepEqual(restored,s);healthy(s);
 });
+
+test('Confronting Silas with physical evidence deepens stress with an authored, non-generic reaction',()=>{
+  const s=createSession();move(s,'vestry');inspect(s,'seal');
+  dispatch(s,{type:'present',person:'silas',clue:'seal'});
+  const said=s.events.findLast(e=>e.kind==='speech'&&e.actor==='silas');
+  assert.equal(said.data.intent,'Deflect physical evidence');
+  assert.equal(s.world.npcs.silas.stress,.95);
+  assert.ok(s.world.npcs.silas.beliefs.some(b=>b.key==='detective_has_physical'));
+  healthy(s);
+});
+
+test('The delivery receipt is presented as a contradiction of Silas\u2019s stated alibi',()=>{
+  const s=createSession();move(s,'vestry');inspect(s,'delivery');
+  dispatch(s,{type:'present',person:'silas',clue:'delivery'});
+  const said=s.events.findLast(e=>e.kind==='speech'&&e.actor==='silas');
+  assert.equal(said.data.deception,'Contradiction with stated alibi');
+  assert.equal(s.world.npcs.silas.stress,.9);
+  healthy(s);
+});
+
+test('A witness recounts sightings drawn from memory, without revealing where anyone was headed',()=>{
+  const s=createSession();
+  dispatch(s,{type:'ask',person:'bell',topic:'sightings'});
+  const said=s.events.findLast(e=>e.kind==='speech'&&e.actor==='bell').playerText;
+  assert.match(said,/\byou\b/i);
+  assert.doesNotMatch(said,/the detective/i);
+  assert.doesNotMatch(said,/headed|toward|destination/i);
+  healthy(s);
+});
+
+test('Showing Bell the fast clock casts doubt on Ada\u2019s account without silently rewriting it',()=>{
+  const s=createSession();dispatch(s,{type:'wait',minutes:60});
+  const before=s.world.npcs.bell.beliefs.find(b=>b.key==='adas_account');
+  assert.ok(before&&before.confidence>=.7);
+  move(s,'inn');inspect(s,'clock');move(s,'square');
+  dispatch(s,{type:'present',person:'bell',clue:'clock'});
+  const after=s.world.npcs.bell.beliefs.find(b=>b.key==='adas_account');
+  assert.ok(after.confidence<=.5);
+  assert.equal(after.truth,false);
+  healthy(s);
+});
