@@ -7,6 +7,10 @@ A first playable, text-based Bellweather mystery with a visual simulation inspec
 The browser application is in `dist/` and has no runtime dependencies, external services, or API keys. Serve that directory with any static HTTP server. A command-line adapter uses the same engine:
 
 ```sh
+python3 -m http.server 8000 --bind 127.0.0.1 --directory dist
+# Open http://127.0.0.1:8000 and keep this server running.
+
+# Terminal play and tests require Node.js 20 or newer:
 node cli.mjs
 node --test tests/*.test.mjs
 ```
@@ -19,6 +23,11 @@ The browser saves progress on the current device. Export/import includes the com
 - A clock that advances only on consequential actions, with travel and NPC routines.
 - Bounded deterministic choices with recorded alternative scores and reasons.
 - Structured beliefs with confidence, provenance, and explicit observation/testimony distinctions.
+- Local NPC witnesses record arrivals and departures as causal observations and retained memories, including player movement.
+- A replay-aware Memories tab shows time, location, and belief/dialogue content in acquisition order, linking each memory to its source event.
+- Clear scene-change banners, five recent transcript entries in chronological order, and paged full observed history.
+- Inspect, Talk, and Wait action groups with explicit character-specific questions and highlighted local people.
+- Previously completed inspection, question, and evidence-presentation options remain clickable with a Done marker derived from saved command history.
 - Clara can disclose information after reassurance or travel to warn Rowan after a threat.
 - Showing Silas the accounts changes his beliefs and prompts him to retrieve and hide a real document.
 - Ada can pass an honest mistake to Bell. Correcting Ada does not silently correct Bell.
@@ -34,15 +43,20 @@ The browser saves progress on the current device. Export/import includes the com
 | --- | --- |
 | `dist/case.mjs` | Authored locations, characters, evidence, hidden history, case rubrics |
 | `dist/engine.mjs` | Simulation, action execution, event records, replay, projections, save validation |
+| `dist/inspector.mjs` | Read-only character sighting and missed-opportunity projections at a replay cursor |
 | `dist/ui.mjs` | Game and visual inspector adapters |
 | `dist/styles.css` | Responsive text-game and inspector presentation |
 | `cli.mjs` | Terminal adapter using the same engine |
+| `tests/inspector.test.mjs` | Perspective boundaries, replay-aware missed clues, and evidence relocation |
+| `tests/ui.test.mjs` | Adapter regression tests for history, completion markers, scene rendering, and memories (no browser layout testing) |
 | `tests/engine.test.mjs` | Investigative, causal, information-boundary, replay, and save scenarios |
 | `docs/architecture.md` | Design boundaries, debugger model, and next implementation steps |
 
 ## Current boundaries
 
 The engine is authoritative within this single-player client, not a secure server. Source and exported saves include the solution. The inspector intentionally reveals it. There is no live LLM, ASP/SMT solver, arbitrary natural-language conversation, procedural crime generation, automatic branching, graphics, or cloud save synchronization in this version.
+
+Most evidence/person combinations still use a generic acknowledgement; only selected combinations have authored reactions. Movement memories are inspectable but do not yet inform dialogue or planning. A Done marker means an option has been used successfully, not that repeating it cannot yield new information.
 
 The evidence rubric is authored. It validates a playable case; it is not a proof of general logical solvability, evidence independence, or legal sufficiency. NPC policies cover a few explicit situations rather than a general planning system. Confidence values are authored scores, not calibrated probabilities. Initial social relationships are fixed; trust toward the player changes through interaction.
 
@@ -51,7 +65,12 @@ The evidence rubric is authored. It validates a playable case; it is not a proof
 1. Inspect the accounts at the manor. Find Silas at the vestry and present them. Wait while he retrieves the folio. Follow the speech event to the new belief, decision, movement, object transfer, and concealment. The folio remains discoverable in the vestry drawer.
 2. Read Clara’s letter at the greenhouse. Present it to Clara and threaten exposure. Follow her journey to Rowan and inspect his new belief and reduced trust. Revisit the same history before the warning to see that he did not already know.
 3. Wait in the square for Ada’s visit. Inspect the origin of Bell’s new belief, then challenge Ada with the clock evidence. Bell retains her original report until informed otherwise.
-4. Export, reload, and check that replay reproduces the same current world.
+4. Travel from the square to the manor. In the inspector, open Bell’s Memories to find your departure, and Clara’s Memories to find your arrival. Follow each observation to the movement that caused it; seek backward to see when the memory was acquired.
+5. Export, reload, and check that replay reproduces the same current world.
+
+## Next development steps
+
+See [the roadmap](docs/roadmap.md) for the sequence to finish The Last Bell before procedural generation, the more sophisticated inspector design, and a manual acceptance checklist. The current inspector opens on World, offers character perspectives and a milestone strip, and reveals missed opportunities only after a separate spoiler action.
 
 ## Toward a Stardew-style presentation
 

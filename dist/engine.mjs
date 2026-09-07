@@ -31,12 +31,24 @@ function believe(s,id,key,text,confidence,sourceType,sourceId,truth=null){
 function local(s,id){return s.world.npcs[id]?.location===s.world.player.location;}
 function notice(s,id,cause,text){if(local(s,id)){commit(s,{kind:'observation',title:`You notice ${PEOPLE[id].name}`,actor:'player',parents:[cause],playerText:text,changes:{[`player.lastSeen.${id}`]:{location:s.world.player.location,minute:s.world.minute}}});}}
 
+// Witnesses learn only the movement visible at their location, not a route or motive.
+function witnessMovement(s,subject,phase,location,cause){
+  if(!LOCATIONS[location])return;
+  const name=subject==='player'?'The detective':PEOPLE[subject].name;
+  for(const [id,npc] of Object.entries(s.world.npcs)){
+    if(id===subject||npc.location!==location||npc.travel)continue;
+    const observation=commit(s,{kind:'observation',title:`${PEOPLE[id].name} sees ${name} ${phase==='departure'?'leave':'arrive'}`,actor:id,location,parents:[cause],data:{subject,phase,observedLocation:location,sourceType:'observation'}});
+    remember(s,id,observation);
+  }
+}
+
 export function createSession(seed=17){
   if(!Number.isInteger(seed)||seed<0||seed>999999)throw Error('Seed must be an integer from 0 to 999999.');
   const s={version:VERSION,seed,events:[],world:baseWorld(seed)};
   const origin=commit(s,{kind:'history',title:'The case is established',data:{history:CASE.history,truth:CASE.truth},location:'manor'});
   for(const [id,p]of Object.entries(PEOPLE))for(const b of p.beliefSeeds)believe(s,id,...b.slice(0,4),origin,b[4]);
-  commit(s,{kind:'arrival',title:'You arrive in Bellweather',actor:'player',location:'square',playerText:`${CASE.synopsis}\n\n“Start with the study,” Bell says. “Then listen carefully. A lie and a murder aren’t the same thing.”`,changes:{'player.lastSeen.bell':{location:'square',minute:480}},data:{boundary:true}});
+  const arrival=commit(s,{kind:'arrival',title:'You arrive in Bellweather',actor:'player',location:'square',playerText:`${CASE.synopsis}\n\n“Start with the study,” Bell says. “Then listen carefully. A lie and a murder aren’t the same thing.”`,changes:{'player.lastSeen.bell':{location:'square',minute:480}},data:{boundary:true}});
+  witnessMovement(s,'player','arrival','square',arrival);
   return s;
 }
 
@@ -55,6 +67,7 @@ function routineDestination(s,id){const t=(s.world.minute-480)%180,shift=s.seed%
 function startTravel(s,id,to,cause,purpose){const a=s.world.npcs[id],from=a.location;if(a.travel||from===to)return;
   const arrival=s.world.minute+distance(from,to);if(!Number.isFinite(arrival))return;
   const e=commit(s,{kind:'movement',title:`${PEOPLE[id].name} sets out for ${LOCATIONS[to].short}`,actor:id,location:from,parents:[cause],data:{from,to,arrival,purpose},changes:{[`npcs.${id}.location`]:'transit',[`npcs.${id}.travel`]:{from,to,arrival,cause,purpose}},playerText:from===s.world.player.location?`${PEOPLE[id].name} leaves for ${LOCATIONS[to].short}.`:null});
+  witnessMovement(s,id,'departure',from,e);
   if(from===s.world.player.location)commit(s,{kind:'observation',title:`You see ${PEOPLE[id].name} leave`,actor:'player',parents:[e],changes:{[`player.lastSeen.${id}`]:{location:from,minute:s.world.minute,departed:true}}});
 }
 function decide(s,id,cause){
@@ -95,7 +108,7 @@ function advance(s,minutes,cause){
   for(let n=0;n<minutes;n++){
     const e=commit(s,{kind:'clock',title:'A minute passes',parents:[cause],changes:{minute:s.world.minute+1}});
     for(const [id,a]of Object.entries(s.world.npcs)){
-      if(a.travel&&a.travel.arrival<=s.world.minute){const tr=copy(a.travel);const arrival=commit(s,{kind:'movement',title:`${PEOPLE[id].name} arrives at ${LOCATIONS[tr.to].short}`,actor:id,location:tr.to,parents:[tr.cause,e],changes:{[`npcs.${id}.location`]:tr.to,[`npcs.${id}.travel`]:null},data:{from:tr.from,to:tr.to},playerText:s.world.player.location===tr.to?`${PEOPLE[id].name} arrives from ${LOCATIONS[tr.from].short}.`:null});notice(s,id,arrival,`${PEOPLE[id].name} is here now.`);decide(s,id,arrival);}
+      if(a.travel&&a.travel.arrival<=s.world.minute){const tr=copy(a.travel);const arrival=commit(s,{kind:'movement',title:`${PEOPLE[id].name} arrives at ${LOCATIONS[tr.to].short}`,actor:id,location:tr.to,parents:[tr.cause,e],changes:{[`npcs.${id}.location`]:tr.to,[`npcs.${id}.travel`]:null},data:{from:tr.from,to:tr.to},playerText:s.world.player.location===tr.to?`${PEOPLE[id].name} arrives from ${LOCATIONS[tr.from].short}.`:null});witnessMovement(s,id,'arrival',tr.to,arrival);notice(s,id,arrival,`${PEOPLE[id].name} is here now.`);decide(s,id,arrival);}
       else if(!a.travel&&s.world.minute%10===0)decide(s,id,e);
     }
   }
@@ -173,8 +186,9 @@ export function dispatch(s,action){
     case 'move':{
       if(!LOCATIONS[action.to]){reject(s,'Unknown destination','Choose a place on the village list.',start);break;}
       const from=s.world.player.location;if(from===action.to){reject(s,'Already at destination','You are already here.',start);break;}
-      const duration=distance(from,action.to);commit(s,{kind:'movement',title:`You leave for ${LOCATIONS[action.to].short}`,actor:'player',parents:[start],changes:{'player.location':'transit'},data:{from,to:action.to,duration}});advance(s,duration,start);
+      const duration=distance(from,action.to);const departure=commit(s,{kind:'movement',title:`You leave for ${LOCATIONS[action.to].short}`,actor:'player',location:from,parents:[start],changes:{'player.location':'transit'},data:{from,to:action.to,duration}});witnessMovement(s,'player','departure',from,departure);advance(s,duration,start);
       const arr=commit(s,{kind:'arrival',title:`You reach ${LOCATIONS[action.to].name}`,actor:'player',location:action.to,parents:[start],changes:{'player.location':action.to,'player.visited':[...new Set([...s.world.player.visited,action.to])]},playerText:LOCATIONS[action.to].description});
+      witnessMovement(s,'player','arrival',action.to,arr);
       for(const id of Object.keys(PEOPLE))notice(s,id,arr,`${PEOPLE[id].name} is here.`);break;
     }
     case 'inspect':{

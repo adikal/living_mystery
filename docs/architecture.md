@@ -33,20 +33,46 @@ The current implementation reconstructs from the start, which is sufficient for 
 
 Beliefs record proposition keys, human-readable content, confidence, source type and event, acquisition time, and an inspector-only relation to authored case truth. Observation, testimony, inference, and speech assertions remain distinguishable. A false statement never becomes a physical world fact.
 
+Movement perception is emitted at each arrival or departure boundary, including the detective’s initial arrival. Every other stationary NPC at that location receives an internal observation linked to the movement, then a memory event retaining that observation ID. Witnesses record the subject, arrival/departure phase, and observed location; they do not acquire the route, destination, or private purpose. Transit is not a shared perceptible location. Events within the same minute follow stable character iteration order. These observations do not yet drive dialogue or planning.
+
+The inspector’s Memories tab reads the selected replay world’s retained IDs (currently capped at 80 per character), while the full timeline preserves all historical observations. Existing version-1 saves remain readable; past movement observations are not backfilled.
+
 Initial belief provenance uses the case-history event. New knowledge travels via a real interaction. A later correction updates the recipient of that correction, not every person who heard the original rumor.
 
 `playerView` exposes only public character descriptions, people currently encountered, previously observed locations, discovered evidence, personal hypotheses, and observed text. Local last-seen information can become stale. The inspector is a separately entered omniscient view.
+
+## Investigation adapter
+
+The main transcript renders only the five most recent player-visible entries, oldest to newest. A modal pages the complete observed transcript in groups of 20, also chronologically. Full engine history is retained for export and replay. Desktop panels constrain their own scrolling; the mobile transcript has a bounded height.
+
+Scene changes show a from/to banner and arrivals have a distinct transcript treatment. Inspect, Talk, and Wait expose supported actions directly; the text parser remains optional. Local character highlights use the public projection. Question labels map to the deterministic engine's authored topics, with evidence presentation available separately.
+
+Done markers are derived from matching command events without a directly caused rejection. Inspections match the object, questions match person/topic, and presentations match person/clue/tone. These markers work with existing saves and typed commands, do not disable actions, and do not imply an exhausted topic. Most evidence presentations still use a generic response pending more authored communicative behavior.
+
+Memories display oldest to newest in acquisition order, with timestamps, locations, event IDs, and belief or speech content where available. Repeated conversations remain distinct episodes. An arrival followed immediately by departure may share a simulation minute because reading and choosing do not advance time; event order resolves that sequence. The debugger's full event timeline remains newest first.
 
 ## Meaningful verification
 
 The test suite covers complete investigations using both evidence rubrics, unsupported accusations, unavailable actions, goal-driven concealment, information transfer and correction, knowledge retention after object movement, a limited hidden-state counterfactual, exact replay, save/load continuation, and corrupt-save rejection.
 
+Adapter regression tests exercise bounded chronological history, pagination, successful/rejected option markers and restore behavior, scene rendering, and chronological memories using a minimal DOM stub. They do not validate browser layout or accessibility.
+
 The built-in checks establish trace integrity, not fairness or completeness. General solver-backed identification and investigative reachability remain future work. The UI labels case routes as authored requirements.
+
+## World-centered inspection
+
+`dist/inspector.mjs` computes character sightings and missed opportunities from a selected event prefix and its reconstructed world. It never mutates the session or contributes to the player projection. A character's map uses their own movement observations; it does not substitute other characters' actual positions. Self position and travel are exact. Beliefs and recent belief changes are shown with their recorded sources. Full trace details remain explicitly omniscient.
+
+The default inspector has no character sidebar. Selecting an event or character opens one contextual panel; the actual-world / character selector controls the main projection. The bottom slider remains event-index based, preserving order within a minute. Nearby meaningful milestones are shortcuts; future recorded milestones are labeled. No temporal compression or spatial routing is implemented in this iteration.
+
+Missed opportunities require a separate spoiler reveal. They include unacquired physical evidence currently at visited places, unobserved recorded NPC speech, three authored evidence follow-ups, and a special moving-folio status. They are not a comprehensive solvability assessment or a judgment that every clue is required. All reports stop at the replay cursor; they do not use future acquisitions or encounters. Existing saves remain compatible without backfilling perception.
+
+See [roadmap.md](roadmap.md) for the staged plan and manual acceptance checklist.
 
 ## Next milestones
 
 1. Playtest the current case; inspect stalls and unintended deductions using exported traces.
-2. Add perception events and memory records for all locally observed movements. Replace remaining direct dialogue conditionals with typed communicative plans.
+2. Extend local movement perception to other visible actions and make witnessed history available to typed communicative plans. Replace remaining direct dialogue conditionals with those plans.
 3. Build a shared typed action and inference schema before introducing a solver. Add an independent reference suite so shared semantic mistakes are detectable.
 4. Use runtime execution to construct pre-game histories and derive traces, then introduce a small family of generated cases.
 5. Add replay checkpoints, branch-from-command-boundary, and run comparison once histories and policies become complex enough to need them.

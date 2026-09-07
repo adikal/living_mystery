@@ -1,5 +1,7 @@
 # Living Mystery: System Design
 
+Implementation note: this document describes the longer-term design, including unimplemented systems. See [architecture.md](architecture.md) for current behavior and [../README.md](../README.md) for running the deterministic prototype.
+
 Status: evolving design specification  
 Current implementation: vertical slice  
 North Star: a replayable procedural murder-mystery text adventure in a causally coherent, socially alive world

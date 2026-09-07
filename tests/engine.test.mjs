@@ -111,3 +111,47 @@ test('Published command examples map to the intended actions',()=>{
   assert.equal(parseCommand('go manor').to,'manor');assert.equal(parseCommand('inspect desk').object,'desk');assert.equal(parseCommand('read visiting ledger').object,'record');
   assert.equal(parseCommand('ask Clara about alibi').person,'clara');assert.equal(parseCommand('wait 10').minutes,10);assert.equal(parseCommand('look').type,'look');
 });
+
+
+test('Local NPCs remember player arrivals and departures without learning the destination',()=>{
+  const s=createSession();
+  const initial=s.events.find(e=>e.actor==='bell'&&e.data.subject==='player');
+  assert.equal(initial.data.phase,'arrival');
+  assert.ok(s.world.npcs.bell.memories.includes(initial.id));
+  move(s,'manor');
+  const departure=s.events.find(e=>e.actor==='bell'&&e.data.phase==='departure');
+  const arrival=s.events.find(e=>e.actor==='clara'&&e.data.subject==='player');
+  assert.deepEqual(departure.data,{subject:'player',phase:'departure',observedLocation:'square',sourceType:'observation'});
+  assert.equal(arrival.data.phase,'arrival');
+  assert.equal(arrival.location,'manor');
+  assert.equal(s.events.find(e=>e.id===departure.parents[0]).location,'square');
+  assert.ok(!s.events.some(e=>e.actor==='silas'&&e.data.subject==='player'));
+  assert.ok(!worldAt(s,arrival.index-1).npcs.clara.memories.includes(arrival.id));
+  assert.ok(s.world.npcs.clara.memories.includes(arrival.id));
+  assert.ok(!playerView(s).transcript.some(e=>e.id===arrival.id||e.id===departure.id));
+  healthy(s);
+});
+
+test('NPC movement produces exactly the local witnesses at each event boundary',()=>{
+  const s=createSession();dispatch(s,{type:'wait',minutes:60});
+  const movements=s.events.filter(e=>e.kind==='movement'&&e.actor!=='player');
+  assert.ok(movements.length>0);
+  for(const movement of movements){
+    const at=worldAt(s,movement.index);
+    const witnesses=Object.entries(at.npcs).filter(([id,n])=>id!==movement.actor&&n.location===movement.location&&!n.travel).map(([id])=>id);
+    const observations=s.events.filter(e=>e.kind==='observation'&&e.data.subject===movement.actor&&e.parents.includes(movement.id));
+    assert.deepEqual(observations.map(e=>e.actor),witnesses);
+    for(const observation of observations){
+      assert.equal(observation.data.phase,movement.data.arrival?'departure':'arrival');
+      assert.equal(observation.playerText,null);
+      assert.equal(observation.data.purpose,undefined);
+      assert.equal(observation.data.to,undefined);
+      assert.ok(s.world.npcs[observation.actor].memories.includes(observation.id));
+    }
+  }
+  const adaArrival=s.events.find(e=>e.actor==='ada'&&e.kind==='movement'&&!e.data.arrival);
+  assert.ok(s.events.some(e=>e.actor==='bell'&&e.data.subject==='ada'&&e.parents.includes(adaArrival.id)));
+  const restored=importSession(exportSession(s));
+  dispatch(restored,{type:'wait',minutes:30});dispatch(s,{type:'wait',minutes:30});
+  assert.deepEqual(restored,s);healthy(s);
+});
