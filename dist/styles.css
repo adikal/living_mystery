@@ -144,3 +144,19 @@ dialog{background:#1a262e;color:var(--text);border:1px solid #56636a;border-radi
 .claim-card.superseded{border-style:dashed;opacity:.7}
 .claim-conflict{border-left:3px solid var(--gold);padding-left:10px;margin-bottom:20px}
 .notebook-panel>.small-tabs{flex-wrap:wrap;gap:12px}
+
+/* Case artwork is decorative; labels, state and evidence stay in the interface. */
+.game-art{object-fit:cover;display:block;background:var(--panel-deep)}
+.game-art[hidden]{display:none}
+.avatar{position:relative;overflow:hidden;isolation:isolate}
+.avatar .portrait-art{position:absolute;inset:0;width:100%;height:100%;object-position:50% 38%;border-radius:inherit}
+.avatar.large{flex-basis:64px}
+.place-art{width:48px;height:42px;flex:0 0 48px;border-radius:5px;border:1px solid var(--line)}
+.scene-art{float:right;width:38%;height:118px;margin:0 0 12px 18px;border-radius:6px;border:1px solid #756344;object-position:center}
+.scene-heading:after{content:"";display:block;clear:both}
+.world-place-art{width:100%;height:86px;border-radius:4px;margin-bottom:10px}
+.artifact-art{float:left;width:48px;height:48px;margin:3px 10px 6px 0;border-radius:5px}
+.object-button .artifact-art{width:38px;height:38px}
+.evidence-open:after,.object-button:after{content:"";display:block;clear:both}
+.artifact-detail-art{width:136px;height:136px;border-radius:8px;margin-bottom:18px}
+@media(max-width:700px){.scene-art{width:34%;height:90px;margin-left:12px}.place-art{width:38px;height:34px;flex-basis:38px}.world-place-art{height:65px}}

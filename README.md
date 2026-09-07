@@ -33,6 +33,7 @@ Tests: `node --test tests/*.test.mjs` and `python3 -m unittest discover -s tests
 ## Implemented
 
 - Six locations, six characters, three suspects, and fifteen evidence entries.
+- Illustrated portraits, location scenes, and selected artifact icons share a consistent visual style; labels and gameplay states remain accessible text. See [the art and procedural asset design](docs/art-direction.md).
 - Evidence-gated cross-examination, source questions tied to the preceding reply, persistent alibi revisions, refusals, and character-specific evidence reactions. Follow-ups require the relevant account to have been discussed.
 - Conversation partners stay engaged across questions and evidence presentations. Closing the conversation or taking another valid world action releases their plans; other NPCs continue moving.
 - A Claims notebook with attributed statements, case-night intervals, conflicting/consistent accounts, historical revisions, and source links.

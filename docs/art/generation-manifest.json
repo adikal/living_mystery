@@ -1,0 +1,231 @@
+{
+  "style": "bellweather-gouache-v1",
+  "method": "built-in image_gen",
+  "reference": "docs/art/bellweather-reference.png",
+  "assets": [
+    {
+      "id": "clara",
+      "kind": "portrait",
+      "subject": "Clara Vale, composed adult woman, dark waved hair, lavender 1930s day dress",
+      "prompt": "Create a single production portrait asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style and matching character identity. Output ONLY this asset, not a sheet. Subject: Clara Vale, composed adult woman, dark waved hair, lavender 1930s day dress. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Square composition, head and shoulders centered, same identity as corresponding labeled character on reference, eye line at 38 percent height, head takes 55 percent width, simplified plain muted slate backdrop. No oval frame; full bleed square, generous safe margin for circle cropping. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-b89da2c6-9b07-4d2c-bb7f-ea2dbb4dbcad.png",
+      "output": "dist/assets/last-bell/clara.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 256,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "rowan",
+      "kind": "portrait",
+      "subject": "Rowan Pike, kind weathered male groundskeeper, work shirt, brown waistcoat, cloth cap, no green coat",
+      "prompt": "Create a single production portrait asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style and matching character identity. Output ONLY this asset, not a sheet. Subject: Rowan Pike, kind weathered male groundskeeper, work shirt, brown waistcoat, cloth cap, no green coat. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Square composition, head and shoulders centered, same identity as corresponding labeled character on reference, eye line at 38 percent height, head takes 55 percent width, simplified plain muted slate backdrop. No oval frame; full bleed square, generous safe margin for circle cropping. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-d11bbf19-67cd-405c-860f-82415ca12522.png",
+      "output": "dist/assets/last-bell/rowan.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 256,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "silas",
+      "kind": "portrait",
+      "subject": "Silas Voss, courteous middle-aged male solicitor, tidy dark suit, credible pleasant expression, never visually villainous",
+      "prompt": "Create a single production portrait asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style and matching character identity. Output ONLY this asset, not a sheet. Subject: Silas Voss, courteous middle-aged male solicitor, tidy dark suit, credible pleasant expression, never visually villainous. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Square composition, head and shoulders centered, same identity as corresponding labeled character on reference, eye line at 38 percent height, head takes 55 percent width, simplified plain muted slate backdrop. No oval frame; full bleed square, generous safe margin for circle cropping. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-3976b192-06b0-49e4-8d3a-b94a00ee5c7c.png",
+      "output": "dist/assets/last-bell/silas.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 256,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "ada",
+      "kind": "portrait",
+      "subject": "Ada Finch, observant middle-aged female innkeeper, rose blouse and apron",
+      "prompt": "Create a single production portrait asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style and matching character identity. Output ONLY this asset, not a sheet. Subject: Ada Finch, observant middle-aged female innkeeper, rose blouse and apron. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Square composition, head and shoulders centered, same identity as corresponding labeled character on reference, eye line at 38 percent height, head takes 55 percent width, simplified plain muted slate backdrop. No oval frame; full bleed square, generous safe margin for circle cropping. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-574f5b32-5e9b-49b3-8f3c-accfd022d3c7.png",
+      "output": "dist/assets/last-bell/ada.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 256,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "iris",
+      "kind": "portrait",
+      "subject": "Dr Iris Marsh, calm attentive female doctor, practical muted blue 1930s clothing",
+      "prompt": "Create a single production portrait asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style and matching character identity. Output ONLY this asset, not a sheet. Subject: Dr Iris Marsh, calm attentive female doctor, practical muted blue 1930s clothing. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Square composition, head and shoulders centered, same identity as corresponding labeled character on reference, eye line at 38 percent height, head takes 55 percent width, simplified plain muted slate backdrop. No oval frame; full bleed square, generous safe margin for circle cropping. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-3c7fefe6-f349-490c-9e7a-08c0526300d6.png",
+      "output": "dist/assets/last-bell/iris.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 256,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "bell",
+      "kind": "portrait",
+      "subject": "Arthur Bell, steady middle-aged male British village constable, period dark police tunic and helmet",
+      "prompt": "Create a single production portrait asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style and matching character identity. Output ONLY this asset, not a sheet. Subject: Arthur Bell, steady middle-aged male British village constable, period dark police tunic and helmet. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Square composition, head and shoulders centered, same identity as corresponding labeled character on reference, eye line at 38 percent height, head takes 55 percent width, simplified plain muted slate backdrop. No oval frame; full bleed square, generous safe margin for circle cropping. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-2596660d-5298-4c4b-95dd-5c0e1c36b6a1.png",
+      "output": "dist/assets/last-bell/bell.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 256,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "square",
+      "kind": "location",
+      "subject": "Rainy English village square, iron railings, closed post office and distant church bell tower",
+      "prompt": "Create a single production location asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style reference. Output ONLY this asset, not a sheet. Subject: Rainy English village square, iron railings, closed post office and distant church bell tower. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Landscape 3:2 composition, uncluttered atmospheric establishing scene, large recognizable shapes, no people or moving evidence featured, no plot spoilers, full bleed. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-b91d928f-c434-4f32-8ff3-6a3070ebac3e.png",
+      "output": "dist/assets/last-bell/square.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 640,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "manor",
+      "kind": "location",
+      "subject": "Vale Manor study, green reading lamp, unfinished accounts, cold fireplace, slightly askew chair; no people",
+      "prompt": "Create a single production location asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style reference. Output ONLY this asset, not a sheet. Subject: Vale Manor study, green reading lamp, unfinished accounts, cold fireplace, slightly askew chair; no people. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Landscape 3:2 composition, uncluttered atmospheric establishing scene, large recognizable shapes, no people or moving evidence featured, no plot spoilers, full bleed. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-46cd66ea-c1f5-4aef-8cd0-4683ed1dd9a5.png",
+      "output": "dist/assets/last-bell/manor.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 640,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "inn",
+      "kind": "location",
+      "subject": "Rook and Lantern village inn, warm wood bar, empty tables, grandfather clock",
+      "prompt": "Create a single production location asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style reference. Output ONLY this asset, not a sheet. Subject: Rook and Lantern village inn, warm wood bar, empty tables, grandfather clock. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Landscape 3:2 composition, uncluttered atmospheric establishing scene, large recognizable shapes, no people or moving evidence featured, no plot spoilers, full bleed. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-88f34c03-0679-404c-ad1f-97b09691751a.png",
+      "output": "dist/assets/last-bell/inn.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 640,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "greenhouse",
+      "kind": "location",
+      "subject": "Condensation glazed greenhouse, plants, bench, frost pump; no revealing letter text",
+      "prompt": "Create a single production location asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style reference. Output ONLY this asset, not a sheet. Subject: Condensation glazed greenhouse, plants, bench, frost pump; no revealing letter text. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Landscape 3:2 composition, uncluttered atmospheric establishing scene, large recognizable shapes, no people or moving evidence featured, no plot spoilers, full bleed. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-5ccb17a9-4c3b-4a2b-bb78-f593b6786396.png",
+      "output": "dist/assets/last-bell/greenhouse.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 640,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "vestry",
+      "kind": "location",
+      "subject": "Small English church vestry used as solicitor office, parish notices, desk, drawers and estate papers",
+      "prompt": "Create a single production location asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style reference. Output ONLY this asset, not a sheet. Subject: Small English church vestry used as solicitor office, parish notices, desk, drawers and estate papers. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Landscape 3:2 composition, uncluttered atmospheric establishing scene, large recognizable shapes, no people or moving evidence featured, no plot spoilers, full bleed. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-5bf22dbc-aaf3-4c04-846b-ae85c80cd83a.png",
+      "output": "dist/assets/last-bell/vestry.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 640,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "surgery",
+      "kind": "location",
+      "subject": "1932 village doctor's surgery, warm coal fire, wooden desk with closed visiting ledger",
+      "prompt": "Create a single production location asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style reference. Output ONLY this asset, not a sheet. Subject: 1932 village doctor's surgery, warm coal fire, wooden desk with closed visiting ledger. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Landscape 3:2 composition, uncluttered atmospheric establishing scene, large recognizable shapes, no people or moving evidence featured, no plot spoilers, full bleed. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-137797a6-11c4-4acd-93ce-432b4b32ba2a.png",
+      "output": "dist/assets/last-bell/surgery.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 640,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "folio",
+      "kind": "artifact",
+      "subject": "Single worn red cloth document folio with fastening, unmistakable red silhouette",
+      "prompt": "Create a single production artifact asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style reference. Output ONLY this asset, not a sheet. Subject: Single worn red cloth document folio with fastening, unmistakable red silhouette. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Square composition, isolated object centered on solid warm parchment colored background, object occupies 72 percent of canvas, same three-quarter angle as sheet, generous margins, strong icon silhouette. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-2a6e7076-9d86-42f8-a726-88c15f34f43d.png",
+      "output": "dist/assets/last-bell/folio.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 256,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "seal",
+      "kind": "artifact",
+      "subject": "Single brass document seal with handle and square base, no blood, no engraving, no highlighted damage",
+      "prompt": "Create a single production artifact asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style reference. Output ONLY this asset, not a sheet. Subject: Single brass document seal with handle and square base, no blood, no engraving, no highlighted damage. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Square composition, isolated object centered on solid warm parchment colored background, object occupies 72 percent of canvas, same three-quarter angle as sheet, generous margins, strong icon silhouette. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-1fa79991-2dcc-476b-afd9-373184e2d3bd.png",
+      "output": "dist/assets/last-bell/seal.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 256,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "letter",
+      "kind": "artifact",
+      "subject": "Single plain folded cream envelope, no text or names",
+      "prompt": "Create a single production artifact asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style reference. Output ONLY this asset, not a sheet. Subject: Single plain folded cream envelope, no text or names. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Square composition, isolated object centered on solid warm parchment colored background, object occupies 72 percent of canvas, same three-quarter angle as sheet, generous margins, strong icon silhouette. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-bd34a5d0-9e91-41f1-abcf-1d4c408c36ab.png",
+      "output": "dist/assets/last-bell/letter.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 256,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    },
+    {
+      "id": "record",
+      "kind": "artifact",
+      "subject": "Single closed blue-gray cloth bound doctor's visiting ledger, blank label, no text",
+      "prompt": "Create a single production artifact asset for Living Mystery, Bellweather England 1932. Use the attached concept sheet ONLY as style reference. Output ONLY this asset, not a sheet. Subject: Single closed blue-gray cloth bound doctor's visiting ledger, blank label, no text. Consistent hand painted gouache and ink, subdued jewel colors, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious village atmosphere. Square composition, isolated object centered on solid warm parchment colored background, object occupies 72 percent of canvas, same three-quarter angle as sheet, generous margins, strong icon silhouette. NO text, lettering, captions, borders, watermarks, labels, panels or UI. Simplify reference detail for readability at small display sizes. No culprit cues or relationship clues.",
+      "source": "/Users/ec/.codex/generated_images/01a07c50-4299-7963-afe7-8d2c41d7f005/exec-25a26837-1c8a-4c80-a978-2190b549f169.png",
+      "output": "dist/assets/last-bell/record.jpg",
+      "packaging": {
+        "format": "jpeg",
+        "maxEdge": 256,
+        "quality": 82
+      },
+      "review": "Reviewed for subject, style and spoiler safety; browser layout pending user playtest"
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import * as art from '../dist/art.mjs';
 import * as engine from '../dist/engine.mjs';
 import * as claims from '../dist/claims.mjs';
 import * as inspector from '../dist/inspector.mjs';
@@ -16,7 +17,7 @@ function adapter(saved=null,overrides={}){
     if(!nodes.has(selector))nodes.set(selector,{innerHTML:'',scrollTop:0,dataset:{},addEventListener(){},setAttribute(){},focus(){},showModal(){this.open=true},classList:{add(){},remove(){}}});
     return nodes.get(selector);
   };
-  const context=vm.createContext({...engine,...inspector,...claims,...llm,...dialogueSave,URL,structuredClone,setTimeout,clearTimeout,setInterval,clearInterval,
+  const context=vm.createContext({...art,...engine,...inspector,...claims,...llm,...dialogueSave,URL,structuredClone,setTimeout,clearTimeout,setInterval,clearInterval,
     fetch:async()=>({ok:false,json:async()=>({})}),AbortController,
     localStorage:{getItem(key){return key==='living-mystery.bellweather.v1'?savedText:null},setItem(key,value){if(key==='living-mystery.bellweather.v1')savedText=value}},
     document:{querySelector:node,addEventListener(type,fn){listeners[type]=fn},body:{dataset:{}}},...overrides});
@@ -114,4 +115,17 @@ test('Claims notebook and evidence-gated follow-ups are available without openin
   assert.match(ui.node('#app').innerHTML,/Conflicting accounts/);
   assert.match(ui.node('#app').innerHTML,/Read source/);
   const menu=ui.run("chat='silas';conversation(playerView(session))");assert.match(menu,/challenge_delivery/);assert.match(menu,/What is your account based on/);
+});
+
+test('Case artwork decorates views without changing text labels or revealing unacquired evidence',()=>{
+  const ui=adapter();
+  const html=ui.node('#app').innerHTML;
+  assert.match(html,/assets\/last-bell\/square\.jpg/);
+  assert.match(html,/assets\/last-bell\/bell\.jpg/);
+  assert.match(html,/Village square/);
+  assert.doesNotMatch(ui.run('notebookContent(playerView(session))'),/artifact-art/);
+  ui.run("dispatch(session,{type:'move',to:'manor'});dispatch(session,{type:'inspect',object:'folio'});render()");
+  assert.match(ui.run('notebookContent(playerView(session))'),/assets\/last-bell\/folio\.jpg/);
+  assert.match(ui.run("avatar('clara')"),/CV<img[^>]*alt=""/);
+  assert.equal(ui.run("artImage(undefined,'artifact-art')"),'');
 });

@@ -110,3 +110,7 @@ See [roadmap.md](roadmap.md) for implementation status, the manual case checklis
 Conversation engagement is stored in `player.conversation` through event patches. The addressed NPC defers autonomous decisions across questions and evidence presentations while the rest of the town advances. Ending the conversation, switching speakers, or taking a valid movement, inspection, wait, or local accusation action releases the previous speaker and reevaluates their plans. Notebook and inspector browsing do not end engagement. Legacy saves without this optional field start disengaged.
 
 Rejected movement, inspection, and unavailable follow-up requests preserve engagement. Source replies link to the preceding substantive speech event and explain that account; repeating a source question retains the same referent. Identity and coat follow-ups require prior relevant testimony, not merely any conversation with that NPC.
+
+## Case artwork
+
+`dist/art.mjs` is a presentation-only manifest keyed by case entity IDs. Local illustrations decorate avatars, navigation, scenes, inspector locations, inspection actions, and acquired evidence. Images never supply facts or mutate simulation state. Text remains available when images are absent or fail. Future procedural cases must follow the public-description asset-generation and packaging contract in [Art direction](art-direction.md).

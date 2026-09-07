@@ -29,6 +29,24 @@ Implemented for The Last Bell:
 
 The implementation is authored and bounded. It does not interpret arbitrary player dialogue, model general cognition, or formally prove consistency. Claim annotations cover selected case assertions, not every sentence. Old acquired evidence can be projected through the case catalog without mutating its save; old free-text speech is not retroactively parsed. Earlier stock testimony and source events remain historical records.
 
+## Visual identity for authored and procedural cases
+
+The Last Bell now uses a shared illustrated art family for people, places, and selected artifacts, resolved by stable entity IDs. Every future procedural-case design must include the public-appearance asset manifest, fixed style references, identity-preserving variants, spoiler review, small-size review, and packaged static output described in [Art direction](art-direction.md). Image generation belongs in case preparation, never ordinary play. UI labels and interaction states remain in code. Expression variants and automatic procedural asset generation remain future work.
+
+### Image-generation cost controls
+
+Already implemented: generate once during development, package static assets, reuse portraits across views, illustrate selected artifacts, and keep UI labels and states in code. Image compression reduces storage and delivery costs; it does not reduce generation charges.
+
+Before automatic procedural asset generation, implement:
+
+- **Reusable approved asset library.** Share generic buildings, documents, tools, and clothing across cases within compatible styles. Generate new artwork only where it adds meaningful visual distinction.
+- **Cache lookup before generation.** Match normalized public appearance, category, style/reference version, and asset specification. Persist approved results across cases and deduplicate identical pending requests; reloads and retries must not accidentally submit duplicate generations.
+- **Per-case budgets.** Cap new assets, generation requests, and retries; enforce a spend ceiling where pricing/usage is available. Prioritize recognizable portraits and important locations. Use approved library assets or text/initials when the budget is exhausted.
+- **Selective generation and revision.** Generate only library gaps. Review small batches, retry only failed assets within the budget, and edit approved portraits for required expressions instead of regenerating entire sets.
+- **Usage and cost records.** Track requests, cache hits, retries, provider/model, and actual provider usage/cost when available. Label estimates as estimates and unknown costs as unknown; report totals per case and asset category.
+
+Acceptance: preparing an unchanged case twice makes no new image requests; shared approved assets are reused across compatible cases; retry and budget limits hold under failures; a case remains playable with fallback artwork. These automated controls are planned, not yet implemented.
+
 ## Next development sequence
 
 1. **Complete dialogue coverage and playtest the new branches.** Extend communicative plans, follow-up chains, refusals, interruptions, and evidence reactions based on observed stalls. Keep the engine responsible for disclosure and the LLM responsible for realization.
@@ -41,7 +59,7 @@ The implementation is authored and bounded. It does not interpret arbitrary play
 8. **Check solvability and recovery.** Different investigative choices should retain viable routes. Distinguish optional clues, expired encounters, essential evidence, and believable recovery from damaged trust.
 9. **Deepen the inspector and debrief.** Belief-evolution tracks, focused causal graphs, bookmarks, branch-from-command-boundary, run comparisons, and failed-plan explanations. Keep player hints separate from omniscient debugging.
 10. **Build a spatial playable town.** Coordinates, route segments, visible journeys, routines, environmental interactions, and a top-down client; retain text play and debugging contracts.
-11. **Controlled procedural generation.** Vary schedules/evidence placement first, then motives/methods/culprits/relationships, validating both physical consistency and investigative distinguishability.
+11. **Controlled procedural generation.** Vary schedules/evidence placement first, then motives/methods/culprits/relationships, validating both physical consistency and investigative distinguishability. Apply the asset-library, caching, budget, retry, and usage controls above before enabling automatic image generation for new cases.
 
 ## Test the latest case work
 
