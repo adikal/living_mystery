@@ -24,3 +24,15 @@ test('Unapproved text or mismatched event assertions cannot be restored as AI di
     const restored=importDialogueSave(JSON.stringify(save));assert.equal(restored.audit.size,0);assert.deepEqual(restored.session,f.session);
   }
 });
+
+
+test('Board metadata round-trips without changing the engine and discards invalid placements',()=>{
+  const session=createSession();dispatch(session,{type:'move',to:'vestry'});dispatch(session,{type:'inspect',object:'delivery'});
+  const before=exportSession(session),notes={silas:{delivery:{pillar:'opportunity',polarity:'contradicts'},folio:{pillar:'motive',polarity:'supports'}},clara:{delivery:{pillar:'invalid',polarity:'supports'}},unknown:{delivery:{pillar:'means',polarity:'supports'}}};
+  const saved=exportDialogueSave(session,new Map(),notes),restored=importDialogueSave(saved);
+  assert.deepEqual(restored.boardNotes,{silas:{delivery:{pillar:'opportunity',polarity:'contradicts'}}});
+  assert.equal(exportSession(restored.session),before);
+  const malformed=JSON.parse(saved);malformed.reasoning.notes={silas:{delivery:null}};
+  assert.deepEqual(importDialogueSave(JSON.stringify(malformed)).boardNotes,{});
+  assert.deepEqual(importDialogueSave(before).boardNotes,{});
+});

@@ -14,7 +14,7 @@ function adapter(saved=null,overrides={}){
   let savedText=saved;
   const nodes=new Map(),listeners={};
   const node=selector=>{
-    if(!nodes.has(selector))nodes.set(selector,{innerHTML:'',scrollTop:0,dataset:{},addEventListener(){},setAttribute(){},focus(){},showModal(){this.open=true},classList:{add(){},remove(){}}});
+    if(!nodes.has(selector))nodes.set(selector,{innerHTML:'',scrollTop:0,dataset:{},addEventListener(){},setAttribute(){},focus(){},showModal(){this.open=true},close(){this.open=false},classList:{add(){},remove(){}}});
     return nodes.get(selector);
   };
   const context=vm.createContext({...art,...engine,...inspector,...claims,...llm,...dialogueSave,URL,structuredClone,setTimeout,clearTimeout,setInterval,clearInterval,
@@ -22,7 +22,7 @@ function adapter(saved=null,overrides={}){
     localStorage:{getItem(key){return key==='living-mystery.bellweather.v1'?savedText:null},setItem(key,value){if(key==='living-mystery.bellweather.v1')savedText=value}},
     document:{querySelector:node,addEventListener(type,fn){listeners[type]=fn},body:{dataset:{}}},...overrides});
   vm.runInContext(readFileSync(new URL('../dist/ui.mjs',import.meta.url),'utf8').replace(/^import .*;\n/gm,''),context);
-  return {saved:()=>savedText,run:code=>vm.runInContext(code,context),node,click(action){listeners.click({target:{closest(){return {dataset:{do:action}}}}})}};
+  return {saved:()=>savedText,run:code=>vm.runInContext(code,context),node,change(target){listeners.change({target})},click(action,data={}){listeners.click({target:{closest(){return {dataset:{do:action,...data}}}}})}};
 }
 
 test('Recent history stays bounded and chronological; full history pages preserve order',()=>{
@@ -136,4 +136,45 @@ test('Case artwork decorates views without changing text labels or revealing una
   assert.match(ui.run('notebookContent(playerView(session))'),/assets\/last-bell\/folio\.jpg/);
   assert.match(ui.run("avatar('clara')"),/CV<img[^>]*alt=""/);
   assert.equal(ui.run("artImage(undefined,'artifact-art')"),'');
+});
+
+
+test('Reasoning cards preserve corrected testimony and do not invent a death window',()=>{
+  const ui=adapter();
+  ui.run("dispatch(session,{type:'move',to:'inn'});dispatch(session,{type:'inspect',object:'clock'});mode='reasoning';reasonSuspect='clara';render()");
+  assert.doesNotMatch(ui.node('#app').innerHTML,/class="tl-death"/);
+  assert.match(ui.node('#app').innerHTML,/medical window not yet established/);
+  ui.run("dispatch(session,{type:'present',person:'ada',clue:'clock'});dispatch(session,{type:'ask',person:'ada',topic:'night'});notesFor('rowan').ada={pillar:'opportunity',polarity:'supports'};reasonSuspect='rowan';render()");
+  const card=ui.node('#app').innerHTML.match(/<article class="board-card[\s\S]*?<\/article>/)[0];
+  assert.match(card,/I was wrong about the time/);assert.doesNotMatch(card,/Ada says she saw Rowan/);
+  ui.run("dispatch(session,{type:'move',to:'manor'});dispatch(session,{type:'inspect',object:'body'});render()");
+  assert.match(ui.node('#app').innerHTML,/class="tl-death"/);
+});
+
+test('Doctor testimony establishes the timeline window without requiring the notebook examination',()=>{
+  const ui=adapter();ui.run("dispatch(session,{type:'move',to:'surgery'});dispatch(session,{type:'ask',person:'iris',topic:'night'})");
+  assert.equal(ui.run("session.world.player.evidence.some(e=>e.clue==='medical')"),false);
+  assert.match(ui.run("suspectTimeline('clara',playerClaims(session),0,500,0,100)"),/class="tl-death"/);
+});
+
+test('Board placements persist with the save and imports replace rather than mix investigations',async()=>{
+  const ui=adapter();ui.run("dispatch(session,{type:'move',to:'vestry'});dispatch(session,{type:'inspect',object:'delivery'})");
+  ui.click('board-place',{suspect:'silas',clue:'delivery',pillar:'opportunity'});
+  const saved=ui.saved();assert.equal(JSON.parse(saved).reasoning.notes.silas.delivery.polarity,'supports');
+  const reloaded=adapter(saved);assert.equal(reloaded.run("boardNotes.silas.delivery.pillar"),'opportunity');
+  const importFile=async(text)=>{ui.change({id:'import-file',files:[{size:text.length,text:async()=>text}],value:'fixture'});await new Promise(r=>setTimeout(r,0));};
+  await importFile(engine.exportSession(engine.createSession()));
+  assert.equal(ui.run('JSON.stringify(boardNotes)'),'{}');
+  await importFile(saved);assert.equal(ui.run("boardNotes.silas.delivery.pillar"),'opportunity');
+  ui.click('restart');assert.equal(ui.run('JSON.stringify(boardNotes)'),'{}');
+  assert.deepEqual(JSON.parse(ui.saved()).reasoning.notes,{});
+});
+
+test('Legacy device board migrates only on startup of its existing save',()=>{
+  const session=engine.createSession();engine.dispatch(session,{type:'move',to:'vestry'});engine.dispatch(session,{type:'inspect',object:'delivery'});
+  const store=new Map([['living-mystery.bellweather.v1',engine.exportSession(session)],['living-mystery.board.v1',JSON.stringify({silas:{delivery:{pillar:'opportunity',polarity:'supports'}}})]]);
+  const ui=adapter(null,{localStorage:{getItem:k=>store.get(k),setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)}});
+  assert.equal(ui.run('boardNotes.silas.delivery.pillar'),'opportunity');
+  ui.run('saveBoardNotes()');assert.equal(store.has('living-mystery.board.v1'),false);
+  assert.equal(JSON.parse(store.get('living-mystery.bellweather.v1')).reasoning.notes.silas.delivery.polarity,'supports');
 });

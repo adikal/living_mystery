@@ -36,7 +36,7 @@ Tests: `node --test tests/*.test.mjs` and `python3 -m unittest discover -s tests
 - Illustrated portraits, location scenes, and selected artifact icons share a consistent visual style; labels and gameplay states remain accessible text. See [the art and procedural asset design](docs/art-direction.md).
 - Evidence-gated cross-examination, source questions tied to the preceding reply, persistent alibi revisions, refusals, and character-specific evidence reactions. Follow-ups require the relevant account to have been discussed.
 - Conversation partners stay engaged across questions and evidence presentations. Closing the conversation or taking another valid world action releases their plans; other NPCs continue moving.
-- A Claims notebook with attributed statements, case-night intervals, conflicting/consistent accounts, historical revisions, and source links.
+- A player-built Reasoning board: place acquired evidence under Motive, Means, Opportunity, or Alibi for each suspect and mark it supports/contradicts. Source links, objective account conflicts, and a timeline help compare evidence without grading guilt. The medical window appears only after it is established by discovered evidence or testimony.
 - Knowledge-driven correction/reporting: Ada can seek Bell to correct her rumor; a cooperative Clara can report witnessing the folio retrieval.
 - A clock that advances only on consequential actions, with travel and NPC routines.
 - Bounded deterministic choices with recorded alternative scores and reasons.
@@ -53,7 +53,7 @@ Tests: `node --test tests/*.test.mjs` and `python3 -m unittest discover -s tests
 - A filtered player view; no private profiles or hidden actions enter the investigation transcript.
 - A visual inspector with search, actor/type filters, causal links, state diffs, decision scores, character profiles, beliefs and source events, per-character history, world positions, case history, and integrity checks.
 - Read-only replay to any event, without mutating the live simulation.
-- Export/import and deterministic continuation after restoring a save.
+- Export/import includes Reasoning board placements and dialogue audits alongside deterministic engine history. Import replaces the current board; legacy saves start with an empty board. Existing separate device-local board notes migrate when loading that device’s older investigation.
 
 ## Code map
 
@@ -69,7 +69,7 @@ Tests: `node --test tests/*.test.mjs` and `python3 -m unittest discover -s tests
 | `dist/engine.mjs` | Thin façade: assembles kernel + active case, hosts the generic action router, and re-exports the stable public API |
 | `dist/inspector.mjs` | Read-only character sighting and missed-opportunity projections at a replay cursor |
 | `dist/ui.mjs` | Game and visual inspector adapters (+ persisted optional AI delivery audit) |
-| `dist/dialogue-save.mjs` | Saves and validates dialogue presentation audits separately from deterministic world state |
+| `dist/dialogue-save.mjs` | Saves and validates dialogue audits and Reasoning board annotations separately from deterministic world state |
 | `dist/llm.mjs` | Free-form AI dialogue with entity/number checks, a separate semantic critic, and audited fallback |
 | `dist/styles.css` | Responsive text-game and inspector presentation |
 | `server/llm_proxy.py` | Local Bedrock (Converse) proxy for AI-voiced dialogue; holds AWS creds server-side |
@@ -83,7 +83,7 @@ Tests: `node --test tests/*.test.mjs` and `python3 -m unittest discover -s tests
 
 ## Current boundaries
 
-The engine is authoritative within this single-player client, not a secure server. Source and exported saves include the solution. The inspector intentionally reveals it. An optional, off-by-default AI dialogue mode generates varied wording, checks known entities and numeric tokens, and asks a separate model critic to compare it with the authored statement. Rejected output or failures fall back to the written line. The critic can miss semantic errors; AI never changes engine state — so play stays fully deterministic and offline without it. There is still no LLM authority over state, ASP/SMT solver, arbitrary natural-language conversation, procedural crime generation, automatic branching, graphics, or cloud save synchronization in this version.
+The engine is authoritative within this single-player client, not a secure server. Source and exported saves include the solution. The inspector intentionally reveals it. An optional, off-by-default AI dialogue mode generates varied wording, checks known entities and numeric tokens, and asks a separate model critic to compare it with the authored statement. Rejected output or failures fall back to the written line. The critic can miss semantic errors; AI never changes engine state — so play stays fully deterministic and offline without it. There is still no LLM authority over state, ASP/SMT solver, arbitrary natural-language conversation, procedural crime generation, automatic branching, a spatial playable client, or cloud save synchronization in this version.
 
 Dialogue remains authored and bounded, with specific reactions for relevant evidence and explicit knowledge limits otherwise. Movement memories can be recounted through sightings; selected witnessed actions and learned corrections drive reporting plans. Claims cover selected assertions and support limited temporal/location comparisons, not a solver-backed proof of coherence. A Done marker means an option has been used successfully, not that repeating it cannot yield new information.
 

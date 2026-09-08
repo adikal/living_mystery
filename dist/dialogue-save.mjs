@@ -1,8 +1,26 @@
-import {exportSession,importSession,PEOPLE,LOCATIONS} from './engine.mjs';
+import {exportSession,importSession,PEOPLE,LOCATIONS,SUSPECTS,PILLARS} from './engine.mjs';
 import {REALIZATION_VERSION,SYSTEM_PROMPT,CRITIC_PROMPT,checkAnchors,parseCritic} from './llm.mjs';
 export const dialogueEntities=[...new Set([...Object.values(PEOPLE).flatMap(p=>p.name.split(/\s+/).filter(n=>n.length>2&&!n.endsWith('.'))),...Object.keys(LOCATIONS),'Edmund','Bellweather'])];
-export function exportDialogueSave(session,audit){
+// Board annotations travel with the investigation but never enter engine state.
+export function normalizeBoardNotes(session,input){
+  const out={},acquired=new Set(session.world.player.evidence.map(e=>e.clue));
+  const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
+  if(!object(input))return out;
+  for(const id of SUSPECTS){
+    const entries=Object.hasOwn(input,id)?input[id]:null;
+    if(!object(entries))continue;
+    for(const clue of acquired){
+      const n=Object.hasOwn(entries,clue)?entries[clue]:null;
+      if(object(n)&&PILLARS.some(([key])=>key===n.pillar)&&['supports','contradicts'].includes(n.polarity)){
+        (out[id]??={})[clue]={pillar:n.pillar,polarity:n.polarity};
+      }
+    }
+  }
+  return out;
+}
+export function exportDialogueSave(session,audit,boardNotes={}){
   const save=JSON.parse(exportSession(session));
+  save.reasoning={version:1,notes:normalizeBoardNotes(session,boardNotes)};
   save.dialogue={version:1,records:[...audit.entries()].map(([eventId,record])=>({eventId,...record}))};
   return JSON.stringify(save,null,2);
 }
@@ -28,5 +46,5 @@ export function importDialogueSave(text){
       audit.set(e.id,{version:r.version,authored:r.authored,request:{system:SYSTEM_PROMPT,prompt:r.request.prompt,max_tokens:512},response:r.response,critic:r.critic,entities:dialogueEntities,text:r.text,status:r.status,reason:r.reason});
     }
   }
-  return {session,audit};
+  return {session,audit,boardNotes:save.reasoning?.version===1?normalizeBoardNotes(session,save.reasoning.notes):{},hasBoard:Object.hasOwn(save,'reasoning')};
 }

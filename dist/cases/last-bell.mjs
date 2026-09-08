@@ -206,7 +206,7 @@ export function createBehavior(K) {
     } else if (id === 'silas') {
       e = speech(s, id, known(s,id,'alibi_challenged')&&topic!=='accounts'?'As I acknowledged, I was at the manor at 21:12 for the delivery. I will not claim I stayed in the vestry throughout.':topic === 'accounts' ? 'Routine discrepancies. Edmund liked to dramatize bookkeeping. The old folio won’t tell you anything.' : 'I was in the vestry from nine until half past. Alone, unfortunately. I had no appointment worth mentioning.', cause, { intent: 'Conceal the crime', basis: 'committed_murder', deception: 'Deliberate false alibi',claims:topic==='accounts'?[]:known(s,id,'alibi_challenged')?testimonyClaims.silas_revision:testimonyClaims.silas_alibi });
       if(topic!=='accounts')addEvidence(s, 'alibi', e);
-    } else if (id === 'iris') e = speech(s, id, 'Death was between 21:10 and 21:20. I was with Rowan and Clara at the greenhouse from 21:06 to 21:23. My visiting ledger is available at the surgery.', cause, { intent: 'Provide an accurate account', basis: 'treated_rowan',claims:evidenceClaims.record });
+    } else if (id === 'iris') e = speech(s, id, 'Death was between 21:10 and 21:20. I was with Rowan and Clara at the greenhouse from 21:06 to 21:23. My visiting ledger is available at the surgery.', cause, { intent: 'Provide an accurate account', basis: 'treated_rowan',claims:[...evidenceClaims.record,...evidenceClaims.medical] });
     advance(s, 3, cause);
     return e;
   }
