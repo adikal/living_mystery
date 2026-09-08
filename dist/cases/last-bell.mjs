@@ -214,7 +214,7 @@ export function createBehavior(K) {
   function present(s, id, clue, tone, cause) {
     if (!PEOPLE[id] || !local(s, id)) return reject(s, 'Recipient not present', 'You need to be in the same place as the person you want to address.', cause);
     if (!has(s, clue)) return reject(s, 'Evidence not acquired', 'You cannot show evidence you have not discovered.', cause);
-    const e = commit(s, { kind: 'speech', title: `You show ${CLUES[clue].title.toLowerCase()} to ${PEOPLE[id].name}`, actor: 'player', parents: [cause, s.world.player.evidence.find((x) => x.clue === clue).eventId], data: { listener: id, clue, tone }, playerText: `You show ${PEOPLE[id].name} ${CLUES[clue].title.toLowerCase()}.` });
+    const e = commit(s, { kind: 'speech', title: `You show ${CLUES[clue].title.toLowerCase()} to ${PEOPLE[id].name}`, actor: 'player', parents: [cause, s.world.player.evidence.find((x) => x.clue === clue).eventId], data: { listener: id, clue, tone }, playerText: K.presentLineHidden(s) ? null : `You show ${PEOPLE[id].name} ${CLUES[clue].title.toLowerCase()}.` });
     believe(s, id, `player_has_${clue}`, `The detective has seen ${CLUES[clue].title.toLowerCase()}.`, .99, 'observation', e, true);
     if (id === 'clara' && (clue === 'letter' || clue === 'record')) {
       if (tone === 'press') {

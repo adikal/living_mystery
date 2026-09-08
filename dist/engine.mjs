@@ -116,9 +116,9 @@ export function dispatch(s, action) {
 }
 
 // Called by the validated character pipeline on an isolated session copy.
-export function dispatchCharacter(s,{person,text,proposal,action,audit,useAuthored=false,presented=null}){
+export function dispatchCharacter(s,{person,text,proposal,action,audit,useAuthored=false,presented=null,origin=null}){
   if(s.world.status==='solved'||!PEOPLE[person]||!K.local(s,person)||s.world.npcs[person].travel)throw Error('Conversation is no longer available.');
-  const command=commit(s,{kind:'command',title:`Speak to ${PEOPLE[person].name}`,actor:'player',data:{action:{type:'converse',person,text}}});
+  const command=commit(s,{kind:'command',title:`Speak to ${PEOPLE[person].name}`,actor:'player',data:{action:{type:'converse',person,text},origin:origin?copy(origin):null}});
   const previous=s.world.player.conversation;
   const engagement=commit(s,{kind:'action',title:`You engage ${PEOPLE[person].name}`,actor:'player',parents:[command],changes:{'player.conversation':person}});
   if(previous&&previous!==person)B.decide(s,previous,engagement);
@@ -136,8 +136,8 @@ export function dispatchCharacter(s,{person,text,proposal,action,audit,useAuthor
   }
   const start=s.events.length;
   if(action){
-    if(useAuthored)dispatch(s,action);
-    else K.withSpeech(s,{...proposal,person,parents:[heard,decision]},()=>dispatch(s,action));
+    if(useAuthored)K.withoutPlayerPresentLine(s,()=>dispatch(s,action));
+    else K.withSpeech(s,{...proposal,person,parents:[heard,decision]},()=>K.withoutPlayerPresentLine(s,()=>dispatch(s,action)));
   }else{
     K.speech(s,person,proposal.utterance,decision,{intent:proposal.intent,topic:proposal.intent,claims:[],characterTurn:true});
     K.advance(s,3,command);

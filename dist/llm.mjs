@@ -21,8 +21,13 @@ export function checkAnchors(authored,candidate,entities=[]){
   return null;
 }
 export function sanitizeRealization(authored,candidate){return checkAnchors(authored,candidate)?authored:candidate.trim()}
+// Models often wrap JSON in ```json fences or add prose around it; extract the
+// JSON object before parsing so a well-formed answer isn't rejected on delivery.
+export function extractJson(raw){if(typeof raw!=='string')return raw;const t=raw.trim();const f=t.match(/^```[a-zA-Z0-9]*\s*([\s\S]*?)\s*```$/);return f?f[1].trim():t;}
+export function parseJsonLoose(raw){for(const cand of [extractJson(raw),(String(raw).match(/\{[\s\S]*\}/)||[])[0]]){if(cand==null)continue;try{return JSON.parse(cand);}catch{}}return null;}
 export function parseCritic(raw){
-  try{const x=JSON.parse(raw);if(!x||Object.keys(x).sort().join(',')!=='verdict,violations'||!['pass','reject'].includes(x.verdict)||!Array.isArray(x.violations)||x.violations.length>20||!x.violations.every(v=>typeof v==='string'&&v.length<=1000)||x.verdict==='pass'&&x.violations.length)return null;return x}catch{return null}
+  const x=parseJsonLoose(raw);
+  if(!x||typeof x!=='object'||Object.keys(x).sort().join(',')!=='verdict,violations'||!['pass','reject'].includes(x.verdict)||!Array.isArray(x.violations)||x.violations.length>20||!x.violations.every(v=>typeof v==='string'&&v.length<=1000)||x.verdict==='pass'&&x.violations.length)return null;return x;
 }
 
 // An audit result is display metadata, never an engine event or belief.

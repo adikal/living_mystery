@@ -50,6 +50,9 @@ export function createKernel(model) {
 
   const speechOverrides=new WeakMap();
   function withSpeech(s,override,run){speechOverrides.set(s,override);try{return run();}finally{speechOverrides.delete(s);}}
+  const hidePresentLine=new WeakSet();
+  function withoutPlayerPresentLine(s,run){hidePresentLine.add(s);try{return run();}finally{hidePresentLine.delete(s);}}
+  function presentLineHidden(s){return hidePresentLine.has(s);}
   const nextId = (s) => `e${String(s.events.length + 1).padStart(5, '0')}`;
   const has = (s, c) => s.world.player.evidence.some((e) => e.clue === c);
   const local = (s, id) => s.world.npcs[id]?.location === s.world.player.location;
@@ -208,7 +211,7 @@ export function createKernel(model) {
   }
 
   const api = {
-    model, withSpeech, nextId, has, local, commit, remember, believe, notice, witnessMovement,
+    model, withSpeech, withoutPlayerPresentLine, presentLineHidden, nextId, has, local, commit, remember, believe, notice, witnessMovement,
     distance, startTravel, advance, addEvidence, reject, speech,
     worldAt, diagnostics, exportSession, importSession, baseWorld,
     // Injected NPC decision policy — set by the assembling engine to the active

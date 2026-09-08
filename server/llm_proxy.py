@@ -38,6 +38,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 REGION = os.environ.get("AWS_REGION") or os.environ.get("AWS_DEFAULT_REGION") or "us-west-2"
 MODEL_ID = os.environ.get("LM_BEDROCK_MODEL", "us.anthropic.claude-haiku-4-5-20251001-v1:0")
+CHARACTER_MODEL = os.environ.get("LM_CHARACTER_MODEL", "us.anthropic.claude-sonnet-4-5-20250929-v1:0")
 HOST = os.environ.get("LM_PROXY_HOST", "127.0.0.1")
 PORT = int(os.environ.get("LM_PROXY_PORT", "8787"))
 TEMPERATURE = float(os.environ.get("LM_TEMPERATURE", "0.7"))
@@ -132,7 +133,7 @@ class Handler(BaseHTTPRequestHandler):
             system, prompt, max_tokens = payload["system"], payload["prompt"], payload["max_tokens"]
 
             kwargs = dict(
-                modelId=MODEL_ID,
+                modelId=(CHARACTER_MODEL if profile == "character-v1" else MODEL_ID),
                 messages=[{"role": "user", "content": [{"text": prompt}]}],
                 inferenceConfig={"maxTokens": max_tokens, "temperature": TEMPERATURE},
             )

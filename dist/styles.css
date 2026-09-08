@@ -279,3 +279,13 @@ dialog{background:#1a262e;color:var(--text);border:1px solid #56636a;border-radi
 .obj-conflicts .meta{color:#a08a6b}
 
 .character-composer{display:grid;gap:8px;padding:12px 0;border-bottom:1px solid var(--line);margin-bottom:12px}.character-composer label{font-size:.875rem;color:var(--gold)}.character-composer textarea{min-height:76px}.character-composer [role=status]{color:var(--muted);font-size:.8125rem}
+
+/* Character-turn busy indicator */
+.character-status{display:inline-flex;align-items:center;gap:8px;font-size:.8125rem;color:var(--muted)}
+.spinner{display:inline-block;width:15px;height:15px;border:2px solid #ffffff2e;border-top-color:var(--gold);border-radius:50%;animation:lm-spin .7s linear infinite;flex:0 0 auto}
+@keyframes lm-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.spinner{animation-duration:1.6s}}
+
+/* Pending character reply in the main feed */
+.pending-turn .character-status{display:flex;align-items:center;gap:10px;font-family:var(--font);font-size:.9375rem}
+.pending-turn .character-status .subtle-button{margin-left:auto}
