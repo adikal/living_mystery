@@ -10,6 +10,7 @@ import {claimsAt,claimRelations} from '../claims.mjs';
 import { VERSION, timeLabel } from '../kernel.mjs';
 
 export { CASE, LOCATIONS, PEOPLE, CLUES, OBJECTS };
+export { SUSPECTS, PILLARS, suspectMeta, suspectBoard } from './last-bell-board.mjs';
 
 // Initial world for this case: cast starting state, object placement, flags.
 export function baseWorld(seed = 17) {

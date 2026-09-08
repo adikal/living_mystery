@@ -14,6 +14,7 @@ import * as ActiveCase from './cases/last-bell.mjs';
 
 // --- Case data (re-exported for adapters/tests) ---------------------------
 export const { CASE, LOCATIONS, PEOPLE, CLUES, OBJECTS } = ActiveCase;
+export const { SUSPECTS, PILLARS, suspectMeta, suspectBoard } = ActiveCase;
 export { VERSION, copy, timeLabel };
 export const baseWorld = ActiveCase.baseWorld;
 

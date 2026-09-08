@@ -110,11 +110,19 @@ test('Completed AI delivery persists across reload and is visible in event audit
   assert.match(details,/Dialogue audit/);assert.match(details,/accepted/);
 });
 
-test('Claims notebook and evidence-gated follow-ups are available without opening the inspector',()=>{
-  const ui=adapter();ui.run("dispatch(session,{type:'move',to:'vestry'});dispatch(session,{type:'ask',person:'silas',topic:'alibi'});dispatch(session,{type:'inspect',object:'delivery'});notebook='claims';render()");
-  assert.match(ui.node('#app').innerHTML,/Conflicting accounts/);
-  assert.match(ui.node('#app').innerHTML,/Read source/);
-  const menu=ui.run("chat='silas';conversation(playerView(session))");assert.match(menu,/challenge_delivery/);assert.match(menu,/What is your account based on/);
+test('Reasoning is a player-built workspace; nothing is pre-classified; placing a clue renders it',()=>{
+  const ui=adapter();
+  ui.run("dispatch(session,{type:'move',to:'vestry'});dispatch(session,{type:'ask',person:'silas',topic:'alibi'});dispatch(session,{type:'inspect',object:'delivery'});mode='reasoning';reasonSuspect='silas';render()");
+  const html=ui.node('#app').innerHTML;
+  assert.match(html,/suspect-card/);
+  assert.match(html,/evidence-tray/);
+  assert.match(html,/data-do="board-place"/);
+  assert.doesNotMatch(html,/board-card /); // nothing auto-placed
+  ui.run("notesFor('silas')['delivery']={pillar:'opportunity',polarity:'supports'};render()");
+  const placed=ui.node('#app').innerHTML;
+  assert.match(placed,/board-card e-supports/);
+  assert.match(placed,/verdict-node/);assert.match(placed,/pillar-node/);assert.match(placed,/board-timeline/);
+  const menu=ui.run("chat='silas';conversation(playerView(session))");assert.match(menu,/challenge_delivery/);
 });
 
 test('Case artwork decorates views without changing text labels or revealing unacquired evidence',()=>{

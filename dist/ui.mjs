@@ -2,7 +2,7 @@ import {ART} from './art.mjs';
 import {claimsAt,claimRelations} from './claims.mjs';
 import {exportDialogueSave,importDialogueSave,dialogueEntities} from './dialogue-save.mjs';
 import {perspectiveAt,missedAt} from './inspector.mjs';
-import {CASE,LOCATIONS,PEOPLE,CLUES,OBJECTS,createSession,dispatch,followupOptions,playerClaims,parseCommand,playerView,worldAt,timeLabel,distance,diagnostics,caseHealth,exportSession,importSession} from './engine.mjs';
+import {CASE,LOCATIONS,PEOPLE,CLUES,OBJECTS,SUSPECTS,PILLARS,createSession,dispatch,followupOptions,playerClaims,parseCommand,playerView,worldAt,timeLabel,distance,diagnostics,caseHealth,exportSession,importSession} from './engine.mjs';
 import {llmActive,llmConfig,setLlmConfig,realizeDialogue} from './llm.mjs';
 
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -10,8 +10,13 @@ const storageKey='living-mystery.bellweather.v1';
 let session,loadedAudit=new Map(),saveError=false;
 try{const saved=localStorage.getItem(storageKey);if(saved){const restored=importDialogueSave(saved);session=restored.session;loadedAudit=restored.audit;}else session=createSession(17);}catch{session=createSession(17);saveError=true;}
 let perspective='world',detailPanel=null,missedRevealed=false;
+// Player-built reasoning board: { [suspect]: { [clue]: {pillar,polarity} } }.
+// Persisted separately from the engine save (pure UI annotation).
+const BOARD_KEY='living-mystery.board.v1';
+let boardNotes=(()=>{try{return JSON.parse(localStorage.getItem(BOARD_KEY))||{};}catch{return {};}})();
+function saveBoardNotes(){try{localStorage.setItem(BOARD_KEY,JSON.stringify(boardNotes));}catch{}}
 let actionGroup='inspect',sceneTransition=null,historyPage=0;
-let mode='game',notebook='evidence',evidenceKind='All',chat=null,chosenClue=null,inspectorTab='world',person='clara',personTab='profile',cursor=null,typeFilter='all',actorFilter='all',query='',includeClock=false,timer=null,healthCache=null;
+let mode='game',notebook='evidence',evidenceKind='All',reasonSuspect=null,chat=null,chosenClue=null,inspectorTab='world',person='clara',personTab='profile',cursor=null,typeFilter='all',actorFilter='all',query='',includeClock=false,timer=null,healthCache=null;
 // Persisted presentation audit is separate from deterministic engine events.
 const dialogueAudit=loadedAudit;
 const realized=new Map([...dialogueAudit].map(([id,r])=>[id,`${actorName(session.events.find(e=>e.id===id).actor)}\n"${r.text}"`]));
@@ -80,7 +85,7 @@ function paragraphs(text){return String(text).split('\n\n').map(p=>`<p>${esc(p).
 
 function header(){return `<header class="topbar">
   <button class="brand" data-do="mode" data-value="game" aria-label="Return to the investigation"><span class="brand-mark">L<span>M</span></span><span><strong>Living Mystery</strong><small>BELLWEATHER · CASE 01</small></span></button>
-  <nav class="mode-switch" aria-label="Application mode"><button class="${mode==='game'?'active':''}" data-do="mode" data-value="game" aria-pressed="${mode==='game'}">Investigation</button><button class="${mode==='inspector'?'active':''}" data-do="mode" data-value="inspector" aria-pressed="${mode==='inspector'}">Inspector <span class="small-symbol">⌘</span></button></nav>
+  <nav class="mode-switch" aria-label="Application mode"><button class="${mode==='game'?'active':''}" data-do="mode" data-value="game" aria-pressed="${mode==='game'}">Investigation</button><button class="${mode==='reasoning'?'active':''}" data-do="mode" data-value="reasoning" aria-pressed="${mode==='reasoning'}">Reasoning</button><button class="${mode==='inspector'?'active':''}" data-do="mode" data-value="inspector" aria-pressed="${mode==='inspector'}">Inspector <span class="small-symbol">⌘</span></button></nav>
   <div class="top-tools"><div class="world-time"><strong>${timeLabel(session.world.minute)}</strong><span>${CASE.date}</span></div><button class="icon-button" data-do="menu" aria-label="Save, import, restart, and help">•••</button></div>
 </header>`;}
 
@@ -97,7 +102,7 @@ function game(){chat??=session.world.player.conversation??null;const v=playerVie
   <div class="journal" id="journal" role="log" aria-label="Recent investigation activity" aria-live="polite">${visibleTranscript(v.transcript).slice(-5).map(journalEntry).join('')}</div>
   </main>
   <aside class="side-panel panel" aria-label="Your notebook">
-  <div class="notebook-region"><div class="panel-heading"><span class="eyebrow">YOUR CASE FILE</span><span class="meta">${v.evidence.length} entries</span></div><h2 class="section-heading">The notebook</h2><div class="small-tabs" role="tablist" aria-label="Notebook views">${[['evidence','Evidence'],['people','People'],['claims','Claims'],['notes','Hypotheses']].map(([id,label])=>`<button role="tab" aria-selected="${notebook===id}" class="${notebook===id?'active':''}" data-do="notebook" data-id="${id}">${label}</button>`).join('')}</div><div class="notebook-content">${notebookContent(v)}</div><div class="notebook-footer"><span class="meta">${v.pins.length} pinned for your case</span><button class="primary full" data-do="accusation">${v.status==='solved'?'Review your accusation':'Make an accusation'} <span>↗</span></button><span class="save-note">${saveError?'Not saved · export a copy':'Saved on this device'}</span></div></div>
+  <div class="notebook-region"><div class="panel-heading"><span class="eyebrow">YOUR CASE FILE</span><span class="meta">${v.evidence.length} entries</span></div><h2 class="section-heading">The notebook</h2><div class="small-tabs" role="tablist" aria-label="Notebook views">${[['evidence','Evidence'],['people','People'],['notes','Hypotheses']].map(([id,label])=>`<button role="tab" aria-selected="${notebook===id}" class="${notebook===id?'active':''}" data-do="notebook" data-id="${id}">${label}</button>`).join('')}</div><div class="notebook-content">${notebookContent(v)}</div><div class="notebook-footer"><span class="meta">${v.pins.length} pinned for your case</span><button class="primary full" data-do="accusation">${v.status==='solved'?'Review your accusation':'Make an accusation'} <span>↗</span></button><span class="save-note">${saveError?'Not saved · export a copy':'Saved on this device'}</span></div></div>
   </aside>
 </div>`;}
 
@@ -122,15 +127,72 @@ const dialogueTopics={bell:[['case','What makes a convincing case?'],['night','C
 
 function conversation(v){const p=PEOPLE[chat];if(!v.evidence.some(e=>e.clue===chosenClue))chosenClue=v.evidence[0]?.clue??null;return `<div class="conversation-head">${avatar(chat)}<span><strong>${p.name}</strong><small>${p.role}</small></span><button class="icon-button close-small" data-do="close-chat" aria-label="Close conversation">×</button></div><div class="dialogue-options">${[...dialogueTopics[chat],...followupOptions(session,chat)].map(([topic,label])=>{const done=actionDone({type:'ask',person:chat,topic});return `<button class="text-action ${done?'action-done':''}" data-do="ask" data-person="${chat}" data-topic="${topic}"><span>${label}${doneLabel(done)}</span><span>3 min</span></button>`;}).join('')}</div>${v.evidence.length?`<div class="present-controls"><label for="present-clue">Show evidence · 4 min</label><select id="present-clue">${v.evidence.map(e=>`<option value="${e.clue}" ${e.clue===chosenClue?'selected':''}>${e.title}</option>`).join('')}</select>${chat==='clara'&&['letter','record'].includes(chosenClue)?`<div class="two-actions">${presentButton('clara','private','Offer discretion')}${presentButton('clara','press','Threaten exposure')}</div>`:`${presentButton(chat,'private','Present & discuss')}`}</div>`:'<p class="meta">Discover evidence to present it in conversation.</p>'}`;}
 
-function claimCard(c){return `<article class="claim-card ${c.superseded?'superseded':''}"><strong>${esc(PEOPLE[c.subject]?.name??c.subject.replaceAll('_',' '))} · ${esc(c.predicate.replaceAll('_',' '))}</strong><p>${esc(LOCATIONS[c.value]?.name??c.value)}${c.interval?` · ${timeLabel(c.interval.start)}–${timeLabel(c.interval.end)}`:''}</p><small>${esc(c.attribution)} · ${Math.round(c.confidence*100)}% authored confidence${c.superseded?' · earlier account':''}</small><button class="subtle-button" data-do="claim-source" data-id="${c.eventId}">Read source ↗</button></article>`;}
-function claimsNotebook(){
-  const claims=playerClaims(session),relations=claimRelations(claims),conflicts=relations.filter(r=>r.kind==='conflicts'),supports=relations.filter(r=>r.kind==='supports');
-  const pair=r=>`<div class="claim-conflict">${claimCard(r.left)}<span class="gold">${r.kind==='conflicts'?'Conflicts with':'Agrees with'} ↓</span>${claimCard(r.right)}</div>`;
-  return `<p class="meta">Statements and records you acquired. A conflict is a reason to question an account, not proof of guilt. Times refer to the case night.</p><h3>Conflicting accounts (${conflicts.length})</h3>${conflicts.map(pair).join('')||'<p class="meta">No overlapping-location or incompatible death-window conflicts found yet.</p>'}<details><summary>Consistent accounts (${supports.length})</summary><p class="meta">Agreement is not necessarily independent corroboration. Compare the sources.</p>${supports.map(pair).join('')}</details><details open><summary>Recorded claims (${claims.length})</summary>${claims.map(claimCard).join('')||'<p class="meta">Inspect records and ask people for their accounts.</p>'}</details>`;
+const humanLabel=v=>LOCATIONS[v]?.name??PEOPLE[v]?.name??String(v).replaceAll('_',' ');
+const NIGHT_START=1255,NIGHT_END=1290;
+const PILLAR_ABBR={motive:'Mot',means:'Mns',opportunity:'Opp',alibi:'Alb'};
+const clip=(t,n)=>{t=String(t);return t.length>n?t.slice(0,n-1)+'…':t;};
+function notesFor(id){return boardNotes[id]||(boardNotes[id]={});}
+// Objective, fair aid: factual clashes in the record (does NOT judge guilt).
+function objectiveConflicts(id,claims){const rels=claimRelations(claims).filter(r=>r.kind==='conflicts'&&(r.left.subject===id||r.right.subject===id));if(!rels.length)return '';return rels.map(r=>`<p>“${esc(CLUES[r.left.clue]?.title??r.left.attribution)}” vs “${esc(CLUES[r.right.clue]?.title??r.right.attribution)}” — ${esc(humanLabel(r.left.value))} vs ${esc(humanLabel(r.right.value))}.</p>`).join('');}
+function suspectStripCard(id,selected){
+  const notes=boardNotes[id]||{},acq=new Set(session.world.player.evidence.map(e=>e.clue));
+  const placed=Object.keys(notes).filter(c=>acq.has(c));
+  const sup=placed.filter(c=>notes[c].polarity==='supports').length,con=placed.length-sup;
+  const filled=new Set(placed.map(c=>notes[c].pillar));
+  const chips=PILLARS.map(([k])=>`<span class="pstat ${filled.has(k)?'s-filled':'s-open'}">${PILLAR_ABBR[k]}</span>`).join('');
+  return `<button class="suspect-card ${selected===id?'selected':''}" data-do="reason-suspect" data-id="${id}">${artImage(ART.people[id],'suspect-face')}<span class="suspect-id">${avatar(id,'tiny')}<strong>${PEOPLE[id].name}</strong></span><small>${PEOPLE[id].role}</small><span class="pstat-row">${chips}</span><span class="tally">${placed.length?`<b class="sup">${sup} support</b> · <b class="con">${con} contradict</b>`:'<span class="meta">no cards pinned</span>'}</span></button>`;
+}
+// Distinct whereabouts for the timeline: collapse identical location+interval
+// claims (a spoken alibi and its recorded copy are the same bar), preferring
+// the current account over a superseded one.
+function placementsFor(id,claims){
+  const seen=new Set();
+  return claims.filter(c=>c.subject===id&&c.predicate==='location'&&c.interval)
+    .slice().sort((a,b)=>Number(a.superseded)-Number(b.superseded))
+    .filter(c=>{const k=`${c.value}:${c.interval.start}:${c.interval.end}`;if(seen.has(k))return false;seen.add(k);return true;});
+}
+function suspectTimeline(id,claims,x0,w,y0,h){
+  const span=NIGHT_END-NIGHT_START,px=t=>x0+((Math.max(NIGHT_START,Math.min(NIGHT_END,t))-NIGHT_START)/span)*w;
+  const death=claims.find(c=>c.predicate==='death_time'&&c.interval)?.interval??{start:1270,end:1280};
+  const places=placementsFor(id,claims);
+  const trackH=Math.max(42,24+places.length*22+8);
+  const ticks=[1260,1270,1280,1290].map(t=>`<span class="tl-tick" style="left:${px(t)-x0}px">${timeLabel(t)}</span>`).join('');
+  const band=`<div class="tl-death" style="left:${px(death.start)-x0}px;width:${Math.max(4,px(death.end)-px(death.start))}px"></div>`;
+  const bars=places.map((c,i)=>{const left=px(c.interval.start)-x0,wd=Math.max(10,px(c.interval.end)-px(c.interval.start)),scene=c.value==='manor',label=`${humanLabel(c.value)} · ${timeLabel(c.interval.start)}–${timeLabel(c.interval.end)}`;return `<div class="tl-bar ${scene?'scene':'away'}${c.superseded?' sup':''}${wd<52?' point':''}" style="left:${left}px;width:${wd}px;top:${24+i*22}px" title="${esc(label)}">${wd<52?'':esc(humanLabel(c.value))}</div>`;}).join('')||'<span class="tl-none">No placed whereabouts yet — the death window is 21:10–21:20.</span>';
+  return `<div class="board-timeline" style="left:${x0}px;top:${y0}px;width:${w}px;height:${h}px"><div class="tl-head">The night · death window highlighted in red</div><div class="tl-track" style="height:${trackH}px">${band}${bars}</div><div class="tl-axis">${ticks}</div></div>`;
+}
+function workspaceView(id,claims){
+  const notes=boardNotes[id]||{},ev=session.world.player.evidence,acq=[...new Set(ev.map(e=>e.clue))];
+  const placed=acq.filter(c=>notes[c]),unplaced=acq.filter(c=>!notes[c]);
+  const padX=30,colW=248,verdW=300,verdH=80,pillarH=54,cardW=214,cardH=134,gap=16,cardTop=252;
+  const boardW=padX*2+PILLARS.length*colW,colCenter=i=>padX+i*colW+colW/2,verdCX=boardW/2,verdBottom=18+verdH;
+  const byPillar=Object.fromEntries(PILLARS.map(([k])=>[k,placed.filter(c=>notes[c].pillar===k)]));
+  const maxCards=Math.max(1,...PILLARS.map(([k])=>byPillar[k].length||1));
+  const nPlace=placementsFor(id,claims).length;
+  const timelineTop=cardTop+maxCards*(cardH+gap)+18,timelineH=Math.max(42,24+nPlace*22+8)+58,boardH=timelineTop+timelineH+26;
+  let paths='',chips='';const cluePos={};
+  const pillarNodes=PILLARS.map(([k,label],i)=>{const cx=colCenter(i),n=byPillar[k].length,col=n?'#c8b48c':'#6a5a3f';paths+=`<path class="edge2" stroke="${col}" d="M${cx} 150 Q${(cx+verdCX)/2} ${(150+verdBottom)/2-8} ${verdCX} ${verdBottom}"/>`;return `<div class="pillar-node s-${n?'filled':'open'}" style="left:${cx-90}px;top:150px">${label}<span>${n?`${n} card${n===1?'':'s'}`:'empty'}</span></div>`;}).join('');
+  const cardsHtml=PILLARS.map(([k],i)=>{const cx=colCenter(i),list=byPillar[k];if(!list.length)return `<div class="board-empty" style="left:${cx-cardW/2}px;top:${cardTop}px;width:${cardW}px">Place evidence here from the tray below.</div>`;return list.map((c,r)=>{const pol=notes[c].polarity,x=cx-cardW/2,y=cardTop+r*(cardH+gap);cluePos[c]={cx,cy:y+cardH/2};paths+=`<path class="edge2 e-${pol}" d="M${cx} ${y} L${cx} ${150+pillarH}"/>`;const src=ev.find(z=>z.clue===c);return `<article class="board-card e-${pol}" style="left:${x}px;top:${y}px;width:${cardW}px;min-height:${cardH}px"><span class="pin p-${pol}"></span><strong>${esc(CLUES[c].title)}</strong><p>${esc(clip(CLUES[c].text,88))}</p><div class="card-controls"><button class="mini pol-${pol}" data-do="board-flip" data-suspect="${id}" data-clue="${c}">${pol==='supports'?'Supports':'Contradicts'} ⇄</button>${src?`<button class="mini" data-do="claim-source" data-id="${src.eventId}" title="Read source">↗</button>`:''}<button class="mini danger" data-do="board-remove" data-suspect="${id}" data-clue="${c}" title="Return to tray">✕</button></div></article>`;}).join('');}).join('');
+  for(const rl of claimRelations(claims).filter(r=>r.kind==='conflicts'&&(r.left.subject===id||r.right.subject===id))){const a=cluePos[rl.left.clue],b=cluePos[rl.right.clue];if(!a||!b||a===b)continue;const mx=(a.cx+b.cx)/2,my=(a.cy+b.cy)/2+18;paths+=`<path class="edge2 e-conflict-dyn" d="M${a.cx} ${a.cy} Q${mx} ${my} ${b.cx} ${b.cy}"/>`;chips+=`<span class="edge-chip chip-conflicts" style="left:${mx}px;top:${my}px">accounts conflict</span>`;}
+  const sup=placed.filter(c=>notes[c].polarity==='supports').length,con=placed.length-sup;
+  const canvas=`<div class="reason-canvas" style="width:${boardW}px;height:${boardH}px"><svg class="reason-edges" width="${boardW}" height="${boardH}" aria-hidden="true">${paths}</svg><div class="verdict-node" style="left:${(boardW-verdW)/2}px;top:18px;width:${verdW}px;min-height:${verdH}px"><strong>Your case against ${esc(PEOPLE[id].name)}</strong><span>Pinned ${placed.length}/${acq.length} clues — <b class="sup">${sup} support</b>, <b class="con">${con} contradict</b> (your call).</span><span class="verdict-meter">You decide what each clue means.</span></div>${pillarNodes}${cardsHtml}${chips}${suspectTimeline(id,claims,padX,boardW-2*padX,timelineTop,timelineH)}</div>`;
+  const objConf=objectiveConflicts(id,claims);
+  const tray=`<div class="evidence-tray"><h3>Evidence to place${unplaced.length?` · ${unplaced.length}`:''}</h3>${unplaced.length?`<div class="tray-cards">${unplaced.map(c=>`<div class="tray-card"><div class="tray-info"><strong>${esc(CLUES[c].title)}</strong><small>${esc(CLUES[c].kind)}</small></div><div class="tray-place">${PILLARS.map(([k,label])=>`<button class="mini" data-do="board-place" data-suspect="${id}" data-clue="${c}" data-pillar="${k}" title="Place under ${label}">${PILLAR_ABBR[k]}</button>`).join('')}</div></div>`).join('')}</div>`:'<p class="meta">Every acquired clue is placed. Remove one to re-file it.</p>'}${objConf?`<div class="obj-conflicts"><h3>Contradictions in the accounts</h3><p class="meta">Objective clashes in the record — a reason to dig, not a verdict.</p>${objConf}</div>`:''}</div>`;
+  return `<div class="workspace">${canvas}${tray}</div>`;
+}
+// The Reasoning board: a player-built detective evidence board. You place each
+// acquired clue under Motive / Means / Opportunity / Alibi and mark it supports
+// or contradicts the case — the app never classifies for you. It only surfaces
+// objective conflicts in the record and the night timeline. Reads only your
+// evidence; the deduction is yours.
+function reasoning(){
+  const claims=playerClaims(session);
+  const strip=SUSPECTS.map(id=>suspectStripCard(id,reasonSuspect)).join('');
+  const body=!session.world.player.evidence.length?`<div class="reason-empty2"><h2>The board is bare</h2><p>Question the village and inspect records. As you gather evidence, place it here and build your own case for or against each suspect.</p></div>`:reasonSuspect?workspaceView(reasonSuspect,claims):`<div class="reason-empty2"><h2>Pick a suspect</h2><p>Choose someone above, then place each clue you’ve gathered under Motive, Means, Opportunity, or Alibi — and mark whether it supports or contradicts the case against them. The board draws the objective conflicts; the reasoning is yours.</p></div>`;
+  return `<main class="reason-board"><div class="reason-toolbar"><div><div class="eyebrow gold">THE EVIDENCE BOARD</div><h1>Reasoning</h1><p class="meta">Your board. Place clues and decide what each one means — <b class="sup">supports</b> or <b class="con">contradicts</b> the case. Nothing here is graded for you.</p></div><div class="reason-legend"><span class="legend-item"><i class="dot supports"></i>you marked supports</span><span class="legend-item"><i class="dot contradicts"></i>contradicts</span></div></div><div class="suspect-strip">${strip}</div><div class="reason-scroll">${body}</div></main>`;
 }
 
 function notebookContent(v){
-  if(notebook==='claims')return claimsNotebook();
   if(notebook==='evidence'){
     if(!v.evidence.length)return `<div class="empty-notebook"><span class="empty-symbol">⌑</span><h3>A fresh page.</h3><p>What you discover and what people tell you will appear here.</p><p class="meta">Begin with the study at Vale Manor.</p></div>`;
     const kinds=[...new Set(v.evidence.map(e=>e.kind))];
@@ -248,7 +310,7 @@ function followTraceCursor(){
     list.scrollTop+item.top-bounds.top-(list.clientHeight-item.height)/2));
 }
 
-function render(){const scrolls={};for(const selector of ['#journal','#event-list','#event-detail','#character-panel','.notebook-content']){const el=$(selector);if(el)scrolls[selector]=el.scrollTop;}$('#app').innerHTML=header()+(mode==='game'?game():inspector());document.body.dataset.mode=mode;for(const [selector,value]of Object.entries(scrolls)){const el=$(selector);if(el)el.scrollTop=value;}followTraceCursor();}
+function render(){const scrolls={};for(const selector of ['#journal','#event-list','#event-detail','#character-panel','.notebook-content','.reason-scroll']){const el=$(selector);if(el)scrolls[selector]=el.scrollTop;}$('#app').innerHTML=header()+(mode==='game'?game():mode==='reasoning'?reasoning():inspector());document.body.dataset.mode=mode;for(const [selector,value]of Object.entries(scrolls)){const el=$(selector);if(el)el.scrollTop=value;}followTraceCursor();}
 function openModal(content,label){stopReplay();const m=$('#modal');m.innerHTML=`<button class="dialog-close icon-button" data-do="close-modal" aria-label="Close dialog">×</button>${content}`;m.setAttribute('aria-label',label);if(!m.open)m.showModal();}
 function clueModal(id){const c=CLUES[id],entry=session.world.player.evidence.find(e=>e.clue===id);if(!entry)return;openModal(`${artifactArt(id,'artifact-detail-art')}<div class="eyebrow gold">${c.kind}</div><h2>${c.title}</h2><p class="clue-source">${esc(entry.source)} · ${timeLabel(entry.minute)}</p><div class="dialog-prose"><p>${esc(entry.text??c.text)}</p></div><div class="value-tags">${c.tags.map(t=>`<span>${t}</span>`).join('')}</div><button class="primary full" data-do="pin-close" data-id="${id}">${session.world.player.pins.includes(id)?'Unpin from your case':'Pin for your accusation'}</button>`,'Evidence detail');}
 function accusationModal(){const w=session.world;if(w.status==='solved'){openModal(`<div class="eyebrow gold">CASE CLOSED</div><h2>Your accusation</h2><p>You identified Silas Voss, the brass seal, and the diverted payments.</p><div class="dialog-prose"><p>${CASE.truth}</p></div><h3>Your supporting evidence</h3><ul>${w.ending.evidence.map(c=>`<li>${CLUES[c].title}</li>`).join('')}</ul>`,'Your completed accusation');return;}
@@ -281,6 +343,10 @@ document.addEventListener('click',event=>{const b=event.target.closest('[data-do
     case 'ask':act({type:'ask',person:b.dataset.person,topic:b.dataset.topic});break;
     case 'present':if(chosenClue)act({type:'present',person:b.dataset.person,clue:chosenClue,tone:b.dataset.tone});break;
     case 'notebook':notebook=id;render();break;
+    case 'reason-suspect':reasonSuspect=reasonSuspect===id?null:id;render();break;
+    case 'board-place':{const n=notesFor(b.dataset.suspect);n[b.dataset.clue]={pillar:b.dataset.pillar,polarity:n[b.dataset.clue]?.polarity||'supports'};saveBoardNotes();render();break;}
+    case 'board-flip':{const n=notesFor(b.dataset.suspect)[b.dataset.clue];if(n){n.polarity=n.polarity==='supports'?'contradicts':'supports';saveBoardNotes();render();}break;}
+    case 'board-remove':{delete notesFor(b.dataset.suspect)[b.dataset.clue];saveBoardNotes();render();break;}
     case 'claim-source':{const source=eventById(id);if(source?.playerText)openModal(`<h2>Recorded source · ${timeLabel(source.minute)}</h2>${paragraphs(source.playerText)}`,'Claim source');break;}
     case 'evkind':evidenceKind=id;render();break;
     case 'pin':act({type:'pin',clue:id});break;
@@ -295,7 +361,7 @@ document.addEventListener('click',event=>{const b=event.target.closest('[data-do
     case 'export':exportFile();break;
     case 'import':$('#import-file').click();break;
     case 'restart-confirm':openModal(`<div class="eyebrow gold">RESTART THE LAST BELL</div><h2>Return to the beginning?</h2><p>Your current investigation will be replaced on this device. Export it first if you want to keep its history. This remains the same authored case.</p><div class="menu-actions"><button class="soft-button" data-do="export">Export current investigation</button><button class="primary" data-do="restart">Restart from 08:00</button></div>`,'Restart this investigation');break;
-    case 'restart':missedRevealed=false;detailPanel=null;sceneTransition=null;actionGroup='inspect';session=createSession(session.seed);healthCache=null;cursor=null;chat=null;resetRealized();stopReplay();persist();$('#modal').close();render();toast('A new morning in Bellweather.');break;
+    case 'restart':missedRevealed=false;detailPanel=null;sceneTransition=null;actionGroup='inspect';session=createSession(session.seed);healthCache=null;cursor=null;chat=null;resetRealized();boardNotes={};saveBoardNotes();stopReplay();persist();$('#modal').close();render();toast('A new morning in Bellweather.');break;
     case 'close-detail':detailPanel=null;render();break;
     case 'reveal-missed':missedRevealed=true;render();break;
     case 'hide-missed':missedRevealed=false;detailPanel=null;render();break;
