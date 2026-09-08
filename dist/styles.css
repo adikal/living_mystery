@@ -277,3 +277,5 @@ dialog{background:#1a262e;color:var(--text);border:1px solid #56636a;border-radi
 .obj-conflicts h3{margin-bottom:4px}
 .obj-conflicts p{font-size:.8rem;color:#d8b6ad;margin:6px 0 0}
 .obj-conflicts .meta{color:#a08a6b}
+
+.character-composer{display:grid;gap:8px;padding:12px 0;border-bottom:1px solid var(--line);margin-bottom:12px}.character-composer label{font-size:.875rem;color:var(--gold)}.character-composer textarea{min-height:76px}.character-composer [role=status]{color:var(--muted);font-size:.8125rem}

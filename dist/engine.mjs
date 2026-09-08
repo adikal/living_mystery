@@ -115,6 +115,46 @@ export function dispatch(s, action) {
   return s;
 }
 
+// Called by the validated character pipeline on an isolated session copy.
+export function dispatchCharacter(s,{person,text,proposal,action,audit,useAuthored=false,presented=null}){
+  if(s.world.status==='solved'||!PEOPLE[person]||!K.local(s,person)||s.world.npcs[person].travel)throw Error('Conversation is no longer available.');
+  const command=commit(s,{kind:'command',title:`Speak to ${PEOPLE[person].name}`,actor:'player',data:{action:{type:'converse',person,text}}});
+  const previous=s.world.player.conversation;
+  const engagement=commit(s,{kind:'action',title:`You engage ${PEOPLE[person].name}`,actor:'player',parents:[command],changes:{'player.conversation':person}});
+  if(previous&&previous!==person)B.decide(s,previous,engagement);
+  const heard=commit(s,{kind:'speech',title:`You address ${PEOPLE[person].name}`,actor:'player',parents:[command],data:{listener:person,assertion:text,unverified:true,presented},playerText:`You
+“${text}”`});
+  K.remember(s,person,heard);
+  if(presented){if(!K.has(s,presented))throw Error('Unacquired evidence.');K.believe(s,person,`player_has_${presented}`,`The detective has shown me ${CLUES[presented].title.toLowerCase()}.`,.99,'observation',heard,true);}
+  const decision=commit(s,{kind:'decision',title:`${PEOPLE[person].name} chooses how to respond`,actor:person,parents:[heard,...proposal.sources],data:{selected:proposal.intent,candidates:[],reason:proposal.rationale,proposal:copy(proposal),characterAudit:copy(audit)}});
+  if(!useAuthored&&['tentatively_accept','doubt'].includes(proposal.belief)){
+    // Player reports stay attributed and uncertain; they cannot replace case facts.
+    const existing=s.world.npcs[person].beliefs;
+    const reports=existing.filter(b=>b.key.startsWith('player_report_'));
+    if(reports.length>=12)commit(s,{kind:'belief',title:`${PEOPLE[person].name} archives an older player report`,actor:person,parents:[decision],changes:{[`npcs.${person}.beliefs`]:existing.filter(b=>!reports.slice(0,reports.length-11).includes(b))}});
+    K.believe(s,person,`player_report_${heard}`,`The detective claims: ${text}`,proposal.belief==='tentatively_accept'?.6:.2,'testimony',heard,null);
+  }
+  const start=s.events.length;
+  if(action){
+    if(useAuthored)dispatch(s,action);
+    else K.withSpeech(s,{...proposal,person,parents:[heard,decision]},()=>dispatch(s,action));
+  }else{
+    K.speech(s,person,proposal.utterance,decision,{intent:proposal.intent,topic:proposal.intent,claims:[],characterTurn:true});
+    K.advance(s,3,command);
+  }
+  const reply=s.events.slice(start).find(e=>e.kind==='speech'&&e.actor===person&&e.data.listener==='player');
+  if(!reply||s.events.slice(start).some(e=>e.kind==='rejected'))throw Error('The selected account became unavailable.');
+  const npc=s.world.npcs[person],prior=npc.dialogueState??{turns:0,disclosures:[]};
+  const dialogueState={turns:prior.turns+1,lastIntent:proposal.intent,lastPlayerEvent:heard,lastReplyEvent:reply.id,
+    topic:proposal.account??prior.topic??null,openQuestion:proposal.intent==='clarify'?reply.data.assertion:null,
+    disclosures:[...new Set([...prior.disclosures,...(proposal.account?[proposal.account]:[])])],lastDecision:decision};
+  const delta=useAuthored?0:proposal.trust==='warmer'?.03:proposal.trust==='cooler'?-.03:0;
+  commit(s,{kind:'relationship',title:`${PEOPLE[person].name} retains this exchange`,actor:person,parents:[decision,reply.id],changes:{[`npcs.${person}.dialogueState`]:dialogueState,[`npcs.${person}.trust`]:Math.max(0,Math.min(1,npc.trust+delta))}});
+  if(proposal.engagement==='end'&&!useAuthored)dispatch(s,{type:'endConversation'});
+  commit(s,{kind:'checkpoint',title:'Character turn complete',actor:'player',parents:[command,decision],data:{boundary:true}});
+  return s;
+}
+
 export function playerView(s) {
   const w = s.world, at = w.player.location;
   return { minute: w.minute, status: w.status, location: at, scene: LOCATIONS[at], people: Object.entries(w.npcs).filter(([, p]) => p.location === at).map(([id]) => ({ id, ...publicPerson(id) })), evidence: w.player.evidence.map((e) => ({ ...e, ...CLUES[e.clue],text:e.text??CLUES[e.clue].text })), pins: copy(w.player.pins), notes: copy(w.player.notes), lastSeen: copy(w.player.lastSeen), transcript: s.events.filter((e) => e.playerText).map((e) => ({ id: e.id, minute: e.minute, kind: e.kind, text: e.playerText, actor: e.actor })), ending: copy(w.ending) };

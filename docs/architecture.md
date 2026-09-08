@@ -16,9 +16,11 @@ The simulation is split into three layers so that content and generation can gro
 
 **Typed contracts** live in `dist/schema.mjs` (JSDoc typedefs — no build step): `Event`, `Belief`, `Action`, `Model`, `Kernel`, `CaseBehavior`, `Case`, plus a declarative `ACTIONS` catalog and `validateAction()`. This is the shared vocabulary a generator, a symbolic verifier, and an LLM action-proposer target: a proposed action can be shape-validated against the catalog before the kernel executes it. Deeper semantic/precondition validation still lives in the kernel/case.
 
-This is the foundation for the roadmap's harder phases: generation produces a new Case `model`; verification checks the event log + action catalog; and an LLM may (later, behind validation) propose typed actions rather than only restyle dialogue.
+This is the foundation for the roadmap's harder phases: generation produces a new Case `model`; verification checks the event log + action catalog; and the optional character-turn pipeline now proposes bounded conversation decisions behind validation. See [Character turns](character-turns.md) for the implemented contract.
 
-## Generated dialogue, critic, and audit
+## Wording-only dialogue, critic, and audit
+
+This section describes the legacy delivery mode. Character reasoning is a separate opt-in path: its accepted speech, decisions, attributed player memories, belief stance and dialogue state are engine events, with the full audit attached to the decision. It uses a 30-second combined budget and atomic trial execution. Neither mode is a symbolic proof of coherence.
 
 The generator freely rewrites the authored statement using character persona and event-time mood. Deterministic checks first enforce matching numeric tokens and presence/absence of known person/place terms. These checks intentionally reject some harmless paraphrases (e.g. converting numeric times to words) and do not detect all semantic changes. A second, separate-context model call compares source and candidate for added or omitted claims, changed certainty, negation, attribution, alibis, or disclosures. The authored statement is the reference even when it is a deliberate lie. Both requests currently use the same configured model; this is not an independent formal verifier.
 

@@ -82,7 +82,7 @@
  * @property {string[]} [evidence]       accuse: selected clue ids.
  */
 
-/** @typedef {'move'|'inspect'|'ask'|'present'|'wait'|'pin'|'note'|'accuse'|'look'|'endConversation'} PlayerActionType */
+/** @typedef {'move'|'inspect'|'ask'|'present'|'wait'|'pin'|'note'|'accuse'|'look'|'endConversation'|'converse'} PlayerActionType */
 
 // ---------------------------------------------------------------------------
 // Case / Kernel interfaces
@@ -161,6 +161,7 @@
  * @type {Record<PlayerActionType,{required:string[],optional:string[],advancesTime:boolean,summary:string}>}
  */
 export const ACTIONS = Object.freeze({
+  converse: { required: ['person','text'], optional: [], advancesTime: true, summary: 'A recorded natural-language character turn, executed through the validated async character pipeline.' },
   move:    { required: ['to'],                       optional: [],            advancesTime: true,  summary: 'Travel to a location.' },
   inspect: { required: ['object'],                   optional: [],            advancesTime: true,  summary: 'Examine an object in the current place.' },
   ask:     { required: ['person'],                   optional: ['topic'],     advancesTime: true,  summary: 'Question a co-located character.' },

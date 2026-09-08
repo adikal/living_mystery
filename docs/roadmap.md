@@ -2,7 +2,7 @@
 
 ## Direction
 
-The long-term goal is a playable town with simulated characters and generated, investigable mysteries. First make The Last Bell a complete reference case: believable interactions, actionable memories, executable history, and explanations for every consequential event. Keep the deterministic engine as the regression oracle. Optional AI dialogue now generates free-form wording with deterministic anchor checks, a separate model critic, and a saved audit. It has no authority over world state; ASP and SMT are not implemented.
+The long-term goal is a playable town with simulated characters and generated, investigable mysteries. First make The Last Bell a complete reference case: believable interactions, actionable memories, executable history, and explanations for every consequential event. Keep the deterministic engine as the regression oracle. Optional AI character turns now combine response decisions and natural wording through perspective-limited context, a separate critic and atomic engine validation. Authored accounts bound disclosures and story consequences; ASP and SMT are not implemented.
 
 ## Current inspector iteration
 
@@ -27,7 +27,13 @@ Implemented for The Last Bell:
 - Ada seeks Bell to correct an already-shared rumor. A cooperative Clara may report seeing Silas take the folio. Plans use beliefs and trust, travel to a real recipient, and record scored reasons and causal sources.
 - Local observation of the folio retrieval; remote characters learn nothing. Sightings report the most recent retained occurrence of repeated movements.
 
-The implementation is authored and bounded. It does not interpret arbitrary player dialogue, model general cognition, or formally prove consistency. Claim annotations cover selected case assertions, not every sentence. Old acquired evidence can be projected through the case catalog without mutating its save; old free-text speech is not retroactively parsed. Earlier stock testimony and source events remain historical records.
+The implementation is authored and bounded. The optional character mode accepts free-text questions but remains bounded by available authored accounts; it does not model general cognition or formally prove consistency. Claim annotations cover selected case assertions, not every sentence. Old acquired evidence can be projected through the case catalog without mutating its save; old free-text speech is not retroactively parsed. Earlier stock testimony and source events remain historical records.
+
+## Implemented: character decisions and natural dialogue
+
+All six characters support optional free-text turns, combined intent/account/wording proposals, attributed player memories, bounded trust and belief updates, explicit endings, audited critic/revision attempts, atomic commits and deterministic replay. Existing action buttons use the same pipeline when enabled. See [contract and testing](character-turns.md). No runtime solver or autonomous LLM movement policy was added.
+
+The next quality milestone is stronger structured claims and symbolic causal/temporal validation (start with Z3 for temporal and physical constraints), followed by executable prehistory and broader character planning. Introduce ASP for discrete plan/generation search only when those domains are explicit. Neither solver replaces semantic dialogue evaluation. Complete and playtest The Last Bell before procedural generation.
 
 ## Visual identity for authored and procedural cases
 
@@ -49,7 +55,7 @@ Acceptance: preparing an unchanged case twice makes no new image requests; share
 
 ## Next development sequence
 
-1. **Complete dialogue coverage and playtest the new branches.** Extend communicative plans, follow-up chains, refusals, interruptions, and evidence reactions based on observed stalls. Keep the engine responsible for disclosure and the LLM responsible for realization.
+1. **Complete dialogue coverage and playtest the new branches.** Extend communicative plans, follow-up chains, refusals, interruptions, and evidence reactions based on observed stalls. Expand the implemented account-selection and natural-response pipeline through playtesting; retain engine-validated disclosure capabilities.
 2. **Strengthen structured claims.** Add spatial rooms, clock-relative observations, uncertainty intervals, explicit retraction links, shared source ancestry, and structured assertion coverage of all consequential dialogue. Generalize the current presence/window comparisons.
 3. **Expand knowledge-driven decisions.** Information seeking, conflicting testimony, mistaken expectations, interrupted plans, explicit perception and memory policies, and communication goals beyond this case's correction/report/warning situations.
 4. **Symbolic causal and temporal validation.** Check action preconditions, travel feasibility, object possession, ordering, and knowledge provenance against the shared schema. Permit false beliefs and lies while keeping physical history coherent.

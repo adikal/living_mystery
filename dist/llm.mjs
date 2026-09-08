@@ -1,8 +1,8 @@
 // Free-form realization with deterministic anchors and a separate semantic critic.
-const ENDPOINT_KEY='living-mystery.llm.endpoint',ENABLED_KEY='living-mystery.llm.enabled';
+const ENDPOINT_KEY='living-mystery.llm.endpoint',ENABLED_KEY='living-mystery.llm.enabled',REASONING_KEY='living-mystery.llm.reasoning';
 function safeStore(store){try{return store??globalThis.localStorage}catch{return undefined}}
-export function llmConfig(store){try{const s=safeStore(store);return {endpoint:s?.getItem(ENDPOINT_KEY)||'',enabled:s?.getItem(ENABLED_KEY)==='1'}}catch{return {endpoint:'',enabled:false}}}
-export function setLlmConfig({endpoint,enabled},store){try{const s=safeStore(store);if(endpoint!==undefined)s?.setItem(ENDPOINT_KEY,String(endpoint).trim());if(enabled!==undefined)s?.setItem(ENABLED_KEY,enabled?'1':'0')}catch{}}
+export function llmConfig(store){try{const s=safeStore(store);return {endpoint:s?.getItem(ENDPOINT_KEY)||'',enabled:s?.getItem(ENABLED_KEY)==='1',reasoning:s?.getItem(REASONING_KEY)==='1'}}catch{return {endpoint:'',enabled:false,reasoning:false}}}
+export function setLlmConfig({endpoint,enabled,reasoning},store){try{const s=safeStore(store);if(endpoint!==undefined)s?.setItem(ENDPOINT_KEY,String(endpoint).trim());if(enabled!==undefined)s?.setItem(ENABLED_KEY,enabled?'1':'0');if(reasoning!==undefined)s?.setItem(REASONING_KEY,reasoning?'1':'0')}catch{}}
 export function llmActive(store){const c=llmConfig(store);try{const u=new URL(c.endpoint);return c.enabled&&['http:','https:'].includes(u.protocol)&&!u.username&&!u.password}catch{return false}}
 
 export const REALIZATION_VERSION=3;

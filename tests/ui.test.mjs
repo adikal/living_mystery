@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import * as characterTurns from '../dist/character-turn.mjs';
 import * as art from '../dist/art.mjs';
 import * as engine from '../dist/engine.mjs';
 import * as claims from '../dist/claims.mjs';
@@ -17,7 +18,7 @@ function adapter(saved=null,overrides={}){
     if(!nodes.has(selector))nodes.set(selector,{innerHTML:'',scrollTop:0,dataset:{},addEventListener(){},setAttribute(){},focus(){},showModal(){this.open=true},close(){this.open=false},classList:{add(){},remove(){}}});
     return nodes.get(selector);
   };
-  const context=vm.createContext({...art,...engine,...inspector,...claims,...llm,...dialogueSave,URL,structuredClone,setTimeout,clearTimeout,setInterval,clearInterval,
+  const context=vm.createContext({...characterTurns,...art,...engine,...inspector,...claims,...llm,...dialogueSave,URL,structuredClone,setTimeout,clearTimeout,setInterval,clearInterval,
     fetch:async()=>({ok:false,json:async()=>({})}),AbortController,
     localStorage:{getItem(key){return key==='living-mystery.bellweather.v1'?savedText:null},setItem(key,value){if(key==='living-mystery.bellweather.v1')savedText=value}},
     document:{querySelector:node,addEventListener(type,fn){listeners[type]=fn},body:{dataset:{}}},...overrides});
@@ -177,4 +178,35 @@ test('Legacy device board migrates only on startup of its existing save',()=>{
   assert.equal(ui.run('boardNotes.silas.delivery.pillar'),'opportunity');
   ui.run('saveBoardNotes()');assert.equal(store.has('living-mystery.board.v1'),false);
   assert.equal(JSON.parse(store.get('living-mystery.bellweather.v1')).reasoning.notes.silas.delivery.polarity,'supports');
+});
+
+test('Character mode renders free-text input and commits one audited turn without a second voice pass',async()=>{
+  const settings=new Map(),store={getItem:k=>settings.get(k),setItem:(k,v)=>settings.set(k,v)};
+  llm.setLlmConfig({endpoint:'http://127.0.0.1:8787',enabled:true,reasoning:true},store);
+  const ui=adapter(null,{llmActive:()=>true,llmConfig:()=>({reasoning:true}),
+    proposeCharacterTurn:t=>characterTurns.proposeCharacterTurn(t,{store,fetchImpl:async(_url,init)=>{
+      const body=JSON.parse(init.body),a=t.context.accounts.find(a=>a.id==='ask:alibi');
+      const p={intent:'deceive',account:a.id,utterance:a.statement,claims:a.claims,sources:a.sources,trust:'unchanged',belief:'remember_only',engagement:'continue',rationale:'Give my account.'};
+      return {ok:true,json:async()=>({text:body.system===characterTurns.CHARACTER_CRITIC?'{"verdict":"pass","violations":[]}':JSON.stringify(p)})};
+    }})});
+  ui.run("dispatch(session,{type:'move',to:'vestry'});chat='silas';actionGroup='talk';render()");
+  assert.match(ui.node('#app').innerHTML,/Speak in your own words/);
+  await ui.run("runCharacter('silas','Where were you last night?')");
+  assert.equal(ui.run('characterBusy'),false);
+  assert.equal(ui.run('session.world.npcs.silas.dialogueState.turns'),1);
+  assert.equal(ui.run('dialogueAudit.size'),0);
+  ui.run("cursor=session.events.findLast(e=>e.data.characterAudit).index");
+  assert.match(ui.run('eventDetail()'),/Character turn audit/);
+  assert.equal(engine.importSession(ui.saved()).world.npcs.silas.dialogueState.turns,1);
+});
+
+test('Pending character requests block world actions and cannot overwrite a restarted session',async()=>{
+  let resolve;
+  const ui=adapter(null,{llmActive:()=>true,llmConfig:()=>({reasoning:true}),proposeCharacterTurn:()=>new Promise(r=>resolve=r)});
+  ui.run("dispatch(session,{type:'move',to:'vestry'})");
+  const pending=ui.run("runCharacter('silas','Where were you?')");
+  const before=ui.run('session.world.minute');ui.run("act({type:'wait',minutes:10})");assert.equal(ui.run('session.world.minute'),before);
+  ui.click('restart');const count=ui.run('session.events.length');
+  resolve({proposal:null,audit:{reason:'cancelled'}});await pending;
+  assert.equal(ui.run('session.events.length'),count);assert.equal(ui.run('characterBusy'),false);
 });

@@ -11,8 +11,8 @@ contract the browser's ``dist/llm.mjs`` expects:
     -> 200  {"text": "<restyled line>"}
     -> 502  {"error": "...", "detail": "..."}
 
-Boundary: this ONLY restyles an already-authored line. It cannot and must not
-change game state — it just calls Bedrock's Converse API (mirroring the
+Boundary: this transports dialogue styling or structured character proposals. It cannot and must not
+directly change game state — it just calls Bedrock's Converse API (mirroring the
 QuickWork Bedrock pattern) and returns text. Not for production use.
 
 Run:
@@ -63,14 +63,16 @@ def bedrock_client():
                               config=Config(connect_timeout=3, read_timeout=7, retries={"max_attempts": 0}))
     return _client
 
-def validate_payload(payload):
+def validate_payload(payload, profile="dialogue-v2"):
+    field_cap = 32000 if profile == "character-v1" else _MAX_FIELD
+    token_cap = 1500 if profile == "character-v1" else _MAX_TOKENS_CAP
     if not isinstance(payload, dict) or set(payload) != {"system", "prompt", "max_tokens"}:
         raise ValueError("Expected system, prompt, and max_tokens")
     for field in ("system", "prompt"):
-        if not isinstance(payload[field], str) or not payload[field].strip() or len(payload[field]) > _MAX_FIELD:
+        if not isinstance(payload[field], str) or not payload[field].strip() or len(payload[field]) > field_cap:
             raise ValueError("Invalid " + field)
     tokens = payload["max_tokens"]
-    if type(tokens) is not int or not 1 <= tokens <= _MAX_TOKENS_CAP:
+    if type(tokens) is not int or not 1 <= tokens <= token_cap:
         raise ValueError("Invalid max_tokens")
     return payload
 
@@ -114,7 +116,7 @@ class Handler(BaseHTTPRequestHandler):
             self._send(404, {"error": "not_found"})
 
     def do_POST(self) -> None:
-        if not self._allowed() or self.headers.get("X-Living-Mystery") != "dialogue-v2":
+        if not self._allowed() or self.headers.get("X-Living-Mystery") not in ("dialogue-v2", "character-v1"):
             self._send(403, {"error": "origin_not_allowed"})
             return
         if self.path != "/" or self.headers.get("Content-Type", "").split(";")[0].strip() != "application/json":
@@ -122,9 +124,11 @@ class Handler(BaseHTTPRequestHandler):
             return
         try:
             n = int(self.headers.get("content-length", "0") or 0)
-            if n <= 0 or n > _MAX_BODY:
+            profile = self.headers.get("X-Living-Mystery")
+            body_cap = 128000 if profile == "character-v1" else _MAX_BODY
+            if n <= 0 or n > body_cap:
                 raise ValueError("empty or oversized request body")
-            payload = validate_payload(json.loads(self.rfile.read(n)))
+            payload = validate_payload(json.loads(self.rfile.read(n)), profile)
             system, prompt, max_tokens = payload["system"], payload["prompt"], payload["max_tokens"]
 
             kwargs = dict(

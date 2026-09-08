@@ -17,16 +17,19 @@ node --test tests/*.test.mjs
 
 The browser saves progress on the current device. Export/import includes the complete event history and current world. This is one authored case, **The Last Bell**. Seeds vary schedules; they do not generate a new culprit or crime.
 
-## Optional AI delivery
+## Optional AI characters
 
 1. Install `boto3` in the Python environment used for the proxy and configure AWS credentials with Bedrock access.
 2. Run `python3 server/llm_proxy.py` (restart it after code changes).
-3. Serve the game at `http://127.0.0.1:8000` or `http://localhost:8000`, open the game menu → AI-voiced dialogue, and enable endpoint `http://127.0.0.1:8787`.
-4. Ask a new question. In Inspector, select its speech event and open **Dialogue audit** to see the displayed output, generation, critic request/verdict, or fallback reason. Export/import retains completed attempts and the words shown.
+3. Serve the game at `http://127.0.0.1:8000` or `http://localhost:8000`, open the game menu → AI characters, and enable endpoint `http://127.0.0.1:8787`.
+4. Enable **character reasoning** to get a free-text composer. Ask a question in your own words, or use the existing question/evidence buttons. Reasoning is off by default, independently of the AI toggle.
+5. In Inspector → Trace details, select the character's decision event and open **Character turn audit** to inspect its perspective, proposal, critic and fallback. Export/import preserves accepted words and state without another model call.
 
-AI produces free-form wording. Deterministic checks reject changed numeric tokens and known names/places; a separate critic request checks added/omitted claims, certainty, attribution, negation, alibis, and disclosures relative to the authored line—even when that line is a lie. Only a strict passing verdict releases the candidate; rejection, malformed output, or timeout uses the authored line. Both stages currently use the configured model in separate requests. This reduces risk but is not a guarantee of semantic equivalence. Completed attempts survive save/reload; model availability is not required for play.
+Character reasoning combines response selection and natural wording for all six NPCs. The model can choose a permitted account, refuse, challenge, ask for clarification, adjust trust, respond to a player allegation, or explicitly end the conversation. It receives the speaker's own beliefs, retained memories and conversation history. The engine validates a proposal on a session copy before committing the complete turn. Authored accounts still bound factual disclosures and consequential case actions; lies and mistaken beliefs are allowed. A separate model critic checks the prose, but is not a formal correctness guarantee.
 
-The proxy is loopback-only and permits explicit game origins, valid Host headers, JSON payloads, and the `X-Living-Mystery: dialogue-v2` request header. For another local game port, set `LM_ALLOWED_ORIGINS` to the exact origin(s). These checks are not authentication against local programs; this is a development proxy, not a public service.
+With character reasoning disabled, AI retains the earlier wording-only mode (speech events expose **Dialogue audit**). With AI disabled the game remains deterministic and offline. Failed explicit questions use their authored response; failed free-text turns ask for a supported question. See [the character-turn contract and test guide](docs/character-turns.md) for limits and scenarios.
+
+The proxy is loopback-only and permits explicit game origins, valid Host headers, JSON payloads, and the `X-Living-Mystery: dialogue-v2` or `character-v1` request header. For another local game port, set `LM_ALLOWED_ORIGINS` to the exact origin(s). These checks are not authentication against local programs; this is a development proxy, not a public service.
 
 Tests: `node --test tests/*.test.mjs` and `python3 -m unittest discover -s tests -p 'test_*.py'`. Proxy tests use a stub model client and need neither AWS credentials nor boto3. Real Bedrock behavior is a separate integration check.
 
@@ -70,6 +73,7 @@ Tests: `node --test tests/*.test.mjs` and `python3 -m unittest discover -s tests
 | `dist/inspector.mjs` | Read-only character sighting and missed-opportunity projections at a replay cursor |
 | `dist/ui.mjs` | Game and visual inspector adapters (+ persisted optional AI delivery audit) |
 | `dist/dialogue-save.mjs` | Saves and validates dialogue audits and Reasoning board annotations separately from deterministic world state |
+| `dist/character-turn.mjs` | Perspective construction, character proposals, critic, bounded retries and atomic application |
 | `dist/llm.mjs` | Free-form AI dialogue with entity/number checks, a separate semantic critic, and audited fallback |
 | `dist/styles.css` | Responsive text-game and inspector presentation |
 | `server/llm_proxy.py` | Local Bedrock (Converse) proxy for AI-voiced dialogue; holds AWS creds server-side |
@@ -83,7 +87,7 @@ Tests: `node --test tests/*.test.mjs` and `python3 -m unittest discover -s tests
 
 ## Current boundaries
 
-The engine is authoritative within this single-player client, not a secure server. Source and exported saves include the solution. The inspector intentionally reveals it. An optional, off-by-default AI dialogue mode generates varied wording, checks known entities and numeric tokens, and asks a separate model critic to compare it with the authored statement. Rejected output or failures fall back to the written line. The critic can miss semantic errors; AI never changes engine state — so play stays fully deterministic and offline without it. There is still no LLM authority over state, ASP/SMT solver, arbitrary natural-language conversation, procedural crime generation, automatic branching, a spatial playable client, or cloud save synchronization in this version.
+The engine is authoritative within this single-player client, not a secure server. Source, exported saves and the inspector expose the solution. Optional AI character turns influence dialogue and bounded character state through validated proposals; the model cannot submit arbitrary world patches. Semantic critics can miss mistakes. Recorded runs replay deterministically; new AI runs may vary. There is no ASP/SMT solver, general LLM physical planning, procedural crime generation, automatic branching, spatial playable client, or cloud save synchronization yet.
 
 Dialogue remains authored and bounded, with specific reactions for relevant evidence and explicit knowledge limits otherwise. Movement memories can be recounted through sightings; selected witnessed actions and learned corrections drive reporting plans. Claims cover selected assertions and support limited temporal/location comparisons, not a solver-backed proof of coherence. A Done marker means an option has been used successfully, not that repeating it cannot yield new information.
 

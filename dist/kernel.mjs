@@ -48,6 +48,8 @@ export function createKernel(model) {
   const stateRoots = model.stateRoots || DEFAULT_STATE_ROOTS;
   const eventKinds = new Set(model.eventKinds || DEFAULT_EVENT_KINDS);
 
+  const speechOverrides=new WeakMap();
+  function withSpeech(s,override,run){speechOverrides.set(s,override);try{return run();}finally{speechOverrides.delete(s);}}
   const nextId = (s) => `e${String(s.events.length + 1).padStart(5, '0')}`;
   const has = (s, c) => s.world.player.evidence.some((e) => e.clue === c);
   const local = (s, id) => s.world.npcs[id]?.location === s.world.player.location;
@@ -147,6 +149,8 @@ export function createKernel(model) {
     return commit(s, { kind: 'rejected', title, actor: 'player', parents: [cause], data: { reason: text, ...data }, playerText: text });
   }
   function speech(s, id, text, cause, data = {}) {
+    const override=speechOverrides.get(s);
+    if(override&&override.person===id){data={...data,authoredAssertion:text,intent:override.intent,plan:{...(data.plan??{}),intent:override.intent},characterTurn:true,sourceEvents:[...(data.sourceEvents??[]),...override.parents]};text=override.utterance;}
     const e = commit(s, { kind: 'speech', title: `${PEOPLE[id].name} speaks to you`, actor: id, parents: [cause,...(data.sourceEvents??[])], data: { listener: 'player', assertion: text, ...data }, playerText: `${PEOPLE[id].name}\n“${text}”` });
     remember(s, id, e);
     return e;
@@ -204,7 +208,7 @@ export function createKernel(model) {
   }
 
   const api = {
-    model, nextId, has, local, commit, remember, believe, notice, witnessMovement,
+    model, withSpeech, nextId, has, local, commit, remember, believe, notice, witnessMovement,
     distance, startTravel, advance, addEvidence, reject, speech,
     worldAt, diagnostics, exportSession, importSession, baseWorld,
     // Injected NPC decision policy — set by the assembling engine to the active

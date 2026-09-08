@@ -50,6 +50,15 @@ class ProxyTests(unittest.TestCase):
         for payload in [[], {"prompt":"x"}, {"system":"x","prompt":"x","max_tokens":-1}, {"system":"x","prompt":"x","max_tokens":True}, {"system":"x","prompt":"x"*6001,"max_tokens":80}]:
             h=self.handler(payload=payload);h.do_POST();self.assertEqual(h.results[0][0],400)
         self.assertEqual(self.client.calls, [])
+    def test_character_profile_has_separate_bounded_context_and_output_caps(self):
+        payload={"system":"Character", "prompt":"x"*16000, "max_tokens":1200}
+        h=self.handler(payload=payload);h.headers.replace_header("X-Living-Mystery","character-v1");h.do_POST()
+        self.assertEqual(h.results[0][0],200)
+        for field,value in [("prompt","x"*32001),("max_tokens",1501)]:
+            h=self.handler(payload={**payload,field:value});h.headers.replace_header("X-Living-Mystery","character-v1");h.do_POST()
+            self.assertEqual(h.results[0][0],400)
+        h=self.handler(payload=payload);h.do_POST();self.assertEqual(h.results[0][0],400)
+
     def test_preflight_rejects_foreign_origin(self):
         h=self.handler("https://unrelated.example");h.headers["Access-Control-Request-Method"]="POST";h.do_OPTIONS()
         self.assertEqual(h.results[0][0],403)
