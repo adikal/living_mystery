@@ -22,12 +22,12 @@ The browser saves progress on the current device. Export/import includes the com
 1. Install `boto3` in the Python environment used for the proxy and configure AWS credentials with Bedrock access.
 2. Run `python3 server/llm_proxy.py` (restart it after code changes).
 3. Serve the game at `http://127.0.0.1:8000` or `http://localhost:8000`, open the game menu → AI characters, and enable endpoint `http://127.0.0.1:8787`.
-4. Enable **character reasoning** to get a free-text composer. Ask a question in your own words, or use the existing question/evidence buttons. Reasoning is off by default, independently of the AI toggle.
+4. Enable **character reasoning** to get a free-text composer. Ask a question in your own words, or use the existing question/evidence buttons. This is the single AI toggle and is off by default.
 5. In Inspector → Trace details, select the character's decision event and open **Character turn audit** to inspect its perspective, proposal, critic and fallback. Export/import preserves accepted words and state without another model call.
 
 Character reasoning combines response selection and natural wording for all six NPCs. The model can choose a permitted account, refuse, challenge, ask for clarification, adjust trust, respond to a player allegation, or explicitly end the conversation. It receives the speaker's own beliefs, retained memories and conversation history. The engine validates a proposal on a session copy before committing the complete turn. Authored accounts still bound factual disclosures and consequential case actions; lies and mistaken beliefs are allowed. A separate model critic checks the prose, but is not a formal correctness guarantee.
 
-With character reasoning disabled, AI retains the earlier wording-only mode (speech events expose **Dialogue audit**). With AI disabled the game remains deterministic and offline. Failed explicit questions use their authored response; failed free-text turns ask for a supported question. See [the character-turn contract and test guide](docs/character-turns.md) for limits and scenarios.
+With character reasoning disabled, the game gives immediate scripted responses and makes no AI requests. Historical wording-only audits remain readable in older saves. Failed explicit questions use their authored response; failed free-text turns ask for a supported question. See [the character-turn contract and test guide](docs/character-turns.md) for limits and scenarios.
 
 The proxy is loopback-only and permits explicit game origins, valid Host headers, JSON payloads, and the `X-Living-Mystery: dialogue-v2` or `character-v1` request header. For another local game port, set `LM_ALLOWED_ORIGINS` to the exact origin(s). These checks are not authentication against local programs; this is a development proxy, not a public service.
 
@@ -104,6 +104,8 @@ The evidence rubric is authored. It validates a playable case; it is not a proof
 ## Next development steps
 
 See [the roadmap](docs/roadmap.md) for the sequence to finish The Last Bell before procedural generation, the more sophisticated inspector design, and a manual acceptance checklist. The current inspector opens on World, offers character perspectives and a milestone strip, and reveals missed opportunities only after a separate spoiler action.
+
+The planned [shared symbolic layer](docs/symbolic-reasoning.md) maps a common model to solver adapters, starting with Z3, and feeds attributed conclusions back through engine validation. Its main uses are procedural case creation, agent-output checks and final-case arguments. No symbolic solver is integrated yet.
 
 ## Toward a Stardew-style presentation
 

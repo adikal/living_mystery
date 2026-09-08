@@ -289,3 +289,5 @@ dialog{background:#1a262e;color:var(--text);border:1px solid #56636a;border-radi
 /* Pending character reply in the main feed */
 .pending-turn .character-status{display:flex;align-items:center;gap:10px;font-family:var(--font);font-size:.9375rem}
 .pending-turn .character-status .subtle-button{margin-left:auto}
+
+.notebook-metrics{margin:12px 0}.notebook-metrics .meter{margin:8px 0}.notebook-person>div{min-width:0;flex:1}

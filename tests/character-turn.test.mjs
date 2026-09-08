@@ -134,3 +134,18 @@ test('A complete testimony investigation remains solvable through accepted chara
  dispatch(s,{type:'accuse',suspect:'silas',method:'seal',motive:'fraud',evidence:s.world.player.evidence.map(e=>e.clue)});
  assert.equal(s.world.status,'solved');assert.deepEqual(s.world.ending.routes,['testimony']);assert.deepEqual(diagnostics(s).errors,[]);
 });
+
+
+test('Ambiguous critic verdicts exhaust the retry budget and cannot commit model speech',async()=>{
+ const s=here('manor'),t=ticket(s,'clara','Where were you?',{type:'ask',person:'clara',topic:'alibi'}),p=proposal(t,'ask:alibi');
+ p.utterance='As I recall it, '+p.utterance;let calls=0;
+ const result=await proposeCharacterTurn(t,{store:active(),fetchImpl:async(_url,init)=>{
+   calls++;return {ok:true,json:async()=>({text:JSON.parse(init.body).system===CHARACTER_CRITIC
+     ? 'Example: {"verdict":"pass","violations":[]} Actual verdict: reject.'
+     : JSON.stringify(p)})};
+ }});
+ assert.equal(calls,4);assert.equal(result.proposal,null);
+ applyCharacterTurn(s,t,result);
+ assert.notEqual(s.events.findLast(e=>e.actor==='clara'&&e.kind==='speech').data.assertion,p.utterance);
+ assert.deepEqual(diagnostics(s).errors,[]);
+});

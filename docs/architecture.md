@@ -20,7 +20,7 @@ This is the foundation for the roadmap's harder phases: generation produces a ne
 
 ## Wording-only dialogue, critic, and audit
 
-This section describes the legacy delivery mode. Character reasoning is a separate opt-in path: its accepted speech, decisions, attributed player memories, belief stance and dialogue state are engine events, with the full audit attached to the decision. It uses a 30-second combined budget and atomic trial execution. Neither mode is a symbolic proof of coherence.
+This section describes the retired delivery mode for compatibility with saved audits. The UI now has one character-reasoning toggle; when off, all new responses are scripted without model calls. Character reasoning is a separate opt-in path: its accepted speech, decisions, attributed player memories, belief stance and dialogue state are engine events, with the full audit attached to the decision. It uses a 30-second combined budget and atomic trial execution. Neither mode is a symbolic proof of coherence.
 
 The generator freely rewrites the authored statement using character persona and event-time mood. Deterministic checks first enforce matching numeric tokens and presence/absence of known person/place terms. These checks intentionally reject some harmless paraphrases (e.g. converting numeric times to words) and do not detect all semantic changes. A second, separate-context model call compares source and candidate for added or omitted claims, changed certainty, negation, attribution, alibis, or disclosures. The authored statement is the reference even when it is a deliberate lie. Both requests currently use the same configured model; this is not an independent formal verifier.
 
@@ -65,7 +65,7 @@ The inspector’s Memories tab reads the selected replay world’s retained IDs 
 
 Initial belief provenance uses the case-history event. New knowledge travels via a real interaction. A later correction updates the recipient of that correction, not every person who heard the original rumor.
 
-`playerView` exposes only public character descriptions, people currently encountered, previously observed locations, discovered evidence, personal hypotheses, and observed text. Local last-seen information can become stale. The inspector is a separately entered omniscient view.
+`playerView` exposes public character descriptions, current trust and stress only for stationary characters in the player’s scene (no remote metrics), people currently encountered, previously observed locations, discovered evidence, personal hypotheses, and observed text. Local last-seen information can become stale. The inspector is a separately entered omniscient view.
 
 ## Investigation adapter
 
@@ -122,3 +122,10 @@ Rejected movement, inspection, and unavailable follow-up requests preserve engag
 The top-level Reasoning view replaces the notebook Claims tab. Players assign acquired clues to Motive, Means, Opportunity, or Alibi and choose supports/contradicts for each suspect. The UI does not consume the authored grading key. Automatic aids are limited to structured account conflicts and a timeline of acquired whereabouts. The death-window band requires a current player-visible death-time claim, acquired through the examination or Dr Marsh’s testimony; there is no fallback to hidden case constants. Board excerpts prefer the saved evidence entry’s text, preserving corrections made before testimony was acquired. Later revisions remain distinct historical statements rather than silently rewriting an earlier source.
 
 `dist/dialogue-save.mjs` includes optional `reasoning: {version: 1, notes}` metadata in the save envelope. Notes never enter engine events or affect replay. Validation retains only known suspects, acquired clue IDs, valid pillars, and supports/contradicts values. Reload restores notes; explicit import replaces them, using an empty board for legacy or unsupported board metadata. Startup alone may migrate the former separate localStorage board for an existing legacy device save. Once the combined save succeeds, the old key is removed. Restart clears notes, and save failures use the existing visible warning instead of silently losing edits.
+
+
+## Planned shared symbolic layer
+
+[Shared symbolic representation and solver integration](symbolic-reasoning.md) specifies the next architecture: versioned facts, events, assertions, beliefs, hypotheses and rules; perspective-scoped queries; adapters to multiple logics starting with Z3; and engine-owned admission of attributed inferences. World truth, testimony and belief remain separate. Derived conclusions retain dependencies and are reconsidered when premises change; possible models never silently become world facts.
+
+The three main uses are future mystery generation, structured agent-output validation, and evaluation of the player's final case. Begin with read-only Last Bell account checks, then add inference feedback and action validation. ASP is an optional later adapter for discrete planning/generation; Lean is an optional certificate target. None is implemented yet. The symbolic service is independent of generative AI and must support scripted play as well.

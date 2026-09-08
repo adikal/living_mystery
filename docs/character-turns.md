@@ -1,13 +1,13 @@
 # Character turns
 
-The optional browser character mode combines response selection and natural dialogue for all six Last Bell characters. Enable AI and character reasoning in **AI characters** after restarting `python3 server/llm_proxy.py`. Existing saves work; both settings remain local preferences. No credentials enter the browser.
+The optional browser character mode combines response selection and natural dialogue for all six Last Bell characters. Enable character reasoning in **AI characters** after restarting `python3 server/llm_proxy.py`. Existing saves work; the setting remains a local preference. No credentials enter the browser.
 
 ## Authority and flow
 
 1. Prepare an immutable turn ticket from the current session. Supply only the speaker's own beliefs (without omniscient truth labels), personality, goals, relationships, mood, last 18 retained memories, last 12 direct speech entries and persistent conversation state.
 2. Compile currently legal authored accounts on isolated session copies. An explicit question/evidence button offers its corresponding account; free text offers available topics and follow-ups. Source IDs and claim keys are capabilities, not generated references. Preview consequences exclude unrelated NPC activity.
 3. Generate one structured proposal: `intent`, `account`, `utterance`, `claims`, `sources`, `trust`, `belief`, `engagement`, and a short `rationale`. The rationale is an inspectable decision explanation, not private chain-of-thought. With no account, the character may clarify, challenge or refuse without asserting new facts.
-4. Check exact fields, enums, account availability, claim/source equality, numeric tokens and size bounds. A separate-context critic checks relevance, continuity, disclosure, factual equivalence, permitted deception, belief stance and explicit endings. A strict pass with no violations is required. Both calls currently use the same configured model.
+4. Check exact fields, enums, account availability, claim/source equality, numeric tokens and size bounds. A separate-context critic checks relevance, continuity, disclosure, factual equivalence, permitted deception, belief stance and explicit endings. A strict pass with no violations is required. Critic verdicts accept plain JSON or one enclosing JSON/unlabelled code fence; surrounding prose and multiple objects are rejected. The critic checks clearly unrelated answers and unexplained contradictions while allowing supported revisions, indirect replies, deliberate deflection and permitted lies. Both calls currently use the same configured model.
 5. Execute the accepted proposal on a fresh session copy through the existing case actions. Validate replay/world integrity, then atomically commit. A changed session invalidates the ticket. Cancellation commits nothing; restarting/importing invalidates pending replies. The world does not advance while waiting for the model.
 
 The model chooses a permitted account and its delivery, or a non-disclosure response. It cannot invent new case facts, submit patches, choose arbitrary physical actions or rewrite past events. Permitted lies remain lies; private beliefs are not automatically permitted disclosures. Existing case rules gate evidence, relationships and story consequences. Diagnostics are integrity checks, not a formal proof of semantic correctness or global solvability.
@@ -28,7 +28,7 @@ Failed explicit buttons retain their authored answer and case consequences. Fail
 
 ## Manual test guide
 
-- Restart the proxy, refresh the game, enable AI and character reasoning, and talk to a local character. Try both free text and a question button.
+- Restart the proxy, refresh the game, enable character reasoning, and talk to a local character. Try both free text and a question button.
 - Ask Silas about his alibi, acquire the delivery register, then challenge the contradiction. Ask again: his revised account should persist.
 - Challenge Clara with acquired evidence, comparing discretion and a threat. Private disclosure should follow the existing case gates.
 - Make an allegation; inspect whether the character remembered or doubted it. The allegation must remain attributed to you, not become world truth.

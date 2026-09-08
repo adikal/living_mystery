@@ -23,7 +23,7 @@ function adapter(saved=null,overrides={}){
     localStorage:{getItem(key){return key==='living-mystery.bellweather.v1'?savedText:null},setItem(key,value){if(key==='living-mystery.bellweather.v1')savedText=value}},
     document:{querySelector:node,addEventListener(type,fn){listeners[type]=fn},body:{dataset:{}}},...overrides});
   vm.runInContext(readFileSync(new URL('../dist/ui.mjs',import.meta.url),'utf8').replace(/^import .*;\n/gm,''),context);
-  return {saved:()=>savedText,run:code=>vm.runInContext(code,context),node,change(target){listeners.change({target})},click(action,data={}){listeners.click({target:{closest(){return {dataset:{do:action,...data}}}}})}};
+  return {submit:id=>listeners.submit({preventDefault(){},target:{id}}),saved:()=>savedText,run:code=>vm.runInContext(code,context),node,change(target){listeners.change({target})},click(action,data={}){listeners.click({target:{closest(){return {dataset:{do:action,...data}}}}})}};
 }
 
 test('Recent history stays bounded and chronological; full history pages preserve order',()=>{
@@ -99,10 +99,11 @@ test('Hiding missed-opportunity spoilers also dismisses the contextual detail pa
 });
 
 test('Completed AI delivery persists across reload and is visible in event audit',async()=>{
-  const ui=adapter(null,{llmActive:()=>true,realizeDialogue:payload=>llm.realizeDialogue(payload,{store:{getItem:k=>k.endsWith('.enabled')?'1':'http://127.0.0.1:8787'},fetchImpl:async(url,init)=>({ok:true,json:async()=>({text:JSON.parse(init.body).system.includes('independent')?'{"verdict":"pass","violations":[]}':'Well. '+payload.authoredLine})})})});
+  const ui=adapter();
   ui.run("act({type:'ask',person:'bell',topic:'case'})");
-  await new Promise(resolve=>setImmediate(resolve));
-  assert.equal(ui.run('dialogueAudit.size'),1);
+  const event=JSON.parse(ui.run("JSON.stringify(session.events.find(e=>e.kind==='speech'&&e.data.listener==='player'))"));
+  const record=await llm.realizeDialogue({authoredLine:event.data.assertion},{store:{getItem:k=>k.endsWith('.enabled')?'1':'http://127.0.0.1:8787'},fetchImpl:async(url,init)=>({ok:true,json:async()=>({text:JSON.parse(init.body).system.includes('independent')?'{"verdict":"pass","violations":[]}':'Well. '+event.data.assertion})})});
+  ui.run(`dialogueAudit.set(${JSON.stringify(event.id)},${JSON.stringify(record)});persist()`);
   const restored=adapter(ui.saved());
   assert.equal(restored.run('dialogueAudit.size'),1);
   assert.equal(restored.run('realized.size'),1);
@@ -209,4 +210,43 @@ test('Pending character requests block world actions and cannot overwrite a rest
   ui.click('restart');const count=ui.run('session.events.length');
   resolve({proposal:null,audit:{reason:'cancelled'}});await pending;
   assert.equal(ui.run('session.events.length'),count);assert.equal(ui.run('characterBusy'),false);
+});
+
+
+test('Scripted mode never calls a stylist, including legacy voice-only settings',()=>{
+ for(const enabled of [false,true]){
+  const ui=adapter(null,{llmActive:()=>enabled,llmConfig:()=>({enabled,reasoning:false}),realizeDialogue:()=>{throw Error('No stylist calls allowed')},proposeCharacterTurn:()=>{throw Error('No character calls allowed')}});
+  ui.run("act({type:'ask',person:'bell',topic:'case'})");
+  assert.equal(ui.run('session.world.minute'),483);
+  assert.equal(ui.run('dialogueAudit.size'),0);
+  assert.match(ui.node('#app').innerHTML,/Bring me a suspect/);
+  ui.click('llm');const settings=ui.node('#modal').innerHTML;
+  assert.equal((settings.match(/type="checkbox"/g)||[]).length,1);
+  assert.doesNotMatch(settings,/name="enabled"/);
+ }
+});
+
+test('Notebook profiles expose only public descriptions and local trust and stress',()=>{
+ const ui=adapter();ui.run("notebook='people';render()");
+ const profiles=JSON.parse(ui.run('JSON.stringify(playerView(session).profiles)'));
+ assert.deepEqual(Object.keys(profiles.find(p=>p.id==='bell')).sort(),['color','id','initials','metrics','name','public','role']);
+ assert.ok(profiles.find(p=>p.id==='bell').metrics);
+ assert.equal(profiles.find(p=>p.id==='clara').metrics,null);
+ const html=ui.node('#app').innerHTML;
+ assert.match(html,/Trust in you/);assert.match(html,/Stress factor/);
+ for(const p of Object.values(engine.PEOPLE))assert.ok(!html.includes(p.secret));
+ assert.doesNotMatch(html,/Private background|Competing goals|Relationships/);
+ ui.run("act({type:'move',to:'manor'})");
+ assert.ok(ui.run("playerView(session).profiles.find(p=>p.id==='clara').metrics!==null"));
+ assert.equal(ui.run("playerView(session).profiles.find(p=>p.id==='bell').metrics"),null);
+});
+
+
+test('The single AI checkbox enables both character settings and disables them together',()=>{
+ const config={endpoint:'http://127.0.0.1:8787',enabled:false,reasoning:false};
+ const ui=adapter(null,{llmConfig:()=>config,llmActive:()=>config.enabled,setLlmConfig:next=>Object.assign(config,next)});
+ const endpoint={value:config.endpoint},toggle={checked:true};
+ ui.node('#modal').querySelector=selector=>selector==='[name=endpoint]'?endpoint:selector==='[name=reasoning]'?toggle:null;
+ ui.submit('llm-form');assert.equal(config.enabled,true);assert.equal(config.reasoning,true);
+ toggle.checked=false;ui.submit('llm-form');assert.equal(config.enabled,false);assert.equal(config.reasoning,false);
 });

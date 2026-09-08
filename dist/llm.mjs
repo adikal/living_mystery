@@ -26,7 +26,10 @@ export function sanitizeRealization(authored,candidate){return checkAnchors(auth
 export function extractJson(raw){if(typeof raw!=='string')return raw;const t=raw.trim();const f=t.match(/^```[a-zA-Z0-9]*\s*([\s\S]*?)\s*```$/);return f?f[1].trim():t;}
 export function parseJsonLoose(raw){for(const cand of [extractJson(raw),(String(raw).match(/\{[\s\S]*\}/)||[])[0]]){if(cand==null)continue;try{return JSON.parse(cand);}catch{}}return null;}
 export function parseCritic(raw){
-  const x=parseJsonLoose(raw);
+  // Verdicts authorize output: never extract an example object from surrounding prose.
+  if(typeof raw!=='string')return null;
+  const text=raw.trim(),fence=text.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+  let x;try{x=JSON.parse(fence?fence[1]:text);}catch{return null;}
   if(!x||typeof x!=='object'||Object.keys(x).sort().join(',')!=='verdict,violations'||!['pass','reject'].includes(x.verdict)||!Array.isArray(x.violations)||x.violations.length>20||!x.violations.every(v=>typeof v==='string'&&v.length<=1000)||x.verdict==='pass'&&x.violations.length)return null;return x;
 }
 

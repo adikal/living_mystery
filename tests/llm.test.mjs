@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {SYSTEM_PROMPT,CRITIC_PROMPT,buildUserPrompt,checkAnchors,llmConfig,setLlmConfig,llmActive,realizeLine,realizeDialogue} from '../dist/llm.mjs';
+import {SYSTEM_PROMPT,CRITIC_PROMPT,buildUserPrompt,checkAnchors,llmConfig,setLlmConfig,llmActive,realizeLine,realizeDialogue,parseCritic} from '../dist/llm.mjs';
 const authored='I lent Silas my green coat at 20:55.',payload={speaker:'Rowan',authoredLine:authored,entities:['Silas','Rowan']};
 function fakeStore(){const m=new Map();return {getItem:k=>m.get(k),setItem:(k,v)=>m.set(k,v)}}
 function active(){const store=fakeStore();setLlmConfig({endpoint:'http://127.0.0.1:8787',enabled:true},store);return store}
@@ -41,4 +41,26 @@ test('Timeout resolves even when transport ignores abort',async()=>{
 });
 test('Exact authored response needs no critic',async()=>{
   const r=await realizeDialogue(payload,{store:active(),fetchImpl:sequence(authored)});assert.equal(r.reason,'unchanged');assert.equal(r.critic,null);
+});
+
+
+test('Critic accepts a complete JSON verdict, optionally in a single code fence',()=>{
+  for(const raw of [pass,`  ${pass}\n`,`\`\`\`json\n${pass}\n\`\`\``,`\`\`\`\n${pass}\n\`\`\``]){
+    assert.deepEqual(parseCritic(raw),{verdict:'pass',violations:[]});
+  }
+});
+
+test('Ambiguous critic prose cannot authorize a generated line',async()=>{
+  const ambiguous=[
+    `Example output: ${pass}\nActual verdict: reject. The reply invents evidence.`,
+    `${pass}\nHowever, the reply changes the account.`,
+    `Here is my verdict:\n\`\`\`json\n${pass}\n\`\`\``,
+    `${pass} ${pass}`,
+    `\`\`\`json\n${pass}\n\`\`\`\nRejected.`,
+  ];
+  for(const raw of ambiguous){
+    assert.equal(parseCritic(raw),null);
+    const result=await realizeDialogue(payload,{store:active(),fetchImpl:sequence('Well, '+authored,raw)});
+    assert.equal(result.status,'fallback');assert.equal(result.reason,'invalid_critic');assert.equal(result.text,authored);
+  }
 });
