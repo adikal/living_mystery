@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 530" role="img" aria-labelledby="title desc"><title id="title">Authority and component architecture</title><desc id="desc">Player and character proposals enter the engine. Kernel events drive player and inspector views. The Director checks plans with optional Z3; additional logics are proposed.</desc><defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#496779" stroke-width="1.4"/></marker></defs><rect width="100%" height="100%" rx="12" fill="#f5f7f7"/><style>text{font-family:Arial,sans-serif;fill:#17313e} .label{font-size:17px;font-weight:600} .small{font-size:14px;fill:#4d6270} .edge{stroke:#496779;stroke-width:1.7;fill:none;marker-end:url(#arrow)}</style>
+<rect x="30" y="30" width="255" height="95" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="46" y="57" class="label" text-anchor="start">Player adapters</text>
+<text x="46" y="80" class="small" text-anchor="start">Browser · terminal · tests</text>
+<text x="46" y="101" class="small" text-anchor="start">Commands and conversations</text>
+<rect x="355" y="30" width="245" height="95" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="371" y="57" class="label" text-anchor="start">Character policy</text>
+<text x="371" y="80" class="small" text-anchor="start">Authored rules / optional AI</text>
+<text x="371" y="101" class="small" text-anchor="start">Accounts and plan capabilities</text>
+<rect x="675" y="30" width="255" height="95" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="691" y="57" class="label" text-anchor="start">Case specification</text>
+<text x="691" y="80" class="small" text-anchor="start">People · places · evidence</text>
+<text x="691" y="101" class="small" text-anchor="start">Dialogue · permissions · goals</text>
+<rect x="210" y="190" width="300" height="100" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="226" y="217" class="label" text-anchor="start">Engine + deterministic kernel</text>
+<text x="226" y="240" class="small" text-anchor="start">Validate and execute on copies</text>
+<text x="226" y="261" class="small" text-anchor="start">Only authority for world commits</text>
+<rect x="620" y="190" width="310" height="100" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="636" y="217" class="label" text-anchor="start">World Director</text>
+<text x="636" y="240" class="small" text-anchor="start">Local plan checks · optional Z3</text>
+<text x="636" y="261" class="small" text-anchor="start">Bounded investigation witnesses</text>
+<rect x="30" y="355" width="260" height="95" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="46" y="382" class="label" text-anchor="start">Append-only event history</text>
+<text x="46" y="405" class="small" text-anchor="start">Patches · causes · sources</text>
+<text x="46" y="426" class="small" text-anchor="start">Replay / belief lifecycle</text>
+<rect x="355" y="355" width="245" height="95" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="371" y="382" class="label" text-anchor="start">Read projections</text>
+<text x="371" y="405" class="small" text-anchor="start">Player: observed information</text>
+<text x="371" y="426" class="small" text-anchor="start">Inspector: full state + replay</text>
+<rect x="675" y="355" width="255" height="95" rx="8" fill="#fcf8ed" stroke="#a88950" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="691" y="382" class="label" text-anchor="start">Future logic adapters</text>
+<text x="691" y="405" class="small" text-anchor="start">Shared semantic model</text>
+<text x="691" y="426" class="small" text-anchor="start">ASP / optional certificates</text>
+<polyline points="157,125 157,160 270,160 270,190" class="edge"/>
+<polyline points="477,125 477,190" class="edge"/>
+<polyline points="805,125 805,153 530,153 530,220 510,220" class="edge"/>
+<polyline points="510,250 620,250" class="edge"/>
+<text x="540" y="240" class="small" text-anchor="start">queries</text>
+<polyline points="360,290 360,325 160,325 160,355" class="edge"/>
+<polyline points="290,402 355,402" class="edge"/>
+<polyline points="775,290 775,355" class="edge"/>
+<text x="30" y="495" class="small" text-anchor="start">Solid: implemented boundary. Dashed: proposed extension. Optional services do not own world state.</text>
+</svg>

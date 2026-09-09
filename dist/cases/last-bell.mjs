@@ -7,6 +7,7 @@
 import { CASE, LOCATIONS, PEOPLE, CLUES, OBJECTS } from '../case.mjs';
 import {evidenceClaims,testimonyClaims,at} from './last-bell-claims.mjs';
 import {claimsAt,claimRelations} from '../claims.mjs';
+import {recordPlan,executePlanStep} from '../world-director.mjs';
 import { VERSION, timeLabel } from '../kernel.mjs';
 
 export { CASE, LOCATIONS, PEOPLE, CLUES, OBJECTS };
@@ -20,7 +21,7 @@ export function baseWorld(seed = 17) {
 }
 
 // Static tables + world factory the kernel needs.
-export const model = { PEOPLE, LOCATIONS, CLUES, OBJECTS, CASE, baseWorld, evidenceClaims, testimonyClues:['ada','alibi'], version: VERSION };
+export const model = { containers:{drawer:'vestry'}, agentPermissions:{silas:[{id:'conceal:folio',label:'Conceal the folio in the vestry drawer',object:'folio',requires:'detective_knows_accounts',location:'vestry',to:'drawer'}]}, PEOPLE, LOCATIONS, CLUES, OBJECTS, CASE, baseWorld, evidenceClaims, testimonyClues:['ada','alibi'], version: VERSION };
 
 /**
  * Bind this case's behavior to a kernel instance.
@@ -30,7 +31,7 @@ export const model = { PEOPLE, LOCATIONS, CLUES, OBJECTS, CASE, baseWorld, evide
 export function createBehavior(K) {
   const { commit, believe, remember, addEvidence, reject, startTravel, advance, local, has, nextId } = K;
 
-  // Structured claims and communicative plans remain case-authored; AI only realizes the line.
+  // Case accounts bound disclosures; optional AI selects and phrases permitted accounts.
   function speech(s,id,text,cause,data={}){
     const claims=(data.claims??[]).map(c=>({...c,claimant:id}));
     const action=s.events.findLast(e=>e.kind==='command')?.data.action;
@@ -64,7 +65,7 @@ export function createBehavior(K) {
     const options=[];
     if(said(s,id))options.push(['source','What is your account based on?']);
     if(id==='ada'&&s.events.some(e=>e.kind==='speech'&&e.actor===id&&e.data.listener==='player'&&(e.data.basis==='saw_coat'||e.data.topic==='identity')))options.push(['identity','Did you actually recognize the person’s face?']);
-    if(id==='ada'&&known(s,id,'needs_correction'))options.push(['correction','Will you correct your account to Bell?']);
+    if(id==='ada'&&(known(s,id,'needs_correction')||known(s,id,'correction_delivered')))options.push(['correction',s.world.flags.adaCorrectionDelivered?'Did you correct your account to Bell?':'Will you correct your account to Bell?']);
     if(id==='silas'&&has(s,'delivery')&&claimsAt(s,s.events.length-1,evidenceClaims).some(c=>c.key==='silas_alibi'&&c.value==='vestry'))options.push(['challenge_delivery','Your alibi conflicts with the 21:12 receipt. Explain.']);
     if(id==='silas'&&known(s,id,'alibi_challenged'))options.push(['appointment','Why were you meeting Edmund?']);
     if(id==='clara'&&has(s,'record')&&said(s,id))options.push(['challenge_record','The visiting record places you in the greenhouse.']);
@@ -132,12 +133,31 @@ export function createBehavior(K) {
     if(id==='clara'&&witnessed&&a.trust>=.6&&!s.world.flags.claraReportedFolio)candidates.push({id:'report',label:'Tell Bell what I saw Silas take',score:65,reasons:['I personally saw Silas take the folio.','The detective earned my cooperation.'],source:witnessed.sourceId});
     const winner = candidates.reduce((a, b) => (b.score > a.score ? b : a)), plan = winner.id;
     const decision = commit(s, { kind: 'decision', title: `${PEOPLE[id].name}: ${winner.label.toLowerCase()}`, actor: id, parents: [cause, winner.source], data: { candidates, selected: plan, reason: winner.reasons.join(' '), knowledgeUsed: a.beliefs.filter((b) => b.sourceId === winner.source).map((b) => b.key) }, changes: { [`npcs.${id}.intention`]: winner.label, [`npcs.${id}.plan`]: plan, [`npcs.${id}.lastDecision`]: nextId(s) } });
-    if(plan==='correct'||plan==='report'){
-      if(a.location!=='square')startTravel(s,id,'square',decision,plan==='correct'?'Find Bell to correct my testimony':'Report my observation to Bell');
+    // These authored policies and future AI policies share the same plan contract.
+    let directed=null;
+    if(plan==='correct')directed={actor:id,label:'correct the account to Bell',sources:[winner.source],steps:[
+      ...(a.location!=='square'?[{kind:'move',to:'square'}]:[]),
+      {kind:'communicate',recipient:'bell',location:'square',belief:'needs_correction',recipientPresent:s.world.npcs.bell.location==='square'&&!s.world.npcs.bell.travel}
+    ]};
+    if(plan==='conceal'&&['manor',id].includes(s.world.objects.folio))directed={actor:id,label:'retrieve and conceal the folio',sources:[winner.source],steps:[
+      ...(s.world.objects.folio==='manor'?[...(a.location!=='manor'?[{kind:'move',to:'manor'}]:[]),{kind:'take',object:'folio',from:'manor'}]:[]),
+      ...((s.world.objects.folio==='manor'||a.location!=='vestry')?[{kind:'move',to:'vestry'}]:[]),
+      {kind:'store',object:'folio',location:'vestry',to:'drawer'}
+    ]};
+    let planCause=decision;
+    if(directed){const admission=recordPlan(K,s,directed,decision);if(admission.audit.status!=='allow')return;planCause=admission.event;}
+    if(plan==='correct'){
+      executePlanStep(K,s,directed,planCause,{communicate:(_step,parent)=>{
+        const text='I must correct my account. The inn clock was twelve minutes fast. I saw an unidentified person in a green coat at 21:03, not an identified Rowan at 21:15.';
+        const e=commit(s,{kind:'speech',title:'Ada corrects her report to Bell',actor:id,location:a.location,parents:[parent,winner.source],data:{listener:'bell',assertion:text,intent:'Correct testimony',claims:testimonyClaims.ada_corrected},changes:{'flags.adaCorrectionDelivered':true,'flags.rumorShared':true},playerText:local(s,id)?`You overhear ${PEOPLE[id].name}: “${text}”`:null});
+        believe(s,'bell','adas_account','Ada corrected her account: the inn clock was twelve minutes fast. She saw an unidentified person in a green coat at 21:03; she did not identify Rowan.',.85,'testimony',e,true);remember(s,id,e);reconcileKnowledge(s);
+      }});
+    }else if(plan==='report'){
+      if(a.location!=='square')startTravel(s,id,'square',decision,'Report my observation to Bell');
       else if(s.world.npcs.bell.location==='square'){
-        const text=plan==='correct'?'I must correct my account. The inn clock was twelve minutes fast. I saw an unidentified person in a green coat at 21:03, not an identified Rowan at 21:15.':'I saw Silas take the red folio at the manor. I cannot say what he intended or where he put it afterward.';
-        const e=commit(s,{kind:'speech',title:plan==='correct'?'Ada corrects her report to Bell':'Clara reports the folio movement to Bell',actor:id,location:'square',parents:[decision,winner.source],data:{listener:'bell',assertion:text,intent:plan==='correct'?'Correct testimony':'Share a witnessed action',claims:plan==='correct'?testimonyClaims.ada_corrected:[]},changes:{[plan==='correct'?'flags.adaCorrectionDelivered':'flags.claraReportedFolio']:true},playerText:s.world.player.location==='square'?`You overhear ${PEOPLE[id].name}: “${text}”`:null});
-        believe(s,'bell',plan==='correct'?'adas_account':'clara_folio_report',text,plan==='correct'?.85:.8,'testimony',e,true);remember(s,id,e);
+        const text='I saw Silas take the red folio at the manor. I cannot say what he intended or where he put it afterward.';
+        const e=commit(s,{kind:'speech',title:'Clara reports the folio movement to Bell',actor:id,location:'square',parents:[decision,winner.source],data:{listener:'bell',assertion:text,intent:'Share a witnessed action',claims:[]},changes:{'flags.claraReportedFolio':true},playerText:local(s,id)?`You overhear ${PEOPLE[id].name}: “${text}”`:null});
+        believe(s,'bell','clara_folio_report',text,.8,'testimony',e,true);remember(s,id,e);
       }
     }else if (plan === 'warn') {
       if (a.location !== 'greenhouse') startTravel(s, id, 'greenhouse', decision, 'Find Rowan');
@@ -149,13 +169,11 @@ export function createBehavior(K) {
         remember(s, 'clara', e);
       }
     } else if (plan === 'conceal') {
-      if (s.world.objects.folio === 'manor') {
-        if (a.location !== 'manor') startTravel(s, id, 'manor', decision, 'Retrieve the forged folio');
-        else { const e = commit(s, { kind: 'action', title: 'Silas takes the red folio', actor: id, parents: [decision], changes: { 'objects.folio': 'silas' }, data: { object: 'folio', reason: 'Conceal incriminating records' }, playerText: local(s, id) ? 'Silas slips the red folio inside his coat. He notices you watching, but says nothing.' : null }); for(const [witness,npc]of Object.entries(s.world.npcs)){if(witness!==id&&npc.location===a.location&&!npc.travel){const observed=commit(s,{kind:'observation',title:`${PEOPLE[witness].name} sees Silas take the red folio`,actor:witness,location:a.location,parents:[e],data:{subject:'silas',object:'folio',observedAction:'take',observedLocation:a.location}});remember(s,witness,observed);believe(s,witness,'saw_folio_taken','I saw Silas take the red folio at the manor.',.99,'observation',observed,true);}}believe(s, id, 'folio_at_manor', 'The folio is no longer in the study; I am carrying it.', .99, 'observation', e, true); startTravel(s, id, 'vestry', e, 'Hide the folio in the deed drawer'); }
-      } else if (s.world.objects.folio === 'silas') {
-        if (a.location !== 'vestry') startTravel(s, id, 'vestry', decision, 'Hide the forged folio');
-        else { const e = commit(s, { kind: 'action', title: 'Silas hides the folio in the deed drawer', actor: id, parents: [decision], changes: { 'objects.folio': 'drawer', 'npcs.silas.concealed': true }, data: { object: 'folio', reachableAt: 'vestry', reason: 'Put the document among routine deeds' }, playerText: local(s, id) ? 'Silas pushes the red folio beneath a stack of deeds. The drawer closes with a soft scrape.' : null }); believe(s, id, 'folio_at_manor', 'I hid the forged folio in the deed drawer at the vestry.', .99, 'observation', e, true); }
-      } else commit(s, { kind: 'decision', title: 'Silas cannot find the folio where he expected', actor: id, parents: [decision], data: { reason: 'The attempted plan encountered a changed object location.' }, changes: { 'npcs.silas.concealed': true } });
+      if(directed)executePlanStep(K,s,directed,planCause,{
+        take:(_step,parent)=>{const e = commit(s, { kind: 'action', title: 'Silas takes the red folio', actor: id, parents: [parent], changes: { 'objects.folio': 'silas' }, data: { object: 'folio', reason: 'Conceal incriminating records' }, playerText: local(s, id) ? 'Silas slips the red folio inside his coat. He notices you watching, but says nothing.' : null }); for(const [witness,npc]of Object.entries(s.world.npcs)){if(witness!==id&&npc.location===a.location&&!npc.travel){const observed=commit(s,{kind:'observation',title:`${PEOPLE[witness].name} sees Silas take the red folio`,actor:witness,location:a.location,parents:[e],data:{subject:'silas',object:'folio',observedAction:'take',observedLocation:a.location}});remember(s,witness,observed);believe(s,witness,'saw_folio_taken','I saw Silas take the red folio at the manor.',.99,'observation',observed,true);}}believe(s, id, 'folio_at_manor', 'The folio is no longer in the study; I am carrying it.', .99, 'observation', e, true); startTravel(s,id,'vestry',e,'Hide the folio in the deed drawer');},
+        store:(_step,parent)=>{const e = commit(s, { kind: 'action', title: 'Silas hides the folio in the deed drawer', actor: id, parents: [parent], changes: { 'objects.folio': 'drawer', 'npcs.silas.concealed': true }, data: { object: 'folio', reachableAt: 'vestry', reason: 'Put the document among routine deeds' }, playerText: local(s, id) ? 'Silas pushes the red folio beneath a stack of deeds. The drawer closes with a soft scrape.' : null }); believe(s, id, 'folio_at_manor', 'I hid the forged folio in the deed drawer at the vestry.', .99, 'observation', e, true);}
+      });
+      else commit(s,{kind:'decision',title:'Silas cannot find the folio where he expected',actor:id,parents:[decision],data:{reason:'The attempted plan encountered a changed object location.'},changes:{'npcs.silas.concealed':true}});
     } else startTravel(s, id, routineDestination(s, id), decision, 'A standing morning obligation');
     if (id === 'ada' && a.location === 'square' && s.world.npcs.bell.location === 'square' && !s.world.flags.rumorShared) {
       const b = a.beliefs.find((x) => x.key === 'saw_rowan');
@@ -242,8 +260,8 @@ export function createBehavior(K) {
     } else if (id === 'ada' && clue === 'clock') {
       const response = speech(s, id, 'Twelve minutes fast? Then it was three minutes past nine. And I never saw his face. I’ve told the constable too much with too much certainty.', e, { intent: 'Correct an honest mistake',claims:testimonyClaims.ada_corrected });
       commit(s, { kind: 'belief', title: 'Ada retracts her identification and time', actor: id, parents: [response], changes: { 'flags.clockCorrected': true } });
-      believe(s, id, 'saw_rowan', 'I saw an unidentified person in a green coat at 21:03.', .96, 'inference', response, true);
-      if(s.world.flags.rumorShared)believe(s,id,'needs_correction','Bell heard my earlier mistaken account; I need to correct it in person.',.99,'inference',response,true);
+      believe(s, id, 'saw_rowan', 'I saw an unidentified person in a green coat at 21:03.', .96, 'inference', response, true,{supports:['saw_coat','player_has_clock']});
+      if(s.world.flags.rumorShared&&!s.world.flags.adaCorrectionDelivered)believe(s,id,'needs_correction','Bell heard my earlier mistaken account; I need to correct it in person.',.99,'inference',response,true,{supports:['saw_rowan']});
       // Bell retains his old account until Ada travels to him and speaks.
     } else if (id === 'rowan' && clue === 'record') {
       speech(s, id, 'So you checked before deciding. Thank you. I lent Silas my coat at 20:55, outside the inn.', e, { intent: 'Cooperate after corroboration', basis: 'coat_lent' });
@@ -279,6 +297,33 @@ export function createBehavior(K) {
     K.witnessMovement(s, 'player', 'arrival', 'square', arrival);
   }
 
+  // Append a source-linked update for completed exchanges, including older saves.
+  // Never rewrite the historical speech, patches or earlier belief snapshots.
+  // Narrative consequences of a shared transfer, independent of who proposed it.
+  function afterTransfer(s,id,step,event){
+    if(id!=='silas'||step.object!=='folio')return;
+    if(step.kind==='take'){
+      believe(s,id,'folio_at_manor','The folio is no longer in the study; I am carrying it.',.99,'observation',event,true);
+      for(const [witness,npc]of Object.entries(s.world.npcs))if(witness!==id&&!npc.travel&&npc.location===s.world.npcs[id].location){
+        const observed=s.events.findLast(e=>e.actor===witness&&e.kind==='observation'&&e.parents.includes(event));
+        if(observed)believe(s,witness,'saw_folio_taken','I saw Silas take the red folio at the manor.',.99,'observation',observed.id,true);
+      }
+    }
+    if(['conceal','store'].includes(step.kind)&&step.to==='drawer'){
+      commit(s,{kind:'action',actor:id,title:'Silas completes his concealment intention',parents:[event],changes:{'npcs.silas.concealed':true}});
+      believe(s,id,'folio_at_manor','I hid the forged folio in the deed drawer at the vestry.',.99,'observation',event,true);
+    }
+  }
+
+  function reconcileKnowledge(s){
+    if(!s.world.flags.adaCorrectionDelivered)return;
+    const speech=s.events.findLast(e=>e.kind==='speech'&&e.actor==='ada'&&e.data.listener==='bell'&&e.data.intent==='Correct testimony');
+    if(!speech)return;
+    K.completeIntention(s,'ada',{key:'needs_correction',completedKey:'correction_delivered',text:'I corrected my account to Bell: the person was unidentified and the corrected time was 21:03.',sourceId:speech.id});
+    const account=known(s,'bell','adas_account');
+    if(account?.sourceId===speech.id&&account.text===speech.data.assertion)believe(s,'bell','adas_account','Ada corrected her account: the inn clock was twelve minutes fast. She saw an unidentified person in a green coat at 21:03; she did not identify Rowan.',account.confidence,'testimony',speech.id,account.truth);
+  }
+
   function checkCase(s, accusation) {
     const selected = [...new Set(accusation.evidence ?? [])].filter((c) => has(s, c));
     const routes = CASE.proofRoutes.filter((r) => r.all.every((c) => selected.includes(c)));
@@ -308,5 +353,5 @@ export function createBehavior(K) {
     return { move: `Travel to ${LOCATIONS[a.to]?.name ?? a.to}`, inspect: `Inspect ${OBJECTS[a.object]?.label ?? a.object}`, ask: `Ask ${PEOPLE[a.person]?.name ?? a.person} about ${a.topic ?? 'last night'}`, present: `Show evidence to ${PEOPLE[a.person]?.name ?? a.person}`, wait: `Wait ${a.minutes ?? 10} minutes`, pin: 'Update pinned evidence', note: 'Write a hypothesis', accuse: 'Present an accusation', endConversation: 'End conversation', look: 'Look around' }[a.type] ?? 'Unrecognized command';
   }
 
-  return { canAsk, followupOptions, routineDestination, decide, ask, present, seedSession, checkCase, caseHealth, parseCommand, commandLabel };
+  return { afterTransfer, reconcileKnowledge, canAsk, followupOptions, routineDestination, decide, ask, present, seedSession, checkCase, caseHealth, parseCommand, commandLabel };
 }

@@ -1,3 +1,4 @@
+import {createKnowledge} from './knowledge.mjs';
 // Generic, case-agnostic simulation kernel.
 //
 // Owns the mechanics every mystery shares: the append-only event log, reversible
@@ -75,14 +76,7 @@ export function createKernel(model) {
     if (!a) return;
     commit(s, { kind: 'memory', title: `${PEOPLE[id].name} remembers an event`, actor: id, parents: [eventId], changes: { [`npcs.${id}.memories`]: [...a.memories, eventId].slice(-80) } });
   }
-  function believe(s, id, key, text, confidence, sourceType, sourceId, truth = null) {
-    const a = s.world.npcs[id], belief = { key, text, confidence, sourceType, sourceId, truth, acquired: s.world.minute };
-    const list = a.beliefs.filter((b) => b.key !== key);
-    list.push(belief);
-    const event = commit(s, { kind: 'belief', title: `${PEOPLE[id].name} updates a belief`, actor: id, parents: [sourceId], data: { belief }, changes: { [`npcs.${id}.beliefs`]: list } });
-    remember(s, id, event);
-    return event;
-  }
+  const {believe,retireBelief,completeIntention}=createKnowledge({commit,remember,model});
   function notice(s, id, cause, text) {
     if (local(s, id)) commit(s, { kind: 'observation', title: `You notice ${PEOPLE[id].name}`, actor: 'player', parents: [cause], playerText: text, changes: { [`player.lastSeen.${id}`]: { location: s.world.player.location, minute: s.world.minute } } });
   }
@@ -184,7 +178,10 @@ export function createKernel(model) {
     for (const [id, a] of Object.entries(s.world.npcs)) {
       if (!PEOPLE[id] || (a.location !== 'transit' && !LOCATIONS[a.location])) errors.push(`Invalid location for ${id}`);
       if ((a.location === 'transit') !== Boolean(a.travel)) errors.push(`Travel mismatch for ${id}`);
-      for (const b of a.beliefs) if (!ids.has(b.sourceId)) errors.push(`Untraced belief for ${id}`);
+      for (const b of a.beliefs) {
+        if (!ids.has(b.sourceId)) errors.push(`Untraced belief for ${id}`);
+        if(b.supports!==undefined&&(!Array.isArray(b.supports)||b.supports.some(p=>!p||!a.beliefs.some(premise=>premise.key===p.key&&premise.sourceId===p.sourceId))))errors.push(`Untraced active premise for ${id}`);
+      }
     }
     for (const e of s.world.player.evidence) if (!CLUES[e.clue] || !ids.has(e.eventId)) errors.push('Untraced evidence');
     if (s.world.player.location !== 'transit' && !LOCATIONS[s.world.player.location]) errors.push('Invalid player location');
@@ -211,7 +208,7 @@ export function createKernel(model) {
   }
 
   const api = {
-    model, withSpeech, withoutPlayerPresentLine, presentLineHidden, nextId, has, local, commit, remember, believe, notice, witnessMovement,
+    model, withSpeech, withoutPlayerPresentLine, presentLineHidden, nextId, has, local, commit, remember, believe, retireBelief, completeIntention, notice, witnessMovement,
     distance, startTravel, advance, addEvidence, reject, speech,
     worldAt, diagnostics, exportSession, importSession, baseWorld,
     // Injected NPC decision policy — set by the assembling engine to the active

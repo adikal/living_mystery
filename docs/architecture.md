@@ -12,7 +12,7 @@ The simulation is split into three layers so that content and generation can gro
 
 - **Kernel** (`dist/kernel.mjs`) — generic, case-agnostic mechanics: the append-only event log, reversible patches, deterministic replay (`worldAt`), save/load + integrity checks (`diagnostics`), and the neutral "simulation verbs" (`commit`, `believe`, `speech`, `witnessMovement`, `advance`, …). It knows nothing about a specific mystery. `createKernel(model)` binds it to a case's data tables and world factory; the NPC decision policy is **injected** via `kernel.decide` so the clock can drive character behavior without the kernel importing any content.
 - **Case** (`dist/cases/last-bell.mjs`, data in `dist/case.mjs`) — one mystery as data + behavior: `model` (people/locations/clues/objects/case), `baseWorld(seed)`, and `createBehavior(kernel)` returning the policy (`decide`, `routineDestination`), the authored dialogue (`ask`, `present`), session seeding, `checkCase`/`caseHealth`, and the command parser. A second or **procedurally generated** case is another module of this exact shape.
-- **Engine** (`dist/engine.mjs`) — a thin façade that assembles kernel + active case, hosts the generic action router (`dispatch`), and re-exports the stable public API the adapters and tests use. Swapping the active case is a one-line change here.
+- **Engine** (`dist/engine.mjs`) — a thin façade that assembles kernel + active case, hosts the generic action router (`dispatch`), and re-exports the stable public API the adapters and tests use. Selecting the active case is a one-line import change, but a fully reusable game still requires removing Last Bell assumptions from routing, UI and reachability adapters.
 
 **Typed contracts** live in `dist/schema.mjs` (JSDoc typedefs — no build step): `Event`, `Belief`, `Action`, `Model`, `Kernel`, `CaseBehavior`, `Case`, plus a declarative `ACTIONS` catalog and `validateAction()`. This is the shared vocabulary a generator, a symbolic verifier, and an LLM action-proposer target: a proposed action can be shape-validated against the catalog before the kernel executes it. Deeper semantic/precondition validation still lives in the kernel/case.
 
@@ -97,7 +97,7 @@ See [roadmap.md](roadmap.md) for the staged plan and manual acceptance checklist
 
 ## Structured claims and case dialogue
 
-`claims.mjs` validates attributed assertions and compares selected predicates. `last-bell-claims.mjs` supplies case-night presence intervals, document facts, and testimony. Acquisition time is separate from the asserted time. Speech contains an authored communicative plan (intent, belief basis, disclosure policy); LLM realization does not choose state changes.
+`claims.mjs` validates attributed assertions and compares selected predicates. `last-bell-claims.mjs` supplies case-night presence intervals, document facts, and testimony. Acquisition time is separate from the asserted time. Speech records its authored reference and communicative metadata. The active character pipeline selects an account, bounded stance changes and an optional physical-plan capability; engine-owned handlers apply all consequences. Historical wording-only realization remains presentation metadata.
 
 The claim projection used by Reasoning processes only player-visible events. It preserves old assertions and marks earlier claims by the same claimant/key as superseded. Overlapping location assertions with different values conflict; matching values agree. Disjoint death windows conflict. A planned appointment is a distinct predicate and does not establish presence. These are bounded comparisons, not a semantic solver, a confidence calculation, or proof of independent corroboration.
 
@@ -128,4 +128,38 @@ The top-level Reasoning view replaces the notebook Claims tab. Players assign ac
 
 [Shared symbolic representation and solver integration](symbolic-reasoning.md) specifies the next architecture: versioned facts, events, assertions, beliefs, hypotheses and rules; perspective-scoped queries; adapters to multiple logics starting with Z3; and engine-owned admission of attributed inferences. World truth, testimony and belief remain separate. Derived conclusions retain dependencies and are reconsidered when premises change; possible models never silently become world facts.
 
-The three main uses are future mystery generation, structured agent-output validation, and evaluation of the player's final case. Begin with read-only Last Bell account checks, then add inference feedback and action validation. ASP is an optional later adapter for discrete planning/generation; Lean is an optional certificate target. None is implemented yet. The symbolic service is independent of generative AI and must support scripted play as well.
+The three main uses are future mystery generation, structured agent-output validation, and evaluation of the player's final case. Prioritize agent-output validation (use case 2): begin with observational plan checks, then add inference feedback, enforcement and bounded investigation-viability checks. ASP is an optional later adapter for discrete planning/generation; Lean is an optional certificate target. The Z3 adapter, two authored plan integrations and shared AI-selectable action capabilities are implemented; ASP and Lean are not. The symbolic service is independent of generative AI and must support scripted play as well.
+
+
+## World Director: implementation and planned extensions
+
+The World Director coordinates the Game Master's consistency, investigation viability and recovery responsibilities. This expands symbolic use case 2 rather than introducing a fourth use case: generation establishes an initial viable world; the Director checks whether consequential actions preserve a viable investigation; final-case evaluation checks the submitted argument.
+
+The implementation now adds a bounded Director to engine preconditions, kernel diagnostics and authored policies: authored and bounded AI-selected plans use a common constraint compiler, and optional Z3 validates trial turns. A two-strategy engine replay checks an investigative witness for turns containing admitted take/store/give/conceal steps; general global route search remains planned. The proposed Director evaluates isolated candidate post-states, calls the shared symbolic service, and returns an auditable allow/reject/alternative/defer/recovery decision. The engine remains the only executor. Agents receive no hidden-world facts from Director checks.
+
+Check short-plan feasibility first. Then check evidence reachability before route-closing actions or deadline transitions, using the current proof bundles as initial search goals. Replay returned witness routes against the actual engine. Distinguish a found route, no route within stated bounds, and unresolved; never equate a finite search with a guarantee over all playthroughs. Recovery uses permitted authored actions and cannot rewrite the past. Both scripted and AI modes share these rules. See the [World Director contract](symbolic-reasoning.md#world-director-global-coordination-within-use-case-2) for ownership, failure policy, audit fields and acceptance criteria.
+
+
+### Director implementation boundary
+
+The synchronous engine records local admission for the authored integrations and shared queued plans, with immediate precondition checks at execution. Browser adapters opt into `commitDirectedTurn`: execute on a copy, query the independent Z3 service, verify returned witnesses and optionally replay an investigation route, then atomically replace state. Rejected local plans do not execute and do not make an otherwise harmless wait fail remote validation. Unknown service results defer required candidate turns. Full audits are non-public decision data, persisted in event history and excluded from player/character projections.
+
+The solver-neutral compiler and immediate executor share typed steps; narrative effects stay in case callbacks. This is not a complete declarative replacement of the case behavior layer. The first version checks candidate plans under explicit assumptions, not arbitrary history or guaranteed future meetings. See [implemented scope](symbolic-reasoning.md#implemented-first-slice-september-2026) and [testing](director-testing.md).
+
+
+## Shared plans and belief revisions
+
+`actions.mjs` is the closed NPC action contract; `symbolic.mjs` compiles its
+preconditions and effects, and `world-director.mjs` rechecks each executable step.
+`agent-plans.mjs` builds perspective-limited capabilities and owns the replayable
+pending-plan queue. Character turns may select a capability alongside dialogue;
+engine scheduling executes it after conversation release. Actor observations and
+attributed testimony are recorded at execution, never at proposal time. Case
+transfer callbacks preserve the authored consequences in both modes.
+
+`knowledge.mjs` owns source-linked replacement, retirement, explicit premise
+support, transitive inference invalidation and intention completion. Retired
+conclusions remain in historical snapshots. Automatic re-derivation and general
+solver-to-knowledge inference admission remain roadmap items.
+
+Director progress UI is tied to actual symbolic verification: ordinary scripted turns with no admitted plan query show no checking indicator. The pending message clears on completion or cancellation; no timed progress toast remains. AI and Director settings are independent.

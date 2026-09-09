@@ -108,3 +108,24 @@ test('Asking about accounts alone does not acquire an alibi that was never state
   const s=createSession();move(s,'vestry');ask(s,'silas','accounts');
   assert.ok(!s.world.player.evidence.some(e=>e.clue==='alibi'));
 });
+
+test('Completed corrections retire Ada’s intention and attribute Bell’s knowledge to her',()=>{
+ const s=createSession();dispatch(s,{type:'wait',minutes:60});move(s,'inn');inspect(s,'clock');
+ dispatch(s,{type:'present',person:'ada',clue:'clock'});
+ const before=s.events.length-1;
+ dispatch(s,{type:'wait',minutes:30});
+ const speech=s.events.find(e=>e.kind==='speech'&&e.actor==='ada'&&e.data.intent==='Correct testimony');
+ assert.ok(speech);
+ assert.ok(!s.world.npcs.ada.beliefs.some(b=>b.key==='needs_correction'));
+ assert.equal(s.world.npcs.ada.beliefs.find(b=>b.key==='correction_delivered').sourceId,speech.id);
+ assert.match(s.world.npcs.bell.beliefs.find(b=>b.key==='adas_account').text,/Ada corrected her account/);
+ assert.ok(worldAt(s,before).npcs.ada.beliefs.some(b=>b.key==='needs_correction'));
+ assert.deepEqual(importSession(exportSession(s)),s);
+ // Recreate an older save's active beliefs through valid, replayable fixture events.
+ commit(s,{kind:'belief',title:'Legacy correction fixture',changes:{'npcs.ada.beliefs':worldAt(s,before).npcs.ada.beliefs,'npcs.bell.beliefs':s.world.npcs.bell.beliefs.map(b=>b.key==='adas_account'?{...b,text:speech.data.assertion}:b)}});
+ const old=structuredClone(s.events),restored=importSession(exportSession(s));
+ assert.deepEqual(restored.events.slice(0,old.length),old);
+ assert.ok(!restored.world.npcs.ada.beliefs.some(b=>b.key==='needs_correction'));
+ assert.match(restored.world.npcs.bell.beliefs.find(b=>b.key==='adas_account').text,/Ada corrected/);
+ assert.deepEqual(importSession(exportSession(restored)),restored);healthy(restored);
+});

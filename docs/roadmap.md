@@ -2,7 +2,7 @@
 
 ## Direction
 
-The long-term goal is a playable town with simulated characters and generated, investigable mysteries. First make The Last Bell a complete reference case: believable interactions, actionable memories, executable history, and explanations for every consequential event. Keep the deterministic engine as the regression oracle. Optional AI character turns now combine response decisions and natural wording through perspective-limited context, a separate critic and atomic engine validation. Authored accounts bound disclosures and story consequences; ASP and SMT are not implemented.
+The long-term goal is a playable town with simulated characters and generated, investigable mysteries. First make The Last Bell a complete reference case: believable interactions, actionable memories, executable history, and explanations for every consequential event. Keep the deterministic engine as the regression oracle. Optional AI character turns now combine response decisions and natural wording through perspective-limited context, a separate critic and atomic engine validation. Authored accounts bound disclosures and story consequences. Optional Z3 checks validate authored and bounded AI-selected plans; ASP and general symbolic cognition remain future work.
 
 ## Current inspector iteration
 
@@ -31,19 +31,45 @@ The implementation is authored and bounded. The optional character mode accepts 
 
 ## Implemented: character decisions and natural dialogue
 
-All six characters support optional free-text turns, combined intent/account/wording proposals, attributed player memories, bounded trust and belief updates, explicit endings, audited critic/revision attempts, atomic commits and deterministic replay. Existing action buttons use the same pipeline when enabled. See [contract and testing](character-turns.md). No runtime solver or autonomous LLM movement policy was added.
+All six characters support optional free-text turns, combined intent/account/wording proposals, attributed player memories, bounded trust and belief updates, explicit endings, audited critic/revision attempts, atomic commits and deterministic replay. Existing action buttons use the same pipeline when enabled. See [contract and testing](character-turns.md). The World Director now checks bounded AI-selected physical plans as well as authored plans. Autonomous background LLM decisions and unrestricted plan composition remain future work.
 
-The next quality milestone is stronger structured claims and symbolic causal/temporal validation (start with Z3 for temporal and physical constraints), followed by executable prehistory and broader character planning. Introduce ASP for discrete plan/generation search only when those domains are explicit. Neither solver replaces semantic dialogue evaluation. Complete and playtest The Last Bell before procedural generation.
+The next quality milestone is broader structured-claim coverage, rule-driven re-derivation and solver-derived knowledge admission, followed by general bounded investigation search, executable prehistory and richer character planning. The finite action IR, Z3 admission, capability queue and explicit dependency invalidation are already implemented. Introduce ASP for discrete plan/generation search only when those domains are explicit. Neither solver replaces semantic dialogue evaluation. Complete and playtest The Last Bell before procedural generation.
 
 ## Next architecture milestone: shared symbolic reasoning
 
-Design: [Shared symbolic representation and solver integration](symbolic-reasoning.md). Planned, not implemented.
+Design: [Shared symbolic representation and solver integration](symbolic-reasoning.md). First bounded Director/Z3 slice implemented; broader architecture remains planned.
 
 Build one versioned model for physical events, assertions, beliefs, hypotheses and rules, with explicit perspective, time semantics and provenance. Translate supported fragments through adapters, starting with Z3; unsupported semantics must be reported rather than omitted. Add ASP only for a demonstrated discrete planning/generation need, and consider Lean only for independently checked proof certificates.
 
 The three main uses are **procedural mystery/world creation**, **validation of structured agent outputs**, and **evaluation of the final argument to the constable**. Speech may be false without being an invalid action. Final-case reasoning must expose assumptions and explore alternatives without using the hidden culprit key. Generation must check physical consistency, distinguishability and reachable evidence separately.
 
-Deliver in stages: precise shared schema and query contract → read-only Z3 account checks with conflict explanations → attributed inference events and dependency-based reconsideration → bounded agent-plan validation and final-case reasoning → executable prehistory and later procedural generation. Solver conclusions carry premises, perspective, applicable time, versions and status; possible, entailed, inconsistent and unresolved remain distinct. Neither remote knowledge nor corroboration may be manufactured by solver feedback. Preserve complete scripted play; symbolic checks do not require an LLM.
+Prioritize **use case 2**. The first shared IR, plan checks and bounded witness-replay slice is complete; continue through: precise shared schema and query contract → observational Z3 checks for character short plans through a small World Director → inference admission and enforced plan validation → bounded continued-viability checks for selected route-closing transitions → richer final-case reasoning and executable prehistory → procedural generation. Solver conclusions carry premises, perspective, applicable time, versions and status; possible, entailed, inconsistent and unresolved remain distinct. Preserve complete scripted play; symbolic checks do not require an LLM.
+
+### World Director and continued investigation viability
+
+The planned World Director is the global coordinator within use case 2, not another solver or a fourth use case. The Director checks authored and bounded capability plans and, when Z3 is enabled, requires an engine-replayed investigation witness for turns containing admitted take/store/give/conceal steps. The legacy `caseHealth()` indicator remains limited; neither it nor the new two-strategy witness check performs general reachability search.
+
+First check candidate short plans for compound physical/temporal feasibility. Then check proposed route-closing effects and deadline crossings against bounded investigative reachability, initially using the existing proof bundles. A route must include executable acquisition and accusation actions, and its witness sequence must replay successfully in the engine. Keep one viable route rather than guaranteeing that all choices or optional encounters succeed.
+
+Return explicit found/bounded-no-route/unresolved results with horizons and assumptions. Required unresolved checks defer a consequential transition or select a known-safe authored alternative; they never silently approve it. Recovery uses an explicit authored policy catalog, valid preconditions and recorded consequences. No retroactive evidence repair, hidden omniscient feedback, fabricated corroboration or intervention loops. Preserve failures and meaningful costs where a route remains.
+
+Acceptance: equivalent scripted/AI proposals get the same validation; optional losses remain allowed; another valid route can sustain an investigation; last-route threats produce a permitted alternative or deferral; missed deadlines trigger reconsideration; witness routes survive engine replay; stale queries and solver failures cannot authorize changes; inspector audits explain all interventions. Broader adversarial/branch robustness comes later. See the [full Director design](symbolic-reasoning.md#world-director-global-coordination-within-use-case-2).
+
+### Implemented Director slice and next work
+
+- Ada’s correction and Silas’s folio concealment produce inspectable typed short plans in scripted mode.
+- The shared IR and local witness evaluator check timing, location, possession and source knowledge. Immediate execution rechecks preconditions; future meetings remain conditional.
+- Optional Z3 service on port 8788 verifies candidate turns independently of Bedrock. Query/result matching, witness validation, cancellation, stale-state checks and atomic application are covered by tests.
+- Concealment turns require one engine-replayed investigation witness from two authored strategies. This preserves an explicit route under current deterministic policies, not all possible playthroughs.
+- Inspector decisions show plans, constraints, source events, solver results and witness actions. See [setup and test scenarios](director-testing.md).
+
+Implemented next layer:
+
+- A closed action contract for move, observe, communicate, take, give and conceal (plus legacy store), shared by compilation and execution.
+- AI-selected bounded physical plans, capability-checked against the current perspective and case policy, queued after validated dialogue, and rechecked at execution. The same queue/executor supports deterministic policies without any model calls.
+- Generic source-linked belief supersession, transitive invalidation of explicitly supported inferences, cycle rejection, and completed-intention retirement. Ada's revised inference declares its premises; her correction uses the generic completion API. Independent testimony does not change remotely.
+
+Next: broaden case-authored plan capabilities and real-model playtesting; move beyond the authored witness strategies to bounded symbolic reachability; add rule-driven re-derivation and solver-derived knowledge admission; add explicit last-route alternatives and recovery policies; extend validation to deadline crossings and intermediate states. Keep unsupported/unknown results explicit. Unrestricted plan composition, autonomous background AI turns, procedural generation and general final-case proofs remain future work.
 
 ## Visual identity for authored and procedural cases
 
@@ -67,12 +93,12 @@ Acceptance: preparing an unchanged case twice makes no new image requests; share
 
 1. **Playtest and evaluate the real AI pipeline; complete dialogue coverage.** Measure accepted replies, unnecessary fallbacks, unrelated answers, unsupported disclosures and latency using truthful, deceptive and uncertain scenarios. Extend communicative plans, follow-up chains, refusals, interruptions, and evidence reactions based on observed stalls. Expand the implemented account-selection and natural-response pipeline through playtesting; retain engine-validated disclosure capabilities.
 2. **Build the shared symbolic representation and strengthen claims.** Implement the versioned vocabulary, adapter capabilities, perspective-scoped query contract and inference provenance described in the symbolic design. Add spatial rooms, clock-relative observations, uncertainty intervals, explicit retraction links, shared source ancestry, and structured assertion coverage of all consequential dialogue. Generalize the current presence/window comparisons.
-3. **Z3 integration and inference feedback.** Start with read-only account compatibility, then add engine-admitted conclusions with dependency invalidation, bounded plan validation and final-case arguments. Return source-linked explanations and explicit unresolved results. Check action preconditions, travel feasibility, object possession, ordering, and knowledge provenance against the shared schema. Permit false beliefs and lies while keeping physical history coherent.
+3. **Z3 integration and inference feedback.** Prioritize use case 2 through observational and then enforced World Director plan checks, engine-admitted conclusions with dependency invalidation, and bounded evidence-route checks for selected consequential actions. Return source-linked explanations and explicit unresolved results. Check action preconditions, travel feasibility, object possession, ordering, and knowledge provenance against the shared schema. Permit false beliefs and lies while keeping physical history coherent.
 4. **Execute the authored prehistory.** Simulate meetings, crime, cover-up, and evidence creation, replacing background summaries with inspectable events.
 5. **Expand knowledge-driven decisions.** Information seeking, conflicting testimony, mistaken expectations, interrupted plans, explicit perception and memory policies, and communication goals beyond this case's correction/report/warning situations.
 6. **Improve deduction play.** Extend the implemented player-built Reasoning board with editable timelines, richer claim comparison, targeted challenges, and explanations of how evidence supports a theory beyond the current accusation rubric. Keep optional grading separate from the ungraded workspace.
 7. **Evaluate and improve AI dialogue.** Build adversarial truthful/lying/uncertain reference sets; measure critic false acceptance and rejection, voice consistency, and latency. Support a separately configured critic model. Mocked orchestration tests are not model-quality evaluations.
-8. **Check solvability and recovery.** Different investigative choices should retain viable routes. Distinguish optional clues, expired encounters, essential evidence, and believable recovery from damaged trust.
+8. **Broaden solvability and recovery.** Extend the first Director checks from milestone 3 across more investigative branches and uncertain NPC choices; test recovery-policy coverage and bounded-search limitations. Different investigative choices should retain viable routes. Distinguish optional clues, expired encounters, essential evidence, and believable recovery from damaged trust.
 9. **Deepen the inspector and debrief.** Belief-evolution tracks, focused causal graphs, bookmarks, branch-from-command-boundary, run comparisons, and failed-plan explanations. Keep player hints separate from omniscient debugging.
 10. **Build a spatial playable town.** Coordinates, route segments, visible journeys, routines, environmental interactions, and a top-down client; retain text play and debugging contracts.
 11. **Controlled procedural generation.** Vary schedules/evidence placement first, then motives/methods/culprits/relationships, validating both physical consistency and investigative distinguishability. Apply the asset-library, caching, budget, retry, and usage controls above before enabling automatic image generation for new cases.

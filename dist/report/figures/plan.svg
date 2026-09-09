@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-labelledby="title desc"><title id="title">Plan execution lifecycle</title><desc id="desc">Queued plans pause during engagement, run after release, resume at arrival and complete or block with source-linked audits.</desc><defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#496779" stroke-width="1.4"/></marker></defs><rect width="100%" height="100%" rx="12" fill="#f5f7f7"/><style>text{font-family:Arial,sans-serif;fill:#17313e} .label{font-size:17px;font-weight:600} .small{font-size:14px;fill:#4d6270} .edge{stroke:#496779;stroke-width:1.7;fill:none;marker-end:url(#arrow)}</style>
+<rect x="30" y="45" width="235" height="100" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="46" y="72" class="label" text-anchor="start">Pending</text>
+<text x="46" y="95" class="small" text-anchor="start">Stored plan and cursor</text>
+<text x="46" y="116" class="small" text-anchor="start">Conversation pauses execution</text>
+<rect x="360" y="45" width="235" height="100" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="376" y="72" class="label" text-anchor="start">Check next step</text>
+<text x="376" y="95" class="small" text-anchor="start">Current world conditions</text>
+<text x="376" y="116" class="small" text-anchor="start">Message source still valid</text>
+<rect x="690" y="45" width="235" height="100" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="706" y="72" class="label" text-anchor="start">Travelling</text>
+<text x="706" y="95" class="small" text-anchor="start">Actual graph duration</text>
+<text x="706" y="116" class="small" text-anchor="start">Resume on arrival</text>
+<polyline points="265,95 360,95" class="edge"/>
+<text x="283" y="80" class="small" text-anchor="start">release</text>
+<polyline points="595,95 690,95" class="edge"/>
+<text x="622" y="80" class="small" text-anchor="start">move</text>
+<polyline points="807,145 807,188 478,188 478,145" class="edge"/>
+<text x="610" y="179" class="small" text-anchor="start">arrival</text>
+<rect x="30" y="265" width="235" height="100" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="46" y="292" class="label" text-anchor="start">Blocked</text>
+<text x="46" y="315" class="small" text-anchor="start">Record reason; clear queue</text>
+<text x="46" y="336" class="small" text-anchor="start">Reconsideration required</text>
+<rect x="360" y="265" width="235" height="100" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="376" y="292" class="label" text-anchor="start">Execute immediate step</text>
+<text x="376" y="315" class="small" text-anchor="start">Observe / tell / transfer</text>
+<text x="376" y="336" class="small" text-anchor="start">Advance cursor; check again</text>
+<rect x="690" y="265" width="235" height="100" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="706" y="292" class="label" text-anchor="start">Completed</text>
+<text x="706" y="315" class="small" text-anchor="start">All effects occurred</text>
+<text x="706" y="336" class="small" text-anchor="start">Retire pending intention</text>
+<polyline points="400,145 400,215 148,215 148,265" class="edge"/>
+<text x="190" y="205" class="small" text-anchor="start">condition failed</text>
+<polyline points="520,145 520,265" class="edge"/>
+<polyline points="595,315 690,315" class="edge"/>
+<text x="611" y="298" class="small" text-anchor="start">last step</text>
+<polyline points="360,315 325,315 325,168 430,168 430,145" class="edge"/>
+</svg>

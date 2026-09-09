@@ -2,9 +2,31 @@
 
 A first playable, text-based Bellweather mystery with a visual simulation inspector.
 
+## Technical report
+
+Read the [Living Mystery technical report](dist/report/index.html), or the
+[continuous / print edition](dist/report/complete.html). With the game server
+running, the reading edition is also available at `/report/`.
+
+The report has twelve linked chapters and seven SVG diagrams covering the
+architecture, knowledge model, character reasoning, symbolic checks, World
+Director, worked examples, evaluation and procedural-generation research agenda.
+It distinguishes implemented, experimental and proposed behavior.
+
+Edit [the Markdown sources](docs/report/index.md) and figures, then rebuild:
+
+```sh
+npm run docs:build
+npm run docs:check
+```
+
+See [the authoring guide](docs/report/README.md) for the update and validation
+workflow. The report is local static documentation; building it makes no model
+requests and does not change the game or its saves.
+
 ## Play
 
-The browser application is in `dist/` and has no runtime dependencies, external services, or API keys. Serve that directory with any static HTTP server. (An optional, off-by-default AI-dialogue mode generates varied lines checked by a separate critic via a local Bedrock proxy — see `server/llm_proxy.py`; the game stays deterministic and offline without it.) A command-line adapter uses the same engine:
+The browser application is in `dist/`. Scripted play needs only a static HTTP server; it makes no model requests. Optional AI character reasoning uses a local Bedrock proxy, and optional World Director verification uses a separate Z3 service. These settings are independent. A command-line adapter uses the same engine:
 
 ```sh
 python3 -m http.server 8000 --bind 127.0.0.1 --directory dist
@@ -87,7 +109,7 @@ Tests: `node --test tests/*.test.mjs` and `python3 -m unittest discover -s tests
 
 ## Current boundaries
 
-The engine is authoritative within this single-player client, not a secure server. Source, exported saves and the inspector expose the solution. Optional AI character turns influence dialogue and bounded character state through validated proposals; the model cannot submit arbitrary world patches. Semantic critics can miss mistakes. Recorded runs replay deterministically; new AI runs may vary. There is no ASP/SMT solver, general LLM physical planning, procedural crime generation, automatic branching, spatial playable client, or cloud save synchronization yet.
+The engine is authoritative within this single-player client, not a secure server. Source, exported saves and the inspector expose the solution. Optional AI character turns influence dialogue and bounded character state through validated proposals; the model cannot submit arbitrary world patches. Semantic critics can miss mistakes. Recorded runs replay deterministically; new AI runs may vary. An optional Z3 adapter validates authored correction/concealment plans and bounded AI-selected capabilities through the shared action contracts. There is no ASP solver, general LLM physical planning, procedural crime generation, automatic branching, spatial playable client, or cloud save synchronization yet.
 
 Dialogue remains authored and bounded, with specific reactions for relevant evidence and explicit knowledge limits otherwise. Movement memories can be recounted through sightings; selected witnessed actions and learned corrections drive reporting plans. Claims cover selected assertions and support limited temporal/location comparisons, not a solver-backed proof of coherence. A Done marker means an option has been used successfully, not that repeating it cannot yield new information.
 
@@ -105,8 +127,22 @@ The evidence rubric is authored. It validates a playable case; it is not a proof
 
 See [the roadmap](docs/roadmap.md) for the sequence to finish The Last Bell before procedural generation, the more sophisticated inspector design, and a manual acceptance checklist. The current inspector opens on World, offers character perspectives and a milestone strip, and reveals missed opportunities only after a separate spoiler action.
 
-The planned [shared symbolic layer](docs/symbolic-reasoning.md) maps a common model to solver adapters, starting with Z3, and feeds attributed conclusions back through engine validation. Its main uses are procedural case creation, agent-output checks and final-case arguments. No symbolic solver is integrated yet.
+The planned [shared symbolic layer](docs/symbolic-reasoning.md) maps a common model to solver adapters, starting with Z3, and feeds attributed conclusions back through engine validation. Its main uses are procedural case creation, agent-output checks and final-case arguments. Z3/World Director checks cover Ada’s correction, Silas’s concealment and the shared capability-plan queue; see [setup and testing](docs/director-testing.md).
 
 ## Toward a Stardew-style presentation
 
 Keep commands, world events, and the public player projection independent of rendering. A future top-down town client can translate tile clicks into the existing actions and animate the resulting movements and observations. The next data-model work should introduce explicit spatial coordinates and route segments while preserving the same information boundary and inspector event contract.
+
+
+## Optional World Director / Z3
+
+This runs independently of AI and needs no AWS credentials. Create a Python virtual environment, install `server/requirements-solver.txt`, and run `.venv/bin/python server/director_server.py`. In the game menu choose **World Director → Enable Z3 turn checks**. Scripted mode stays immediate with local plan checks when this is off.
+
+Z3 verifies recorded short-plan constraints before a candidate turn commits. Turns with admitted take, store, give or conceal steps additionally need an engine-replayed investigation witness when Director verification is enabled. Inspect decision events for the checks and their assumptions. This is a bounded first slice, not a general no-dead-ends guarantee. [Detailed test guide](docs/director-testing.md).
+
+
+Character reasoning can now select bounded physical plans alongside dialogue.
+Plans start after the conversation, share the scripted action checks, and survive
+save/load. Belief revisions preserve their sources and invalidate explicitly
+dependent inferences. See [the character contract](docs/character-turns.md) and
+[Director testing](docs/director-testing.md) for the current scope and test steps.

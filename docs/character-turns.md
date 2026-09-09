@@ -6,11 +6,11 @@ The optional browser character mode combines response selection and natural dial
 
 1. Prepare an immutable turn ticket from the current session. Supply only the speaker's own beliefs (without omniscient truth labels), personality, goals, relationships, mood, last 18 retained memories, last 12 direct speech entries and persistent conversation state.
 2. Compile currently legal authored accounts on isolated session copies. An explicit question/evidence button offers its corresponding account; free text offers available topics and follow-ups. Source IDs and claim keys are capabilities, not generated references. Preview consequences exclude unrelated NPC activity.
-3. Generate one structured proposal: `intent`, `account`, `utterance`, `claims`, `sources`, `trust`, `belief`, `engagement`, and a short `rationale`. The rationale is an inspectable decision explanation, not private chain-of-thought. With no account, the character may clarify, challenge or refuse without asserting new facts.
+3. Generate one structured proposal: `intent`, `account`, `utterance`, `claims`, `sources`, `trust`, `belief`, `engagement`, optional `plan`, and a short `rationale`. The rationale is an inspectable decision explanation, not private chain-of-thought. With no account, the character may clarify, challenge, refuse or state an intention from the selected plan without asserting new past or present case facts.
 4. Check exact fields, enums, account availability, claim/source equality, numeric tokens and size bounds. A separate-context critic checks relevance, continuity, disclosure, factual equivalence, permitted deception, belief stance and explicit endings. A strict pass with no violations is required. Critic verdicts accept plain JSON or one enclosing JSON/unlabelled code fence; surrounding prose and multiple objects are rejected. The critic checks clearly unrelated answers and unexplained contradictions while allowing supported revisions, indirect replies, deliberate deflection and permitted lies. Both calls currently use the same configured model.
-5. Execute the accepted proposal on a fresh session copy through the existing case actions. Validate replay/world integrity, then atomically commit. A changed session invalidates the ticket. Cancellation commits nothing; restarting/importing invalidates pending replies. The world does not advance while waiting for the model.
+5. Execute the accepted proposal on a fresh session copy through the existing case actions. Validate replay/world integrity, then atomically commit. With World Director enabled, the browser retains an outer candidate copy until applicable Z3 and investigation-witness checks finish. A changed session invalidates the ticket. Cancellation commits nothing; restarting/importing invalidates pending replies. The world does not advance while waiting for the model.
 
-The model chooses a permitted account and its delivery, or a non-disclosure response. It cannot invent new case facts, submit patches, choose arbitrary physical actions or rewrite past events. Permitted lies remain lies; private beliefs are not automatically permitted disclosures. Existing case rules gate evidence, relationships and story consequences. Diagnostics are integrity checks, not a formal proof of semantic correctness or global solvability.
+The model chooses a permitted account and its delivery, or a non-disclosure response, and may select a bounded physical-plan capability. It cannot invent new case facts, submit patches, invent arbitrary physical actions or rewrite past events. Permitted lies remain lies; private beliefs are not automatically permitted disclosures. Existing case rules gate evidence, relationships and story consequences. Diagnostics are integrity checks, not a formal proof of semantic correctness or global solvability.
 
 ## Persistent character state
 
@@ -37,4 +37,35 @@ Failed explicit buttons retain their authored answer and case consequences. Fail
 - Inspect the decision's Character turn audit, export/import, and scrub the timeline. Accepted words and state should survive without fresh calls.
 - Stop the proxy: explicit questions should fall back to authored answers; free text should ask for clarification. Disable AI and complete an ordinary offline investigation.
 
-Automated tests use mocked model responses. They cover all six characters, legal consequences, deceptive accounts, uncertain player beliefs, critic rejection, budgets, stale/cancelled turns, UI wiring and deterministic replay. They do not establish real-model critic accuracy, voice quality or latency. Physical scheduling remains deterministic, and no ASP/SMT runtime is included.
+Automated tests use mocked model responses. They cover all six characters, legal consequences, deceptive accounts, uncertain player beliefs, critic rejection, budgets, stale/cancelled turns, UI wiring and deterministic replay. They do not establish real-model critic accuracy, voice quality or latency. Physical scheduling remains deterministic. Optional Z3 checks use the separate Director service; ASP is not included.
+
+## Shared physical plans (September 2026)
+
+Character proposal version 2 adds optional `plan: null | capabilityId`. Older
+version-1 proposals without the field still mean “no physical plan.” Tickets
+contain perspective-safe available plans: survey a public location, give a held
+object to someone present, share a newly witnessed location observation, or use
+a case-granted concealment capability. Silas's folio capability requires his
+existing knowledge that the detective knows the accounts. Private starting
+beliefs are not automatically shareable. The LLM chooses a bounded multi-step
+plan, not arbitrary patches or newly invented entities. Unrestricted plan
+composition and autonomous background LLM turns remain future work.
+
+The semantic critic checks relevance and promises against the selected plan.
+The plan's physical constraints are checked locally during admission and again
+at each execution step; with World Director enabled the same query also goes to
+Z3 before the candidate turn commits. Source, capability and stale-ticket checks
+remain mandatory even when Z3 is off. A failed generated turn cannot leave a
+queued plan behind. The queue is created only after the dialogue validates, and
+conversation engagement prevents execution until the player releases the NPC.
+Movement resumes at actual arrival; transfer and observation are instantaneous
+at the current minute. A changed recipient, object or message source blocks the
+remaining plan with an audit rather than inventing success. Completed/blocked
+intentions are replayable, and pending plans survive export/import.
+
+`actions.mjs` defines the closed vocabulary consumed by the symbolic compiler
+and executor: move, observe, communicate, take, give, conceal, and the legacy
+store alias. `agent-plans.mjs` supplies capability generation, queueing, generic
+execution, and local perception. Case callbacks retain special narrative effects
+(such as Clara learning she saw Silas take the folio). No new model calls are
+needed in scripted mode, and no model call is needed to finish a queued plan.

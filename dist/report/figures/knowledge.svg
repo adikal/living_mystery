@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 510" role="img" aria-labelledby="title desc"><title id="title">Belief revision and information locality</title><desc id="desc">Ada revises a premise, retiring its dependent conclusion and intention. Bell retains independent received testimony until a new speech event reaches him.</desc><defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#496779" stroke-width="1.4"/></marker></defs><rect width="100%" height="100%" rx="12" fill="#f5f7f7"/><style>text{font-family:Arial,sans-serif;fill:#17313e} .label{font-size:17px;font-weight:600} .small{font-size:14px;fill:#4d6270} .edge{stroke:#496779;stroke-width:1.7;fill:none;marker-end:url(#arrow)}</style>
+<rect x="30" y="35" width="275" height="105" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="46" y="62" class="label" text-anchor="start">Ada: recorded premises</text>
+<text x="46" y="85" class="small" text-anchor="start">Coat observation</text>
+<text x="46" y="106" class="small" text-anchor="start">Clock evidence received</text>
+<rect x="355" y="35" width="265" height="105" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="371" y="62" class="label" text-anchor="start">Ada: revised inference</text>
+<text x="371" y="85" class="small" text-anchor="start">Unidentified person · 21:03</text>
+<text x="371" y="106" class="small" text-anchor="start">Explicit premise references</text>
+<rect x="675" y="35" width="255" height="105" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="691" y="62" class="label" text-anchor="start">Ada: correction intention</text>
+<text x="691" y="85" class="small" text-anchor="start">Bell heard my earlier account</text>
+<text x="691" y="106" class="small" text-anchor="start">Completion still pending</text>
+<polyline points="305,87 355,87" class="edge"/>
+<polyline points="620,87 675,87" class="edge"/>
+<rect x="30" y="220" width="275" height="110" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="46" y="247" class="label" text-anchor="start">Premise changes again</text>
+<text x="46" y="270" class="small" text-anchor="start">Retire explicit dependents</text>
+<text x="46" y="291" class="small" text-anchor="start">Keep prior event snapshots</text>
+<rect x="355" y="220" width="265" height="110" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="371" y="247" class="label" text-anchor="start">Real encounter + speech</text>
+<text x="371" y="270" class="small" text-anchor="start">Travel and presence required</text>
+<text x="371" y="291" class="small" text-anchor="start">Source for received testimony</text>
+<rect x="675" y="220" width="255" height="110" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="691" y="247" class="label" text-anchor="start">Bell: independent belief</text>
+<text x="691" y="270" class="small" text-anchor="start">Retain earlier report until told</text>
+<text x="691" y="291" class="small" text-anchor="start">Then attribute revision to Ada</text>
+<polyline points="167,140 167,220" class="edge"/>
+<polyline points="803,140 803,180 488,180 488,220" class="edge"/>
+<polyline points="620,275 675,275" class="edge"/>
+<text x="622" y="258" class="small" text-anchor="start">transfer</text>
+<text x="35" y="392" class="label" text-anchor="start">No remote update: changing Ada’s beliefs alone does not change Bell’s testimony.</text>
+<text x="35" y="432" class="small" text-anchor="start">Dependency invalidation applies only to declared supports; automatic re-derivation is future work.</text>
+</svg>

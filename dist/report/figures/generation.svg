@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-labelledby="title desc"><title id="title">Proposed procedural case production</title><desc id="desc">Generate a constrained hidden history, execute it, derive knowledge and evidence, validate alternative explanations and reachable investigations, then produce playable content.</desc><defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#496779" stroke-width="1.4"/></marker></defs><rect width="100%" height="100%" rx="12" fill="#f5f7f7"/><style>text{font-family:Arial,sans-serif;fill:#17313e} .label{font-size:17px;font-weight:600} .small{font-size:14px;fill:#4d6270} .edge{stroke:#496779;stroke-width:1.7;fill:none;marker-end:url(#arrow)}</style>
+<rect x="30" y="35" width="265" height="100" rx="8" fill="#fcf8ed" stroke="#a88950" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="46" y="62" class="label" text-anchor="start">1. Case specification</text>
+<text x="46" y="85" class="small" text-anchor="start">Entities · actions · motives</text>
+<text x="46" y="106" class="small" text-anchor="start">Observation / evidence rules</text>
+<rect x="350" y="35" width="265" height="100" rx="8" fill="#fcf8ed" stroke="#a88950" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="366" y="62" class="label" text-anchor="start">2. Hidden-history search</text>
+<text x="366" y="85" class="small" text-anchor="start">Choose events and timing</text>
+<text x="366" y="106" class="small" text-anchor="start">Satisfy physical constraints</text>
+<rect x="670" y="35" width="260" height="100" rx="8" fill="#fcf8ed" stroke="#a88950" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="686" y="62" class="label" text-anchor="start">3. Execute prehistory</text>
+<text x="686" y="85" class="small" text-anchor="start">Produce traces and evidence</text>
+<text x="686" y="106" class="small" text-anchor="start">Derive legitimate perceptions</text>
+<polyline points="295,85 350,85" class="edge"/>
+<polyline points="615,85 670,85" class="edge"/>
+<rect x="670" y="215" width="260" height="110" rx="8" fill="#fcf8ed" stroke="#a88950" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="686" y="242" class="label" text-anchor="start">4. Check explanations</text>
+<text x="686" y="265" class="small" text-anchor="start">Discoverable discrimination</text>
+<text x="686" y="286" class="small" text-anchor="start">Explicit remaining ambiguity</text>
+<rect x="350" y="215" width="265" height="110" rx="8" fill="#fcf8ed" stroke="#a88950" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="366" y="242" class="label" text-anchor="start">5. Check investigation</text>
+<text x="366" y="265" class="small" text-anchor="start">Bounded reachable routes</text>
+<text x="366" y="286" class="small" text-anchor="start">Replay candidate witnesses</text>
+<rect x="30" y="215" width="265" height="110" rx="8" fill="#fcf8ed" stroke="#a88950" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="46" y="242" class="label" text-anchor="start">6. Produce playable case</text>
+<text x="46" y="265" class="small" text-anchor="start">Scripted dialogue + AI options</text>
+<text x="46" y="286" class="small" text-anchor="start">Public art / content manifests</text>
+<polyline points="800,135 800,215" class="edge"/>
+<polyline points="670,270 615,270" class="edge"/>
+<polyline points="350,270 295,270" class="edge"/>
+<rect x="190" y="420" width="580" height="85" rx="8" fill="#fcf8ed" stroke="#a88950" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="206" y="447" class="label" text-anchor="start">Validation before widening generation freedom</text>
+<text x="206" y="470" class="small" text-anchor="start">Counterexamples · human playtests · cost and failure budgets</text>
+<polyline points="163,325 163,375 330,375 330,420" class="edge"/>
+<text x="30" y="538" class="small" text-anchor="start">This complete pipeline is proposed. Today’s reference case and route checks provide individual building blocks.</text>
+</svg>

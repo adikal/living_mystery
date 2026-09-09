@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 630" role="img" aria-labelledby="title desc"><title id="title">Transactional character turn</title><desc id="desc">A restricted ticket leads to generation, structural checks, a critic and isolated execution; optional Director verification precedes commit.</desc><defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#496779" stroke-width="1.4"/></marker></defs><rect width="100%" height="100%" rx="12" fill="#f5f7f7"/><style>text{font-family:Arial,sans-serif;fill:#17313e} .label{font-size:17px;font-weight:600} .small{font-size:14px;fill:#4d6270} .edge{stroke:#496779;stroke-width:1.7;fill:none;marker-end:url(#arrow)}</style>
+<rect x="30" y="35" width="270" height="95" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="46" y="62" class="label" text-anchor="start">1. Prepare immutable ticket</text>
+<text x="46" y="85" class="small" text-anchor="start">Own perspective · legal accounts</text>
+<text x="46" y="106" class="small" text-anchor="start">Available plan capabilities</text>
+<rect x="355" y="35" width="270" height="95" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="371" y="62" class="label" text-anchor="start">2. Generate proposal</text>
+<text x="371" y="85" class="small" text-anchor="start">Intent · words · stance · plan</text>
+<text x="371" y="106" class="small" text-anchor="start">No arbitrary world patches</text>
+<rect x="680" y="35" width="250" height="95" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="696" y="62" class="label" text-anchor="start">3. Structural checks</text>
+<text x="696" y="85" class="small" text-anchor="start">Shape · sources · numbers</text>
+<text x="696" y="106" class="small" text-anchor="start">Capability IDs</text>
+<polyline points="300,82 355,82" class="edge"/>
+<polyline points="625,82 680,82" class="edge"/>
+<rect x="680" y="205" width="250" height="95" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="696" y="232" class="label" text-anchor="start">4. Semantic critic</text>
+<text x="696" y="255" class="small" text-anchor="start">Faithfulness and disclosure</text>
+<text x="696" y="276" class="small" text-anchor="start">Relevant, conditional promises</text>
+<rect x="355" y="205" width="270" height="95" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="371" y="232" class="label" text-anchor="start">5. Execute on a copy</text>
+<text x="371" y="255" class="small" text-anchor="start">Dialogue effects and plan queue</text>
+<text x="371" y="276" class="small" text-anchor="start">Replay / world integrity</text>
+<rect x="30" y="205" width="270" height="95" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="46" y="232" class="label" text-anchor="start">6. Optional Director</text>
+<text x="46" y="255" class="small" text-anchor="start">Z3 checks when needed</text>
+<text x="46" y="276" class="small" text-anchor="start">Selected route replay</text>
+<polyline points="805,130 805,205" class="edge"/>
+<polyline points="680,253 625,253" class="edge"/>
+<polyline points="355,253 300,253" class="edge"/>
+<rect x="30" y="385" width="270" height="105" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="46" y="412" class="label" text-anchor="start">7. Atomic commit</text>
+<text x="46" y="435" class="small" text-anchor="start">Starting state must still match</text>
+<text x="46" y="456" class="small" text-anchor="start">Record accepted effects + audits</text>
+<rect x="355" y="385" width="270" height="105" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="371" y="412" class="label" text-anchor="start">After conversation ends</text>
+<text x="371" y="435" class="small" text-anchor="start">Execute queued plan steps</text>
+<text x="371" y="456" class="small" text-anchor="start">Recheck at actual execution</text>
+<rect x="680" y="385" width="250" height="105" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="696" y="412" class="label" text-anchor="start">Failure paths</text>
+<text x="696" y="435" class="small" text-anchor="start">One model repair attempt</text>
+<text x="696" y="456" class="small" text-anchor="start">Fallback / defer / cancel</text>
+<polyline points="165,300 165,385" class="edge"/>
+<polyline points="300,438 355,438" class="edge"/>
+<polyline points="805,300 805,385" class="edge"/>
+<text x="35" y="550" class="label" text-anchor="start">Network latency does not advance simulation time. A plan promise is not a completed action.</text>
+<text x="35" y="580" class="small" text-anchor="start">The optional outer transaction can reject a candidate without applying its time or effects.</text>
+</svg>

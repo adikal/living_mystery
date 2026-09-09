@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-labelledby="title desc"><title id="title">Ada correction across two knowledge states</title><desc id="desc">Illustrative morning trace: Ada revises at 09:14, travels at 09:21 and speaks at 09:24; Bell retains the old account until that speech.</desc><defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#496779" stroke-width="1.4"/></marker></defs><rect width="100%" height="100%" rx="12" fill="#f5f7f7"/><style>text{font-family:Arial,sans-serif;fill:#17313e} .label{font-size:17px;font-weight:600} .small{font-size:14px;fill:#4d6270} .edge{stroke:#496779;stroke-width:1.7;fill:none;marker-end:url(#arrow)}</style>
+<text x="25" y="40" class="label" text-anchor="start">Acquisition and communication time · illustrative playthrough</text>
+<text x="185" y="87" class="label" text-anchor="start">08:53</text>
+<line x1="185" y1="105" x2="185" y2="350" stroke="#c8d7d9" stroke-dasharray="4 4"/>
+<text x="380" y="87" class="label" text-anchor="start">09:14</text>
+<line x1="380" y1="105" x2="380" y2="350" stroke="#c8d7d9" stroke-dasharray="4 4"/>
+<text x="575" y="87" class="label" text-anchor="start">09:21</text>
+<line x1="575" y1="105" x2="575" y2="350" stroke="#c8d7d9" stroke-dasharray="4 4"/>
+<text x="770" y="87" class="label" text-anchor="start">09:24</text>
+<line x1="770" y1="105" x2="770" y2="350" stroke="#c8d7d9" stroke-dasharray="4 4"/>
+<text x="25" y="160" class="label" text-anchor="start">Ada</text>
+<text x="25" y="280" class="label" text-anchor="start">Bell</text>
+<rect x="165" y="125" width="180" height="82" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="181" y="152" class="label" text-anchor="start">Original report</text>
+<text x="181" y="175" class="small" text-anchor="start">Rowan · 21:15</text>
+<rect x="360" y="125" width="180" height="82" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="376" y="152" class="label" text-anchor="start">Revised account</text>
+<text x="376" y="175" class="small" text-anchor="start">Unknown · 21:03</text>
+<rect x="555" y="125" width="180" height="82" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="571" y="152" class="label" text-anchor="start">Travelling</text>
+<text x="571" y="175" class="small" text-anchor="start">Correction pending</text>
+<rect x="750" y="125" width="180" height="82" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="766" y="152" class="label" text-anchor="start">Speech delivered</text>
+<text x="766" y="175" class="small" text-anchor="start">Intention complete</text>
+<rect x="165" y="245" width="180" height="82" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="181" y="272" class="label" text-anchor="start">Hears report</text>
+<text x="181" y="295" class="small" text-anchor="start">Retains testimony</text>
+<rect x="360" y="245" width="180" height="82" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="376" y="272" class="label" text-anchor="start">No new message</text>
+<text x="376" y="295" class="small" text-anchor="start">Old account remains</text>
+<rect x="555" y="245" width="180" height="82" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="571" y="272" class="label" text-anchor="start">No new message</text>
+<text x="571" y="295" class="small" text-anchor="start">Old account remains</text>
+<rect x="750" y="245" width="180" height="82" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
+<text x="766" y="272" class="label" text-anchor="start">Hears correction</text>
+<text x="766" y="295" class="small" text-anchor="start">Attributed to Ada</text>
+<polyline points="835,207 835,245" class="edge"/>
+<text x="25" y="396" class="label" text-anchor="start">Correcting one mind does not broadcast a correction to the town.</text>
+</svg>

@@ -1,3 +1,4 @@
+import {availablePlans,queuePlan,resumePlan} from './agent-plans.mjs';
 // Engine façade.
 //
 // Assembles a generic simulation KERNEL (kernel.mjs) with an active CASE
@@ -21,7 +22,8 @@ export const baseWorld = ActiveCase.baseWorld;
 // --- Assemble kernel + case ------------------------------------------------
 const K = createKernel(ActiveCase.model);
 const B = ActiveCase.createBehavior(K);
-K.decide = B.decide; // inject the NPC decision policy into the kernel's clock
+K.afterTransfer=B.afterTransfer;
+K.decide = (s,id,cause)=>{if(!resumePlan(K,s,id,cause))B.decide(s,id,cause);}; // inject the NPC decision policy into the kernel's clock
 
 // --- Kernel mechanics (re-exported) ---------------------------------------
 export const commit = K.commit;
@@ -29,7 +31,7 @@ export const distance = K.distance;
 export const worldAt = K.worldAt;
 export const diagnostics = K.diagnostics;
 export const exportSession = K.exportSession;
-export const importSession = K.importSession;
+export function importSession(text){const s=K.importSession(text);B.reconcileKnowledge(s);return s;}
 
 // --- Case behavior (re-exported) ------------------------------------------
 export const parseCommand = B.parseCommand;
@@ -37,6 +39,8 @@ export const followupOptions=B.followupOptions;
 export const playerClaims=(s,index=s.events.length-1)=>claimsAt(s,index,ActiveCase.model.evidenceClaims);
 export const checkCase = B.checkCase;
 export const caseHealth = B.caseHealth;
+export const characterPlans=(s,actor)=>availablePlans(K,s,actor);
+export const scheduleCharacterPlan=(s,plan,cause)=>queuePlan(K,s,plan,cause);
 
 export function createSession(seed = 17) {
   if (!Number.isInteger(seed) || seed < 0 || seed > 999999) throw Error('Seed must be an integer from 0 to 999999.');
@@ -62,7 +66,7 @@ export function dispatch(s, action) {
   const next = talking ? action.person : releases ? null : previous;
   if (s.world.status !== 'solved' && previous !== next) {
     const engagement = commit(s, { kind: 'action', title: next ? `You engage ${PEOPLE[next].name} in conversation` : 'You end the conversation', actor: 'player', parents: [start], data: { conversation: next }, changes: { 'player.conversation': next } });
-    if (previous) B.decide(s, previous, engagement);
+    if (previous) K.decide(s, previous, engagement);
   }
   if (s.world.status === 'solved' && !['pin', 'note', 'look'].includes(action.type)) {
     K.reject(s, 'The case is closed', 'The case is closed. You can review the notebook and inspect the full history, or begin again.', start);
@@ -116,12 +120,12 @@ export function dispatch(s, action) {
 }
 
 // Called by the validated character pipeline on an isolated session copy.
-export function dispatchCharacter(s,{person,text,proposal,action,audit,useAuthored=false,presented=null,origin=null}){
+export function dispatchCharacter(s,{person,text,proposal,action,audit,useAuthored=false,presented=null,origin=null,queuedPlan=null}){
   if(s.world.status==='solved'||!PEOPLE[person]||!K.local(s,person)||s.world.npcs[person].travel)throw Error('Conversation is no longer available.');
   const command=commit(s,{kind:'command',title:`Speak to ${PEOPLE[person].name}`,actor:'player',data:{action:{type:'converse',person,text},origin:origin?copy(origin):null}});
   const previous=s.world.player.conversation;
   const engagement=commit(s,{kind:'action',title:`You engage ${PEOPLE[person].name}`,actor:'player',parents:[command],changes:{'player.conversation':person}});
-  if(previous&&previous!==person)B.decide(s,previous,engagement);
+  if(previous&&previous!==person)K.decide(s,previous,engagement);
   const heard=commit(s,{kind:'speech',title:`You address ${PEOPLE[person].name}`,actor:'player',parents:[command],data:{listener:person,assertion:text,unverified:true,presented},playerText:`You
 “${text}”`});
   K.remember(s,person,heard);
@@ -150,6 +154,7 @@ export function dispatchCharacter(s,{person,text,proposal,action,audit,useAuthor
     disclosures:[...new Set([...prior.disclosures,...(proposal.account?[proposal.account]:[])])],lastDecision:decision};
   const delta=useAuthored?0:proposal.trust==='warmer'?.03:proposal.trust==='cooler'?-.03:0;
   commit(s,{kind:'relationship',title:`${PEOPLE[person].name} retains this exchange`,actor:person,parents:[decision,reply.id],changes:{[`npcs.${person}.dialogueState`]:dialogueState,[`npcs.${person}.trust`]:Math.max(0,Math.min(1,npc.trust+delta))}});
+  if(queuedPlan)scheduleCharacterPlan(s,queuedPlan,decision);
   if(proposal.engagement==='end'&&!useAuthored)dispatch(s,{type:'endConversation'});
   commit(s,{kind:'checkpoint',title:'Character turn complete',actor:'player',parents:[command,decision],data:{boundary:true}});
   return s;

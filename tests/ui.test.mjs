@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import * as directorTurns from '../dist/director-turn.mjs';
 import * as characterTurns from '../dist/character-turn.mjs';
 import * as art from '../dist/art.mjs';
 import * as engine from '../dist/engine.mjs';
@@ -18,11 +19,22 @@ function adapter(saved=null,overrides={}){
     if(!nodes.has(selector))nodes.set(selector,{innerHTML:'',scrollTop:0,dataset:{},addEventListener(){},setAttribute(){},focus(){},showModal(){this.open=true},close(){this.open=false},classList:{add(){},remove(){}}});
     return nodes.get(selector);
   };
-  const context=vm.createContext({...characterTurns,...art,...engine,...inspector,...claims,...llm,...dialogueSave,URL,structuredClone,setTimeout,clearTimeout,setInterval,clearInterval,
+  // Expose only explicitly imported names, matching browser module scope.
+  // Injecting every engine export previously masked missing UI imports.
+  const source=readFileSync(new URL('../dist/ui.mjs',import.meta.url),'utf8');
+  const modules={'./director-turn.mjs':directorTurns,'./character-turn.mjs':characterTurns,'./art.mjs':art,'./engine.mjs':engine,'./inspector.mjs':inspector,'./claims.mjs':claims,'./llm.mjs':llm,'./dialogue-save.mjs':dialogueSave};
+  const bindings={};
+  for(const match of source.matchAll(/^import \{([^}]+)\} from '([^']+)';$/gm)){
+    for(const name of match[1].split(',').map(s=>s.trim())){
+      assert.ok(Object.hasOwn(modules[match[2]],name),`Missing module export: ${name}`);
+      bindings[name]=modules[match[2]][name];
+    }
+  }
+  const context=vm.createContext({...bindings,URL,structuredClone,setTimeout,clearTimeout,setInterval,clearInterval,
     fetch:async()=>({ok:false,json:async()=>({})}),AbortController,
     localStorage:{getItem(key){return key==='living-mystery.bellweather.v1'?savedText:null},setItem(key,value){if(key==='living-mystery.bellweather.v1')savedText=value}},
     document:{querySelector:node,addEventListener(type,fn){listeners[type]=fn},body:{dataset:{}}},...overrides});
-  vm.runInContext(readFileSync(new URL('../dist/ui.mjs',import.meta.url),'utf8').replace(/^import .*;\n/gm,''),context);
+  vm.runInContext(source.replace(/^import .*;\n/gm,''),context);
   return {submit:id=>listeners.submit({preventDefault(){},target:{id}}),saved:()=>savedText,run:code=>vm.runInContext(code,context),node,change(target){listeners.change({target})},click(action,data={}){listeners.click({target:{closest(){return {dataset:{do:action,...data}}}}})}};
 }
 
@@ -249,4 +261,62 @@ test('The single AI checkbox enables both character settings and disables them t
  ui.node('#modal').querySelector=selector=>selector==='[name=endpoint]'?endpoint:selector==='[name=reasoning]'?toggle:null;
  ui.submit('llm-form');assert.equal(config.enabled,true);assert.equal(config.reasoning,true);
  toggle.checked=false;ui.submit('llm-form');assert.equal(config.enabled,false);assert.equal(config.reasoning,false);
+});
+
+test('World Director settings are independent of AI; successful checks persist and render audits',async()=>{
+ let on=false;
+ const ui=adapter(null,{directorEnabled:()=>on,setDirectorEnabled:v=>{on=v},llmActive:()=>false,
+   commitDirectedTurn:(s,t,opts)=>directorTurns.commitDirectedTurn(s,t,{...opts,fetchImpl:async(_url,init)=>({ok:true,json:async()=>({results:JSON.parse(init.body).queries.map(({id,query})=>({id,query,result:{status:'sat',witness:t.events.find(e=>e.id===id).data.director.witness}}))})})})});
+ ui.click('director');assert.match(ui.node('#modal').innerHTML,/independently of AI/);
+ ui.click('toggle-director');assert.equal(on,true);
+ ui.run("dispatch(session,{type:'move',to:'manor'});dispatch(session,{type:'inspect',object:'accounts'});dispatch(session,{type:'move',to:'vestry'});dispatch(session,{type:'present',person:'silas',clue:'ledger'})");
+ await ui.run("runDirectedAction({type:'endConversation'})");
+ assert.ok(ui.run("session.events.some(e=>e.data.directorResult?.status==='verified')"));
+ assert.match(ui.run("cursor=session.events.findLast(e=>e.data.directorResult).index;eventDetail()"),/Investigation route: route_found/);
+ const restored=adapter(ui.saved());assert.ok(restored.run("session.events.some(e=>e.data.directorResult?.status==='verified')"));
+});
+
+test('Cancelling a pending symbolic turn leaves the world unchanged and clears the pending UI',async()=>{
+ let resolve;
+ const ui=adapter(null,{directorEnabled:()=>true,commitDirectedTurn:(_s,_t,{signal,onChecking})=>new Promise(r=>{onChecking();resolve=r;signal.addEventListener('abort',()=>r({status:'cancelled'}))})});
+ const before=ui.run('JSON.stringify(session.world)');
+ const pending=ui.run("runDirectedAction({type:'wait',minutes:5})");
+ assert.match(ui.node('#app').innerHTML,/World Director is checking the turn/);
+ ui.click('cancel-character');await pending;
+ assert.equal(ui.run('JSON.stringify(session.world)'),before);
+ assert.equal(ui.run('directorPending'),false);
+});
+
+
+test('Wait 30 minutes with Director enabled clones and commits through actual UI imports',async()=>{
+ const ui=adapter(null,{directorEnabled:()=>true,llmActive:()=>false});
+ await ui.run("runDirectedAction({type:'wait',minutes:30})");
+ assert.equal(ui.run('session.world.minute'),510);
+ assert.notEqual(ui.node('#toast').textContent,'copy is not defined');
+ assert.equal(ui.run('characterBusy'),false);
+});
+
+test('Director progress exists only while checking, with no lingering timed notification',async()=>{
+ let finish;
+ const ui=adapter(null,{directorEnabled:()=>true,llmActive:()=>false,
+   commitDirectedTurn:(s,t,{onChecking})=>new Promise(resolve=>{onChecking();finish=()=>{s.world=t.world;s.events=t.events;resolve({status:'verified'});};})});
+ const pending=ui.run("runDirectedAction({type:'wait',minutes:5})");
+ assert.match(ui.node('#app').innerHTML,/World Director is checking the turn/);
+ assert.doesNotMatch(ui.node('#toast').textContent??'',/World Director is checking the turn/);
+ assert.equal(ui.run('session.world.minute'),480);
+ finish();await pending;
+ assert.equal(ui.run('session.world.minute'),485);
+ assert.doesNotMatch(ui.node('#app').innerHTML,/World Director is checking the turn/);
+ assert.doesNotMatch(ui.node('#toast').textContent??'',/World Director is checking the turn/);
+ assert.equal(ui.run('characterBusy'),false);
+});
+
+
+test('Scripted turns with no symbolic plans never display a checking indicator',async()=>{
+ const ui=adapter(null,{directorEnabled:()=>true,llmActive:()=>false});
+ ui.run("const shown=[];const renderBeforeCheck=render;render=()=>{renderBeforeCheck();shown.push(document.querySelector('#app').innerHTML);}");
+ await ui.run("runDirectedAction({type:'ask',person:'bell',topic:'case'})");
+ assert.ok(ui.run("session.events.some(e=>e.kind==='speech'&&e.actor==='bell')"));
+ assert.equal(ui.run("shown.some(html=>html.includes('World Director is checking the turn'))"),false);
+ assert.equal(ui.run('characterBusy'),false);
 });
