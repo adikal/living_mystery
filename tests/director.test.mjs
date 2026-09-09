@@ -4,6 +4,8 @@ import {spawnSync} from 'node:child_process';
 import {createSession,dispatch,copy,exportSession,importSession,diagnostics,commit,playerView} from '../dist/engine.mjs';
 import {compilePlan} from '../dist/symbolic.mjs';
 import {verifyDirectorTurn,commitDirectedTurn,investigateReachability} from '../dist/director-turn.mjs';
+// Real-solver tests are opt-in: skip cleanly when the .venv/z3 dependency is absent.
+const solverSkip=spawnSync('.venv/bin/python',['-c','import z3'],{encoding:'utf8'}).status===0?false:'z3-solver not installed in .venv; see docs/report/evaluation.md §9.2';
 
 function fixture(steps,extra={}){return compilePlan({actor:'actor',location:'a',objects:{paper:'a'},knowledge:['correction'],locations:{a:{},b:{}},distances:{'a:a':0,'a:b':8,'b:a':8,'b:b':0},minute:480,steps,...extra});}
 function z3(query){
@@ -14,7 +16,7 @@ function z3(query){
 const realFetch=async(_url,init)=>{const {queries}=JSON.parse(init.body);return {ok:true,json:async()=>({results:queries.map(({id,query})=>({id,query,result:z3(query)}))})};};
 function concealment(){const s=createSession();dispatch(s,{type:'move',to:'manor'});dispatch(s,{type:'inspect',object:'accounts'});dispatch(s,{type:'move',to:'vestry'});dispatch(s,{type:'present',person:'silas',clue:'ledger'});return s;}
 
-test('Shared constraints and real Z3 agree on feasible transfers and impossible travel/possession',()=>{
+test('Shared constraints and real Z3 agree on feasible transfers and impossible travel/possession',{skip:solverSkip},()=>{
  for(const [steps,status]of [
   [[{kind:'take',object:'paper',from:'a'},{kind:'move',to:'b'},{kind:'store',object:'paper',location:'b',to:'drawer'}],'sat'],
   [[{kind:'move',to:'b',duration:2}],'unsat'],
@@ -27,7 +29,7 @@ test('Shared constraints and real Z3 agree on feasible transfers and impossible 
  assert.throws(()=>fixture([{kind:'teleport',to:'b'}]),/Unsupported/);
 });
 
-test('Knowledge and actual recipient presence are required; future meetings remain conditional',()=>{
+test('Knowledge and actual recipient presence are required; future meetings remain conditional',{skip:solverSkip},()=>{
  const speak={kind:'communicate',recipient:'recipient',location:'a',belief:'correction',recipientPresent:true};
  assert.equal(z3(fixture([speak]).query).status,'sat');
  assert.equal(z3(fixture([speak],{knowledge:[]}).query).status,'unsat');
@@ -36,7 +38,7 @@ test('Knowledge and actual recipient presence are required; future meetings rema
  assert.equal(z3(future.query).status,'sat');assert.equal(future.query.assumptions.length,1);
 });
 
-test('Scripted Ada executes a source-linked correction only after meeting Bell, with deterministic replay',()=>{
+test('Scripted Ada executes a source-linked correction only after meeting Bell, with deterministic replay',{skip:solverSkip},()=>{
  const s=createSession();dispatch(s,{type:'wait',minutes:60});dispatch(s,{type:'move',to:'inn'});dispatch(s,{type:'inspect',object:'clock'});dispatch(s,{type:'present',person:'ada',clue:'clock'});
  assert.ok(!s.world.flags.adaCorrectionDelivered);
  dispatch(s,{type:'endConversation'});
@@ -50,7 +52,7 @@ test('Scripted Ada executes a source-linked correction only after meeting Bell, 
  assert.ok(!JSON.stringify(playerView(s)).includes('directorResult'));
 });
 
-test('Silas concealment is validated transactionally with a replayed surviving investigation route',async()=>{
+test('Silas concealment is validated transactionally with a replayed surviving investigation route',{skip:solverSkip},async()=>{
  const s=concealment(),before=exportSession(s),trial=copy(s);dispatch(trial,{type:'endConversation'});
  const result=await verifyDirectorTurn(s,trial,{fetchImpl:realFetch});
  assert.equal(result.status,'verified');assert.equal(exportSession(s),before);
@@ -63,7 +65,7 @@ test('Silas concealment is validated transactionally with a replayed surviving i
  for(const action of witness.actions)dispatch(play,action);assert.equal(play.world.status,'solved');
 });
 
-test('Unresolved route search defers the candidate rather than claiming a dead end',async()=>{
+test('Unresolved route search defers the candidate rather than claiming a dead end',{skip:solverSkip},async()=>{
  const s=concealment(),trial=copy(s);dispatch(trial,{type:'endConversation'});
  const r=await verifyDirectorTurn(s,trial,{fetchImpl:realFetch,reachability:()=>({status:'unresolved'})});assert.equal(r.status,'defer');
  assert.equal(investigateReachability(s,{horizon:1}).status,'unresolved');
@@ -92,7 +94,7 @@ test('Unmet immediate meetings defer without remotely updating recipient beliefs
  assert.ok(diagnostics(s).ok);
 });
 
-test('New observation, gift and concealment contracts agree with real Z3',()=>{
+test('New observation, gift and concealment contracts agree with real Z3',{skip:solverSkip},()=>{
  const extra={participants:{actor:{location:'a'},recipient:{location:'a'}},containers:{drawer:'b'}};
  for(const [steps,status]of [
   [[{kind:'observe',location:'a',object:'paper'}],'sat'],
@@ -104,7 +106,7 @@ test('New observation, gift and concealment contracts agree with real Z3',()=>{
  assert.throws(()=>fixture([{kind:'conceal',object:'paper',location:'a',to:'drawer'}],extra),/container/);
 });
 
-test('A queued shared survey is admitted through the real transactional Z3 boundary',async()=>{
+test('A queued shared survey is admitted through the real transactional Z3 boundary',{skip:solverSkip},async()=>{
  const {characterPlans,scheduleCharacterPlan}=await import('../dist/engine.mjs');
  const s=createSession(),trial=copy(s);
  scheduleCharacterPlan(trial,characterPlans(trial,'bell').find(p=>p.id==='survey:inn'),trial.events[0].id);

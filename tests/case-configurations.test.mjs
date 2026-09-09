@@ -8,6 +8,8 @@ import {prepareCharacterTurn} from '../dist/character-turn.mjs';
 import {makeCase} from '../dist/cases/bellweather.mjs';
 import {createRuntime} from '../dist/engine-runtime.mjs';
 import {CONFIGS} from '../dist/cases/bellweather-configs.mjs';
+// Real-solver test is opt-in: skip cleanly when the .venv/z3 dependency is absent.
+const solverSkip=spawnSync('.venv/bin/python',['-c','import z3'],{encoding:'utf8'}).status===0?false:'z3-solver not installed in .venv; see docs/report/evaluation.md §9.2';
 
 test('All authored configurations execute a sourced prehistory and solve in scripted mode',()=>{
  for(const spec of CONFIGS){
@@ -79,7 +81,7 @@ test('Capability filtering honors public constable availability and inaccessible
  assert.equal(r.CASE.culprit,'clara');
 });
 
-test('Contradictory authored prehistory fails construction, and real Z3 checks recorded plans',()=>{
+test('Contradictory authored prehistory fails construction, and real Z3 checks recorded plans',{skip:solverSkip},()=>{
  assert.throws(()=>createRuntime(makeCase({...CONFIGS[0],minute:1201})).createSession(),/time reversal/);
  const s=createSession(17,'bellweather-02');const queries=s.events.filter(e=>e.data.director?.query).map(e=>e.data.director.query);
  const run=spawnSync('.venv/bin/python',['-c','import json,sys; from server.symbolic_solver import solve; print(json.dumps([solve(q)["status"] for q in json.load(sys.stdin)]))'],{input:JSON.stringify(queries),encoding:'utf8'});

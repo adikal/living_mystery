@@ -344,7 +344,7 @@ test('Alternate case renders scoped profiles, missed clues and prehistory',()=>{
 
 
 test('New feed content scrolls after scripted, Director and AI turns; panel renders preserve reading position',async()=>{
- const ui=adapter(null,{llmActive:()=>true,llmConfig:()=>({reasoning:true}),proposeCharacterTurn:async()=>({proposal:null,audit:[],reason:'offline'})});
+ const ui=adapter(null,{llmActive:()=>true,llmConfig:()=>({reasoning:true}),proposeCharacterTurn:async(ticket)=>({proposal:null,audit:{reason:'offline',context:ticket.context,attempts:[]}})});
  const feed=ui.node('#journal'),side=ui.node('.notebook-content');feed.scrollHeight=1500;feed.scrollTop=20;side.scrollTop=87;
  ui.run('render()');assert.equal(feed.scrollTop,20);assert.equal(side.scrollTop,87);
  ui.run("act({type:'look'})");assert.equal(feed.scrollTop,1500);assert.equal(side.scrollTop,87);

@@ -4,7 +4,7 @@
 
 ## 9.1 What current tests establish
 
-The configuration implementation was validated on 2026-09-08 with 122 passing JavaScript tests and 10 passing Python tests. The suite covers engine behavior, claims, saved dialogue, character orchestration, shared plans, solver integration, configured cases and UI adapter logic. These are engineering regression results for this working tree, not player-study or model-quality measurements.
+The configuration implementation was validated on 2026-09-08 with 124 passing JavaScript tests and 10 passing Python tests. The real-solver JavaScript subset is opt-in: it skips cleanly when the `.venv`/Z3 dependency is absent, so a checkout without the solver still reports a green suite. The suite covers engine behavior, claims, saved dialogue, character orchestration, shared plans, solver integration, configured cases and UI adapter logic. These are engineering regression results for this working tree, not player-study or model-quality measurements.
 
 | Property | Representative evidence | Boundary of the conclusion |
 | --- | --- | --- |
