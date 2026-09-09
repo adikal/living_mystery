@@ -16,6 +16,21 @@ The project is not an unrestricted collection of LLM personas. Its central rule 
 
 > A deterministic simulation owns reality. Agents propose intentions within it. A narrative governor and symbolic checks preserve causality, solvability, and playability.
 
+The refined governing contract is to preserve physical, temporal and epistemic
+constraints and continued solvability as hard invariants, while maximizing
+character freedom within the dynamically admissible action space. This is a
+target for the full solution, not a guarantee established by the current slice.
+A player may miss optional content or pursue a wrong theory, but each admitted
+nonterminal state must retain an achievable route to a supported solution.
+
+The World Director first filters parameterized choices using local checks and
+applicable symbolic queries, then validates concrete effects again immediately
+before commitment. Scripted policies and AI both select within this boundary.
+Unknown required results defer the action or select a verified alternative;
+private constraints must not leak hidden facts through feedback or menus.
+See [the refined contract](symbolic-reasoning.md#governing-contract-autonomy-within-hard-invariants)
+for horizons, scheduling obligations, player actions and no-dead-end semantics.
+
 The design must preserve three distinct layers of knowledge:
 
 1. What actually happened.
@@ -217,10 +232,10 @@ NPC decision-making follows this pipeline:
 1. Identify agents requiring attention due to an event, schedule transition, blocked goal, player interaction, danger, or urgent need.
 2. Retrieve relevant beliefs and memories.
 3. Generate candidates from current intention, schedule, goals, affordances, obligations, threats, and social opportunities.
-4. Eliminate candidates that fail known preconditions.
+4. Construct a bounded admissible set using known preconditions and private Director checks; use symbolic filtering for compound constraints and viability obligations.
 5. Score remaining candidates deterministically.
 6. Optionally use an LLM to choose or explain ambiguous social strategies within the bounded set.
-7. Validate the typed proposal against authoritative state and narrative policies.
+7. Revalidate the composed plan and next typed transition against the latest authoritative state, hard invariants and future-opportunity obligations.
 8. Execute accepted actions through deterministic action schemas.
 9. Emit events, perceptions, belief updates, memories, and delayed consequences.
 

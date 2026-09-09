@@ -1,20 +1,56 @@
 {
   "title": "Living Mystery",
   "subtitle": "A deterministic substrate for believable characters and investigable worlds",
-  "edition": "0.1",
+  "edition": "0.2",
   "date": "2026-09-08",
   "chapters": [
-    ["index", "Abstract & reading guide"],
-    ["foundations", "1. Research questions"],
-    ["architecture", "2. Architecture"],
-    ["knowledge", "3. Knowledge & provenance"],
-    ["characters", "4. Character reasoning"],
-    ["symbolic", "5. Symbolic validation"],
-    ["director", "6. World Director"],
-    ["case-study", "7. The Last Bell"],
-    ["experience", "8. Player & inspector UX"],
-    ["evaluation", "9. Evaluation"],
-    ["generation", "10. Procedural generation"],
-    ["reference", "11. References & maintenance"]
+    [
+      "index",
+      "Abstract & reading guide"
+    ],
+    [
+      "foundations",
+      "1. Research questions"
+    ],
+    [
+      "architecture",
+      "2. Architecture"
+    ],
+    [
+      "knowledge",
+      "3. Knowledge & provenance"
+    ],
+    [
+      "characters",
+      "4. Character reasoning"
+    ],
+    [
+      "symbolic",
+      "5. Symbolic validation"
+    ],
+    [
+      "director",
+      "6. World Director"
+    ],
+    [
+      "case-study",
+      "7. The Last Bell"
+    ],
+    [
+      "experience",
+      "8. Player & inspector UX"
+    ],
+    [
+      "evaluation",
+      "9. Evaluation"
+    ],
+    [
+      "generation",
+      "10. Procedural generation"
+    ],
+    [
+      "reference",
+      "11. References & maintenance"
+    ]
   ]
 }

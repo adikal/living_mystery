@@ -42,3 +42,15 @@ The public player projection and omniscient inspector are presentation boundarie
 ## 2.5 Scaling implications
 
 Full reconstruction from W₀ is simple and auditable, but repeatedly scanning a growing event history will not scale indefinitely. Proposed improvements include periodic snapshots, indexed event lookup and causality queries, and bounded perspective retrieval. Each optimization must preserve prefix semantics: an index must not accidentally return a later observation while inspecting an earlier world. This is a correctness requirement before it is a performance feature.
+
+
+## 2.6 Proposed admission boundary
+
+The refined target adds an explicit pre-deliberation filtering boundary before
+scripted or AI choice, followed by a latest-state execution boundary. Certificates
+or constrained capabilities carry semantic dependencies, assumptions, horizon and
+rule/adapter versions; they are invalidated by relevant state or time changes.
+All admitted transitions must preserve hard invariants, using direct checks,
+applicable symbolic queries or a sound preservation argument. This extends the
+current selected-plan transaction rather than claiming it already covers the
+whole simulation. See [Figure 8](director.md#6-7-two-stage-admission-for-autonomous-agents).

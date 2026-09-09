@@ -69,3 +69,17 @@ store alias. `agent-plans.mjs` supplies capability generation, queueing, generic
 execution, and local perception. Case callbacks retain special narrative effects
 (such as Clara learning she saw Silas take the folio). No new model calls are
 needed in scripted mode, and no model call is needed to finish a queued plan.
+
+
+## Proposed extension: autonomy inside a dynamically admissible space
+
+The next design replaces a merely predefined plan menu with capabilities or
+parameter domains filtered before deliberation by local and applicable symbolic
+checks. Scripted candidates and event-triggered AI candidates share this boundary.
+Characters choose according to their own goals among admitted alternatives; hard
+world and investigation invariants cannot be traded against utility scores.
+After selection, composition and the next transition are rechecked on current
+state before commit. Conditions and cached results expire when their supports
+change. General autonomous deliberation and this broader filtering stage are
+proposed, not enabled by the current capability catalog. Private Director
+feedback, including observable menu differences, must not expose hidden facts.

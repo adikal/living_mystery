@@ -6,7 +6,7 @@
 
 A conventional puzzle can hold its evidence still while the player reasons. A living mystery must permit change without making inference meaningless. A witness may correct an honest mistake; a frightened suspect may conceal a document; a player may miss an encounter that really occurred. These developments should have causes the player can eventually understand. They should not be arbitrary repairs to a story produced after the fact.
 
-We distinguish four desirable properties. **Physical coherence** concerns locations, possession, durations and event order. **Epistemic coherence** concerns how an actor obtained and revised information. **Investigative viability** concerns whether an executable route to a supported conclusion remains. **Experiential quality** concerns whether the investigation is understandable, engaging and fair. Satisfying any one does not establish the others. In particular, a satisfiable temporal model may describe a dull or practically undiscoverable mystery.
+We distinguish four desirable properties. **Physical coherence** concerns locations, possession, durations and event order. **Epistemic coherence** concerns how an actor obtained and revised information. **Investigative viability** concerns whether an executable route to a supported conclusion remains. The refined target makes physical/temporal coherence, epistemic legitimacy and continued solvability hard admission invariants, while agent goals and dramatic pacing rank choices within the admissible space. **Experiential quality** concerns whether the investigation is understandable, engaging and fair. Satisfying any one does not establish the others. In particular, a satisfiable temporal model may describe a dull or practically undiscoverable mystery.
 
 ## 1.2 Research questions
 
@@ -39,3 +39,14 @@ Generative Agents describes agents whose recorded experiences support retrieval,
 Narrative planning research explicitly connects causal plot structure with understandable character intentions. That distinction motivates recording why a character chose an action in addition to checking whether the action can occur; the current scored policies are not an implementation of IPOCL. [Riedl and Young, 2010](https://faculty.cc.gatech.edu/~riedl/pubs/jair.pdf).
 
 Our research program is therefore an integration and evaluation problem: how much expressive freedom can a useful shared model support, and which failures require richer representation rather than another natural-language instruction?
+
+
+## 1.6 Hybrid autonomy as the governing objective
+
+Scripted structure defines hidden history, evidence origins and required
+investigative opportunities. Character policies choose how to pursue goals within
+those constraints. The target is solver-assisted filtering before deliberation
+and concrete validation immediately before commitment, with shared enforcement
+for scripted agents, AI agents, players and time-dependent effects. See the
+[refined Director contract](director.md#6-6-refined-governing-contract) for its
+formal scope, assumptions and current implementation gap.

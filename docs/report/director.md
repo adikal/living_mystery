@@ -6,7 +6,7 @@
 
 World Director is the term used for the global coordination layer. It belongs within runtime agent-output validation, the second of the three symbolic use cases. The other two are future case creation and evaluation of the player's final argument. The Director is not an omniscient character who whispers private truths to NPCs, and it is not itself a solver.
 
-Its intended obligation is twofold: candidate actions must respect the physical model, and selected consequential transitions must preserve an acceptable route through the investigation. Those are separate checks. Hiding a document can be physically possible yet destructive to a particular evidence route. Conversely, a surviving route cannot justify teleporting a document into an inaccessible room.
+Its target obligation is to preserve physical, temporal and epistemic constraints and continued solvability across every admitted transition. Today the runtime checks only selected plans and consequential turns. Those are separate checks. Hiding a document can be physically possible yet destructive to a particular evidence route. Conversely, a surviving route cannot justify teleporting a document into an inaccessible room.
 
 ## 6.2 What exists today
 
@@ -47,3 +47,107 @@ A recovery catalog needs prerequisites, costs, effects, disclosure rules and ret
 ## 6.5 Present limitations
 
 Checks currently inspect selected plans and the candidate turn's post-state, not every intermediate state or every deadline crossing. There is no general destructive-action policy, no exhaustive last-route detector and no automatic recovery scheduler. Z3 being disabled preserves deterministic local checks but removes the optional solver and witness-search boundary. “AI off” and “Director off” therefore have different meanings.
+
+
+## 6.6 Refined governing contract
+
+**Proposed target.** Maximize character autonomy inside a dynamically admissible
+action space while preserving three hard invariants: physical/temporal coherence,
+legitimate information flow, and continued solvability. Character utility, dramatic
+pacing and cooperation are preferences within that space, never weights that can
+override an invariant. False beliefs and deliberate lies remain valid: epistemic
+legitimacy concerns their origin and transmission, not universal agreement with
+world truth.
+
+The initial playable state and each admitted nonterminal state must retain an
+achievable route to a sufficiently supported solution. The player can overlook
+that route, waste effort, or believe the wrong account. Optional content may be
+lost permanently. The guarantee preserves the opportunity to solve, not eventual
+player success or every preferred investigative approach.
+
+Let `T(s,a)` be a modeled transition and `V(s)` mean that the state admits a viable
+investigation under explicitly enforced scheduling and information assumptions:
+
+```text
+A_safe(s) = {a in A(s) : legal(s,a) and V(T(s,a))}
+Choose according to character goals within A_safe(s).
+Recheck actual effects before committing T(s,a).
+```
+
+This is a specification, not a completed algorithm. Sound implementations can
+offer a certified subset instead of enumerating the whole action space. An
+incomplete bounded search can reject or defer opportunities it cannot establish;
+it cannot call them impossible in every model. General physical and semantic
+correctness remain relative to the declared world model.
+
+## 6.7 Two-stage admission for autonomous agents
+
+![Figure 8. Proposed solver-assisted choice filtering and execution-time validation. Hard invariants constrain both scripted and AI policies.](figures/admissibility.svg)
+
+First, relevant events trigger deliberation. A trusted capability generator builds
+parameterized choices from legitimate affordances, authored commitments and the
+character's goals. Local checks remove obvious impossibilities. Symbolic queries
+filter compound timing, possession and viability constraints where needed. The
+agent receives admitted capabilities or constrained parameter domains, with
+conditions and validity scope. It then selects an action or composes a bounded
+plan using its own priorities.
+
+Second, the system checks that the composition and next concrete effects remain
+admissible in the latest state. Two actions that are individually safe can become
+unsafe when combined. Another character may have moved, a source may have been
+revised, or a deadline may have passed. No pre-deliberation certificate is a
+permanent permission. The engine commits validated changes atomically, records
+provenance, and reconsiders remaining steps as dependencies change.
+
+Scripted policy supplies reliable candidates and authored commitments. It need
+not dictate every scene. For example, Ada can choose different ways to handle her
+mistake while the world preserves a legitimate opportunity to challenge the
+sighting. She need not always deliver a correction if other reachable evidence
+supports the investigation. This hybrid balances a structured mystery with
+character agency.
+
+## 6.8 Coverage, fairness and private checks
+
+An inductive no-dead-end argument needs a viable initial state and preservation
+across every admitted transition. That includes player actions, automatic effects,
+clock advances and intermediate travel or deadline events. Optimizations can use
+effect metadata and still-valid certificates to establish preservation without a
+fresh search, but cannot silently exempt classes of state changes.
+
+A witness that assumes Bell will be available later is conditional until that
+availability is enforced or a robust contingent strategy covers alternatives.
+Admitting successive NPC actions must preserve those obligations. Moreover, a
+world that endlessly postpones an opportunity can frustrate completion despite
+maintaining a hypothetical route at each instant. Fair scheduling and eventual
+access must therefore be modeled explicitly. Acquisition must be achievable from
+player-observable information, not require an oracle that knows hidden facts.
+
+The Director may use private world state to check legality. Its explanations to
+characters must not disclose the culprit, unseen evidence or other minds. Even
+filtering can leak secrets if a capability disappears only when a hidden fact is
+true. The visible vocabulary should come from legitimate affordances; sensitive
+rejections use restricted feedback and require hidden-state counterfactual tests.
+Full explanations belong in the omniscient inspector, not the notebook.
+
+Required unknown checks do not authorize execution. Use a separately verified
+alternative, a safe deferral or a declared recovery with ordinary prerequisites
+and effects. Waiting is not automatically safe around deadlines. A future mode
+claiming hard guarantees must preserve enforcement during solver outages through
+valid local alternatives or certificates; disabling a required solver cannot
+silently disable the invariants. Today's optional Director-off mode makes no
+such guarantee.
+
+## 6.9 Implementation boundary and next experiment
+
+The existing catalog uses local feasibility checks, and selected candidate turns
+receive optional Z3 and authored witness replay. General solver-assisted filtering
+before deliberation, comprehensive transition coverage, robust future obligations
+and autonomous replanning remain proposed. No gameplay guarantee was added by this
+document revision.
+
+The next bounded experiment is hybrid deliberation for Ada's correction: compare
+authored and AI-selected alternatives while preserving the same world constraints
+and evidence opportunities. Test stale choices, last-route threats, competing
+schedules, unsupported checks, repeated deferrals and information leakage before
+expanding the agent's freedom. Executable prehistory remains essential for the
+later procedural-generation pipeline.

@@ -47,3 +47,19 @@ For user experience, ask players to explain an apparent contradiction and author
 The case is authored around known scenarios, so test success may reflect favorable coverage. The same model route generates and criticizes dialogue, allowing correlated error. Bounds and fallback policies change the effective task distribution. Scripted witness replay assumes current NPC policies. Confidence labels may invite stronger interpretations than their derivation warrants. Inspector access can contaminate a player study unless spoiler exposure is controlled.
 
 A future evaluation release should archive code revision, configuration, case specification, seeds, command traces, solver versions, evaluation prompts and scoring rubrics. Model version and date matter because fresh requests are not guaranteed to reproduce prior wording. Event-log replay remains the reproducible record of an accepted run.
+
+
+## 9.5 Acceptance for constrained autonomy
+
+The proposed next evaluation must include player actions, clock/deadline effects
+and competing NPC transitions. Check that optional losses remain possible while
+last-route losses are blocked before commit, stale certificates cannot authorize
+changed effects, and composed plans are checked beyond their individual actions.
+Compare equivalent scripted and AI proposals under identical world states.
+
+Test required-check timeouts, unsupported actions, safe deferral at deadlines,
+future-meeting assumptions and repeated postponement. Inspect both returned text
+and capability availability for private-information leakage. Report how each
+witness depends on its horizon, scheduler and observable acquisition policy.
+These are new acceptance obligations, not results established by the current
+regression suite.

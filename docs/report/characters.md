@@ -50,3 +50,18 @@ Conversation engagement pauses the addressed character's autonomous activity. Ot
 ![Figure 4. Pending-plan lifecycle. Blocked plans record failure and require reconsideration; no automatic recovery is implied.](figures/plan.svg)
 
 Every step is rechecked. An absent recipient, changed possession, inaccessible container or revised message source can block the plan. Successful transfers create local perceptions and case-specific consequences. Save/load preserves the queue, so continuation does not need a new model call. A future planner should be allowed to revise a blocked intention, but that revision must itself pass admission and preserve the record of the failed attempt.
+
+
+## 4.6 Proposed hybrid deliberation
+
+The next step broadens event-triggered deliberation while retaining authored
+candidates and commitments. The Director constructs a dynamically admissible
+choice set before the character reasons, using inexpensive local checks and
+symbolic filtering where constraints interact. An agent ranks those choices for
+its own goals, then submits a concrete proposal for composition and execution-time
+checks. The menu is a sound bounded subset, not necessarily every possible plan.
+This broader filtering stage is proposed; today's catalog does not establish
+continued solvability for every offered choice. The
+[two-stage admission design](director.md#6-7-two-stage-admission-for-autonomous-agents)
+also addresses hidden-information leakage through capabilities and rejection
+feedback.

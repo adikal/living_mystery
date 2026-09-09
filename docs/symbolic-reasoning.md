@@ -117,7 +117,121 @@ The World Director records and checks the authored correction/concealment plans 
 
 Use identical Director rules for scripted and AI-generated proposals. Extend this same boundary to player actions that can close routes, without requiring model calls for scripted play. Keep simple local checks in ordinary code. The Director may access authoritative world state for private checks, but agent feedback is limited to legitimately available information; omniscient explanations belong only in the inspector.
 
-### Two validation points
+### Governing contract: autonomy within hard invariants
+
+**Proposed target, not a guarantee of the current prototype.** Preserve physical,
+temporal and epistemic constraints and continued solvability as hard invariants;
+maximize character autonomy within the dynamically admissible action space.
+Scripted policy and AI deliberation are alternative sources of intentions, not
+alternative authorities over reality.
+
+- **Physical and temporal coherence:** every committed transition respects the
+  declared action semantics, possession, location, duration and causal ordering.
+- **Epistemic legitimacy:** information changes require permitted perception,
+  communication or supported inference. Characters may lie, be mistaken, or hold
+  mutually inconsistent beliefs; those beliefs are not global physical axioms.
+- **Continued solvability:** the initial playable state and every admitted
+  nonterminal state retain an achievable investigation leading to a sufficiently
+  supported solution. The supported solved terminal state satisfies the goal.
+
+The player need not discover or choose that route. Optional clues, conversations,
+trust and preferred approaches can be lost. What cannot be admitted is a state
+with no remaining solution route. The action domain must include player actions,
+NPC actions, clock/deadline transitions and automatic consequences. Checking only
+agent proposals or turn-final snapshots cannot establish this invariant.
+
+Let `T(s,a)` be the authoritative transition and `V(s)` the set-membership
+predicate for viable investigation states under explicitly modeled scheduling,
+access and information assumptions. The ideal admissible action space is:
+
+```text
+A_safe(s) = { a in A(s) |
+    legal_physics_time_and_information(s, a)
+    and V(T(s, a)) }
+```
+
+An implementation may offer a sound, smaller subset rather than enumerate all
+of `A_safe`. Unknown or unsupported candidates stay unapproved. A bounded
+witness proves only what its horizon and assumptions cover. If a route assumes a
+future meeting or cooperation, that assumption must be enforced as an obligation
+or covered by a robust contingent strategy; it cannot be treated as an
+unconditional certificate. Repeated checks that preserve a hypothetical route
+while continually postponing its opportunities can still starve progress, so
+scheduled availability, fairness and eventual opportunities need explicit
+obligations. The guarantee is opportunity to solve, not inevitable completion.
+
+### Dynamic filtering before deliberation, validation before commitment
+
+The target runtime has two distinct admission stages:
+
+1. **Construct admissible choices.** Relevant events trigger reconsideration.
+   Generate parameterized templates from the character's known affordances,
+   goals and authored obligations. Use inexpensive local checks first; then use
+   symbolic queries where compound constraints or viability require them.
+   Offer certified capabilities or constrained parameter domains, with validity
+   conditions, snapshot/dependency identity and expiry. Conditional choices must
+   be labeled conditional, not promised as guaranteed future effects.
+2. **Validate the chosen effects.** The scripted policy or LLM selects or composes
+   a plan. Check composition: individually safe actions can interact unsafely.
+   Recheck the next concrete transition on the latest state, including affected
+   global obligations. Commit effects and audits atomically. Subsequent steps
+   are reconsidered when the world or their supports change.
+
+Agent utility ranks admitted choices according to the character's own goals.
+Physical coherence, legitimate knowledge and continued solvability are never
+weighted preferences that a high utility score can override. Author mystery
+facts, evidence-production rules and required opportunities; prefer these to
+forcing an exact sequence of character choices. Specific scripted commitments
+can exist, but their status and consequences must be explicit.
+
+Not every transition needs a fresh expensive search. Effect/dependency metadata
+can establish that a transition preserves a still-valid witness or obligation.
+Cache keys include semantic state dependencies, time bounds, assumptions and
+rule/adapter versions. Time and concurrent actions can invalidate a result even
+when the acting character has learned nothing new. Arbitrary caller patches
+must not bypass the admission boundary.
+
+Keep private filtering outside the character's epistemic context. The Director
+may use hidden truth to enforce constraints, but must not disclose a culprit,
+unseen evidence or other minds through rejection feedback. Even a capability
+menu can leak information through which choices disappear; derive the visible
+vocabulary from legitimate affordances, avoid secret-dependent explanations, and
+test hidden-state counterfactuals. A refusal is not evidence for the player.
+
+If a required check is unresolved, defer without consuming an unsafe time step,
+choose a separately verified alternative, or execute a declared safe recovery.
+Waiting is safe only if its deadline effects have also been checked. A solver
+outage must not downgrade a hard invariant: a future guaranteed scripted mode
+needs verified local alternatives or cached certificates with valid assumptions.
+The current optional Director-off mode does not provide that guarantee.
+
+### Acceptance for the refined target
+
+- Both scripted and AI proposals receive equivalent admission decisions for the
+  same state and effects; their utility preferences may differ.
+- Losing an optional encounter or one evidence route is allowed when a valid
+  alternative remains; a last-route loss is rejected before commitment.
+- Player choices, waiting, intermediate travel/deadline events and social effects
+  are covered, or have an explicit invariant-preservation argument.
+- A previously admitted plan is rechecked after a changed recipient, holder,
+  source, deadline or competing commitment; composing admitted steps is checked.
+- Unsupported semantics, timeouts and stale caches cannot authorize effects.
+  Recovery itself has checked prerequisites, costs and ordinary causal events.
+- Witnesses replay and expose their horizon/assumptions. Future autonomous choices
+  cannot invalidate reserved opportunities unnoticed, and repeated deferrals
+  cannot silently substitute for eventual investigative access.
+- The player is not required to use the surviving route. Its acquisition policy
+  must be achievable from observable information rather than requiring an oracle
+  that already knows hidden facts.
+- Private constraints do not become character knowledge or player evidence;
+  inspector explanations remain separate from agent feedback.
+
+Current scope remains local capability generation, selected plan checks, optional
+Z3 and two authored witness strategies. General viability certificates,
+solver-assisted pre-deliberation filtering and broader autonomous deliberation
+are the next design milestone, not newly implemented behavior.
+
+### Feasibility and viability obligations
 
 **Plan feasibility:** before adopting a new character plan, test the relevant combination of timing, travel, access, possession, causal prerequisites and committed interactions. Do not treat another agent's tentative plan or a character's expectation as a guaranteed future event. Revalidate before consequential execution because the world can change. Mistaken but reasonable attempts may fail naturally; physical feasibility is distinct from guaranteed achievement of the intention.
 
@@ -143,7 +257,7 @@ The goal is to preserve some meaningful investigation route, not every clue, con
 
 ### Decisions, fallback and recovery
 
-The Director records whether it allows a candidate, rejects a physical conflict, chooses an already validated alternative, defers an unresolved decision, or schedules a permitted recovery. On an unresolved required viability check, defer the route-closing transition or use a known-safe authored alternative. Existing scripted paths must not become dependent on an unavailable optional solver service.
+The Director records whether it allows a candidate, rejects a physical conflict, chooses an already validated alternative, defers an unresolved decision, or schedules a permitted recovery. On an unresolved required viability check, defer the route-closing transition or use a known-safe authored alternative. Current scripted play remains available with the optional service disabled, without claiming the target guarantee. A future guaranteed mode must retain enforcement through valid certificates or verified local alternatives; unavailable required checks never authorize an unchecked transition.
 
 Recovery is an authored policy catalog first, not unrestricted model improvisation. Examples include a later meeting opportunity or a legitimate alternate way to access an existing document. Each recovery needs preconditions, costs/delays, causal provenance and ordinary execution effects. It cannot silently resurrect destroyed evidence, invent corroborating testimony, teleport objects, overwrite established events or coerce a character into unexplained disclosure. Bound retries and avoid loops of repeated interventions. Preserve consequences such as delay and lost optional detail where appropriate.
 

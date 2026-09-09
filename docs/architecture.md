@@ -163,3 +163,26 @@ conclusions remain in historical snapshots. Automatic re-derivation and general
 solver-to-knowledge inference admission remain roadmap items.
 
 Director progress UI is tied to actual symbolic verification: ordinary scripted turns with no admitted plan query show no checking indicator. The pending message clears on completion or cancellation; no timed progress toast remains. AI and Director settings are independent.
+
+
+## Refined target: dynamic admissibility and hard invariants
+
+The full design treats physical/temporal coherence, legitimate information flow
+and continued solvability as hard invariants across every admitted transition.
+Character goals and narrative pacing rank choices only inside the legal space;
+they cannot outweigh these invariants. Scripted opportunities and commitments
+provide mystery structure while agents choose how to act within it.
+
+The target has two stages: solver-assisted capability filtering before agent
+deliberation, then concrete composition/next-effect validation before atomic
+commit. Filter results carry dependencies and assumptions; changed world state
+invalidates them. This applies to player, NPC and clock/deadline transitions,
+including intermediate effects, not just whole turn snapshots. Preserve a route
+the player can still achieve, not every optional encounter or inevitable victory.
+
+A valid witness must account for future scheduling and cooperation; hypothetical
+meetings cannot certify guaranteed access. Private constraint feedback and menus
+must not introduce new character knowledge. Required unknown checks use valid
+local alternatives, safe deferral or verified recovery, never silent approval.
+The present optional Z3 boundary and two authored routes are only a partial
+implementation. See the [formal design contract](symbolic-reasoning.md#governing-contract-autonomy-within-hard-invariants).

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 710" role="img" aria-labelledby="title desc">
+<title id="title">Proposed two-stage admissibility for hybrid autonomy</title>
+<desc id="desc">World state and invariant obligations inform pre-deliberation local and symbolic filtering. Scripted and AI policies choose within admitted capabilities. The engine validates composition and the next effects on current state before committing. Required unresolved results select a verified alternative or safe deferral, and every new event invalidates affected certificates. This is proposed architecture.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#496779" stroke-width="1.4"/></marker></defs>
+<rect width="960" height="710" rx="12" fill="#f5f7f7"/>
+<style>text{font-family:Arial,sans-serif;fill:#17313e}.title{font-size:17px;font-weight:600}.small{font-size:14px;fill:#4d6270}.box{fill:#fcf8ed;stroke:#a88950;stroke-width:1.5;stroke-dasharray:6 4}.edge{stroke:#496779;stroke-width:1.7;fill:none;marker-end:url(#arrow)}</style>
+<text x="30" y="33" class="small">PROPOSED TARGET · Dynamic choices, hard invariants, private constraint checks</text>
+<rect x="30" y="60" width="900" height="85" rx="8" class="box"/>
+<text x="48" y="89" class="title">World state + invariant obligations</text>
+<text x="48" y="115" class="small">Physical / temporal coherence · legitimate information · reachable solution · future access obligations</text>
+<rect x="30" y="215" width="420" height="115" rx="8" class="box"/>
+<text x="48" y="245" class="title">1. Filter before deliberation</text>
+<text x="48" y="272" class="small">Known affordances → local checks → symbolic queries</text>
+<text x="48" y="298" class="small">Admitted capabilities / bounded parameter domains</text>
+<rect x="530" y="215" width="400" height="115" rx="8" class="box"/>
+<text x="548" y="245" class="title">Scripted policy + agent deliberation</text>
+<text x="548" y="272" class="small">Authored commitments and character goals</text>
+<text x="548" y="298" class="small">Choose / compose within admitted alternatives</text>
+<polyline points="240,145 240,215" class="edge"/>
+<polyline points="450,272 530,272" class="edge"/>
+<rect x="530" y="410" width="400" height="115" rx="8" class="box"/>
+<text x="548" y="440" class="title">2. Validate before commitment</text>
+<text x="548" y="467" class="small">Latest state · composed plan · next concrete effects</text>
+<text x="548" y="493" class="small">All invariants remain hard admission conditions</text>
+<polyline points="730,330 730,410" class="edge"/>
+<rect x="30" y="410" width="420" height="115" rx="8" class="box"/>
+<text x="48" y="440" class="title">Verified alternative or safe deferral</text>
+<text x="48" y="467" class="small">Failure / required unknown: no unsafe effects</text>
+<text x="48" y="493" class="small">Restricted feedback does not disclose private facts</text>
+<polyline points="530,468 450,468" class="edge"/>
+<rect x="280" y="595" width="650" height="80" rx="8" class="box"/>
+<text x="298" y="625" class="title">Atomic effects + events + provenance</text>
+<text x="298" y="651" class="small">Reconsider on changes; invalidate affected assumptions and certificates</text>
+<polyline points="730,525 730,595" class="edge"/>
+<text x="744" y="567" class="small">admitted</text>
+<polyline points="280,635 15,635 15,177 125,177 125,215" class="edge"/>
+<text x="32" y="581" class="small">updated state</text>
+</svg>

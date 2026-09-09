@@ -8,7 +8,7 @@ Read the [Living Mystery technical report](dist/report/index.html), or the
 [continuous / print edition](dist/report/complete.html). With the game server
 running, the reading edition is also available at `/report/`.
 
-The report has twelve linked chapters and seven SVG diagrams covering the
+The report has twelve linked chapters and eight SVG diagrams covering the
 architecture, knowledge model, character reasoning, symbolic checks, World
 Director, worked examples, evaluation and procedural-generation research agenda.
 It distinguishes implemented, experimental and proposed behavior.

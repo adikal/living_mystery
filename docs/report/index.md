@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.1 · 8 September 2026**
+**Living technical report · Edition 0.2 · 8 September 2026**
 
 ### Abstract
 
@@ -35,3 +35,14 @@ These are engineering contributions of this prototype. We make no priority claim
 Start with [research questions and principles](foundations.md), then [architecture](architecture.md). The next three chapters detail [knowledge](knowledge.md), [character turns](characters.md) and [symbolic validation](symbolic.md). [World Director](director.md) explains the boundary between a feasible action and a viable investigation. [Worked examples](case-study.md) connect those mechanisms to actual play. The remaining chapters address [player and inspector experience](experience.md), [evaluation](evaluation.md), and [procedural generation](generation.md).
 
 The [reference chapter](reference.md) contains a glossary, source map, bibliography and maintenance protocol. A single-page edition collects every chapter for continuous reading and printing. Markdown sources and SVG diagrams are maintained alongside the implementation; generated HTML is a reproducible reading format rather than the editing source.
+
+
+### Edition 0.2 refinement
+
+The design now explicitly makes physical, temporal and epistemic constraints and
+continued solvability hard invariants, with character autonomy inside a dynamically
+admissible action space. The [Director chapter](director.md#6-6-refined-governing-contract)
+adds solver-assisted filtering before deliberation, execution-time revalidation,
+future-opportunity obligations and a clear distinction between the target guarantee
+and today's bounded implementation. This edition changes design documentation,
+not runtime enforcement.

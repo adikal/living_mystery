@@ -4,6 +4,34 @@
 
 The long-term goal is a playable town with simulated characters and generated, investigable mysteries. First make The Last Bell a complete reference case: believable interactions, actionable memories, executable history, and explanations for every consequential event. Keep the deterministic engine as the regression oracle. Optional AI character turns now combine response decisions and natural wording through perspective-limited context, a separate critic and atomic engine validation. Authored accounts bound disclosures and story consequences. Optional Z3 checks validate authored and bounded AI-selected plans; ASP and general symbolic cognition remain future work.
 
+## Next major milestone: hybrid autonomy under hard invariants
+
+**Proposed.** Preserve physical and temporal consistency, legitimate knowledge
+acquisition and continued solvability across admitted transitions. Scripted
+structure defines mystery facts and investigative opportunities; character goals
+rank choices inside the admissible space. Missing optional content is allowed;
+an unwinnable committed state is not. This is an explicit target, not today's
+two-route guarantee.
+
+1. Specify viability goals, observable acquisition actions, transition coverage,
+   horizons and future availability/cooperation obligations.
+2. Add pre-deliberation capability filtering: cheap local checks followed by
+   applicable symbolic queries, with source-limited feedback and dependency-aware
+   certificates or constrained parameter domains.
+3. Add event-triggered agent deliberation over those choices alongside authored
+   candidates; begin with alternate ways for Ada to handle her correction.
+4. Revalidate composed plans and next effects before commit, including player,
+   clock and deadline effects. Unknown results require a verified alternative or
+   safe deferral; do not assume waiting is harmless.
+5. Expand witness search and recovery, testing last-route threats, stale results,
+   competing agent choices, information leaks and repeated postponement.
+
+Executable prehistory remains a prerequisite for generated evidence and cases;
+it follows or proceeds alongside this autonomy milestone rather than replacing
+it. The current catalog is locally filtered, but general solver-assisted choice
+filtering and no-dead-end enforcement remain unimplemented. See the
+[refined symbolic contract](symbolic-reasoning.md#governing-contract-autonomy-within-hard-invariants).
+
 ## Current inspector iteration
 
 - World is the default view, controlled by the bottom event slider.
@@ -89,7 +117,7 @@ Before automatic procedural asset generation, implement:
 
 Acceptance: preparing an unchanged case twice makes no new image requests; shared approved assets are reused across compatible cases; retry and budget limits hold under failures; a case remains playable with fallback artwork. These automated controls are planned, not yet implemented.
 
-## Next development sequence
+## Broader development sequence
 
 1. **Playtest and evaluate the real AI pipeline; complete dialogue coverage.** Measure accepted replies, unnecessary fallbacks, unrelated answers, unsupported disclosures and latency using truthful, deceptive and uncertain scenarios. Extend communicative plans, follow-up chains, refusals, interruptions, and evidence reactions based on observed stalls. Expand the implemented account-selection and natural-response pipeline through playtesting; retain engine-validated disclosure capabilities.
 2. **Build the shared symbolic representation and strengthen claims.** Implement the versioned vocabulary, adapter capabilities, perspective-scoped query contract and inference provenance described in the symbolic design. Add spatial rooms, clock-relative observations, uncertainty intervals, explicit retraction links, shared source ancestry, and structured assertion coverage of all consequential dialogue. Generalize the current presence/window comparisons.

@@ -90,3 +90,4 @@ For a research or external-review snapshot, associate a report edition with a re
 | Edition | Date | Scope |
 | --- | --- | --- |
 | 0.1 | 2026-09-08 | Initial integrated report: deterministic simulation, bounded character plans, Z3 admission, belief dependencies, inspector and procedural-generation research agenda. |
+| 0.2 | 2026-09-08 | Refined hard-invariant contract, two-stage dynamic admissibility, hybrid autonomy, future-opportunity obligations and acceptance criteria; design changes only. |

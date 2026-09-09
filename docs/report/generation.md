@@ -6,7 +6,7 @@
 
 The Last Bell should become an adequately evaluated reference for dialogue, causality, investigation and debugging before the system generates entire mysteries. Otherwise generation multiplies unclear mechanics and makes failures harder to attribute. Completion means more than an accepted accusation: alternative investigative paths, failed interactions, timing variations and explanation quality need explicit coverage.
 
-The next generalization steps are broader character capabilities, automatic rule-driven re-derivation, general bounded investigation search and explicit recovery policies. Executable prehistory is another prerequisite. Current case-night knowledge is largely anchored to authored background summaries; a generated crime should leave evidence through simulated actions rather than prose retrospectively describing convenient traces.
+The immediate generalization milestone is hybrid autonomy under hard invariants: dynamic admissibility filtering, event-triggered choice and current-state enforcement. Supporting work includes automatic rule-driven re-derivation, general bounded investigation search and explicit recovery policies. Executable prehistory is another prerequisite. Current case-night knowledge is largely anchored to authored background summaries; a generated crime should leave evidence through simulated actions rather than prose retrospectively describing convenient traces.
 
 ## 10.2 Proposed case-production pipeline
 
