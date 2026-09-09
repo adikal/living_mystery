@@ -30,6 +30,13 @@ These paths are relative to the repository root. The report build checks their e
 | --- | --- | --- |
 | `dist/kernel.mjs` | Event commits, replay, time, travel, perception, import checks | [Architecture](architecture.md) |
 | `dist/engine.mjs` | Case assembly, action routing, transactional character execution | [Architecture](architecture.md) |
+| `dist/engine-runtime.mjs` | Case-bound command runtime and kernel assembly | [Architecture](architecture.md) |
+| `dist/prehistory.mjs` | Executable evening events and evidence origins | [Generation](generation.md) |
+| `dist/cases/bellweather-configs.mjs` | Three authored case specifications | [Worked examples](case-study.md) |
+| `dist/cases/bellweather.mjs` | Configured tables, scripted dialogue and evidence rubric | [Generation](generation.md) |
+| `dist/investigation.mjs` | Bounded acquisition search and witness replay | [Director](director.md) |
+| `dist/admission.mjs` | Mandatory configured transition checks and capability previews | [Director](director.md) |
+| `tests/case-configurations.test.mjs` | Configuration, admission, provenance and real-Z3 regressions | [Evaluation](evaluation.md) |
 | `dist/case.mjs` | Authored people, places, evidence and case solution | [Worked examples](case-study.md) |
 | `dist/cases/last-bell.mjs` | Scripted policy, dialogue, case consequences and reconciliation | [Worked examples](case-study.md) |
 | `dist/schema.mjs` | JSDoc contracts and player-action catalog | [Architecture](architecture.md) |
@@ -41,7 +48,7 @@ These paths are relative to the repository root. The report build checks their e
 | `dist/agent-plans.mjs` | Available capabilities, queue, execution and observations | [Character turns](characters.md) |
 | `dist/symbolic.mjs` | Finite query compiler and concrete witness evaluator | [Symbolic layer](symbolic.md) |
 | `dist/world-director.mjs` | Local plan admission and immediate step checks | [Director](director.md) |
-| `dist/director-turn.mjs` | Optional solver boundary and authored route replay | [Director](director.md) |
+| `dist/director-turn.mjs` | Optional solver boundary and acquisition witness validation | [Director](director.md) |
 | `server/symbolic_solver.py` | Bounded Z3 translation and solving | [Symbolic layer](symbolic.md) |
 | `server/director_server.py` | Loopback solver endpoint | [Director](director.md) |
 | `server/llm_proxy.py` | Optional model request proxy | [Character turns](characters.md) |
@@ -91,3 +98,4 @@ For a research or external-review snapshot, associate a report edition with a re
 | --- | --- | --- |
 | 0.1 | 2026-09-08 | Initial integrated report: deterministic simulation, bounded character plans, Z3 admission, belief dependencies, inspector and procedural-generation research agenda. |
 | 0.2 | 2026-09-08 | Refined hard-invariant contract, two-stage dynamic admissibility, hybrid autonomy, future-opportunity obligations and acceptance criteria; design changes only. |
+| 0.3 | 2026-09-08 | Bounded acquisition/admission, parameterized executable prehistory, three selectable authored configurations, provenance and save isolation; generation remains future work. |

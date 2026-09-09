@@ -5,6 +5,8 @@ import {compilePlan,SYMBOLIC_VERSION} from './symbolic.mjs';
 export function assessPlan(kernel,session,plan){
   const npc=session.world.npcs[plan.actor];
   try{
+    const commitment=kernel.model.commitments?.[plan.actor];
+    if(commitment&&session.world.minute>=commitment.from&&plan.steps.some(step=>step.kind==='move'&&step.to!==commitment.location))return {version:SYMBOLIC_VERSION,mode:'local-witness',status:'reject',reason:'A standing public commitment requires this character to remain available here.',plan};
     const distances={};for(const a of Object.keys(kernel.model.LOCATIONS))for(const b of Object.keys(kernel.model.LOCATIONS))distances[`${a}:${b}`]=kernel.distance(a,b);
     const compiled=compilePlan({actor:plan.actor,location:npc.location,objects:session.world.objects,
       knowledge:npc.beliefs.map(b=>b.key),locations:kernel.model.LOCATIONS,distances,steps:plan.steps,minute:session.world.minute,

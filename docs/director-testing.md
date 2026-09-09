@@ -50,7 +50,7 @@ npm test
 
 The Director integration tests require the local `.venv` with Z3 installed and invoke the real solver without HTTP or AWS. They compare constraint results with local evaluation and replay route witnesses through the engine. Existing JavaScript tests require Node 20 or newer. These are not real-LLM quality tests or browser layout tests.
 
-The first slice uses two authored plan families and two authored candidate investigation strategies. It does not yet implement unrestricted AI physical plans, general symbolic route search, recovery scheduling, procedural cases, ASP or Lean. No witness found within the bounded candidate search means unresolved, not a proven dead end.
+The original plan fixtures cover two authored plan families; investigation validation now searches acquisition actions and replays candidate witnesses. It does not yet implement unrestricted AI physical plans, general symbolic route search, recovery scheduling, procedural sampling, ASP or Lean. No witness found within the bounded candidate search means unresolved, not a proven dead end.
 
 
 ## AI-selected plans and dependency revisions
@@ -78,3 +78,7 @@ background model calls or let dialogue invent new physical verbs. Failed
 execution records a blocked plan for reconsideration; automatic replanning is
 future work. Real-model willingness, wording and critic quality require manual
 playtesting beyond the mocked model tests.
+
+## Configured mysteries, no AI or solver service required
+
+See [configuration testing](case-configurations.md). The three new configurations preserve a bounded acquisition witness at the public dispatch boundary even with the optional Director toggle disabled. Tests cover optional clue loss, intermediate loss restored by turn end, a deadline crossed by waiting, unavailable weapon transfers, save isolation and contradictory prehistory. Z3 still independently checks represented short plans; it does not perform the acquisition search. The original case retains its prior optional admission behavior.

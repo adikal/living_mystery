@@ -1,5 +1,5 @@
 // Perspective-limited character decisions. Models propose; the engine commits.
-import {CASE,PEOPLE,LOCATIONS,copy,dispatch,dispatchCharacter,exportSession,diagnostics,followupOptions,characterPlans} from './engine.mjs';
+import {CASE,PEOPLE,LOCATIONS,copy,dispatch,dispatchCharacter,exportSession,diagnostics,followupOptions,characterPlans,caseTables} from './engine.mjs';
 import {llmActive,llmConfig,parseCritic,parseJsonLoose} from './llm.mjs';
 // The complete roster of people and places; given to the critic to check that a
 // reply never names someone/somewhere outside the story or by a wrong name.
@@ -27,6 +27,7 @@ const plain=x=>x&&typeof x==='object'&&!Array.isArray(x);
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 
 function perspective(s,id){
+  const {PEOPLE,LOCATIONS}=caseTables(s);
   const npc=s.world.npcs[id],p=PEOPLE[id];
   const memories=npc.memories.slice(-18).map(eid=>s.events.find(e=>e.id===eid)).filter(Boolean).map(e=>({id:e.id,minute:e.minute,kind:e.kind,
     ...(e.kind==='speech'?{speaker:e.actor,listener:e.data.listener,assertion:e.data.assertion}:{}),

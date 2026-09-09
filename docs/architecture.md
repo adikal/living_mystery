@@ -2,7 +2,7 @@
 
 ## Product boundary
 
-This version prioritizes a complete investigation and a causal debugger. It uses one authored mystery and bounded policies to make failures understandable before expanding generation or cognition.
+This version prioritizes a complete investigation and a causal debugger. It uses an original authored mystery, three configured reference variants and bounded policies to make failures understandable before expanding generation or cognition.
 
 The deterministic engine and case data are ES modules independent of the DOM. The browser and terminal are adapters. The browser renders `playerView(session)` during play; inspector code deliberately reads full state. Source secrecy is not a goal for this local single-player prototype.
 
@@ -135,7 +135,7 @@ The three main uses are future mystery generation, structured agent-output valid
 
 The World Director coordinates the Game Master's consistency, investigation viability and recovery responsibilities. This expands symbolic use case 2 rather than introducing a fourth use case: generation establishes an initial viable world; the Director checks whether consequential actions preserve a viable investigation; final-case evaluation checks the submitted argument.
 
-The implementation now adds a bounded Director to engine preconditions, kernel diagnostics and authored policies: authored and bounded AI-selected plans use a common constraint compiler, and optional Z3 validates trial turns. A two-strategy engine replay checks an investigative witness for turns containing admitted take/store/give/conceal steps; general global route search remains planned. The proposed Director evaluates isolated candidate post-states, calls the shared symbolic service, and returns an auditable allow/reject/alternative/defer/recovery decision. The engine remains the only executor. Agents receive no hidden-world facts from Director checks.
+The implementation now adds a bounded Director to engine preconditions, kernel diagnostics and authored policies: authored and bounded AI-selected plans use a common constraint compiler, and optional Z3 validates trial turns. A bounded acquisition search with engine replay checks an investigative witness for turns containing admitted take/store/give/conceal steps. New configurations additionally enforce local witness admission on all public dispatches and relevant intermediate access/deadline effects; robust global route search remains planned. The proposed Director evaluates isolated candidate post-states, calls the shared symbolic service, and returns an auditable allow/reject/alternative/defer/recovery decision. The engine remains the only executor. Agents receive no hidden-world facts from Director checks.
 
 Check short-plan feasibility first. Then check evidence reachability before route-closing actions or deadline transitions, using the current proof bundles as initial search goals. Replay returned witness routes against the actual engine. Distinguish a found route, no route within stated bounds, and unresolved; never equate a finite search with a guarantee over all playthroughs. Recovery uses permitted authored actions and cannot rewrite the past. Both scripted and AI modes share these rules. See the [World Director contract](symbolic-reasoning.md#world-director-global-coordination-within-use-case-2) for ownership, failure policy, audit fields and acceptance criteria.
 
@@ -184,5 +184,11 @@ A valid witness must account for future scheduling and cooperation; hypothetical
 meetings cannot certify guaranteed access. Private constraint feedback and menus
 must not introduce new character knowledge. Required unknown checks use valid
 local alternatives, safe deferral or verified recovery, never silent approval.
-The present optional Z3 boundary and two authored routes are only a partial
-implementation. See the [formal design contract](symbolic-reasoning.md#governing-contract-autonomy-within-hard-invariants).
+The optional Z3 boundary and bounded acquisition/admission domain are only a partial
+implementation of this general target. See the [formal design contract](symbolic-reasoning.md#governing-contract-autonomy-within-hard-invariants).
+
+## Session-scoped configurations and executed history
+
+`engine.mjs` now selects a cached runtime by session case ID. `engine-runtime.mjs` contains the case-bound façade and kernel assembly. `bellweather.mjs` builds three variants from explicit specifications; `prehistory.mjs` executes their evening events before the player arrives. UI tables, dialogue perspectives, replay and import follow the selected case. Legacy saves continue using the original case.
+
+`investigation.mjs` searches observable acquisition actions and replays candidate solutions. `admission.mjs` provides mandatory local dispatch checks and preliminary capability filtering for the new configurations. Optional Z3 remains a separate short-plan check. See [configuration design](case-configurations.md) for exact bounds, assumptions, compatibility and limitations.

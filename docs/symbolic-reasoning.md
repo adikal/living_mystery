@@ -103,7 +103,7 @@ Before the first Director slice, these responsibilities were distributed:
 - `checkCase()` grades against the canonical answer and two authored evidence bundles.
 - `caseHealth()` counts acquired evidence and performs a narrow folio-location availability check. It does not search for an executable investigative route.
 
-The World Director records and checks the authored correction/concealment plans and shared capability plans. Optional Z3 checks run transactionally around a turn, and turns containing admitted take/store/give/conceal steps require a replay-validated witness from two authored investigation strategies. There is still no general reachability search or automatic recovery planner. Passing these checks is evidence for the modeled plans and witness routes, not a guarantee against every dead end.
+The World Director records and checks the authored correction/concealment plans and shared capability plans. Optional Z3 checks run transactionally around a turn, and turns containing admitted take/store/give/conceal steps require a replay-validated witness from bounded acquisition search. New configurations enforce local admission independently of this optional boundary. There is still no general contingent reachability search or automatic recovery planner. Passing these checks is evidence for the modeled plans and witness routes, not a guarantee against every dead end.
 
 ### Responsibilities and ownership
 
@@ -226,10 +226,7 @@ The current optional Director-off mode does not provide that guarantee.
 - Private constraints do not become character knowledge or player evidence;
   inspector explanations remain separate from agent feedback.
 
-Current scope remains local capability generation, selected plan checks, optional
-Z3 and two authored witness strategies. General viability certificates,
-solver-assisted pre-deliberation filtering and broader autonomous deliberation
-are the next design milestone, not newly implemented behavior.
+Current scope includes selected Z3 plan checks, bounded acquisition search and mandatory local admission in three new configurations. Their preliminary capability filtering and intermediate access/deadline checks are implemented; general viability certificates, complete timed pre-deliberation filtering and broader autonomous deliberation remain future work.
 
 ### Feasibility and viability obligations
 
@@ -300,7 +297,7 @@ Bound query horizons and execution time. Cache by complete semantic query inputs
 
 Meetings after travel carry an explicit recipient-presence assumption; reaching the destination does not prove the recipient will be there. The immediate executor rechecks presence and source knowledge before speech updates the recipient's belief. Ada cannot correct Bell remotely. The recorded speech is the source of Bell's update. General solver-derived belief admission/retraction is still planned.
 
-For turns containing admitted take/store/give/conceal steps, viability is currently tested **after the candidate turn** by replaying up to two authored acquisition strategies through the real engine (180 simulated minutes and 32 commands per strategy). The physical route can preserve solvability when the folio is concealed. A successful witness includes its commands and the existing authored accusation goal. Failed candidate search is `unresolved`, not `unsat` or proof of a dead investigation; the strict optional boundary defers that turn. This search is not Z3 reachability and cannot certify all intermediate states or future NPC choices. General deadlines, destructive actions, last-route alternatives and authored recovery scheduling remain later milestones.
+For turns containing admitted take/store/give/conceal steps, the optional Director uses bounded acquisition search followed by actual engine replay (180 simulated minutes, 32 commands, 16,000 nodes). Search constructs routes instead of trying two fixed itineraries. A successful witness reaches the authored accusation goal. Failure is `unresolved`, not `unsat`. This search is implemented in JavaScript, not as Z3 reachability. The three new configurations additionally enforce mandatory local dispatch admission, preliminary capability effect filtering and relevant intermediate access/deadline checks. Their public Bell commitment and static evidence define a deliberately narrow domain. [Configuration design](case-configurations.md) specifies unsupported effects, conditional previews and the remaining distinction from robust no-dead-end guarantees.
 
 No change is made to final accusation grading. No procedural generation, ASP, Lean or unrestricted new LLM actions are enabled. Offline tests use real Z3 for constraint/compiler integration and engine replay for plan/route behavior. Real LLM quality and browser visual QA remain separate.
 

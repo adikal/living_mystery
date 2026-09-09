@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.2 · 8 September 2026**
+**Living technical report · Edition 0.3 · 8 September 2026**
 
 ### Abstract
 
@@ -26,7 +26,7 @@ This is a design and implementation report, not a peer-reviewed paper or a claim
 - A common admission boundary for authored and bounded AI-selected physical plans, with local checks and optional independent solver execution.
 - A provenance-preserving belief lifecycle, including explicit dependencies, retirement and completed intentions.
 - An investigation debugger that makes temporal order, information flow and differing perspectives inspectable.
-- A concrete, limited experiment in continued investigation viability: replaying candidate solution routes after selected consequential turns.
+- Bounded acquisition search and mandatory transition admission in three authored configurations, with executed prehistory and source-linked morning evidence.
 
 These are engineering contributions of this prototype. We make no priority claim relative to the wider literature. The [research context](reference.md#research-context) identifies related approaches without implying that their methods or empirical results have been reproduced here.
 
@@ -37,12 +37,6 @@ Start with [research questions and principles](foundations.md), then [architectu
 The [reference chapter](reference.md) contains a glossary, source map, bibliography and maintenance protocol. A single-page edition collects every chapter for continuous reading and printing. Markdown sources and SVG diagrams are maintained alongside the implementation; generated HTML is a reproducible reading format rather than the editing source.
 
 
-### Edition 0.2 refinement
+### Edition 0.3 implementation
 
-The design now explicitly makes physical, temporal and epistemic constraints and
-continued solvability hard invariants, with character autonomy inside a dynamically
-admissible action space. The [Director chapter](director.md#6-6-refined-governing-contract)
-adds solver-assisted filtering before deliberation, execution-time revalidation,
-future-opportunity obligations and a clear distinction between the target guarantee
-and today's bounded implementation. This edition changes design documentation,
-not runtime enforcement.
+Three fixed same-cast configurations now vary culprit, means, motive and crime time. Their prehistories execute in the kernel; evidence and initial knowledge link to recorded events. A bounded acquisition search constructs and replays investigation witnesses. The new configurations enforce local transition admission even with AI and optional Z3 disabled, including relevant intermediate access/deadline checks. [Generation](generation.md#10-7-the-implemented-configuration-pipeline) explains the implemented pipeline and the remaining gate before random sampling. The original case remains available with its existing richer authored behavior.

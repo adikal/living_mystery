@@ -12,29 +12,29 @@ Its target obligation is to preserve physical, temporal and epistemic constraint
 
 `assessPlan` constructs local constraints; `recordPlan` emits an inspectable decision; `executePlanStep` rechecks immediate conditions before calling the executor or case consequence handler. With Z3 enabled, `verifyDirectorTurn` collects new locally allowed plans from a candidate turn and requests symbolic verification. Rejected local plans do not make an otherwise harmless waiting command fail solely because an NPC considered an impossible action.
 
-Turns with take, store, give or conceal steps also trigger `investigateReachability`. It tries up to two authored strategies on copies of the post-turn state, with a 180-minute horizon and 32-command limit per strategy. Those strategies acquire evidence and submit the case-authored suspect, method and motive. A route succeeds only if actual engine execution reaches a solved state and passes integrity checks.
+Turns with take, store, give or conceal steps also trigger `investigateReachability`. It now searches acquisition actions derived from case locations, evidence and prerequisites, with a 180-minute horizon, 32-command limit, 16,000-node budget and at most five replay attempts. Each candidate acquires evidence and submits the case-authored hypothesis. A route succeeds only if actual engine execution reaches a solved state and passes integrity checks. The three new configurations additionally apply mandatory local admission to every public dispatch and relevant intermediate object/access/deadline effects, independently of the optional solver.
 
 ```text
 candidate turn
   → local plan admission
   → optional Z3 verification of admitted plans
-  → if relevant transfers: replay candidate investigation strategies
+  → if relevant transfers: search acquisition actions and replay witnesses
   → verify unchanged starting session and candidate integrity
   → commit candidate, or retain original world with a private failure audit
 ```
 
-This is stronger than checking whether a clue identifier remains in a list: the candidate includes movement, acquisition and accusation commands. However, it uses the authored solution goal and only two strategies. It is a developer-side viability instrument, not the player's reasoning process or a proof of guilt inferred from discovered evidence.
+This is stronger than checking whether a clue identifier remains in a list: the candidate includes movement, acquisition and accusation commands. However, it uses the authored solution goal, a finite acquisition catalog and deterministic future scheduling. It is a developer-side viability instrument, not the player's reasoning process or a proof of guilt inferred from discovered evidence.
 
 ## 6.3 Formal target and current approximation
 
-Let G be the supported-investigation goal, A the available investigative actions and H a finite horizon. A future bounded viability query could ask:
+Let G be the supported-investigation goal, A the available investigative actions and H a finite horizon. The bounded viability query asks:
 
 ```text
 Does there exist π = [a₁, …, aₖ], k ≤ H,
 such that execute(W, π) is legal and satisfies G?
 ```
 
-Today's implementation substitutes a small authored set of candidate π for a general search over A. Finding a witness establishes existence under the replayed policies. Finding no witness produces `unresolved`, not a proof that every sequence fails. The result is also conditional on what future NPC policies do during that replay.
+Today's implementation searches a finite acquisition abstraction of A, then validates witnesses in the engine. The abstraction does not model arbitrary social strategies or uncertain future decisions. Finding a witness establishes existence under the replayed policies. Finding no witness produces `unresolved`, not a proof that every sequence fails. The result is also conditional on what future NPC policies do during that replay.
 
 A more robust problem would quantify over selected NPC branches or player mistakes. It must explicitly state which choices are fixed, nondeterministic or adversarial. Universal success across all conceivable player actions would erase much of the game's agency and is not the target.
 
@@ -46,7 +46,7 @@ A recovery catalog needs prerequisites, costs, effects, disclosure rules and ret
 
 ## 6.5 Present limitations
 
-Checks currently inspect selected plans and the candidate turn's post-state, not every intermediate state or every deadline crossing. There is no general destructive-action policy, no exhaustive last-route detector and no automatic recovery scheduler. Z3 being disabled preserves deterministic local checks but removes the optional solver and witness-search boundary. “AI off” and “Director off” therefore have different meanings.
+The original case retains optional post-turn checks for selected consequential plans. The three configured variants have stronger mandatory local admission: every public dispatch needs a witness, and relevant intermediate possession, access and declared expiry changes are checked before commit. Bell's morning availability is a public enforced commitment. This narrow domain has static evidence and a single authored proof route; it does not cover arbitrary destructive actions, social-access rules, contingent futures or automatic recovery. Unknown routing through closed locations is explicitly unresolved. AI and optional Z3 can be disabled without disabling the new configurations' local admission.
 
 
 ## 6.6 Refined governing contract
@@ -134,20 +134,14 @@ alternative, a safe deferral or a declared recovery with ordinary prerequisites
 and effects. Waiting is not automatically safe around deadlines. A future mode
 claiming hard guarantees must preserve enforcement during solver outages through
 valid local alternatives or certificates; disabling a required solver cannot
-silently disable the invariants. Today's optional Director-off mode makes no
-such guarantee.
+silently disable the invariants. The original case's optional Director-off mode makes no such guarantee. New configurations retain their bounded local admission with that toggle off.
 
 ## 6.9 Implementation boundary and next experiment
 
-The existing catalog uses local feasibility checks, and selected candidate turns
-receive optional Z3 and authored witness replay. General solver-assisted filtering
-before deliberation, comprehensive transition coverage, robust future obligations
-and autonomous replanning remain proposed. No gameplay guarantee was added by this
-document revision.
+The new configurations add preliminary capability filtering over projected object effects and public commitments, followed by actual transition admission. The preview is conditional: it is not a complete temporal certificate for the whole proposed plan. Execution checks the actual state and clock. General solver-assisted filtering, robust future obligations, semantic dialogue coherence and autonomous replanning remain proposed. This implements a bounded part of the governing contract, not a universal no-dead-end theorem.
 
 The next bounded experiment is hybrid deliberation for Ada's correction: compare
 authored and AI-selected alternatives while preserving the same world constraints
 and evidence opportunities. Test stale choices, last-route threats, competing
 schedules, unsupported checks, repeated deferrals and information leakage before
-expanding the agent's freedom. Executable prehistory remains essential for the
-later procedural-generation pipeline.
+expanding the agent's freedom. Three executed prehistories now provide reference fixtures for the later procedural-generation pipeline.

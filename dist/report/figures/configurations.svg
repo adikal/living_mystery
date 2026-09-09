@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 390" role="img" aria-labelledby="title desc">
+<title id="title">Authored configurations with executable history and admission</title>
+<desc id="desc">Three fixed specifications feed a session-scoped case factory, executable evening history, and sourced morning state. Each candidate action must retain a replayed investigation witness before commit. Random generation remains future work.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#496779" stroke-width="1.4"/></marker></defs>
+<rect width="960" height="390" rx="12" fill="#f5f7f7"/>
+<style>text{font-family:Arial,sans-serif;fill:#17313e}.label{font-size:17px;font-weight:600}.small{font-size:14px;fill:#4d6270}.box{fill:#edf4f5;stroke:#496779;stroke-width:1.5}.edge{stroke:#496779;stroke-width:1.7;fill:none;marker-end:url(#arrow)}</style>
+<rect class="box" x="25" y="30" width="265" height="100" rx="8"/><text class="label" x="41" y="58">Three fixed specifications</text><text class="small" x="41" y="84">Culprit · means · motive · time</text><text class="small" x="41" y="108">Case-scoped tables and behavior</text>
+<rect class="box" x="347" y="30" width="265" height="100" rx="8"/><text class="label" x="363" y="58">Execute evening history</text><text class="small" x="363" y="84">Travel · possession · fatal action</text><text class="small" x="363" y="108">Examination · delivered report</text>
+<rect class="box" x="670" y="30" width="265" height="100" rx="8"/><text class="label" x="686" y="58">Open the morning case</text><text class="small" x="686" y="84">Evidence and beliefs cite events</text><text class="small" x="686" y="108">Private prehistory in Inspector</text>
+<path class="edge" d="M290 80 H347"/><path class="edge" d="M612 80 H670"/><path class="edge" d="M802 130 V205"/>
+<rect class="box" x="670" y="205" width="265" height="100" rx="8"/><text class="label" x="686" y="233">Candidate action</text><text class="small" x="686" y="259">Scripted or optional AI</text><text class="small" x="686" y="283">Execute on an isolated copy</text>
+<rect class="box" x="347" y="205" width="265" height="100" rx="8"/><text class="label" x="363" y="233">Bounded admission</text><text class="small" x="363" y="259">Search acquisitions, replay route</text><text class="small" x="363" y="283">Relevant intermediate checks</text>
+<rect class="box" x="25" y="205" width="265" height="100" rx="8"/><text class="label" x="41" y="233">Commit or defer</text><text class="small" x="41" y="259">Preserve witness or original state</text><text class="small" x="41" y="283">Private audit records the result</text>
+<path class="edge" d="M670 255 H612"/><path class="edge" d="M347 255 H290"/>
+<text class="small" x="25" y="346">Implemented for the three configured reference cases. Local admission requires neither AI nor the optional Z3 service.</text>
+<text class="small" x="25" y="372">Future: symbolic crime rules, alternative explanations, robust schedules, and seeded procedural sampling.</text>
+</svg>

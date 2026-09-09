@@ -139,7 +139,7 @@ export function createKernel(model) {
     const d = CLUES[clue], event = nextId(s);
     const testimony=model.testimonyClues?.includes(clue)?s.events.find(e=>e.id===cause)?.data.assertion:null;
     const text=testimony??d.text;
-    commit(s, { kind: 'evidence', title: `Recorded: ${d.title}`, actor: 'player', parents: [cause], data: { clue, source: source ?? d.source, claims: model.testimonyClues?.includes(clue)?(s.events.find(e=>e.id===cause)?.data.claims??model.evidenceClaims?.[clue]??[]):(model.evidenceClaims?.[clue]??[]) }, changes: { 'player.evidence': [...s.world.player.evidence, { clue, eventId: event, minute: s.world.minute, source: source ?? d.source,...(testimony?{text}:{}) }] }, playerText: `${d.title}\n${text}` });
+    commit(s, { kind: 'evidence', title: `Recorded: ${d.title}`, actor: 'player', parents: [cause,s.world.flags.evidenceOrigins?.[clue]], data: { clue, source: source ?? d.source, claims: model.testimonyClues?.includes(clue)?(s.events.find(e=>e.id===cause)?.data.claims??model.evidenceClaims?.[clue]??[]):(model.evidenceClaims?.[clue]??[]) }, changes: { 'player.evidence': [...s.world.player.evidence, { clue, eventId: event, minute: s.world.minute, source: source ?? d.source,...(testimony?{text}:{}) }] }, playerText: `${d.title}\n${text}` });
     return true;
   }
   function reject(s, title, text, cause, data = {}) {

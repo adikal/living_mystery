@@ -320,3 +320,39 @@ test('Scripted turns with no symbolic plans never display a checking indicator',
  assert.equal(ui.run("shown.some(html=>html.includes('World Director is checking the turn'))"),false);
  assert.equal(ui.run('characterBusy'),false);
 });
+
+test('Case selection, restart and restore keep scenario-specific evidence and accusation options',()=>{
+ const ui=adapter(null,{llmActive:()=>false});ui.click('choose-case');assert.match(ui.node('#modal').innerHTML,/The Codicil/);
+ ui.click('start-case',{id:'bellweather-02'});
+ assert.equal(ui.run('session.world.caseId'),'bellweather-02');assert.match(ui.node('#app').innerHTML,/The Codicil/);
+ ui.run("act({type:'move',to:'manor'});act({type:'inspect',object:'body'});act({type:'move',to:'square'})");ui.click('accusation');
+ assert.match(ui.node('#modal').innerHTML,/candlestick/);assert.match(ui.node('#modal').innerHTML,/eviction/);
+ const saved=ui.saved(),restored=adapter(saved);assert.equal(restored.run('CASE.culprit'),'clara');
+ assert.match(restored.run("CLUES.medical.text"),/silver rim/);
+ restored.click('restart');assert.equal(restored.run('session.world.caseId'),'bellweather-02');assert.equal(restored.run('session.world.player.evidence.length'),0);
+});
+
+test('Alternate case renders scoped profiles, missed clues and prehistory',()=>{
+ const ui=adapter(null,{llmActive:()=>false});ui.click('start-case',{id:'bellweather-03'});
+ assert.doesNotMatch(ui.node('#app').innerHTML,/fatally strikes|I killed/);
+ assert.equal(ui.run('missedAt(session,session.events.length-1).encounters.length'),0,'Prehistory was never available to overhear');
+ ui.run("mode='inspector';person='silas';personTab='profile';detailPanel='character';render()");
+ assert.doesNotMatch(ui.node('#app').innerHTML,/He killed Edmund with his brass seal/);
+ ui.run("dispatch(session,{type:'move',to:'greenhouse'});cursor=null;inspectorTab='missed';missedRevealed=true;render()");
+ assert.match(ui.node('#app').innerHTML,/damaged meeting object/i);
+});
+
+
+test('New feed content scrolls after scripted, Director and AI turns; panel renders preserve reading position',async()=>{
+ const ui=adapter(null,{llmActive:()=>true,llmConfig:()=>({reasoning:true}),proposeCharacterTurn:async()=>({proposal:null,audit:[],reason:'offline'})});
+ const feed=ui.node('#journal'),side=ui.node('.notebook-content');feed.scrollHeight=1500;feed.scrollTop=20;side.scrollTop=87;
+ ui.run('render()');assert.equal(feed.scrollTop,20);assert.equal(side.scrollTop,87);
+ ui.run("act({type:'look'})");assert.equal(feed.scrollTop,1500);assert.equal(side.scrollTop,87);
+ feed.scrollTop=12;feed.scrollHeight=1750;
+ await ui.run("runDirectedAction({type:'wait',minutes:5})");assert.equal(feed.scrollTop,1750);
+ feed.scrollTop=30;feed.scrollHeight=2000;
+ await ui.run("runCharacter('bell','What makes a convincing case?',{type:'ask',person:'bell',topic:'case'})");
+ assert.ok(ui.run("session.events.some(e=>e.kind==='speech'&&e.actor==='bell')"));
+ assert.equal(feed.scrollTop,2000);assert.equal(side.scrollTop,87);
+ feed.scrollTop=42;ui.run('render()');assert.equal(feed.scrollTop,42);
+});

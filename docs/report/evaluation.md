@@ -4,7 +4,7 @@
 
 ## 9.1 What current tests establish
 
-The test suite exercises engine behavior, claims, saved dialogue, character orchestration, shared plans, solver integration and UI adapter logic. At the start of this report-writing task, the most recent targeted validation ran 32 UI/Director tests successfully. A preceding full-suite run passed 111 JavaScript tests; two subsequent UI regressions were added and validated in targeted runs. Ten Python tests passed in the preceding implementation iteration. These are dated engineering observations, not an automatically maintained benchmark table or a fresh full-suite result for this report.
+The configuration implementation was validated on 2026-09-08 with 122 passing JavaScript tests and 10 passing Python tests. The suite covers engine behavior, claims, saved dialogue, character orchestration, shared plans, solver integration, configured cases and UI adapter logic. These are engineering regression results for this working tree, not player-study or model-quality measurements.
 
 | Property | Representative evidence | Boundary of the conclusion |
 | --- | --- | --- |
@@ -14,7 +14,9 @@ The test suite exercises engine behavior, claims, saved dialogue, character orch
 | Belief lifecycle | Transitive retirement, source changes, cycles, historical snapshots | Dependencies must be explicitly declared. |
 | AI orchestration | Mocked generation/critic, fallback, cancellation, stale tickets | Does not measure real-model semantic accuracy. |
 | Z3 integration | Actual Python Z3 execution, satisfiable and inconsistent fixtures | Shares the compiler's modeling assumptions. |
-| Investigation route | Engine replay reaches an authored accepted accusation | Two candidate strategies are not exhaustive search. |
+| Investigation route | Acquisition search plus engine replay solves all three configurations | Finite catalog, authored goal and deterministic scheduling; no universal proof. |
+| Admission preservation | Last-route loss, intermediate restoration, deadline waiting, optional loss and weapon-capability filtering | Narrow declared access/expiry domain; no general social or adversarial future coverage. |
+| Executed prehistory | Actual travel, possession, crime state, evidence ancestry and save continuation | Typed plan fragments plus direct guards, not a complete SMT crime theory. |
 | Interface behavior | DOM-stub rendering and event-handler regressions | Does not establish browser layout or accessibility. |
 
 The build for this report separately checks chapter and figure references, internal anchors, source-map paths and generated output. Documentation validation does not rerun the game or establish a new simulation result.
@@ -61,5 +63,4 @@ Test required-check timeouts, unsupported actions, safe deferral at deadlines,
 future-meeting assumptions and repeated postponement. Inspect both returned text
 and capability availability for private-information leakage. Report how each
 witness depends on its horizon, scheduler and observable acquisition policy.
-These are new acceptance obligations, not results established by the current
-regression suite.
+The current suite covers selected access/deadline counterexamples and configuration isolation. Robust futures, broad leakage analysis, repeated postponement and real-model evaluations remain acceptance obligations.

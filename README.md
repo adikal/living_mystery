@@ -1,6 +1,6 @@
 # Living Mystery
 
-A first playable, text-based Bellweather mystery with a visual simulation inspector.
+A playable, text-based Bellweather mystery with a visual simulation inspector and three alternate authored case configurations.
 
 ## Technical report
 
@@ -8,7 +8,7 @@ Read the [Living Mystery technical report](dist/report/index.html), or the
 [continuous / print edition](dist/report/complete.html). With the game server
 running, the reading edition is also available at `/report/`.
 
-The report has twelve linked chapters and eight SVG diagrams covering the
+The report has twelve linked chapters and nine SVG diagrams covering the
 architecture, knowledge model, character reasoning, symbolic checks, World
 Director, worked examples, evaluation and procedural-generation research agenda.
 It distinguishes implemented, experimental and proposed behavior.
@@ -146,3 +146,9 @@ Plans start after the conversation, share the scripted action checks, and surviv
 save/load. Belief revisions preserve their sources and invalidate explicitly
 dependent inferences. See [the character contract](docs/character-turns.md) and
 [Director testing](docs/director-testing.md) for the current scope and test steps.
+
+## New: alternate Last Bell configurations
+
+Menu → **Choose a case configuration** offers The Ledger, The Codicil and The Notice alongside the original case. Each has a different culprit, weapon, motive and crime time, executed evening history, sourced evidence and a fully scripted solution. Export your current investigation before replacing it. Restart and imported saves retain their case identity.
+
+The new configurations enforce bounded investigation admission even with AI and optional Z3 off. Acquisition search builds and engine-replays a witness; unsupported or exhausted checks defer effects. These are handcrafted reference configurations, not random generation or a general proof of solvability. See [implementation and testing](docs/case-configurations.md).

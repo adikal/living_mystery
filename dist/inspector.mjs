@@ -1,5 +1,5 @@
 // Read-only inspector projections. Never feed these omniscient reports into playerView.
-import {LOCATIONS,OBJECTS,CLUES,worldAt} from './engine.mjs';
+import {worldAt,caseTables} from './engine.mjs';
 
 export function perspectiveAt(session,index,person){
   const world=worldAt(session,index),seen={};
@@ -12,6 +12,7 @@ export function perspectiveAt(session,index,person){
 }
 
 export function missedAt(session,index){
+  const {LOCATIONS,OBJECTS,CLUES}=caseTables(session);
   const world=worldAt(session,index),events=session.events.slice(0,index+1);
   const has=clue=>world.player.evidence.some(e=>e.clue===clue);
   const clues=[];
@@ -22,11 +23,13 @@ export function missedAt(session,index){
       if(has(clue))continue;
       if(object==='folio'&&world.objects.folio!=='manor')continue;
       if(object==='drawer'&&world.objects.folio!=='drawer')continue;
+      if(world.flags.lockedObjects?.includes(object)||world.flags.closedLocations?.includes(location)||world.flags.evidenceExpiry?.[clue]<world.minute)continue;
+      if(session.world.caseId&&object==='seal'&&world.objects.weapon!==location)continue;
       clues.push({clue,title:CLUES[clue].title,location,status:world.status==='solved'?'Case closed · review only':'Still discoverable',object});
     }
   }
-  const encounters=events.filter(e=>e.kind==='speech'&&e.actor!=='player'&&e.data.listener&&e.data.listener!=='player'&&!e.playerText);
-  const followups=[{clue:'clock',person:'ada',label:'Challenge Ada’s reported time with the clock evidence.'},{clue:'letter',person:'clara',label:'Discuss the letter with Clara.'},{clue:'record',person:'rowan',label:'Discuss the visiting record with Rowan.'}].filter(f=>has(f.clue)&&!events.some(e=>e.kind==='speech'&&e.actor==='player'&&e.data.listener===f.person&&e.data.clue===f.clue));
+  const encounters=events.filter(e=>e.kind==='speech'&&!e.data.prehistory&&e.actor!=='player'&&e.data.listener&&e.data.listener!=='player'&&!e.playerText);
+  const followups=(session.world.caseId?[]:[{clue:'clock',person:'ada',label:'Challenge Ada’s reported time with the clock evidence.'},{clue:'letter',person:'clara',label:'Discuss the letter with Clara.'},{clue:'record',person:'rowan',label:'Discuss the visiting record with Rowan.'}]).filter(f=>has(f.clue)&&!events.some(e=>e.kind==='speech'&&e.actor==='player'&&e.data.listener===f.person&&e.data.clue===f.clue));
   const moved=has('folio')||world.objects.folio==='manor'?null:{location:world.objects.folio,status:world.status==='solved'?'Case closed · review only':world.objects.folio==='drawer'?'Still discoverable at the vestry':'Currently carried; not inspectable yet'};
   return {clues,encounters,followups,moved};
 }

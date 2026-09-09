@@ -8,9 +8,9 @@
 
 The kernel, case and engine façade divide mechanics from content. `dist/kernel.mjs` supplies event commits, replay, travel, minute-by-minute time advancement, perception and persistence checks. `createKernel(model)` binds those mechanisms to case tables. The kernel's decision policy is injected by the engine rather than imported from a particular mystery.
 
-`dist/cases/last-bell.mjs` supplies the world factory, initial beliefs, routines, scored decision candidates, authored dialogue, evidence reactions and accusation rubric. Its data tables live in `dist/case.mjs`; structured claim definitions and reasoning-board metadata are separate modules. `dist/engine.mjs` assembles the active case, routes player commands, and exposes an API to the browser, terminal and tests.
+`dist/cases/last-bell.mjs` supplies the world factory, initial beliefs, routines, scored decision candidates, authored dialogue, evidence reactions and accusation rubric. Its data tables live in `dist/case.mjs`; structured claim definitions and reasoning-board metadata are separate modules. `dist/engine-runtime.mjs` assembles a case-bound kernel and command API. `dist/engine.mjs` selects the runtime by session case ID and applies admission at public dispatch boundaries. `dist/cases/bellweather.mjs` builds three variants from explicit configurations; `dist/prehistory.mjs` executes their evening history.
 
-This separation is a useful generation target, not proof of complete case independence. Some routing, reachability strategies and UI assumptions still refer to Last Bell entities. A procedural case must eventually replace those assumptions with declared capabilities or explicit case adapters. Merely swapping a data table would not yet produce a complete new game.
+This separation is a useful generation target, not proof of complete case independence. The variants share Last Bell entity IDs, graph and an authored evidence rubric; legacy exports and some presentation assumptions still refer to that cast. A procedural case must eventually replace those assumptions with declared capabilities or explicit case adapters. Merely swapping a data table would not yet produce a complete new game.
 
 ## 2.2 State as a fold of events
 
@@ -54,3 +54,9 @@ All admitted transitions must preserve hard invariants, using direct checks,
 applicable symbolic queries or a sound preservation argument. This extends the
 current selected-plan transaction rather than claiming it already covers the
 whole simulation. See [Figure 8](director.md#6-7-two-stage-admission-for-autonomous-agents).
+
+## 2.7 Configuration-specific admission
+
+New configurations stage every public player or character action on a copy and require a replayed acquisition witness before committing it. Relevant intermediate access/possession and declared expiry changes receive separate prefix checks. A terminal flag cannot bypass an earlier failed check. This local boundary is active independently of the optional solver; Z3 can additionally verify represented short plans. Original saves retain the original optional Director boundary.
+
+`investigation.mjs` constructs candidate acquisition routes; `admission.mjs` governs their use in transition and capability checks. Engine-internal witness execution uses the raw case runtime to avoid recursive admission. This is trusted developer machinery, not a security interface. See [the Director chapter](director.md) for model bounds and unresolved semantics.

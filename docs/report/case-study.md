@@ -35,10 +35,24 @@ Learning that the detective knows the accounts can raise Silas's priority for co
 
 A local witness can observe the retrieval. That observation can support Clara's later report, subject to her cooperation. A remote character does not learn either the action or Silas's motive from a successful private solver check. Seeing the retrieval does not reveal the final hiding place; another observation would be needed for that claim.
 
-After a selected concealment turn, the optional Director searches its authored candidate strategies for a surviving investigation. The physical evidence route can succeed even when the folio moves. This result establishes a replayable route in that state; it does not show that every clue or conversation remains available.
+After a selected concealment turn, the optional Director searches acquisition actions for a surviving investigation. The physical evidence route can succeed even when the folio moves. This result establishes a replayable route in that state; it does not show that every clue or conversation remains available.
 
 ## 7.4 Bell's survey as an AI-plan probe
 
 At the square, a player can ask Bell to look around the inn after the conversation. The model may select `survey:inn`, refuse, or continue discussing the question. If an accepted proposal contains that capability, the queue records it. Bell remains engaged until release, then travels and observes his actual surroundings on arrival.
 
 Saving during travel and reloading tests whether the plan exists as engine state rather than an ephemeral promise in the model's context. The resumed plan should not need another model request. If a plan instead communicates an observation and that source is revised before delivery, it becomes blocked rather than relaying a stale account. These are controlled probes of the architecture, not claims that the character now has general autonomous investigative competence.
+
+## 7.5 Three same-cast reference configurations
+
+The new browser case menu offers three fixed variants alongside the original. The following table is omniscient author/debugger material.
+
+| Configuration | Culprit | Means | Motive | Fatal event |
+| --- | --- | --- | --- | --- |
+| The Ledger | Silas | Brass seal | Conceal diverted estate payments | 21:14 |
+| The Codicil | Clara | Silver candlestick | Prevent an inheritance change | 21:34 |
+| The Notice | Rowan | Pruning knife | Prevent family eviction | 21:54 |
+
+The two innocent suspects attend a greenhouse appointment witnessed by Dr Marsh across the fatal interval. A timed signature places the remaining suspect at the manor; the damaged object, floor trace, medical examination and estate decision support the configured physical case. This is a deliberately explicit evidence rubric, not a general solver-derived argument. The variants do not yet reproduce the original affair, rumor-correction and folio-concealment storylines.
+
+To test, leave AI off, choose a configuration, ask Bell for guidance and investigate the six evidence categories he identifies. Inspect the pre-morning trace to review travel, the crime and the doctor's report. Follow acquired evidence back to its source. Restart preserves the configuration; export/import resumes its own history. The original Bell survey example above applies to the original case: the new configurations reserve Bell at the square to enforce their investigation assumption.

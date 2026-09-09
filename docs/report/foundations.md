@@ -14,9 +14,9 @@ We distinguish four desirable properties. **Physical coherence** concerns locati
 | --- | --- | --- |
 | RQ1: Can expressive dialogue remain within explicit information and action boundaries? | Immutable turn tickets, account capabilities, critic, atomic application | Real-model disclosure and semantic-error evaluation |
 | RQ2: Can beliefs change without rewriting history or spreading knowledge remotely? | Provenance, dependencies, local observations, real conversations | Wider correction networks and conflicting-source scenarios |
-| RQ3: Can character agency coexist with a reachable investigation? | Feasible plans and two replayed candidate routes | General bounded search and player-choice robustness |
+| RQ3: Can character agency coexist with a reachable investigation? | Feasible plans, bounded acquisition search and configured admission | Contingent search and broader player-choice robustness |
 | RQ4: Can a debugger explain failures with enough precision to guide authoring? | Timeline, character perspective, causal parents, solver audits | Diagnostic task studies and authoring-time measurements |
-| RQ5: Can the same contracts validate generated cases? | Case interface and versioned action/query fragments | A generator, executable prehistory and distinguishability checks |
+| RQ5: Can the same contracts validate generated cases? | Case interface, executed configured prehistory and action/query fragments | A generator and general distinguishability checks |
 
 The Last Bell is a reference case for developing these instruments. It is not a representative sample of generated mysteries. Success in one carefully authored world should lead to harder counterexamples, not an immediate claim of generality.
 
