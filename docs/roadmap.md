@@ -12,6 +12,17 @@ The long-term goal is a playable town with simulated characters and generated, i
 
 See [implementation and testing](case-configurations.md). This is a bounded reference domain. Broader hybrid autonomy, complete symbolic crime modeling and procedural sampling remain future work.
 
+## Implemented now: composable modules and validated generation (partial G2)
+
+Building on the three configurations:
+
+4. **Composable narrative modules ("bricks").** A case is a base scaffold plus composed modules (`dist/modules/`): misdirection, correction (the witness travels to Bell and corrects him in person), secret-affair (interwoven with misdirection), and concealment (a live culprit plan). Each brick contributes clues, sourced prehistory, capabilities and dialogue, and declares a local coherence invariant. Adding a trope is one module file.
+5. **Case-general validator + seeded sampler.** `dist/casegen.mjs` admits a specification only if it passes physical, epistemic, reachability and evidence-driven distinguishability obligations plus every brick invariant; `sampleCases(seed,n)` returns only validated same-cast cases (the full grid validates).
+6. **Playable generated cases.** `gen-*` ids reconstruct their spec, so a sampled case resolves lazily, plays and saves/reloads like any configuration; a browser "generate a case" action starts one.
+7. **Extended capability system.** Fetch (`from`/`knownBy`) and inform permission shapes let concealment and correction run as validated live plans, not scripted one-offs.
+
+This is a bounded slice of G2 over the fixed cast with role-aware templated prose; new casts, relationships, maps and richly generated prose remain future work.
+
 ## Next major milestone: richer hybrid autonomy under hard invariants
 
 **Proposed.** Preserve physical and temporal consistency, legitimate knowledge

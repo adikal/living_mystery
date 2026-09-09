@@ -1,6 +1,7 @@
 // Executable authored prehistory. Each record is sourced to a checked occurrence,
 // not a substituted paragraph. Times are day-one minutes; play begins day two.
 import {recordPlan,executePlanStep} from './world-director.mjs';
+import {activeModules} from './modules/index.mjs';
 export function executePrehistory(K,s,spec){
  const {culprit,minute,weapon,weaponName,motiveText}=spec,origins={},sources={};
  const origin=(key,event)=>{origins[key]=event;};
@@ -49,6 +50,10 @@ export function executePrehistory(K,s,spec){
  const clock=record('ada','Ada records the inn clock offset',{}, {offset:12});origin('clock',clock);sources.ada=clock;
  for(const [id,p]of Object.entries(K.model.PEOPLE))arrive(id,p.home);
  at(1920);
+ // Composed narrative bricks contribute their own sourced prehistory (events,
+ // beliefs, capabilities) before the origins map is sealed.
+ const mods=activeModules(spec);
+ for(const {module,binding,roles} of mods)module.prehistory?.({binding,roles,spec,K,s,record,origin,peers:mods});
  K.commit(s,{kind:'history',title:'Prehistory complete; investigation opens',parents:[strike,visit,exam,delivered],changes:{'flags.evidenceOrigins':origins},data:{prehistory:true,caseId:spec.id,obligations:['Static evidence remains accessible','Bell returns to the square']}});
  return {origins,sources,strike};
 }

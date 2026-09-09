@@ -13,9 +13,31 @@ export function availablePlans(kernel,s,actor){
   for(const permission of kernel.model.agentPermissions?.[actor]??[]){
     const belief=npc.beliefs.find(b=>b.key===permission.requires);
     if(!belief)continue;
+    // Inform variant: travel to a recipient and communicate a belief the actor holds
+    // (e.g. an in-person correction). Presence is rechecked at execution.
+    if(permission.kind==='inform'){
+      const recipient=s.world.npcs[permission.recipient];
+      if(!recipient||recipient.travel||!npc.beliefs.some(b=>b.key===permission.belief))continue;
+      const at=recipient.location;
+      offers.push({id:permission.id,actor,label:permission.label,sources:[belief.sourceId],steps:[
+        ...(npc.location===at?[]:[{kind:'move',to:at}]),
+        {kind:'communicate',recipient:permission.recipient,location:at,belief:permission.belief}]});
+      continue;
+    }
     // Permission is case-owned. Private actual object locations are not sent to
     // the model: only admit a known starting location or the actor's own hands.
     const holder=s.world.objects[permission.object];
+    // Fetch variant: the actor legitimately knows where the object is (own belief),
+    // so a plan may travel to that known source, take it, and conceal it. This does
+    // not leak a hidden location to a model — it uses the actor's recorded knowledge.
+    if(permission.from&&permission.knownBy&&npc.beliefs.some(b=>b.key===permission.knownBy)&&holder===permission.from){
+      offers.push({id:permission.id,actor,label:permission.label,sources:[belief.sourceId],steps:[
+        ...(npc.location===permission.from?[]:[{kind:'move',to:permission.from}]),
+        {kind:'take',object:permission.object,from:permission.from},
+        ...(permission.location===permission.from?[]:[{kind:'move',to:permission.location}]),
+        {kind:'conceal',object:permission.object,location:permission.location,to:permission.to}]});
+      continue;
+    }
     if(holder!==actor&&holder!==npc.location)continue;
     offers.push({id:permission.id,actor,label:permission.label,sources:[belief.sourceId],steps:[...(holder===actor?[]:[{kind:'take',object:permission.object,from:npc.location}]),...(permission.location===npc.location?[]:[{kind:'move',to:permission.location}]),{kind:'conceal',object:permission.object,location:permission.location,to:permission.to}]});
   }

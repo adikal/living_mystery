@@ -8,6 +8,11 @@ export function assessTransition(runtime,base,candidate,options={}){
  for(const event of candidate.events.slice(base.events.length)){
   if(!event.changes.some(p=>p.path.startsWith('objects.')||p.path.startsWith('flags.')||p.path==='minute'&&Object.keys(previous.flags.evidenceExpiry??{}).length))continue;
   const world=runtime.worldAt(candidate,event.index);
+  // A mid-move prefix (player in transit) is not a committable resting state and
+  // cannot be routed from; its persistent effects are re-checked at a resting
+  // prefix or at the turn-end terminal check below. Skipping avoids spuriously
+  // deferring a harmless move that merely coincides with an NPC's object change.
+  if(world.player.location==='transit'){previous=world;continue;}
   if(invariantSignature(previous)===invariantSignature(world)){previous=world;continue;}
   const prefix={...candidate,world,events:candidate.events.slice(0,event.index+1)};
   const witness=searchInvestigation(prefix,runtime,options);checked++;

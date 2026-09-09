@@ -4,7 +4,7 @@ import {ART} from './art.mjs';
 import {claimsAt,claimRelations} from './claims.mjs';
 import {exportDialogueSave,importDialogueSave,dialogueEntities,normalizeBoardNotes} from './dialogue-save.mjs';
 import {perspectiveAt,missedAt} from './inspector.mjs';
-import {caseTables,CASE_OPTIONS,SUSPECTS,PILLARS,copy,createSession,dispatch,followupOptions,playerClaims,parseCommand,playerView,worldAt,timeLabel,distance,diagnostics,caseHealth,exportSession,importSession} from './engine.mjs';
+import {caseTables,CASE_OPTIONS,SUSPECTS,PILLARS,copy,createSession,dispatch,followupOptions,playerClaims,parseCommand,playerView,worldAt,timeLabel,distance,diagnostics,caseHealth,exportSession,importSession,generateCase} from './engine.mjs';
 import {llmActive,llmConfig,setLlmConfig} from './llm.mjs';
 
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -403,8 +403,9 @@ document.addEventListener('click',event=>{const b=event.target.closest('[data-do
     case 'accusation':accusationModal();break;
     case 'visit-bell':$('#modal').close();chat=null;act({type:'move',to:'square'});accusationModal();break;
     case 'menu':menuModal();break;
-    case 'choose-case':openModal(`<h2>Choose a Bellweather case</h2><p>The same cast, with authored alternate histories. These are deterministic configurations, not random generation. Starting one replaces the current investigation; export it first to retain it.</p><button class="soft-button" data-do="export">Export current investigation</button><div class="menu-actions">${CASE_OPTIONS.map(c=>`<button class="soft-button" data-do="start-case" data-id="${c.id}">${esc(c.title)}</button>`).join('')}</div>`,'Choose case configuration');break;
+    case 'choose-case':openModal(`<h2>Choose a Bellweather case</h2><p>The same cast; authored configurations plus procedurally generated cases. Every generated case is validated (solvable, fair, and distinguishing) before it starts. Starting one replaces the current investigation; export it first to retain it.</p><button class="soft-button" data-do="export">Export current investigation</button><div class="menu-actions"><button class="soft-button" data-do="generate-case">🎲 Generate a new validated case</button>${CASE_OPTIONS.map(c=>`<button class="soft-button" data-do="start-case" data-id="${c.id}">${esc(c.title)}</button>`).join('')}</div>`,'Choose case configuration');break;
     case 'start-case':{const fresh=createSession(17,id);cancelCharacter();stopReplay();session=fresh;resetRealized();boardNotes={};healthCache=null;cursor=null;chat=null;chosenClue=null;reasonSuspect=null;detailPanel=null;missedRevealed=false;sceneTransition=null;actionGroup='inspect';mode='game';persist();$('#modal').close();render();break;}
+    case 'generate-case':{const gen=generateCase();if(!gen){toast('Could not generate a valid case. Try again.');break;}const fresh=createSession(17,gen.id);cancelCharacter();stopReplay();session=fresh;resetRealized();boardNotes={};healthCache=null;cursor=null;chat=null;chosenClue=null;reasonSuspect=null;detailPanel=null;missedRevealed=false;sceneTransition=null;actionGroup='inspect';mode='game';persist();$('#modal').close();render();toast(`New case generated: ${gen.title}`);break;}
 
     case 'close-modal':$('#modal').close();break;
     case 'help':helpModal();break;

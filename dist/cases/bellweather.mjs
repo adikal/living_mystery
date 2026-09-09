@@ -2,6 +2,7 @@ import * as Original from '../case.mjs';
 import {VERSION} from '../kernel.mjs';
 import {executePrehistory} from '../prehistory.mjs';
 import {METHOD_OPTIONS,MOTIVE_OPTIONS} from './bellweather-configs.mjs';
+import {activeModules} from '../modules/index.mjs';
 const clone=x=>structuredClone(x),time=m=>`${Math.floor(m/60)%24}:${String(m%60).padStart(2,'0')}`;
 export function makeCase(spec){
  const PEOPLE=clone(Original.PEOPLE),LOCATIONS=clone(Original.LOCATIONS),OBJECTS=clone(Original.OBJECTS),CLUES=clone(Original.CLUES);
@@ -16,28 +17,32 @@ export function makeCase(spec){
  LOCATIONS[home].objects.push('seal');LOCATIONS.manor.description='Edmund Vale was found dead in the study. His desk, papers and the floor beneath it have been left undisturbed.';
  OBJECTS.seal={label:spec.weaponName,clue:'seal',description:'Examine the damaged object'};
  const set=(id,title,text,tags,extra={})=>{CLUES[id]={title,text,tags,kind:'Document',source:title,...extra};};
- set('medical','The medical examination',`Dr Marsh places death between ${time(spec.minute-4)} and ${time(spec.minute+4)}. The fatal injury is ${spec.injury}.`,['Time','Method']);
+ set('medical','The medical examination',`Dr Marsh places death between ${time(spec.minute-4)} and ${time(spec.minute+4)}. The fatal injury is ${spec.injury}.`,['Time','Method'],{kind:'Observation'});
  set('appointment','The scheduled meeting',`Edmund's diary records a meeting with ${name} shortly before ${t}. A scheduled meeting alone does not prove attendance.`,['Time',name]);
  set('ledger','The disputed estate decision',`Edmund's signed papers establish why ${name} wanted to ${spec.motiveText}. The decision was to be put into effect after their meeting.`,['Motive',name],{subject:spec.culprit,motive:spec.motive});
  set('folio','The retained carbon copy',`The carbon copy preserves the decision described in Edmund's papers: ${name} faced ${spec.motiveText.replace(/^prevent |^conceal /,'')}.`,['Motive',name]);
- set('fragment','The trace beneath the desk',`A fresh trace under the desk matches the damaged edge of the ${spec.weaponName}. It is compatible with the injury recorded by Dr Marsh.`,['Weapon']);
- set('seal','The damaged meeting object',`The ${spec.weaponName} kept in ${LOCATIONS[home].name} has a fresh damaged edge and residue consistent with the trace and fatal injury. Its keeper is ${name}.`,['Weapon',name],{subject:spec.culprit,method:spec.weapon});
+ set('fragment','The trace beneath the desk',`A fresh trace under the desk matches the damaged edge of the ${spec.weaponName}. It is compatible with the injury recorded by Dr Marsh.`,['Weapon'],{kind:'Physical trace'});
+ set('seal','The damaged meeting object',`The ${spec.weaponName} kept in ${LOCATIONS[home].name} has a fresh damaged edge and residue consistent with the trace and fatal injury. Its keeper is ${name}.`,['Weapon',name],{subject:spec.culprit,method:spec.weapon,kind:'Physical trace'});
  set('delivery','The timed delivery receipt',`A dated receipt places ${name} inside Vale Manor at ${time(spec.minute-5)}, shortly before the medical window. The visitor signed it personally.`,['Opportunity',name],{subject:spec.culprit});
  set('record','Dr Marsh’s witnessed visit',`Dr Marsh's signed record places ${names} at the greenhouse continuously from ${time(spec.minute-25)} to ${time(spec.minute+5)}. Both were away from the study during the fatal encounter.`,['Alibi',...names.split(' and ')]);
  set('letter','The appointment letter',`The letter requests a greenhouse appointment for ${names}. It establishes an intention; Dr Marsh's signed record establishes who attended.`,['Appointment']);
  set('pump','The greenhouse appointment log',`The greenhouse log corroborates the appointment described in Dr Marsh's record. Check that signed record for the participants and exact interval.`,['Time']);
- set('clock','The inn clock offset','The clockmaker’s service note records that the inn clock runs twelve minutes fast. No identified crime-night sighting is established by this note alone.',['Time']);
+ set('clock','The inn clock offset','The clockmaker’s service note records that the inn clock runs twelve minutes fast. No identified crime-night sighting is established by this note alone.',['Time'],{kind:'Observation'});
  for(const id of ['ada','clara','alibi','rowan'])set(id,'A recorded witness account','Ask the witness for their own account.',['Testimony'],{kind:'Testimony'});
  const claim=(key,subject,predicate,value,interval=null)=>({key,subject,predicate,value,interval,confidence:.99,attribution:'recorded evidence'});
  const evidenceClaims={medical:[claim('death','edmund','death_time','window',{start:spec.minute-4,end:spec.minute+4})],delivery:[claim('receipt',spec.culprit,'location','manor',{start:spec.minute-5,end:spec.minute-5})],record:innocents.map(id=>claim(`visit_${id}`,id,'location','greenhouse',{start:spec.minute-25,end:spec.minute+5}))};
- const CASE={id:spec.id,title:spec.title,date:'18 November 1932',victim:'Edmund Vale',culprit:spec.culprit,method:spec.weapon,motive:spec.motive,synopsis:'Edmund Vale is dead. Compare the physical traces, the estate decision, and the independent accounts of last night.',truth:`${name} killed Edmund at ${t} with the ${spec.weaponName} to ${spec.motiveText}.`,history:[],proofRoutes:[{id:'physical',title:'Physical traces and independent records',all:['medical','fragment','seal','delivery','ledger','record']}],methodOptions:METHOD_OPTIONS,motiveOptions:MOTIVE_OPTIONS,resolutionText:`Bell checks the physical traces against the records. “The evidence supports your case against ${name}: the ${spec.weaponName}, the estate decision, and the opportunity. We can proceed.”`};
+ const CASE={id:spec.id,title:spec.title,date:'18 November 1932',victim:'Edmund Vale',culprit:spec.culprit,method:spec.weapon,motive:spec.motive,synopsis:'Edmund Vale is dead. Compare the physical traces, the estate decision, and the independent accounts of last night.',truth:`${name} killed Edmund at ${t} with the ${spec.weaponName} to ${spec.motiveText}.`,history:[],proofRoutes:[{id:'physical',title:'Physical traces and independent records',all:['medical','fragment','seal','delivery','ledger','record']},{id:'documents',title:'The carbon copy and the records',all:['medical','fragment','seal','delivery','folio','record']}],methodOptions:METHOD_OPTIONS,motiveOptions:MOTIVE_OPTIONS,resolutionText:`Bell checks the physical traces against the records. “The evidence supports your case against ${name}: the ${spec.weaponName}, the estate decision, and the opportunity. We can proceed.”`};
+ const modules=activeModules(spec);
+ for(const {module,binding,roles} of modules)module.content?.({binding,roles,spec,CLUES,OBJECTS,LOCATIONS,PEOPLE,set,time,CASE,peers:modules});
+ const agentPermissions={},commitments={bell:{location:'square',from:1920}};
+ for(const {module,binding,roles} of modules){const cap=module.capabilities?.({binding,roles,spec,peers:modules});if(cap?.agentPermissions)for(const [k,v]of Object.entries(cap.agentPermissions))agentPermissions[k]=[...(agentPermissions[k]??[]),...v];if(cap?.commitments)Object.assign(commitments,cap.commitments);}
  function baseWorld(seed=17){const npcs={};for(const [id,p]of Object.entries(PEOPLE))npcs[id]={location:p.home,travel:null,stress:.2,trust:p.relationships.player.trust,intention:'Attend to the evening',plan:'routine',beliefs:[],memories:[],lastDecision:null};return {version:VERSION,seed,caseId:spec.id,minute:1200,status:'playing',player:{location:'transit',evidence:[],pins:[],visited:['square'],lastSeen:{},notes:[]},npcs,objects:{weapon:home,folio:'manor'},flags:{victimAlive:true,victimLocation:'manor',evidenceOrigins:{},lockedObjects:[]},ending:null};}
- const model={CASE,PEOPLE,LOCATIONS,OBJECTS,CLUES,baseWorld,evidenceClaims,containers:{drawer:'vestry'},testimonyClues:['ada','clara','alibi','rowan'],version:VERSION,commitments:{bell:{location:'square',from:1920}},boundedInvestigation:true};
+ const model={CASE,PEOPLE,LOCATIONS,OBJECTS,CLUES,baseWorld,evidenceClaims,containers:{drawer:'vestry'},testimonyClues:['ada','clara','alibi','rowan'],version:VERSION,commitments,agentPermissions,boundedInvestigation:true,modules};
  function createBehavior(K){
   const known=(s,id,key)=>s.world.npcs[id].beliefs.find(b=>b.key===key);
   const source=(s,id)=>known(s,id,'night_account')?.sourceId;
   const line=(s,id,text,cause,topic='night',deception=false)=>K.speech(s,id,text,cause,{topic,intent:deception?'Protect my secret':'Answer from my own experience',basis:'night_account',deception:deception?'False alibi':false,sourceEvents:[source(s,id)].filter(Boolean),claims:[]});
-  function decide(s,id,cause){if(s.world.minute<1920||s.world.npcs[id].travel||s.world.player.conversation===id)return;K.startTravel(s,id,PEOPLE[id].home,cause,'Return to my morning duties');}
+  function decide(s,id,cause){if(s.world.minute<1920||s.world.npcs[id].travel||s.world.player.conversation===id)return;for(const {module,binding,roles} of modules)if(module.decide?.({K,s,id,cause,binding,roles,peers:modules}))return;K.startTravel(s,id,PEOPLE[id].home,cause,'Return to my morning duties');}
   function seedSession(s){
    const pre=executePrehistory(K,s,spec);
    for(const [id,p]of Object.entries(PEOPLE)){
@@ -70,24 +75,30 @@ export function makeCase(spec){
 
    if(topic==='source'){const followup=sourceFollowup(s,id);K.speech(s,id,followup.text,cause,{topic:'source',intent:'Explain the preceding account',sourceEvents:[followup.reply.id],claims:[]});K.advance(s,3,cause);return;}
    else if(id==='bell')text='Compare the examination, the trace, the damaged object, the timed receipt, the estate papers and Dr Marsh’s independent visit record. A motive alone does not establish guilt.';
-   else if(id==='iris')text=`${CLUES.medical.text} ${CLUES.record.text}`;
+   else if(id==='iris')text=`I place the death between ${time(spec.minute-4)} and ${time(spec.minute+4)}; the fatal injury is ${spec.injury}. My signed record places ${names} at the greenhouse continuously from ${time(spec.minute-25)} to ${time(spec.minute+5)}, so both were away from the study during the fatal encounter.`;
    else if(id==='ada')text=known(s,id,'night_account').text;
    else if(id===spec.culprit){deception=!known(s,id,'receipt_challenged');text=deception?`I remained at ${LOCATIONS[home].name} all evening. I have no witness to offer.`:`The receipt establishes I attended the manor meeting. ${CLUES.ledger.text} Attendance does not by itself prove a killing.`;}
    else text=known(s,id,'night_account').text;
    if(topic==='accounts')text=id===spec.culprit?'Edmund’s decision affected me. I intended to discuss it with him. That does not establish who killed him.':'I cannot offer an independent account of the estate dispute. Inspect Edmund’s papers.';
    if(topic==='sightings'||topic==='observations')text='My retained observations can establish only the movements I actually saw; they do not reveal anyone’s private purpose.';
    if(topic==='accounts')deception=false;
+   for(const {module,binding,roles} of modules){const t=module.dialogue?.({binding,roles,spec,PEOPLE,id,topic,K,s,peers:modules});if(t!=null)text=t;}
    line(s,id,text,cause,topic,deception);K.advance(s,3,cause);
+   for(const {module,binding,roles} of modules)module.onInteract?.({K,s,id,topic,binding,roles,event:cause,peers:modules});
   }
   function present(s,id,clue,tone,cause){
    if(!K.local(s,id)||!K.has(s,clue)){K.reject(s,'Presentation unavailable','Discover the clue and find the person first.',cause);return;}
    const heard=K.commit(s,{kind:'speech',actor:'player',title:`You show ${PEOPLE[id].name} ${CLUES[clue].title}`,parents:[cause],data:{listener:id,clue,assertion:CLUES[clue].text},playerText:K.presentLineHidden(s)?null:`You show ${PEOPLE[id].name} ${CLUES[clue].title.toLowerCase()}.`});
    K.believe(s,id,`player_has_${clue}`,`The detective showed me ${CLUES[clue].title}.`,.99,'observation',heard,true);
    let text;if(id===spec.culprit&&clue==='delivery'){K.believe(s,id,'receipt_challenged','The receipt contradicts my earlier alibi.',.99,'inference',heard,true);text='I did attend the meeting. My earlier claim was false. You must still establish what happened there.';}
-   else if(id==='iris'&&['medical','record'].includes(clue))text=CLUES[clue].text;
+   else if(id==='iris'&&clue==='medical')text=`I place the death between ${time(spec.minute-4)} and ${time(spec.minute+4)}; the fatal injury is ${spec.injury}.`;
+   else if(id==='iris'&&clue==='record')text=`My signed record places ${names} at the greenhouse from ${time(spec.minute-25)} to ${time(spec.minute+5)}. Both were away from the study during the fatal encounter.`;
    else if(innocents.includes(id)&&clue==='record')text=`That matches my recollection. ${known(s,id,'night_account').text}`;
-   else text=`I can acknowledge what this document says: ${CLUES[clue].text} I cannot claim I witnessed its underlying events unless I have said so.`;
+   else if(id===spec.culprit&&['ledger','folio'].includes(clue))text=`Edmund and I did not see eye to eye about the estate. A disagreement is not a killing, and I won’t be led into saying otherwise.`;
+   else text=`I’ve seen ${CLUES[clue].title.toLowerCase()}. I can speak only to what I witnessed myself; I won’t claim more than that.`;
+   for(const {module,binding,roles} of modules){const t=module.dialogue?.({binding,roles,spec,PEOPLE,id,topic:'present',clue,K,s});if(t!=null)text=t;}
    line(s,id,text,heard,'present');K.advance(s,4,cause);
+   for(const {module,binding,roles} of modules)module.onInteract?.({K,s,id,topic:'present',clue,binding,roles,event:heard,peers:modules});
   }
   function checkCase(s,a){const selected=[...new Set(a.evidence??[])].filter(x=>K.has(s,x));const routes=CASE.proofRoutes.filter(r=>r.all.every(x=>selected.includes(x)));const supported=routes.length>0&&a.suspect===CLUES.delivery.subject&&a.suspect===CLUES.seal.subject&&a.method===CLUES.seal.method&&a.motive===CLUES.ledger.motive;return {supported,routes:routes.map(r=>r.id),selected};}
   const followupOptions=(s,id)=>{const followup=sourceFollowup(s,id);return [...(followup?[['source',followup.label]]:[]),...(id===spec.culprit&&K.has(s,'delivery')?[['challenge_delivery','Explain the receipt and your alibi.']]:[])];};

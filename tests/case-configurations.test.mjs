@@ -65,6 +65,19 @@ test('Admission blocks intermediate last-route loss even when restored by turn e
  assert.equal(assessTransition(r,s,closed).status,'defer');
 });
 
+test('A player move that coincides with an NPC concealment is admitted, not deferred',()=>{
+ const s=createSession(17,'bellweather-03');
+ dispatch(s,{type:'move',to:'greenhouse'});
+ dispatch(s,{type:'ask',person:'rowan',topic:'accounts'}); // arm the culprit's concealment
+ dispatch(s,{type:'endConversation'});
+ let rejected=0;
+ for(const to of ['square','manor','vestry','surgery','inn']){
+  const before=s.events.length;dispatch(s,{type:'move',to});
+  if(s.events.slice(before).some(e=>e.kind==='rejected'&&/preserving the investigation/.test(e.playerText||'')))rejected++;
+ }
+ assert.equal(rejected,0,'a mid-move (transit) prefix must not defer a harmless move');
+ assert.equal(investigateReachability(s).status,'route_found','a route survives the concealment');
+});
 test('Time advancement cannot consume a declared last evidence deadline',()=>{
  const s=createSession(17,'bellweather-02');commit(s,{kind:'world',title:'Finite access fixture',changes:{'flags.evidenceExpiry':{seal:s.world.minute+60}}});
  assert.equal(investigateReachability(s).status,'route_found');

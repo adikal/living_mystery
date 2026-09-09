@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.3 · 8 September 2026**
+**Living technical report · Edition 0.4 · 9 September 2026**
 
 ### Abstract
 
@@ -27,6 +27,7 @@ This is a design and implementation report, not a peer-reviewed paper or a claim
 - A provenance-preserving belief lifecycle, including explicit dependencies, retirement and completed intentions.
 - An investigation debugger that makes temporal order, information flow and differing perspectives inspectable.
 - Bounded acquisition search and mandatory transition admission in three authored configurations, with executed prehistory and source-linked morning evidence.
+- A composable narrative-module ("brick") system with a case-general validator: each case is a base scaffold plus composed modules, and only cases that pass physical, epistemic, reachability and evidence-driven distinguishability obligations (plus each module's local invariant) are admitted. A seeded sampler yields validated, playable generated cases over the fixed cast.
 
 These are engineering contributions of this prototype. We make no priority claim relative to the wider literature. The [research context](reference.md#research-context) identifies related approaches without implying that their methods or empirical results have been reproduced here.
 
@@ -40,3 +41,7 @@ The [reference chapter](reference.md) contains a glossary, source map, bibliogra
 ### Edition 0.3 implementation
 
 Three fixed same-cast configurations now vary culprit, means, motive and crime time. Their prehistories execute in the kernel; evidence and initial knowledge link to recorded events. A bounded acquisition search constructs and replays investigation witnesses. The new configurations enforce local transition admission even with AI and optional Z3 disabled, including relevant intermediate access/deadline checks. [Generation](generation.md#10-7-the-implemented-configuration-pipeline) explains the implemented pipeline and the remaining gate before random sampling. The original case remains available with its existing richer authored behavior.
+
+### Edition 0.4 implementation
+
+A case is now a **base scaffold plus composed narrative modules** (`dist/modules/`): reusable bricks — misdirection, an honest-mistake correction delivered to the constable in person, a benign secret that makes an innocent evasive, and a live culprit concealment — that contribute clues, sourced prehistory, NPC capabilities and dialogue, and each declares a local coherence invariant. A **case-general validator** (`dist/casegen.mjs`) admits a specification only when it passes physical execution, epistemic sourcing, bounded reachability and **evidence-driven distinguishability** (name-neutral: discoverable alibi/opportunity claims discriminate the culprit) obligations, plus every composed module's invariant. A **seeded sampler** returns only validated cases, and generated cases resolve from their id, so they are playable and save/reload-safe through a menu "generate a case" action. The capability system gained fetch and inform plan shapes, so concealment (the culprit hides a document it knows about) and correction (the witness travels to Bell and delivers her revised account) run as validated live plans. This advances the [staged plan](generation.md#10-5-staged-generation-and-exit-criteria) into a bounded slice of G2; new casts, maps and richly generated prose remain future work.

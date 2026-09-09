@@ -1,6 +1,6 @@
 # Living Mystery
 
-A playable, text-based Bellweather mystery with a visual simulation inspector and three alternate authored case configurations.
+A playable, text-based Bellweather mystery with a visual simulation inspector, three alternate authored case configurations, and **validated procedural generation**: composable narrative modules snap onto a base case, and a case-general validator admits only mysteries that are physically executable, legitimately sourced, solvable and distinguishing.
 
 ## Technical report
 
@@ -37,7 +37,7 @@ node cli.mjs
 node --test tests/*.test.mjs
 ```
 
-The browser saves progress on the current device. Export/import includes the complete event history and current world. This is one authored case, **The Last Bell**. Seeds vary schedules; they do not generate a new culprit or crime.
+The browser saves progress on the current device. Export/import includes the complete event history and current world. The original case is **The Last Bell**; the menu also offers three authored configurations and validated generated cases over the same cast. Seeds vary schedules within a case; the culprit/weapon/motive/crime come from the chosen (or generated-and-validated) configuration.
 
 ## Optional AI characters
 
@@ -96,6 +96,11 @@ Tests: `node --test tests/*.test.mjs` and `python3 -m unittest discover -s tests
 | `dist/ui.mjs` | Game and visual inspector adapters (+ persisted optional AI delivery audit) |
 | `dist/dialogue-save.mjs` | Saves and validates dialogue audits and Reasoning board annotations separately from deterministic world state |
 | `dist/character-turn.mjs` | Perspective construction, character proposals, critic, bounded retries and atomic application |
+| `dist/modules/` | Composable narrative bricks: `contract.mjs` (the `NarrativeModule` interface + `resolveRoles`), `index.mjs` (registry + `activeModules`), and `misdirection`/`correction`/`secret-affair`/`concealment` |
+| `dist/casegen.mjs` | Case-general validator (`validateCase`: physical/epistemic/reachability/distinguishability + per-module invariants) and the seeded validated sampler (`sampleCases`) |
+| `dist/cases/bellweather-configs.mjs` | Authored specs + reusable `WEAPONS`/`MOTIVES`/garments, `buildSpec`, and `specFromId` (gen-* ids reconstruct their spec) |
+| `dist/engine-runtime.mjs` | Case-bound command runtime and kernel assembly |
+| `tests/modules.test.mjs` / `tests/casegen.test.mjs` | Module composition/invariants; validator obligations, seeded sampler, and generated-case lifecycle |
 | `dist/llm.mjs` | Free-form AI dialogue with entity/number checks, a separate semantic critic, and audited fallback |
 | `dist/styles.css` | Responsive text-game and inspector presentation |
 | `server/llm_proxy.py` | Local Bedrock (Converse) proxy for AI-voiced dialogue; holds AWS creds server-side |
@@ -109,7 +114,7 @@ Tests: `node --test tests/*.test.mjs` and `python3 -m unittest discover -s tests
 
 ## Current boundaries
 
-The engine is authoritative within this single-player client, not a secure server. Source, exported saves and the inspector expose the solution. Optional AI character turns influence dialogue and bounded character state through validated proposals; the model cannot submit arbitrary world patches. Semantic critics can miss mistakes. Recorded runs replay deterministically; new AI runs may vary. An optional Z3 adapter validates authored correction/concealment plans and bounded AI-selected capabilities through the shared action contracts. There is no ASP solver, general LLM physical planning, procedural crime generation, automatic branching, spatial playable client, or cloud save synchronization yet.
+The engine is authoritative within this single-player client, not a secure server. Source, exported saves and the inspector expose the solution. Optional AI character turns influence dialogue and bounded character state through validated proposals; the model cannot submit arbitrary world patches. Semantic critics can miss mistakes. Recorded runs replay deterministically; new AI runs may vary. An optional Z3 adapter validates authored correction/concealment plans and bounded AI-selected capabilities through the shared action contracts. Procedural generation exists as **validated seeded sampling over the fixed cast** (culprit/weapon/motive/time/misdirection), gated by the case-general validator; there is no new-cast/relationship/map generation, ASP solver, general LLM physical planning, automatic branching, spatial playable client, or cloud save synchronization yet.
 
 Dialogue remains authored and bounded, with specific reactions for relevant evidence and explicit knowledge limits otherwise. Movement memories can be recounted through sightings; selected witnessed actions and learned corrections drive reporting plans. Claims cover selected assertions and support limited temporal/location comparisons, not a solver-backed proof of coherence. A Done marker means an option has been used successfully, not that repeating it cannot yield new information.
 
@@ -147,8 +152,10 @@ save/load. Belief revisions preserve their sources and invalidate explicitly
 dependent inferences. See [the character contract](docs/character-turns.md) and
 [Director testing](docs/director-testing.md) for the current scope and test steps.
 
-## New: alternate Last Bell configurations
+## Composable cases: authored configurations and validated generation
 
-Menu → **Choose a case configuration** offers The Ledger, The Codicil and The Notice alongside the original case. Each has a different culprit, weapon, motive and crime time, executed evening history, sourced evidence and a fully scripted solution. Export your current investigation before replacing it. Restart and imported saves retain their case identity.
+Menu → **Choose a case configuration** offers The Ledger, The Codicil and The Notice alongside the original case, plus **🎲 Generate a new validated case**. Each case is a **base scaffold + composed narrative modules ("bricks")**: reusable units of detective fiction — a misdirection (mistaken sighting), an honest-mistake correction the witness carries to Bell in person, a benign secret that makes an innocent evasive, and a live culprit concealment that hides evidence when you press too hard. Bricks contribute clues, sourced prehistory, NPC capabilities and dialogue, and each declares a local coherence invariant. Adding a new trope is one module file.
 
-The new configurations enforce bounded investigation admission even with AI and optional Z3 off. Acquisition search builds and engine-replays a witness; unsupported or exhausted checks defer effects. These are handcrafted reference configurations, not random generation or a general proof of solvability. See [implementation and testing](docs/case-configurations.md).
+Generated cases permute culprit, weapon, motive, crime time and misdirection over the fixed cast; **`dist/casegen.mjs` validates every candidate** against four obligations (physical execution, legitimately sourced knowledge, bounded solvability, and evidence-driven distinguishability) plus each brick's invariant, and only cases that pass all of them are playable. Generated cases resolve from their id, so they save and reload like any authored configuration. Export your current investigation before replacing it. Restart and imported saves retain their case identity.
+
+The new configurations enforce bounded investigation admission even with AI and optional Z3 off. Acquisition search builds and engine-replays a witness; unsupported or exhausted checks defer effects. Generation is **validated, deterministic (seeded) and offline** — no random unchecked culprit, no model or image requests. See [implementation and testing](docs/case-configurations.md).

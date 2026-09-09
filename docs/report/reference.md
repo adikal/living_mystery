@@ -11,11 +11,14 @@
 | Candidate turn | Isolated execution whose effects are not yet authoritative. |
 | Case model | Content and policies for a particular mystery, bound to the kernel. |
 | Causal parent | An event ID recorded as a cause or support, distinct from simple earlier occurrence. |
+| Case validator | The case-general check (`casegen.validateCase`) admitting only physically executable, legitimately sourced, solvable, distinguishing and module-coherent specifications. |
 | Critic | A model call assessing a proposed reply against permitted content and context. |
 | Dependency invalidation | Retirement of conclusions whose explicitly recorded premises changed. |
+| Distinguishability | Whether discoverable evidence discriminates the intended culprit from alternatives; checked on structured claims and confirmed against the accusation grader. |
 | Event prefix | History through a particular event index, including order within a minute. |
 | Frame constraint | A condition preserving an entity's state across an action that does not change it. |
 | Intention | A character's desired future behavior; not evidence of its completion. |
+| Narrative module (brick) | A reusable, parameterized unit of detective fiction composed onto a base case, contributing content, sourced prehistory, capabilities and dialogue and declaring a local coherence invariant. |
 | Plan capability | A trusted bounded sequence of typed actions available to a policy. |
 | Provenance | Recorded sources and dependencies supporting an event, belief or conclusion. |
 | Replay witness | A concrete sequence of commands that reaches a goal in the engine. |
@@ -44,6 +47,8 @@ These paths are relative to the repository root. The report build checks their e
 | `dist/claims.mjs` | Structured claims and bounded comparison | [Knowledge](knowledge.md) |
 | `dist/cases/last-bell-claims.mjs` | Authored case-night claim annotations | [Knowledge](knowledge.md) |
 | `dist/character-turn.mjs` | Tickets, model proposal, critic and application checks | [Character turns](characters.md) |
+| `dist/modules/` | Composable narrative bricks: `contract.mjs`, `index.mjs` (registry + `activeModules`), and `misdirection`/`correction`/`secret-affair`/`concealment` | [Generation](generation.md) |
+| `dist/casegen.mjs` | Case-general validator (four obligations + module invariants) and the seeded validated sampler | [Generation](generation.md) |
 | `dist/actions.mjs` | Shared NPC action vocabulary | [Symbolic layer](symbolic.md) |
 | `dist/agent-plans.mjs` | Available capabilities, queue, execution and observations | [Character turns](characters.md) |
 | `dist/symbolic.mjs` | Finite query compiler and concrete witness evaluator | [Symbolic layer](symbolic.md) |
@@ -61,6 +66,9 @@ These paths are relative to the repository root. The report build checks their e
 | `tests/character-turn.test.mjs` | Mocked character generation and critic orchestration | [Evaluation](evaluation.md) |
 | `tests/ui.test.mjs` | UI adapter regression checks | [Evaluation](evaluation.md) |
 | `tests/test_symbolic_solver.py` | Solver translation and service boundaries | [Evaluation](evaluation.md) |
+| `tests/modules.test.mjs` | Brick composition, invariants, `peers` interweave and live correction delivery | [Evaluation](evaluation.md) |
+| `tests/casegen.test.mjs` | Validator obligations, seeded sampler and generated-case lifecycle | [Evaluation](evaluation.md) |
+| `tools/debug-session.mjs` | Reads an exported investigation and prints per-turn AI audits (debugging) | [Evaluation](evaluation.md) |
 
 ## Research context
 
@@ -99,3 +107,4 @@ For a research or external-review snapshot, associate a report edition with a re
 | 0.1 | 2026-09-08 | Initial integrated report: deterministic simulation, bounded character plans, Z3 admission, belief dependencies, inspector and procedural-generation research agenda. |
 | 0.2 | 2026-09-08 | Refined hard-invariant contract, two-stage dynamic admissibility, hybrid autonomy, future-opportunity obligations and acceptance criteria; design changes only. |
 | 0.3 | 2026-09-08 | Bounded acquisition/admission, parameterized executable prehistory, three selectable authored configurations, provenance and save isolation; generation remains future work. |
+| 0.4 | 2026-09-09 | Composable narrative modules (misdirection/correction/secret-affair/concealment); case-general validator (physical/epistemic/reachability/distinguishability + module invariants); seeded validated sampler and playable generated cases; fetch/inform capabilities (live concealment and in-person correction); critic JSON-only output and a general clean-decline for out-of-knowledge questions; role-aware prose and clue-kind fixes. |

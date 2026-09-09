@@ -4,7 +4,7 @@
 
 ## 9.1 What current tests establish
 
-The configuration implementation was validated on 2026-09-08 with 124 passing JavaScript tests and 10 passing Python tests. The real-solver JavaScript subset is opt-in: it skips cleanly when the `.venv`/Z3 dependency is absent, so a checkout without the solver still reports a green suite. The suite covers engine behavior, claims, saved dialogue, character orchestration, shared plans, solver integration, configured cases and UI adapter logic. These are engineering regression results for this working tree, not player-study or model-quality measurements.
+The implementation was validated on 2026-09-09 with 140 passing JavaScript tests and 10 passing Python tests. The real-solver JavaScript subset is opt-in: it skips cleanly when the `.venv`/Z3 dependency is absent, so a checkout without the solver still reports a green suite. The suite covers engine behavior, claims, saved dialogue, character orchestration, shared plans, solver integration, configured cases, composable narrative modules, case generation and UI adapter logic. These are engineering regression results for this working tree, not player-study or model-quality measurements.
 
 | Property | Representative evidence | Boundary of the conclusion |
 | --- | --- | --- |
@@ -17,6 +17,8 @@ The configuration implementation was validated on 2026-09-08 with 124 passing Ja
 | Investigation route | Acquisition search plus engine replay solves all three configurations | Finite catalog, authored goal and deterministic scheduling; no universal proof. |
 | Admission preservation | Last-route loss, intermediate restoration, deadline waiting, optional loss and weapon-capability filtering | Narrow declared access/expiry domain; no general social or adversarial future coverage. |
 | Executed prehistory | Actual travel, possession, crime state, evidence ancestry and save continuation | Typed plan fragments plus direct guards, not a complete SMT crime theory. |
+| Module composition | Brick activation/omission, additive content, `peers` interweave, each brick's invariant, and the live correction delivered to Bell | Role-based over the fixed cast; not arbitrary-cast composition. |
+| Case generation | `validateCase` obligations on the full same-cast grid (162 specs), seeded-sampler determinism/validity, and generated-case save/reload lifecycle | Distinguishability rests on the alibi/opportunity claim structure, not a general crime theory. |
 | Interface behavior | DOM-stub rendering and event-handler regressions | Does not establish browser layout or accessibility. |
 
 The build for this report separately checks chapter and figure references, internal anchors, source-map paths and generated output. Documentation validation does not rerun the game or establish a new simulation result.

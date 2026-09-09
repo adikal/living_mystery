@@ -2,13 +2,18 @@ import {guardedDispatch,filterPlans,assessTransition} from './admission.mjs';
 // Session-scoped case assembly. Legacy sessions keep the original Last Bell.
 import * as Original from './cases/last-bell.mjs';
 import {makeCase} from './cases/bellweather.mjs';
-import {CONFIGS} from './cases/bellweather-configs.mjs';
+import {CONFIGS,specFromId} from './cases/bellweather-configs.mjs';
 import {createRuntime} from './engine-runtime.mjs';
+import {sampleCases} from './casegen.mjs';
 export {VERSION,copy,timeLabel} from './kernel.mjs';
 export const {CASE,LOCATIONS,PEOPLE,CLUES,OBJECTS,SUSPECTS,PILLARS,suspectMeta,suspectBoard}=Original;
 const definitions=new Map([[CASE.id,Original],...CONFIGS.map(c=>[c.id,makeCase(c)])]);
 const runtimes=new Map();
-export function runtimeFor(s){const id=typeof s==='string'?s:s?.world?.caseId??CASE.id;if(!definitions.has(id))throw Error('Unknown case configuration');if(!runtimes.has(id))runtimes.set(id,createRuntime(definitions.get(id)));return runtimes.get(id);}
+// Generated cases resolve lazily: a gen-* id reconstructs its spec via specFromId,
+// so sampled cases play (and save/reload) like any authored configuration.
+export function runtimeFor(s){const id=typeof s==='string'?s:s?.world?.caseId??CASE.id;if(!definitions.has(id)){const spec=typeof id==='string'&&id.startsWith('gen-')?specFromId(id):null;if(!spec)throw Error('Unknown case configuration');definitions.set(id,makeCase(spec));}if(!runtimes.has(id))runtimes.set(id,createRuntime(definitions.get(id)));return runtimes.get(id);}
+// Sample a validated case and return its id/title for the UI to start.
+export function generateCase(seed){const s=Number.isInteger(seed)?seed:(Math.floor(Math.random()*0x7ffffffe)+1);const found=sampleCases(s,1);return found.length?{id:found[0].spec.id,title:found[0].spec.title,seed:s}:null;}
 export const caseTables=s=>runtimeFor(s);
 export const CASE_OPTIONS=[{id:CASE.id,title:CASE.title+' — original'},...CONFIGS.map(({id,title})=>({id,title}))];
 export const createSession=(seed=17,caseId=CASE.id)=>runtimeFor(caseId).createSession(seed);

@@ -1,6 +1,6 @@
 # 10. From a reference case to procedural mysteries
 
-**Status: three authored configurations with executable prehistory are implemented; random generation remains proposed.**
+**Status: three authored configurations, a composable narrative-module system, a case-general validator and a seeded sampler are implemented (a bounded slice of G2 over the fixed cast); new-cast, relationship and map generation, and richly generated prose, remain proposed.**
 
 ## 10.1 Complete the reference case first
 
@@ -38,7 +38,7 @@ The proposed multi-logic layer could test alternative assignments or produce exp
 | --- | --- | --- |
 | G0: reference case | Finish authored mechanics and interactions | Repeatable case paths and clearly explained failures |
 | G1: authored variation — implemented slice | Three same-cast culprit/method/motive/time configurations | Executed prehistory and replayed solutions; richer narrative playtests remain |
-| G2: controlled sampling — proposed | Sample validated same-cast specifications | Symbolic crime rules, alternative explanations, source checks and bounded retries |
+| G2: controlled sampling — implemented slice | Seeded sampling of validated same-cast specifications, composed from narrative modules | Now enforced: physical, epistemic, reachability and distinguishability obligations plus per-module invariants, over the fixed cast. Still remaining: symbolic crime rules, independent alternative-explanation proof, richer prose and human playtests |
 | G3: generative authoring | New case structures within a declared domain | Artifact validation, bounded repair and diverse playtests |
 | G4: richer playable world | Spatial actions and larger social networks | Perception semantics, performance budgets and recovery coverage |
 
@@ -61,3 +61,13 @@ Travel and taking use shared typed plan checks, which the tests also submit to a
 The browser selects a configuration and keeps its ID in the save. Scripted play, views and optional character context all bind to that case. The original mystery remains selectable for compatibility and its richer correction/concealment threads. Portraits and location imagery are reused; alternate artifact imagery uses text fallback. No runtime AI or image requests are required.
 
 The next generation gate is controlled seeded sampling of validated specifications. It must reject inconsistent histories, test discoverable discrimination among alternative suspects/methods/motives, replay an acquisition witness and package sufficient scripted content. Merely choosing a different culprit field would not satisfy these obligations.
+
+## 10.8 Composable narrative modules and validated sampling
+
+**Status: implemented over the fixed cast; new-cast composition and richer prose proposed.**
+
+A case is now assembled as a **base scaffold plus composed narrative modules** ("bricks"), each a reusable unit of detective fiction conforming to one contract (`dist/modules/contract.mjs`): `bind` resolves the brick's role slots or sits out; `content` additively contributes clues, objects and proof-route entries; `prehistory` emits sourced events, beliefs and capabilities through the kernel; `capabilities` supplies NPC plan permissions; `decide`/`onInteract` drive and react to behavior; `dialogue` contributes topic responses; and `invariant` is a brick-local coherence check. `activeModules(spec)` composes them (honoring a `requires` order and passing sibling `peers` so bricks can interweave). Four bricks exist today — misdirection, correction, secret-affair and concealment — and adding a trope is one module file plus a registry line.
+
+The **case-general validator** (`dist/casegen.mjs`, `validateCase`) turns the four obligations of §10.3 into executable checks and adds a fifth: **physical** (the prehistory executes and the case constructs), **epistemic** (every seeded belief references a recorded event), **reachability** (a bounded acquisition search plus engine replay solves it), **distinguishability**, and **module coherence** (each composed brick's invariant holds). Distinguishability is checked at the level of discoverable structured claims, not clue prose: every innocent must be placed elsewhere across the death window, the culprit must be unalibied with scene opportunity, and the real accusation grader must convict only the culprit with the discoverable bundle. A red-herring brick therefore cannot become load-bearing, and a concealment brick cannot remove the last route — the invariant and the validator reject such compositions.
+
+`sampleCases(seed, n)` permutes culprit, weapon, motive, crime time and the misdirection target over the fixed cast with a deterministic PRNG and returns **only** specifications that pass every obligation. The full same-cast grid (162 candidates at the current parameters) validates end to end. Generated cases are playable: a `gen-*` identifier encodes every component `buildSpec` needs, so the engine resolves the runtime lazily and the case saves and reloads like any authored configuration; a browser "generate a case" action samples one and starts it. This is variety that is **generated and proven**, not asserted — but it remains bounded to the fixed cast, templated (role-aware) prose, and the current crime shape, so distinguishability rests on the alibi/opportunity claim structure rather than a general symbolic crime theory.
