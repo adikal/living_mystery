@@ -149,3 +149,24 @@ test('Ambiguous critic verdicts exhaust the retry budget and cannot commit model
  assert.notEqual(s.events.findLast(e=>e.actor==='clara'&&e.kind==='speech').data.assertion,p.utterance);
  assert.deepEqual(diagnostics(s).errors,[]);
 });
+
+test('Presenting evidence passes its description and steers a null-account answer to the reaction account, not a decline',()=>{
+ const s=createSession(5,'bellweather-01');
+ dispatch(s,{type:'move',to:'vestry'});
+ dispatch(s,{type:'inspect',object:'delivery'});
+ assert.ok(s.world.player.evidence.some(e=>e.clue==='delivery'),'delivery acquired in the vestry');
+ const t=prepareCharacterTurn(s,{person:'silas',text:"I'd like to discuss the timed delivery receipt.",action:{type:'present',person:'silas',clue:'delivery',tone:'private'}});
+ // Richer presented context: the model is told WHAT it is being shown, not an opaque clue id.
+ assert.equal(t.context.player.presented.clue,'delivery');
+ assert.equal(typeof t.context.player.presented.description,'string');
+ assert.ok(t.context.player.presented.description.length>10,'presented carries the evidence description');
+ // A null-account answer WHILE evidence is presented is steered to select the reaction account (never "I am not familiar").
+ const nullAnswer={intent:'answer',account:null,utterance:'I do not know what you mean.',claims:[],sources:[],trust:'unchanged',belief:'remember_only',engagement:'continue',rationale:'x'};
+ const shown=validateCharacterProposal(t,nullAnswer);
+ assert.equal(shown.ok,false);
+ assert.match(shown.reason,/showing you|reaction to it/i);
+ // The same null-account answer for a plain ask (no presented evidence) is steered to a clean in-character decline.
+ const ask=validateCharacterProposal(prepareCharacterTurn(s,{person:'silas',text:'Tell me about last night.'}),{...nullAnswer});
+ assert.equal(ask.ok,false);
+ assert.match(ask.reason,/cannot speak to that|no available account fits/i);
+});
