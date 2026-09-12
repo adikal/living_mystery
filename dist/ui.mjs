@@ -72,7 +72,16 @@ function selectedIndex(){return cursor===null?session.events.length-1:Math.min(c
 function selectedWorld(){return cursor===null?session.world:worldAt(session,selectedIndex());}
 function selectEvent(index){cursor=Number(index);if(cursor<0||cursor>=session.events.length)cursor=null;stopReplay();render();}
 function toast(message){const el=$('#toast');el.textContent=message;el.classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('visible'),4200);}
-function persist(){try{localStorage.setItem(storageKey,exportDialogueSave(session,dialogueAudit,boardNotes));saveError=false;localStorage.removeItem?.(BOARD_KEY);}catch{saveError=true;toast('This browser could not save the investigation. Use Export to keep a copy.');}}
+function persist(){
+  try{localStorage.setItem(storageKey,exportDialogueSave(session,dialogueAudit,boardNotes,{pretty:false}));saveError=false;localStorage.removeItem?.(BOARD_KEY);}
+  catch{
+    // Most likely the browser's ~5MB localStorage quota, exceeded by the accumulated AI
+    // reasoning trace. Retry a compact, gameplay-only save (drop the heavy audits) so the
+    // investigation itself is never lost; the full trace still survives Export.
+    try{localStorage.setItem(storageKey,exportDialogueSave(session,new Map(),boardNotes,{pretty:false}));saveError=false;localStorage.removeItem?.(BOARD_KEY);toast('Low on browser storage: your progress was saved, but AI reasoning traces were dropped from autosave. Use Export to keep the full record.');}
+    catch{saveError=true;toast('This browser could not save the investigation. Use Export to keep a copy.');}
+  }
+}
 function act(action){if(characterBusy){toast('Wait for the reply or cancel it before acting.');return;}if(llmActive()&&llmConfig().reasoning&&['ask','present'].includes(action.type)){const label=action.type==='present'?`I'd like to discuss ${CLUES[action.clue]?.title?.toLowerCase()}.${action.tone==='press'?' If you refuse, I will expose your private affairs.':''}`:([...topicsFor(action.person),...followupOptions(session,action.person)].find(([topic])=>topic===action.topic)?.[1]??action.topic??'Tell me about last night.');runCharacter(action.person,label,action);return;}if(directorEnabled()||(llmActive()&&llmConfig().reasoning&&session.world.flags.lifeVersion)){runDirectedAction(action);return;}stopReplay();cursor=null;try{const from=session.world.player.location;dispatch(session,action);sceneTransition=from!==session.world.player.location?{from,to:session.world.player.location}:null;if(sceneTransition){chat=null;actionGroup='inspect';}healthCache=null;persist();render();if(sceneTransition){$('.scene-heading')?.focus({preventScroll:true});}}catch(error){toast(`The action could not be completed: ${error.message}`);}}
 async function runDirectedAction(action){
   autonomyController?.abort(); // cancel any detached NPC deliberation before staging this turn

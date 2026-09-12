@@ -18,11 +18,11 @@ export function normalizeBoardNotes(session,input){
   }
   return out;
 }
-export function exportDialogueSave(session,audit,boardNotes={}){
+export function exportDialogueSave(session,audit,boardNotes={},{pretty=true}={}){
   const save=JSON.parse(exportSession(session));
   save.reasoning={version:1,notes:normalizeBoardNotes(session,boardNotes)};
   save.dialogue={version:1,records:[...audit.entries()].map(([eventId,record])=>({eventId,...record}))};
-  return JSON.stringify(save,null,2);
+  return JSON.stringify(save,null,pretty?2:0);
 }
 export function importDialogueSave(text){
   const session=importSession(text),save=JSON.parse(text),audit=new Map();
