@@ -75,6 +75,7 @@ function toast(message){const el=$('#toast');el.textContent=message;el.classList
 function persist(){try{localStorage.setItem(storageKey,exportDialogueSave(session,dialogueAudit,boardNotes));saveError=false;localStorage.removeItem?.(BOARD_KEY);}catch{saveError=true;toast('This browser could not save the investigation. Use Export to keep a copy.');}}
 function act(action){if(characterBusy){toast('Wait for the reply or cancel it before acting.');return;}if(llmActive()&&llmConfig().reasoning&&['ask','present'].includes(action.type)){const label=action.type==='present'?`I'd like to discuss ${CLUES[action.clue]?.title?.toLowerCase()}.${action.tone==='press'?' If you refuse, I will expose your private affairs.':''}`:([...topicsFor(action.person),...followupOptions(session,action.person)].find(([topic])=>topic===action.topic)?.[1]??action.topic??'Tell me about last night.');runCharacter(action.person,label,action);return;}if(directorEnabled()||(llmActive()&&llmConfig().reasoning&&session.world.flags.lifeVersion)){runDirectedAction(action);return;}stopReplay();cursor=null;try{const from=session.world.player.location;dispatch(session,action);sceneTransition=from!==session.world.player.location?{from,to:session.world.player.location}:null;if(sceneTransition){chat=null;actionGroup='inspect';}healthCache=null;persist();render();if(sceneTransition){$('.scene-heading')?.focus({preventScroll:true});}}catch(error){toast(`The action could not be completed: ${error.message}`);}}
 async function runDirectedAction(action){
+  autonomyController?.abort(); // cancel any detached NPC deliberation before staging this turn
   stopReplay();cursor=null;const target=session,epoch=++characterEpoch,from=session.world.player.location,useDirector=directorEnabled();
   characterController=new AbortController();characterBusy=true;directorPending=false;
   try{
@@ -92,6 +93,7 @@ async function runDirectedAction(action){
 async function runCharacter(person,text,action=null){
   if(characterBusy)return;
   if(!llmActive()||!llmConfig().reasoning){toast('Enable character reasoning in AI settings to ask in your own words.');return;}
+  autonomyController?.abort(); // a detached NPC deliberation must not commit under this turn's ticket
   let ticket;try{ticket=prepareCharacterTurn(session,{person,text,action});}catch(error){toast(error.message);return;}
   stopReplay();cursor=null;const target=session,epoch=++characterEpoch,useDirector=directorEnabled();
   characterController=new AbortController();characterBusy=true;characterPending={person,text};renderVoiceResult();

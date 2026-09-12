@@ -379,6 +379,19 @@ test('Background deliberation never blocks or discards the player turn',async()=
  assert.notEqual(ui.run('exportSession(session)'),before);
 });
 
+test('A new player turn aborts in-flight background deliberation so it cannot stale the ticket',async()=>{
+ let sig;const ui=adapter(null,{llmActive:()=>true,llmConfig:()=>({reasoning:true}),directorEnabled:()=>false,
+  deliberateWorld:(_s,{signal})=>{sig=signal;return new Promise(()=>{});},
+  proposeCharacterTurn:async(ticket)=>({proposal:null,audit:{reason:'offline',context:ticket.context,attempts:[]}})});
+ ui.click('start-case',{id:'bellweather-01'});
+ await ui.run("runDirectedAction({type:'wait',minutes:5})");
+ await new Promise(r=>setTimeout(r,0)); // let the detached deliberation start and capture its signal
+ assert.equal(sig?.aborted,false);
+ await ui.run("runCharacter('bell','What makes a case?',{type:'ask',person:'bell',topic:'case'})");
+ assert.equal(sig?.aborted,true,'the new turn aborted the detached deliberation');
+ assert.ok(ui.run("session.events.some(e=>e.kind==='speech'&&e.actor==='bell')"),'the character turn applied, not stale');
+});
+
 test('Menu generates each investigative structure with AI off',()=>{
  const ui=adapter(null,{llmActive:()=>false});ui.click('choose-case');
  assert.match(ui.node('#modal').innerHTML,/cleanup investigation/);
