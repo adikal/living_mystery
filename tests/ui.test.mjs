@@ -365,14 +365,18 @@ test('Life inspector follows the selected time and scripted mode never calls aut
  ui.run("cursor=0;render()");assert.doesNotMatch(ui.node('#app').innerHTML,/<h3>Daily life<\/h3>/);
 });
 
-test('Cancelling background deliberation leaves the whole player turn unapplied',async()=>{
- let finish;const ui=adapter(null,{llmActive:()=>true,llmConfig:()=>({reasoning:true}),directorEnabled:()=>false,deliberateWorld:()=>new Promise(resolve=>{finish=resolve;})});
+test('Background deliberation never blocks or discards the player turn',async()=>{
+ let started=false;const ui=adapter(null,{llmActive:()=>true,llmConfig:()=>({reasoning:true}),directorEnabled:()=>false,deliberateWorld:()=>{started=true;return new Promise(()=>{});}});
  ui.click('start-case',{id:'bellweather-01'});const before=ui.run('exportSession(session)');
- const pending=ui.run("runDirectedAction({type:'wait',minutes:30})");
- assert.match(ui.node('#app').innerHTML,/considering their next activity/);
- ui.click('cancel-character');finish({status:'cancelled'});await pending;
- assert.equal(ui.run('exportSession(session)'),before);assert.equal(ui.run('characterBusy'),false);
+ await ui.run("runDirectedAction({type:'wait',minutes:5})");
+ // The turn commits immediately; deliberation is detached, not awaited, and shows no blocking spinner.
+ assert.notEqual(ui.run('exportSession(session)'),before);
+ assert.equal(ui.run('characterBusy'),false);
  assert.doesNotMatch(ui.node('#app').innerHTML,/considering their next activity/);
+ await new Promise(r=>setTimeout(r,0)); // let the detached deliberation start
+ assert.equal(started,true);
+ ui.click('cancel-character'); // aborting the detached deliberation leaves the applied turn intact
+ assert.notEqual(ui.run('exportSession(session)'),before);
 });
 
 test('Menu generates each investigative structure with AI off',()=>{

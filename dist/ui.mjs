@@ -25,8 +25,20 @@ let mode='game',notebook='evidence',evidenceKind='All',reasonSuspect=null,chat=n
 // Persisted presentation audit is separate from deterministic engine events.
 const dialogueAudit=loadedAudit;
 const realized=new Map([...dialogueAudit].map(([id,r])=>[id,`${actorName(session.events.find(e=>e.id===id).actor)}\n"${r.text}"`]));
-let characterBusy=false,characterController=null,characterEpoch=0,characterDraft='',characterPending=null,directorPending=false,autonomyPending=false;
-function cancelCharacter(){characterEpoch++;characterController?.abort();characterController=null;characterBusy=false;characterPending=null;directorPending=false;autonomyPending=false;}
+let characterBusy=false,characterController=null,characterEpoch=0,characterDraft='',characterPending=null,directorPending=false,autonomyRunning=false,autonomyController=null;
+function cancelCharacter(){characterEpoch++;characterController?.abort();characterController=null;autonomyController?.abort();characterBusy=false;characterPending=null;directorPending=false;}
+// Ordinary NPC life deliberation runs detached after the player's turn commits, so
+// it never blocks the action or its reply. It commits only if the session is
+// unchanged (else the model selection is stale and discarded); a failed or
+// cancelled deliberation simply leaves that NPC on its scripted policy.
+async function scheduleAutonomy(){
+  if(autonomyRunning||characterBusy)return;
+  if(!(llmActive()&&llmConfig().reasoning&&session.world.flags?.lifeVersion))return;
+  autonomyRunning=true;autonomyController=new AbortController();
+  try{const res=await deliberateWorld(session,{signal:autonomyController.signal,endpoint:llmConfig().endpoint});
+    if(!characterBusy&&['accepted','fallback'].includes(res.status)){healthCache=null;persist();render();}
+  }catch{}finally{autonomyRunning=false;autonomyController=null;}
+}
 const pending=new Set();let realizeGen=0;
 // When AI voice is on, a line we've dispatched for restyling shows a brief
 // placeholder until it lands (never the written line first); once voiced, the
@@ -67,16 +79,15 @@ async function runDirectedAction(action){
   characterController=new AbortController();characterBusy=true;directorPending=false;
   try{
     const trial=copy(target);
-    if(llmActive()&&llmConfig().reasoning&&trial.world.flags.lifeVersion){autonomyPending=true;render();await deliberateWorld(trial,{signal:characterController.signal});if(epoch!==characterEpoch||session!==target)return;autonomyPending=false;}
     dispatch(trial,action);
     const result=useDirector?await commitDirectedTurn(target,trial,{signal:characterController.signal,onChecking:()=>{if(epoch===characterEpoch&&session===target){directorPending=true;render();}}}):{status:'not_needed'};
     if(!useDirector&&epoch===characterEpoch&&session===target){target.world=trial.world;target.events=trial.events;}
     if(epoch!==characterEpoch||session!==target)return;
     if(!['verified','not_needed','cancelled'].includes(result.status))toast(`${result.reason}. Turn deferred; disable Z3 checks to continue scripted play.`);
     sceneTransition=from!==session.world.player.location?{from,to:session.world.player.location}:null;
-    if(sceneTransition){chat=null;actionGroup='inspect';}healthCache=null;persist();
+    if(sceneTransition){chat=null;actionGroup='inspect';}healthCache=null;persist();setTimeout(scheduleAutonomy,0);
   }catch(error){if(epoch===characterEpoch)toast(error.message);}
-  finally{if(epoch===characterEpoch){characterBusy=false;characterController=null;directorPending=false;autonomyPending=false;render();}}
+  finally{if(epoch===characterEpoch){characterBusy=false;characterController=null;directorPending=false;render();}}
 }
 async function runCharacter(person,text,action=null){
   if(characterBusy)return;
@@ -90,21 +101,19 @@ async function runCharacter(person,text,action=null){
     const candidate=copy(session);
     const applied=applyCharacterTurn(candidate,ticket,result);
     if(!applied.cancelled){
-      if(llmActive()&&llmConfig().reasoning&&candidate.world.flags.lifeVersion){autonomyPending=true;render();await deliberateWorld(candidate,{signal:characterController.signal});if(epoch!==characterEpoch||session!==target)return;autonomyPending=false;}
       const checked=useDirector?await commitDirectedTurn(target,candidate,{signal:characterController.signal,onChecking:()=>{if(epoch===characterEpoch&&session===target){directorPending=true;render();}}}):{status:'not_needed'};
       if(epoch!==characterEpoch||session!==target)return;
-      if(!['verified','not_needed'].includes(checked.status)){healthCache=null;persist();toast(checked.reason??'Turn cancelled');return;}
+      if(!['verified','not_needed'].includes(checked.status)){healthCache=null;persist();if(checked.status!=='cancelled')toast(`${checked.reason??'Turn deferred'}. Disable World Director Z3 checks (or run the Z3 service on :8788) to continue.`);return;}
       if(!useDirector){target.world=candidate.world;target.events=candidate.events;}
     }
-    if(!applied.cancelled){characterDraft='';if($('#character-question'))$('#character-question').value='';healthCache=null;persist();if(result.proposal?.engagement==='end')chat=null;if(applied.fallback)toast('Using an authored response because the AI turn could not be validated.');}
+    if(!applied.cancelled){characterDraft='';if($('#character-question'))$('#character-question').value='';healthCache=null;persist();if(result.proposal?.engagement==='end')chat=null;if(applied.fallback)toast('Using an authored response because the AI turn could not be validated.');setTimeout(scheduleAutonomy,0);}
   }catch(error){if(epoch===characterEpoch)toast(`The character turn was not applied: ${error.message}`);}
-  finally{if(epoch===characterEpoch){characterBusy=false;characterController=null;characterPending=null;autonomyPending=false;directorPending=false;renderVoiceResult();}}
+  finally{if(epoch===characterEpoch){characterBusy=false;characterController=null;characterPending=null;directorPending=false;renderVoiceResult();}}
 }
 function characterComposer(){return llmActive()&&llmConfig().reasoning?`<form id="character-form" class="character-composer"><label for="character-question">Speak in your own words</label><textarea id="character-question" maxlength="1200" rows="2" placeholder="Ask a question or challenge an account…" ${characterBusy?'disabled':''}>${esc(characterDraft)}</textarea><button class="primary" ${characterBusy?'disabled':''}>Send</button></form>`:'';}
 // While a character turn is in flight, show the player's question and a spinner
 // in the main feed (below the question, before the reply arrives).
 function pendingEntries(){
-  if(autonomyPending)return '<article class="journal-entry pending-turn"><div class="journal-prose character-status"><span role="status">A town character is considering their next activity…</span><button data-do="cancel-character" class="subtle-button">Cancel</button></div></article>';
   if(directorPending)return '<article class="journal-entry pending-turn"><div class="journal-prose character-status"><span class="spinner" aria-hidden="true"></span><span role="status">World Director is checking the turn…</span><button class="subtle-button" data-do="cancel-character">Cancel</button></div></article>';
   if(!characterBusy||!characterPending)return '';
   const {person,text}=characterPending;
