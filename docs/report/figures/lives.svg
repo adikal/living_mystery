@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="title desc">
+<title id="title">Persistent NPC lives</title><desc id="desc">Events and ordinary needs prompt choices. Scripted or optional model policies select bounded goals. Shared constraints validate a plan, actual timed execution changes the world, and observations or failure feed reconsideration. Social commitments require real encounters.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#496779" stroke-width="1.4"/></marker></defs>
+<rect width="960" height="500" rx="12" fill="#f5f7f7"/>
+<style>text{font-family:Arial,sans-serif;fill:#17313e}.label{font-size:17px;font-weight:600}.small{font-size:14px;fill:#4d6270}.box{fill:#edf4f5;stroke:#496779;stroke-width:1.5}.edge{stroke:#496779;stroke-width:1.7;fill:none;marker-end:url(#arrow)}</style>
+<rect class="box" x="25" y="30" width="265" height="100" rx="8"/><text class="label" x="41" y="58">Persistent personal state</text><text class="small" x="41" y="84">Duties · energy · goals · memories</text><text class="small" x="41" y="108">Delivered requests and promises</text>
+<rect class="box" x="347" y="30" width="265" height="100" rx="8"/><text class="label" x="363" y="58">Decision opportunity</text><text class="small" x="363" y="84">Arrival · knowledge · completion</text><text class="small" x="363" y="108">Available goals and priorities</text>
+<rect class="box" x="670" y="30" width="265" height="100" rx="8"/><text class="label" x="686" y="58">Choose a goal sequence</text><text class="small" x="686" y="84">Scripted policy or optional LLM</text><text class="small" x="686" y="108">1–3 permitted goals; bounded calls</text>
+<path class="edge" d="M290 80 H347"/><path class="edge" d="M612 80 H670"/><path class="edge" d="M802 130 V205"/>
+<rect class="box" x="670" y="205" width="265" height="100" rx="8"/><text class="label" x="686" y="233">Shared admission</text><text class="small" x="686" y="259">Timing · presence · commitments</text><text class="small" x="686" y="283">Recheck composition and effects</text>
+<rect class="box" x="347" y="205" width="265" height="100" rx="8"/><text class="label" x="363" y="233">Execute and observe</text><text class="small" x="363" y="259">Travel · timed work · real meetings</text><text class="small" x="363" y="283">Pause for conversation; keep history</text>
+<rect class="box" x="25" y="205" width="265" height="100" rx="8"/><text class="label" x="41" y="233">Reconsider outcomes</text><text class="small" x="41" y="259">Completion · expiry · blocked plan</text><text class="small" x="41" y="283">Recorded reasons and retry delay</text>
+<path class="edge" d="M670 255 H612"/><path class="edge" d="M347 255 H290"/><path class="edge" d="M157 205 V130"/>
+<rect class="box" x="70" y="362" width="820" height="72" rx="8"/><text class="label" x="90" y="390">Social commitment lifecycle</text><text class="small" x="90" y="416">Delivered invitation → in-person acceptance → shared meeting → fulfilled or expired</text>
+<text class="small" x="25" y="475">Implemented bounded domain. Ordinary lives require no AI; general cognition and resource economies remain future work.</text>
+</svg>

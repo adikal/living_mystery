@@ -1,3 +1,4 @@
+import {recordKnowledgeSupport} from '../forensics.mjs';
 // Concealment brick (live behavioral thread, exercises the capability + Director
 // system): once the culprit senses the detective is pressing on the motive
 // documents, they fetch the carbon copy they legitimately know about and hide it
@@ -12,7 +13,8 @@ export const concealment={
 
   // The culprit legitimately knows where the incriminating copy is kept.
   prehistory({roles,K,s,record}){
-    const e=record(roles.culprit,`${K.model.PEOPLE[roles.culprit].name} knows where the incriminating copy is kept`,{},{location:'manor'});
+    const e=s.events.find(e=>e.actor===roles.culprit&&e.data.occurrence==='document_observation').id;
+    recordKnowledgeSupport(K,s,roles.culprit,'knows_copy_location','The carbon copy of the transfers is kept in Edmund’s study.',e);
     K.believe(s,roles.culprit,'knows_copy_location','The carbon copy of the transfers is kept in Edmund’s study.',.9,'observation',e,true);
   },
 

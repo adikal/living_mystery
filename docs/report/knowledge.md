@@ -1,6 +1,6 @@
 # 3. World state, assertions and knowledge
 
-**Status: implemented representations and dependency invalidation; general inference admission is proposed.**
+**Status: provenance, dependency invalidation and registered configured-case support rules are implemented; general inference discovery remains proposed.**
 
 ## 3.1 Separate representational roles
 
@@ -53,3 +53,9 @@ Generic communication creates attributed testimony in the recipient, with unknow
 A completed intention has a similar lifecycle. Ada's pending correction is retired after the actual speech to Bell; a completed belief cites that speech. Generic queued plans retain a cursor, cause and status and record completion or blockage. A promise is not marked complete simply because the words were accepted by a critic.
 
 Confidence values are currently authored or bounded policy values, not calibrated Bayesian probabilities. Showing “99%” should not be read as an empirical accuracy guarantee. Future work should examine whether qualitative confidence displays communicate the model more faithfully.
+
+## 3.6 Typed support and live admission
+
+New configured prehistories declare exact supported accounts and typed premises. Source validation checks what an occurrence establishes and whether the character personally observed it or received the testimony. A valid but unrelated event ID fails. Evidence claims have separate predicate-specific production checks.
+
+Configured live belief updates now pass registered support rules before state changes. The rules cover presented evidence, attributed reports, transfers, local surveys and current case inferences. Unknown support rules fail closed; the registry is the extension point for new knowledge operations. Player testimony remains explicitly uncertain. In particular, Ada's clock correction adjusts timing without claiming to establish identity or whereabouts. Original-case knowledge policy remains separate, and semantic review of LLM wording remains the dialogue critic's responsibility.

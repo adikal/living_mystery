@@ -58,9 +58,9 @@ export function queuePlan(kernel,s,plan,cause){
 export function resumePlan(kernel,s,actor,cause){
   const npc=s.world.npcs[actor],pending=npc.pendingPlan;
   if(!pending)return false;
-  if(npc.travel||s.world.player.conversation===actor)return true;
+  if(npc.travel||npc.life?.active||s.world.player.conversation===actor)return true;
   const {plan}=pending;
-  const finish=(status,reason)=>kernel.commit(s,{kind:'decision',actor,title:`${kernel.model.PEOPLE[actor].name}: plan ${status}`,parents:[cause,pending.cause],data:{planStatus:status,planId:plan.id,reason},changes:{[`npcs.${actor}.pendingPlan`]:null,[`npcs.${actor}.intention`]:status==='completed'?`Completed: ${plan.label}`:`Reconsider: ${plan.label}`}});
+  const finish=(status,reason)=>{if(plan.life)kernel.life?.finished(s,actor,status,reason);return kernel.commit(s,{kind:'decision',actor,title:`${kernel.model.PEOPLE[actor].name}: plan ${status}`,parents:[cause,pending.cause],data:{planStatus:status,planId:plan.id,...(reason?{reason}:{})},changes:{[`npcs.${actor}.pendingPlan`]:null,[`npcs.${actor}.intention`]:status==='completed'?`Completed: ${plan.label}`:`Reconsider: ${plan.label}`}});};
   if(pending.cursor>=plan.steps.length){finish('completed');return true;}
   const remaining={...plan,steps:plan.steps.slice(pending.cursor)};
   const communication=remaining.steps.find(step=>step.kind==='communicate');
@@ -80,6 +80,7 @@ export function resumePlan(kernel,s,actor,cause){
     kernel.afterTransfer?.(s,actor,step,e);
   };
   const handlers={
+    activity:step=>kernel.life.start(s,actor,step,event),
     observe:step=>{
       const visible=[...new Set([
         ...(kernel.model.LOCATIONS[npc.location].objects??[]).filter(id=>!Object.hasOwn(s.world.objects,id)||s.world.objects[id]===npc.location),

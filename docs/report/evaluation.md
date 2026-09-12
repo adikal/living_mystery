@@ -4,7 +4,7 @@
 
 ## 9.1 What current tests establish
 
-The implementation was validated on 2026-09-09 with 140 passing JavaScript tests and 10 passing Python tests. The real-solver JavaScript subset is opt-in: it skips cleanly when the `.venv`/Z3 dependency is absent, so a checkout without the solver still reports a green suite. The suite covers engine behavior, claims, saved dialogue, character orchestration, shared plans, solver integration, configured cases, composable narrative modules, case generation and UI adapter logic. These are engineering regression results for this working tree, not player-study or model-quality measurements.
+The implementation was validated on 2026-09-12 with 162 passing JavaScript tests and 10 passing Python tests. The real-solver JavaScript subset is opt-in: it skips cleanly when the `.venv`/Z3 dependency is absent, so a checkout without the solver still reports a green suite. The suite covers engine behavior, claims, saved dialogue, character orchestration, shared plans, solver integration, configured cases, composable narrative modules, case generation and UI adapter logic. These are engineering regression results for this working tree, not player-study or model-quality measurements.
 
 | Property | Representative evidence | Boundary of the conclusion |
 | --- | --- | --- |
@@ -18,7 +18,7 @@ The implementation was validated on 2026-09-09 with 140 passing JavaScript tests
 | Admission preservation | Last-route loss, intermediate restoration, deadline waiting, optional loss and weapon-capability filtering | Narrow declared access/expiry domain; no general social or adversarial future coverage. |
 | Executed prehistory | Actual travel, possession, crime state, evidence ancestry and save continuation | Typed plan fragments plus direct guards, not a complete SMT crime theory. |
 | Module composition | Brick activation/omission, additive content, `peers` interweave, each brick's invariant, and the live correction delivered to Bell | Role-based over the fixed cast; not arbitrary-cast composition. |
-| Case generation | `validateCase` obligations on the full same-cast grid (162 specs), seeded-sampler determinism/validity, and generated-case save/reload lifecycle | Distinguishability rests on the alibi/opportunity claim structure, not a general crime theory. |
+| Case generation | Seeded-sampler determinism/validity, per-structure route replay, acquired-evidence explanation checks and save/reload | Current coverage is not exhaustive over the expanded structural domain; finite crime assumptions remain explicit. |
 | Interface behavior | DOM-stub rendering and event-handler regressions | Does not establish browser layout or accessibility. |
 
 The build for this report separately checks chapter and figure references, internal anchors, source-map paths and generated output. Documentation validation does not rerun the game or establish a new simulation result.
@@ -66,3 +66,14 @@ future-meeting assumptions and repeated postponement. Inspect both returned text
 and capability availability for private-information leakage. Report how each
 witness depends on its horizon, scheduler and observable acquisition policy.
 The current suite covers selected access/deadline counterexamples and configuration isolation. Robust futures, broad leakage analysis, repeated postponement and real-model evaluations remain acceptance obligations.
+
+
+## 9.6 Daily-life regressions
+
+The new suite exercises unattended ordinary days, social delivery and fulfillment, timed work and conversation pauses, save continuation, unsuccessful encounters and retry delay, composed-plan appointment conflicts, unauthorized tasks, stale model responses, timeout/cancellation, solver batching and preserved solution witnesses after varied generated schedules. Actual Z3 checks cover satisfiable activity sequences and an impossible completion deadline. UI adapter checks cover historical life inspection and cancellation of background deliberation. Model requests are mocked; no live-provider quality result is claimed.
+
+## 9.7 Forensic regression evidence
+
+The expanded suite passed with 162 JavaScript tests, zero skips, and 10 Python tests on 2026-09-12. New checks cover unrelated source IDs, unsupported live beliefs, altered evidence producers, clock calibration, every declared route in each structure, acquired-evidence-only accusations, wrong methods, unresolved motives, save/reload, and structure selection in the UI adapter. Real Z3 checks confirm history feasibility and alternative exclusion for all three structures, reject inconsistent death timing, and exercise the optional Director path with AI off. Offline certification was also run for a seeded clock-dependent case.
+
+These tests exercise structured logic and orchestration. They do not measure human puzzle quality, full generated-space coverage, browser visual layout, or live LLM dialogue quality. Earlier full-grid claims apply only to their earlier smaller configuration domain.

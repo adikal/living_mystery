@@ -12,6 +12,7 @@ export function createKnowledge({commit,remember,model}){
     for(const belief of [...s.world.npcs[id].beliefs])if(belief.supports?.some(p=>p.key===key))retireBelief(s,id,belief.key,cause,'premise_changed; needs re-derivation');
   }
   function believe(s,id,key,text,confidence,sourceType,sourceId,truth=null,meta={}){
+    if(model.validateBelief&&!model.validateBelief(s,id,{key,text,confidence,sourceType,sourceId,truth,meta}))throw Error('Belief is not supported by its source and an admitted inference rule');
     if(!s.events.some(e=>e.id===sourceId))throw Error('Belief requires an existing source event');
     const npc=s.world.npcs[id],old=npc.beliefs.find(b=>b.key===key);
     const supports=(meta.supports??[]).map(key=>{

@@ -50,10 +50,10 @@ npm test
 
 The Director integration tests require the local `.venv` with Z3 installed and invoke the real solver without HTTP or AWS. They compare constraint results with local evaluation and replay route witnesses through the engine. Existing JavaScript tests require Node 20 or newer. These are not real-LLM quality tests or browser layout tests.
 
-The original plan fixtures cover two authored plan families; investigation validation now searches acquisition actions and replays candidate witnesses. It does not yet implement unrestricted AI physical plans, general symbolic route search, recovery scheduling, procedural sampling, ASP or Lean. No witness found within the bounded candidate search means unresolved, not a proven dead end.
+The original plan fixtures cover two authored plan families; investigation validation now searches acquisition actions and replays candidate witnesses. It does not yet implement unrestricted AI physical plans, general symbolic route search, general recovery scheduling, ASP or Lean. Seeded structural sampling is implemented separately in `casegen.mjs`. No witness found within the bounded candidate search means unresolved, not a proven dead end.
 
 
-## AI-selected plans and dependency revisions
+## Original-case AI-selected plans and dependency revisions
 
 1. Refresh the game and enable AI characters. Optionally enable World Director
    for independent Z3 checks (the local action checks always run).
@@ -73,12 +73,18 @@ The original plan fixtures cover two authored plan families; investigation valid
    locality, inference dependency chains, cycles, and save/load. Director tests
    additionally compare the new action constraints with real Z3.
 
-The model chooses among offered plans; these changes do not add autonomous
-background model calls or let dialogue invent new physical verbs. Failed
-execution records a blocked plan for reconsideration; automatic replanning is
-future work. Real-model willingness, wording and critic quality require manual
+The conversation model chooses among offered plans and cannot invent physical verbs. In configured/generated cases, a separate optional activity-selection request and deterministic life replanning are implemented; the original-case examples above retain their legacy scheduling. Real-model willingness, wording and critic quality require manual
 playtesting beyond the mocked model tests.
 
 ## Configured mysteries, no AI or solver service required
 
 See [configuration testing](case-configurations.md). The three new configurations preserve a bounded acquisition witness at the public dispatch boundary even with the optional Director toggle disabled. Tests cover optional clue loss, intermediate loss restored by turn end, a deadline crossed by waiting, unavailable weapon transfers, save isolation and contradictory prehistory. Z3 still independently checks represented short plans; it does not perform the acquisition search. The original case retains its prior optional admission behavior.
+
+
+## Autonomous life implementation
+
+Configured/generated cases now support persistent ordinary goals, timed activities, delivered social requests, accepted commitments and replanning. `life.mjs` drives scripted policies through shared move/activity constraints; `autonomy-turn.mjs` adds isolated optional model selection of bounded goal sequences. The original case retains its legacy policies. Z3 verification batches up to twelve queries per request under the existing atomic turn boundary. See [the complete implementation and test guide](autonomous-lives.md) for state, budgets, assumptions and limitations.
+
+## Shared forensic milestone
+
+New configured/generated cases now use typed source support, registered live belief rules, a shared crime/explanation IR, and a finite competing-explanation accusation grader. Generation varies `trace`, `cleanup` and `clockwork` structures and independently replays every declared route. Optional Z3 verifies recorded history and excludes competing explanations; local non-AI play uses the same finite rules. The original case retains its legacy rubric. See [the forensic model and testing contract](forensic-model.md) for exact scope, commands and limits.

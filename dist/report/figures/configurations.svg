@@ -12,6 +12,6 @@
 <rect class="box" x="347" y="205" width="265" height="100" rx="8"/><text class="label" x="363" y="233">Bounded admission</text><text class="small" x="363" y="259">Search acquisitions, replay route</text><text class="small" x="363" y="283">Relevant intermediate checks</text>
 <rect class="box" x="25" y="205" width="265" height="100" rx="8"/><text class="label" x="41" y="233">Commit or defer</text><text class="small" x="41" y="259">Preserve witness or original state</text><text class="small" x="41" y="283">Private audit records the result</text>
 <path class="edge" d="M670 255 H612"/><path class="edge" d="M347 255 H290"/>
-<text class="small" x="25" y="346">Implemented for the three configured reference cases. Local admission requires neither AI nor the optional Z3 service.</text>
-<text class="small" x="25" y="372">Future: symbolic crime rules, alternative explanations, robust schedules, and seeded procedural sampling.</text>
+<text class="small" x="25" y="346">Configured and generated cases share local admission, independent of AI and the optional Z3 service.</text>
+<text class="small" x="25" y="372">Finite crime/explanation checks and sampling now exist; robust contingent investigation remains future work.</text>
 </svg>

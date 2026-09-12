@@ -1,3 +1,4 @@
+import {createLife} from './life.mjs';
 import {availablePlans,queuePlan,resumePlan} from './agent-plans.mjs';
 // A case-bound kernel and command router. Each runtime closes over its own
 // tables and behavior; engine.mjs selects it using the session's case identity.
@@ -16,6 +17,8 @@ const baseWorld = ActiveCase.baseWorld;
 
 // --- Assemble kernel + case ------------------------------------------------
 const K = createKernel(ActiveCase.model);
+K.life=createLife(K);
+K.runPending=(s,id,cause)=>resumePlan(K,s,id,cause);
 const B = ActiveCase.createBehavior(K);
 K.afterTransfer=B.afterTransfer;
 K.decide = (s,id,cause)=>{if(!resumePlan(K,s,id,cause))B.decide(s,id,cause);}; // inject the NPC decision policy into the kernel's clock
@@ -26,7 +29,7 @@ const distance = K.distance;
 const worldAt = K.worldAt;
 const diagnostics = K.diagnostics;
 const exportSession = K.exportSession;
-function importSession(text){const s=K.importSession(text);B.reconcileKnowledge(s);return s;}
+function importSession(text){const s=K.importSession(text);B.reconcileKnowledge(s);K.life.initialize(s);return s;}
 
 // --- Case behavior (re-exported) ------------------------------------------
 const parseCommand = B.parseCommand;
@@ -41,6 +44,7 @@ function createSession(seed = 17) {
   if (!Number.isInteger(seed) || seed < 0 || seed > 999999) throw Error('Seed must be an integer from 0 to 999999.');
   const s = { version: VERSION, seed, events: [], world: ActiveCase.baseWorld(seed) };
   B.seedSession(s);
+  K.life.initialize(s);
   return s;
 }
 
@@ -61,7 +65,8 @@ function dispatch(s, action) {
   const next = talking ? action.person : releases ? null : previous;
   if (s.world.status !== 'solved' && previous !== next) {
     const engagement = commit(s, { kind: 'action', title: next ? `You engage ${PEOPLE[next].name} in conversation` : 'You end the conversation', actor: 'player', parents: [start], data: { conversation: next }, changes: { 'player.conversation': next } });
-    if (previous) K.decide(s, previous, engagement);
+    if(next)K.life.engagement(s,next,engagement);
+    if(previous){K.life.engagement(s,previous,engagement);K.decide(s,previous,engagement);}
   }
   if (s.world.status === 'solved' && !['pin', 'note', 'look'].includes(action.type)) {
     K.reject(s, 'The case is closed', 'The case is closed. You can review the notebook and inspect the full history, or begin again.', start);
@@ -103,8 +108,8 @@ function dispatch(s, action) {
     case 'accuse': {
       if (!K.local(s, 'bell')) { K.reject(s, 'The constable is not here', 'Bring your case to Constable Bell at the village square.', start); break; }
       const result = B.checkCase(s, action);
-      if (result.supported) { const ending = { suspect: action.suspect, method: action.method, motive: action.motive, evidence: result.selected, routes: result.routes }; commit(s, { kind: 'resolution', title: 'Bell accepts your case', actor: 'bell', parents: [start, ...result.selected.map((c) => s.world.player.evidence.find((e) => e.clue === c).eventId)], changes: { status: 'solved', ending }, data: { rubric: 'Authored case evidence requirements', ...ending }, playerText: CASE.resolutionText ?? 'Bell reads your notes twice, then closes the folder. “The accounts explain why. The records establish when. And the evidence connects Silas to the crime. We have our case.”\n\nBell opens a clean page in his ledger. The investigation has a conclusion supported by evidence, and the village’s favorite rumor has not survived it.' }); }
-      else K.reject(s, 'The accusation is not sufficiently supported', 'Bell sets the file down. “I need a connected case: the medical window, reliable whereabouts, and evidence linking the suspect to the act and its motive. Compare the documents with the testimony, and make sure the relevant entries are selected.”', start, { selected: result.selected, suspect: action.suspect, method: action.method, motive: action.motive });
+      if (result.supported) { const ending = { suspect: action.suspect, method: action.method, motive: action.motive, evidence: result.selected, routes: result.routes }; commit(s, { kind: 'resolution', title: 'Bell accepts your case', actor: 'bell', parents: [start, ...result.selected.map((c) => s.world.player.evidence.find((e) => e.clue === c).eventId)], changes: { status: 'solved', ending }, data: { rubric: result.query?'Finite competing explanations':'Authored case evidence requirements', ...(result.query?{forensicQuery:result.query,alternatives:result.alternatives}:{}), ...ending }, playerText: result.feedback ?? CASE.resolutionText ?? 'Bell reads your notes twice, then closes the folder. “The accounts explain why. The records establish when. And the evidence connects Silas to the crime. We have our case.”\n\nBell opens a clean page in his ledger. The investigation has a conclusion supported by evidence, and the village’s favorite rumor has not survived it.' }); }
+      else K.reject(s, 'The accusation is not sufficiently supported', result.feedback ?? 'Bell sets the file down. “I need a connected case: the medical window, reliable whereabouts, and evidence linking the suspect to the act and its motive. Compare the documents with the testimony, and make sure the relevant entries are selected.”', start, { ...(result.status?{assessment:result.status,alternatives:result.alternatives}:{}), selected: result.selected, suspect: action.suspect, method: action.method, motive: action.motive });
       break;
     }
     case 'look': commit(s, { kind: 'observation', title: 'You look around', actor: 'player', parents: [start], playerText: LOCATIONS[s.world.player.location].description }); break;
@@ -120,7 +125,8 @@ function dispatchCharacter(s,{person,text,proposal,action,audit,useAuthored=fals
   const command=commit(s,{kind:'command',title:`Speak to ${PEOPLE[person].name}`,actor:'player',data:{action:{type:'converse',person,text},origin:origin?copy(origin):null}});
   const previous=s.world.player.conversation;
   const engagement=commit(s,{kind:'action',title:`You engage ${PEOPLE[person].name}`,actor:'player',parents:[command],changes:{'player.conversation':person}});
-  if(previous&&previous!==person)K.decide(s,previous,engagement);
+  K.life.engagement(s,person,engagement);
+  if(previous&&previous!==person){K.life.engagement(s,previous,engagement);K.decide(s,previous,engagement);}
   const heard=commit(s,{kind:'speech',title:`You address ${PEOPLE[person].name}`,actor:'player',parents:[command],data:{listener:person,assertion:text,unverified:true,presented},playerText:`You
 “${text}”`});
   K.remember(s,person,heard);

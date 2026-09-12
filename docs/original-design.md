@@ -1,6 +1,6 @@
 # Living Mystery: System Design
 
-Implementation note: this document describes the longer-term design, including unimplemented systems. See [architecture.md](architecture.md) for current behavior and [../README.md](../README.md) for running the deterministic prototype.
+Historical design note: this document preserves the original proposal and its earlier implementation-status notes. Those notes are not a current feature inventory. The project now includes bounded generation, optional AI and Z3, autonomous lives and finite forensic reasoning; broader systems described here remain targets. See [architecture.md](architecture.md) for current behavior and [../README.md](../README.md) for running the deterministic prototype.
 
 Status: evolving design specification  
 Current implementation: vertical slice  

@@ -32,5 +32,5 @@
 <text x="206" y="447" class="label" text-anchor="start">Validation before widening generation freedom</text>
 <text x="206" y="470" class="small" text-anchor="start">Counterexamples · human playtests · cost and failure budgets</text>
 <polyline points="163,325 163,375 330,375 330,420" class="edge"/>
-<text x="30" y="538" class="small" text-anchor="start">This complete pipeline is proposed. Today’s reference case and route checks provide individual building blocks.</text>
+<text x="30" y="538" class="small" text-anchor="start">Broader synthesis remains proposed; the fixed-cast sampler implements a bounded version of this pipeline.</text>
 </svg>

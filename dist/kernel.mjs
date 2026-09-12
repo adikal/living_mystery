@@ -76,7 +76,8 @@ export function createKernel(model) {
     if (!a) return;
     commit(s, { kind: 'memory', title: `${PEOPLE[id].name} remembers an event`, actor: id, parents: [eventId], changes: { [`npcs.${id}.memories`]: [...a.memories, eventId].slice(-80) } });
   }
-  const {believe,retireBelief,completeIntention}=createKnowledge({commit,remember,model});
+  const {believe:recordBelief,retireBelief,completeIntention}=createKnowledge({commit,remember,model});
+  function believe(s,id,...args){const event=recordBelief(s,id,...args);api.life?.wake(s,id,event);return event;}
   function notice(s, id, cause, text) {
     if (local(s, id)) commit(s, { kind: 'observation', title: `You notice ${PEOPLE[id].name}`, actor: 'player', parents: [cause], playerText: text, changes: { [`player.lastSeen.${id}`]: { location: s.world.player.location, minute: s.world.minute } } });
   }
@@ -121,6 +122,7 @@ export function createKernel(model) {
     for (let n = 0; n < minutes; n++) {
       const e = commit(s, { kind: 'clock', title: 'A minute passes', parents: [cause], changes: { minute: s.world.minute + 1 } });
       for (const [id, a] of Object.entries(s.world.npcs)) {
+        api.life?.tick(s,id,e);
         if (a.travel && a.travel.arrival <= s.world.minute) {
           const tr = copy(a.travel);
           const arrival = commit(s, { kind: 'movement', title: `${PEOPLE[id].name} arrives at ${LOCATIONS[tr.to].short}`, actor: id, location: tr.to, parents: [tr.cause, e], changes: { [`npcs.${id}.location`]: tr.to, [`npcs.${id}.travel`]: null }, data: { from: tr.from, to: tr.to }, playerText: s.world.player.location === tr.to ? `${PEOPLE[id].name} arrives from ${LOCATIONS[tr.from].short}.` : null });

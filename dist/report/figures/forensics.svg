@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430" role="img" aria-labelledby="title desc">
+<title id="title">One forensic representation, three validation boundaries</title><desc id="desc">Typed history and evidence feed a shared finite constraint model. Creation validates sources and routes. Runtime admits supported beliefs and physical plans. Accusation tests acquired evidence and excludes competing explanations. Browser evaluation and Z3 share the constraint language.</desc>
+<rect width="1000" height="430" rx="16" fill="#f5f1e8"/>
+<g font-family="system-ui,sans-serif" text-anchor="middle" fill="#243641">
+<rect x="250" y="25" width="500" height="75" rx="10" fill="#dfe9e6" stroke="#56776b"/>
+<text x="500" y="55" font-size="21" font-weight="600">Typed occurrences and evidence sources</text><text x="500" y="81" font-size="15">Action · production · observation · attributed testimony</text>
+<path d="M500 100v28M170 160v-32h660v32M500 128v32" fill="none" stroke="#56776b" stroke-width="2"/>
+<g fill="#fff" stroke="#87979c"><rect x="30" y="160" width="280" height="125" rx="10"/><rect x="360" y="160" width="280" height="125" rx="10"/><rect x="690" y="160" width="280" height="125" rx="10"/></g>
+<text x="170" y="193" font-size="20" font-weight="600">Creation</text><text x="170" y="225" font-size="15">Physical and source checks</text><text x="170" y="250" font-size="15">Each solution route replayed</text>
+<text x="500" y="193" font-size="20" font-weight="600">Runtime</text><text x="500" y="225" font-size="15">Registered belief support rules</text><text x="500" y="250" font-size="15">Admitted physical transitions</text>
+<text x="830" y="193" font-size="20" font-weight="600">Accusation</text><text x="830" y="225" font-size="15">Selected acquired evidence only</text><text x="830" y="250" font-size="15">Search competing explanations</text>
+<path d="M170 285v30h660v-30M500 285v55" fill="none" stroke="#56776b" stroke-width="2"/>
+<rect x="155" y="340" width="690" height="65" rx="10" fill="#dfe9e6" stroke="#56776b"/>
+<text x="500" y="366" font-size="18" font-weight="600">Shared finite integer / Boolean IR</text><text x="500" y="392" font-size="15">Local evaluation · optional independent Z3 · explicit domain assumptions</text>
+</g></svg>

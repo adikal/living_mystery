@@ -1,3 +1,5 @@
+import {excludeExplanation,crimeModel,compileCrimeHistory,validateKnowledge,validateEvidence,STRUCTURES} from './forensics.mjs';
+import {evaluate} from './symbolic.mjs';
 // Case-general validation of a mystery specification. Variety must be validated,
 // not asserted: a specification is admissible only if it is physically executable,
 // its initial knowledge is legitimately sourced, a bounded investigation solves it,
@@ -10,67 +12,33 @@ import {makeCase} from './cases/bellweather.mjs';
 import {searchInvestigation} from './investigation.mjs';
 import {buildSpec,WEAPONS,MOTIVES} from './cases/bellweather-configs.mjs';
 
-const covers=(iv,win)=>Boolean(iv)&&iv.start<=win.start&&iv.end>=win.end;
-const near=(iv,win,margin)=>Boolean(iv)&&iv.start>=win.start-margin&&iv.start<=win.end+margin;
-
-// Distinguishability is the keystone obligation for principled variety: the
-// discoverable structured claims must place every innocent suspect elsewhere for
-// the whole death window, leave the culprit without such an alibi, and put the
-// culprit at the scene near the window. It is checked on the claims (name-neutral
-// evidence), then confirmed against the real accusation grader, so a case cannot
-// pass merely by naming the culprit inside a clue's prose.
-export function checkDistinguishability(caseModule,runtime,spec,witness,{margin=15}={}){
-  const claims=caseModule.model.evidenceClaims??{};
-  const victimLocation=caseModule.baseWorld().flags.victimLocation;
-  const death=(claims.medical??[]).find(c=>c.predicate==='death_time')?.interval;
-  if(!death)return {ok:false,detail:'No discoverable death window (medical claim missing)'};
-  const suspects=runtime.SUSPECTS,innocents=suspects.filter(id=>id!==spec.culprit);
-  const locationClaims=Object.values(claims).flat().filter(c=>c.predicate==='location');
-  const alibied=new Set(locationClaims.filter(c=>c.value!==victimLocation&&covers(c.interval,death)).map(c=>c.subject));
-  const innocentsAlibied=innocents.every(id=>alibied.has(id));
-  const culpritAlibied=alibied.has(spec.culprit);
-  const opportunity=locationClaims.some(c=>c.subject===spec.culprit&&c.value===victimLocation&&near(c.interval,death,margin));
-
-  // Behavioral confirmation: replay the acquisition witness, then grade the exact
-  // discoverable bundle for the culprit (must pass) and each innocent (must fail).
-  let graderOk=false,graderDetail='witness unavailable';
-  if(witness?.status==='route_found'){
-    const accuse=witness.actions.find(a=>a.type==='accuse');
-    const session=runtime.createSession();
-    for(const action of witness.actions.filter(a=>a.type!=='accuse'))runtime.dispatch(session,action);
-    const grade=suspect=>runtime.behavior.checkCase(session,{...accuse,suspect}).supported;
-    const culpritSupported=grade(spec.culprit);
-    const innocentSupported=innocents.filter(grade);
-    graderOk=culpritSupported&&innocentSupported.length===0;
-    graderDetail=graderOk?`grader: only ${spec.culprit} supported by the discoverable bundle`
-      :`grader: culpritSupported=${culpritSupported}, innocentsSupported=[${innocentSupported.join(', ')}]`;
-  }
-  const ok=innocentsAlibied&&!culpritAlibied&&opportunity&&graderOk;
-  return {ok,alibied:[...alibied],detail:ok
-    ?`Innocents ${innocents.join(', ')} alibied across the death window; ${spec.culprit} unalibied with scene opportunity; ${graderDetail}`
-    :`innocentsAlibied=${innocentsAlibied} culpritAlibied=${culpritAlibied} opportunity=${opportunity}; ${graderDetail}`};
+// Check the acquired bundle against every alternative in the shared finite domain.
+export function checkDistinguishability(caseModule,runtime,spec,witness){
+ if(witness?.status!=='route_found')return {ok:false,detail:'No replay-validated route'};
+ const trial=runtime.createSession();
+ for(const a of witness.actions.filter(a=>a.type!=='accuse'))runtime.dispatch(trial,a);
+ const verdict=runtime.behavior.checkCase(trial,witness.actions.at(-1));
+ return {ok:verdict.supported&&verdict.alternatives.length===1,detail:`${verdict.alternatives.length} competing culprit/method/motive explanations remain`,query:verdict.query};
 }
 
-export function validateCase(spec,{caseModule=makeCase(spec),runtime=createRuntime(caseModule)}={}){
-  const report={spec:spec.id,ok:false,obligations:{}};
+export function validateCase(spec,{caseModule,runtime}={}){
+  const report={spec:spec?.id??null,ok:false,obligations:{}};
   const fail=(name,detail)=>{report.obligations[name]={ok:false,detail};return report;};
 
   // 1. Physical consistency: the authored/generated prehistory must execute and
   //    the scripted case must be constructible. executePrehistory throws on any
   //    time reversal, unreachable meeting or invalid fatal state.
   let session;
-  try{session=runtime.createSession();}
+  try{caseModule??=makeCase(spec);runtime??=createRuntime(caseModule);session=runtime.createSession();}
   catch(error){return fail('physical',`Prehistory/construction failed: ${error.message}`);}
   report.obligations.physical={ok:true,detail:'Prehistory executed; initial state constructed'};
 
-  // 2. Epistemic legitimacy: every seeded belief must be sourced to a real event.
-  const orphans=[];
-  for(const [id,npc]of Object.entries(session.world.npcs))
-    for(const b of npc.beliefs)
-      if(!session.events.some(e=>e.id===b.sourceId))orphans.push(`${id}:${b.key}`);
-  report.obligations.epistemic=orphans.length
-    ?{ok:false,detail:`Unsourced initial beliefs: ${orphans.join(', ')}`}
-    :{ok:true,detail:'All seeded beliefs reference recorded events'};
+  const historyQuery=compileCrimeHistory(session,runtime);
+  const conflicts=historyQuery.constraints.filter(c=>!evaluate(c.formula,{death:session.world.flags.deathMinute}));
+  const inDomain=Object.values(historyQuery.variables).every(d=>Number.isInteger(session.world.flags.deathMinute)&&session.world.flags.deathMinute>=d.min&&session.world.flags.deathMinute<=d.max);
+  report.obligations.symbolic={ok:inDomain&&!conflicts.length,detail:!inDomain?'Crime time is outside the declared domain':conflicts.map(c=>c.label).join('; ')||'Recorded history satisfies the shared physical/temporal IR',query:historyQuery};
+  report.obligations.epistemic=validateKnowledge(session,caseModule.PEOPLE);
+  report.obligations.evidence=validateEvidence(session,caseModule.model.evidenceClaims);
 
   // 3. Reachability: a bounded acquisition search plus engine replay must solve it.
   const witness=searchInvestigation(session,runtime);
@@ -78,10 +46,13 @@ export function validateCase(spec,{caseModule=makeCase(spec),runtime=createRunti
     ?{ok:true,detail:`Route "${witness.route}" solved in ${witness.minutes} min (${witness.actions.length} actions)`}
     :{ok:false,detail:`No replay-validated route: ${witness.reason}`};
 
-  // 4. Distinguishability: discoverable evidence discriminates the culprit.
-  report.obligations.distinguishability=witness.status==='route_found'
-    ?checkDistinguishability(caseModule,runtime,spec,witness)
-    :{ok:false,detail:'No route to evaluate discrimination'};
+  const routeResults=caseModule.CASE.proofRoutes.map(route=>{
+    const scoped={...runtime,CASE:{...runtime.CASE,proofRoutes:[route]}};
+    const found=searchInvestigation(session,scoped);
+    return {id:route.id,ok:found.status==='route_found',detail:found.reason??found.route};
+  });
+  report.obligations.routes={ok:routeResults.every(r=>r.ok),results:routeResults,detail:'Each declared route independently replayed'};
+  report.obligations.distinguishability=checkDistinguishability(caseModule,runtime,spec,witness);
 
   // 5. Module coherence: every composed narrative brick's local invariant holds.
   const modules=caseModule.model.modules??[];
@@ -100,13 +71,14 @@ export function validateAll(specs){
 
 // Controlled seeded sampling of validated specifications (the G2 gate): permute
 // the specification space deterministically and return only variants that pass
-// every obligation. Variety is generated, then proven — never asserted. Sampling
+// every obligation. Candidates must satisfy the declared finite checks. Sampling
 // is deterministic in `seed`, needs no AI, and reuses the fixed cast/assets.
 export function sampleCases(seed=1,count=6,{
   suspects=['clara','rowan','silas'],
   weapons=Object.keys(WEAPONS),
   motives=Object.keys(MOTIVES),
   minutes=[1274,1294,1314],
+  structures=STRUCTURES,
   maxTries=count*40
 }={}){
   let state=(seed>>>0)||1;
@@ -116,11 +88,28 @@ export function sampleCases(seed=1,count=6,{
   while(valid.length<count&&tries++<maxTries){
     const culprit=pick(suspects),innocents=suspects.filter(id=>id!==culprit);
     let spec;
-    try{spec=buildSpec({culprit,weapon:pick(weapons),motive:pick(motives),minute:pick(minutes),seen:pick(innocents)});}
+    try{spec=buildSpec({culprit,weapon:pick(weapons),motive:pick(motives),minute:pick(minutes),seen:pick(innocents),structure:pick(structures)});}
     catch{continue;}
     if(ids.has(spec.id))continue;
     const report=validateCase(spec);
     if(report.ok){ids.add(spec.id);valid.push({spec,report});}
   }
   return valid;
+}
+
+// The transport is injected so Node, browser and offline tooling share the gate.
+// Unavailable/unknown is unresolved and never labeled Z3-verified.
+export async function validateCaseWithSolver(spec,{solve,...options}={}){
+ const report=validateCase(spec,options);
+ if(!report.ok)return report;
+ if(typeof solve!=='function')return {...report,ok:false,solver:{status:'unresolved',reason:'A Z3 adapter is required'}};
+ const checks=[];
+ const hypotheses=report.obligations.distinguishability.query;
+ const queries=[{query:report.obligations.symbolic.query,expected:'sat'},{query:hypotheses,expected:'sat'},{query:excludeExplanation(hypotheses,crimeModel(spec),{suspect:spec.culprit,method:spec.weapon,motive:spec.motive}),expected:'unsat'}];
+ for(const {query:q,expected} of queries){
+  let result;try{result=await solve(q);}catch(error){result={status:'unavailable',reason:error.message};}
+  const valid=result?.status===expected&&(expected==='unsat'||Object.entries(q.variables).every(([k,d])=>Number.isInteger(result.witness?.[k])&&result.witness[k]>=d.min&&result.witness[k]<=d.max)&&q.constraints.every(c=>evaluate(c.formula,result.witness)));
+  checks.push({status:valid?'verified':'unresolved',expected,result});
+ }
+ return {...report,ok:checks.every(c=>c.status==='verified'),solver:{status:checks.every(c=>c.status==='verified')?'verified':'unresolved',checks}};
 }

@@ -10,18 +10,27 @@ The long-term goal is a playable town with simulated characters and generated, i
 2. **Parameterized executable prehistory:** case-scoped runtimes, actual evening travel, possession, crime, examination and report events, with initial knowledge and evidence linked to their sources.
 3. **Three authored configurations:** The Ledger, The Codicil and The Notice vary culprit, means, motive and opportunity with the existing cast. All work without AI and have save/restore isolation and browser selection.
 
-See [implementation and testing](case-configurations.md). This is a bounded reference domain. Broader hybrid autonomy, complete symbolic crime modeling and procedural sampling remain future work.
+See [implementation and testing](case-configurations.md). This is a bounded reference domain. Bounded hybrid autonomy, finite forensic modeling and seeded structural sampling are now implemented. Complete symbolic cognition and arbitrary world generation remain future work.
 
 ## Implemented now: composable modules and validated generation (partial G2)
 
 Building on the three configurations:
 
 4. **Composable narrative modules ("bricks").** A case is a base scaffold plus composed modules (`dist/modules/`): misdirection, correction (the witness travels to Bell and corrects him in person), secret-affair (interwoven with misdirection), and concealment (a live culprit plan). Each brick contributes clues, sourced prehistory, capabilities and dialogue, and declares a local coherence invariant. Adding a trope is one module file.
-5. **Case-general validator + seeded sampler.** `dist/casegen.mjs` admits a specification only if it passes physical, epistemic, reachability and evidence-driven distinguishability obligations plus every brick invariant; `sampleCases(seed,n)` returns only validated same-cast cases (the full grid validates).
+5. **Case-general validator + seeded sampler.** `dist/casegen.mjs` admits a specification only if it passes physical, epistemic, reachability and evidence-driven distinguishability obligations plus every brick invariant; `sampleCases(seed,n)` returns only validated same-cast cases (the earlier parameter-only grid was validated; the expanded structural domain has seeded and per-structure regression coverage).
 6. **Playable generated cases.** `gen-*` ids reconstruct their spec, so a sampled case resolves lazily, plays and saves/reloads like any configuration; a browser "generate a case" action starts one.
 7. **Extended capability system.** Fetch (`from`/`knownBy`) and inform permission shapes let concealment and correction run as validated live plans, not scripted one-offs.
 
 This is a bounded slice of G2 over the fixed cast with role-aware templated prose; new casts, relationships, maps and richly generated prose remain future work.
+
+## Implemented: ordinary lives and bounded hybrid autonomy
+
+1. All six configured-case NPCs have timed responsibilities, errands, energy/rest and persistent goal/plan state.
+2. Invitations, acceptance and appointments are delivered and fulfilled through actual encounters, with conflicts, expiry and backoff.
+3. The existing AI setting optionally selects one to three available goals under a one-request-per-turn budget, isolated NPC perspectives and atomic admission. Scripted policy remains the default.
+4. Execution rechecks activity permissions, composed-plan timing and accepted commitments. Tests cover interrupted/unattended days, stale choices, failures, solver batches and preserved investigation routes.
+
+See [Autonomous lives](autonomous-lives.md). Next broaden task effects to actual resource/relationship systems and richer contingent plans. General unrestricted autonomy and a universal no-dead-end guarantee remain research targets.
 
 ## Next major milestone: richer hybrid autonomy under hard invariants
 
@@ -37,9 +46,8 @@ bounded acquisition/admission domain.
 2. Add pre-deliberation capability filtering: cheap local checks followed by
    applicable symbolic queries, with source-limited feedback and dependency-aware
    certificates or constrained parameter domains.
-3. Add event-triggered agent deliberation over those choices alongside authored
-   candidates; begin with alternate ways for Ada to handle her correction.
-4. Revalidate composed plans and next effects before commit, including player,
+3. Extend the implemented event-triggered life deliberation to richer social and investigative alternatives, with explicit resource effects and recovery choices.
+4. Broaden existing composed-plan and next-effect validation, including player,
    clock and deadline effects. Unknown results require a verified alternative or
    safe deferral; do not assume waiting is harmless.
 5. Expand witness search and recovery, testing last-route threats, stale results,
@@ -75,23 +83,23 @@ The implementation is authored and bounded. The optional character mode accepts 
 
 ## Implemented: character decisions and natural dialogue
 
-All six characters support optional free-text turns, combined intent/account/wording proposals, attributed player memories, bounded trust and belief updates, explicit endings, audited critic/revision attempts, atomic commits and deterministic replay. Existing action buttons use the same pipeline when enabled. See [contract and testing](character-turns.md). The World Director now checks bounded AI-selected physical plans as well as authored plans. Autonomous background LLM decisions and unrestricted plan composition remain future work.
+All six characters support optional free-text turns, combined intent/account/wording proposals, attributed player memories, bounded trust and belief updates, explicit endings, audited critic/revision attempts, atomic commits and deterministic replay. Existing action buttons use the same pipeline when enabled. See [contract and testing](character-turns.md). The World Director now checks bounded AI-selected physical plans as well as authored plans. Configured cases also have optional background goal selection and bounded composition. Unrestricted physical planning remains future work.
 
-The next quality milestone is broader structured-claim coverage, rule-driven re-derivation and solver-derived knowledge admission, followed by broader investigation planning, richer evidence-producing prehistory and character autonomy. Bounded acquisition search and three executed prehistories are now implemented. The finite action IR, Z3 admission, capability queue and explicit dependency invalidation are already implemented. Introduce ASP for discrete plan/generation search only when those domains are explicit. Neither solver replaces semantic dialogue evaluation. Complete and playtest The Last Bell before procedural generation.
+The next quality milestone is broader structured-claim coverage, rule-driven re-derivation and solver-derived knowledge admission, followed by broader investigation planning, richer evidence-producing prehistory and character autonomy. Bounded acquisition search and three executed prehistories are now implemented. The finite action IR, Z3 admission, capability queue and explicit dependency invalidation are already implemented. Introduce ASP for discrete plan/generation search only when those domains are explicit. Neither solver replaces semantic dialogue evaluation. Playtest the bounded same-cast generator before expanding its domain.
 
-## Next architecture milestone: shared symbolic reasoning
+## Shared symbolic reasoning: implemented slice and next extensions
 
-Design: [Shared symbolic representation and solver integration](symbolic-reasoning.md). First bounded Director/Z3 slice implemented; broader architecture remains planned.
+Design: [Shared symbolic representation and solver integration](symbolic-reasoning.md). Plan, crime-history and finite explanation queries share the IR and Z3 adapter. General inference discovery, richer domains and multiple solver adapters remain planned.
 
 Build one versioned model for physical events, assertions, beliefs, hypotheses and rules, with explicit perspective, time semantics and provenance. Translate supported fragments through adapters, starting with Z3; unsupported semantics must be reported rather than omitted. Add ASP only for a demonstrated discrete planning/generation need, and consider Lean only for independently checked proof certificates.
 
 The three main uses are **procedural mystery/world creation**, **validation of structured agent outputs**, and **evaluation of the final argument to the constable**. Speech may be false without being an invalid action. Final-case reasoning must expose assumptions and explore alternatives without using the hidden culprit key. Generation must check physical consistency, distinguishability and reachable evidence separately.
 
-Prioritize **use case 2**. The first shared IR, plan checks and bounded witness-replay slice is complete; continue through: precise shared schema and query contract → observational Z3 checks for character short plans through a small World Director → inference admission and enforced plan validation → bounded continued-viability checks for selected route-closing transitions → richer final-case reasoning and executable prehistory → procedural generation. Solver conclusions carry premises, perspective, applicable time, versions and status; possible, entailed, inconsistent and unresolved remain distinct. Preserve complete scripted play; symbolic checks do not require an LLM.
+All three use cases now have bounded implementations: generated-case validation, runtime plan/belief admission, and competing final explanations. Next extend their domains together: uncertain evidence and crime alternatives → social/contingent acquisition → recovery and robustness checks → richer structural generation. Solver conclusions carry premises, perspective, applicable time, versions and status; possible, entailed, inconsistent and unresolved remain distinct. Preserve complete scripted play; symbolic checks do not require an LLM.
 
 ### World Director and continued investigation viability
 
-The planned World Director is the global coordinator within use case 2, not another solver or a fourth use case. The Director checks authored and bounded capability plans and, when Z3 is enabled, requires an engine-replayed investigation witness for turns containing admitted take/store/give/conceal steps. The legacy `caseHealth()` indicator remains limited. Acquisition search now constructs routes; its finite catalog and replayed deterministic policies do not cover arbitrary future branches. New configurations enforce this local admission independently of the optional solver.
+The World Director is the global coordinator within use case 2, not another solver or a fourth use case. The Director checks authored and bounded capability plans and, when Z3 is enabled, requires an engine-replayed investigation witness for turns containing admitted take/store/give/conceal steps. The legacy `caseHealth()` indicator remains limited. Acquisition search now constructs routes; its finite catalog and replayed deterministic policies do not cover arbitrary future branches. New configurations enforce this local admission independently of the optional solver.
 
 First check candidate short plans for compound physical/temporal feasibility. Then check proposed route-closing effects and deadline crossings against bounded investigative reachability, initially using the existing proof bundles. A route must include executable acquisition and accusation actions, and its witness sequence must replay successfully in the engine. Keep one viable route rather than guaranteeing that all choices or optional encounters succeed.
 
@@ -113,7 +121,7 @@ Implemented next layer:
 - AI-selected bounded physical plans, capability-checked against the current perspective and case policy, queued after validated dialogue, and rechecked at execution. The same queue/executor supports deterministic policies without any model calls.
 - Generic source-linked belief supersession, transitive invalidation of explicitly supported inferences, cycle rejection, and completed-intention retirement. Ada's revised inference declares its premises; her correction uses the generic completion API. Independent testimony does not change remotely.
 
-Next: broaden case-authored plan capabilities and real-model playtesting; broaden acquisition search to social actions and contingent futures; add rule-driven re-derivation and solver-derived knowledge admission; add explicit last-route alternatives and recovery policies; extend the new configurations’ access/deadline and intermediate checks to richer effects and the original case. Keep unsupported/unknown results explicit. Unrestricted plan composition, autonomous background AI turns, procedural generation and general final-case proofs remain future work.
+Next: broaden case-authored plan capabilities and real-model playtesting; broaden acquisition search to social actions and contingent futures; add rule-driven re-derivation and solver-derived knowledge admission; add explicit last-route alternatives and recovery policies; extend the new configurations’ access/deadline and intermediate checks to richer effects and the original case. Keep unsupported/unknown results explicit. Unrestricted plans, arbitrary world generation and general final-case proofs remain future work. Bounded life-goal composition, optional NPC model choices, same-cast sampling and finite competing-explanation grading are implemented.
 
 ## Visual identity for authored and procedural cases
 
@@ -185,10 +193,16 @@ Acceptance: preparing an unchanged case twice makes no new image requests; share
 
 Do not commit or push this iteration until the user's test pass is complete.
 
-## Immediate sequence from this implementation to procedural generation
+## Implemented forensic milestone
 
-1. Playtest all three fixed configurations and enrich their witness dialogue, independent corroboration and red herrings. Retain original-case regression coverage.
-2. Extend the shared symbolic vocabulary to crime/evidence production and alternative hypotheses. Check distinguishability separately from a known-answer acquisition witness.
-3. Expand runtime admissibility to social access, competing schedules, explicit recoveries and robust future obligations. Add event-triggered agent choices with equivalent scripted and optional LLM policies.
-4. Sample parameters within the validated same-cast domain: seed → candidate specification → executable prehistory → consistency/distinguishability checks → replayed investigation → playable content. Bound rejection/repair and record reasons.
-5. Broaden generation to new relationships, characters, locations and mystery structures only after coverage and playtests justify each domain extension. Apply cached artwork and cost budgets during preparation, with no runtime generation requirement.
+The shared forensic representation, finite competing-explanation grader and three investigative structures are implemented for newly created configured/generated cases. See [the exact contracts and limits](forensic-model.md). Typed source checks replace source-ID-only admission; configured live beliefs require registered inference rules. Z3 can check recorded crime history and exclude alternative culprit/method/motive explanations. The browser still supports a fully local non-AI path.
+
+Every declared route is independently replayed. This milestone does not establish arbitrary story synthesis, universal no-dead-end guarantees, automatic theorem discovery, or natural-language entailment. The original case retains its authored grader.
+
+## Next sequence toward broader procedural worlds
+
+1. Playtest all three structures and autonomous lives. Measure clue clarity, difficulty and whether alternative routes feel different. Add accessibility and regression cases from playtests.
+2. Extend the crime domain to alternative locations, multiple acts, forgery, uncertain forensic reliability and additional opportunity constraints. Require counterexample tests and provenance rules for every new predicate.
+3. Add social acquisition, appointment-dependent evidence, explicit recovery routes and contingent investigation search. Validate robustness against bounded autonomous disruptions, beyond one successful replay.
+4. Compose more distinct evidence-production sequences and relationships, with rejection diagnostics and bounded repair. Use symbolic planning when it adds measurable value over the finite sampler.
+5. Broaden to new casts and maps after those contracts hold. Apply cached artwork and generation cost budgets during preparation; runtime image generation remains unnecessary.

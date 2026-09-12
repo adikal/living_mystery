@@ -1,3 +1,4 @@
+import * as autonomy from '../dist/autonomy-turn.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -22,7 +23,7 @@ function adapter(saved=null,overrides={}){
   // Expose only explicitly imported names, matching browser module scope.
   // Injecting every engine export previously masked missing UI imports.
   const source=readFileSync(new URL('../dist/ui.mjs',import.meta.url),'utf8');
-  const modules={'./director-turn.mjs':directorTurns,'./character-turn.mjs':characterTurns,'./art.mjs':art,'./engine.mjs':engine,'./inspector.mjs':inspector,'./claims.mjs':claims,'./llm.mjs':llm,'./dialogue-save.mjs':dialogueSave};
+  const modules={'./autonomy-turn.mjs':autonomy,'./director-turn.mjs':directorTurns,'./character-turn.mjs':characterTurns,'./art.mjs':art,'./engine.mjs':engine,'./inspector.mjs':inspector,'./claims.mjs':claims,'./llm.mjs':llm,'./dialogue-save.mjs':dialogueSave};
   const bindings={};
   for(const match of source.matchAll(/^import \{([^}]+)\} from '([^']+)';$/gm)){
     for(const name of match[1].split(',').map(s=>s.trim())){
@@ -355,4 +356,40 @@ test('New feed content scrolls after scripted, Director and AI turns; panel rend
  assert.ok(ui.run("session.events.some(e=>e.kind==='speech'&&e.actor==='bell')"));
  assert.equal(feed.scrollTop,2000);assert.equal(side.scrollTop,87);
  feed.scrollTop=42;ui.run('render()');assert.equal(feed.scrollTop,42);
+});
+
+test('Life inspector follows the selected time and scripted mode never calls autonomous models',()=>{
+ const ui=adapter(null,{llmActive:()=>false,deliberateWorld:()=>{throw Error('AI must be off')}});
+ ui.click('start-case',{id:'bellweather-01'});ui.run("act({type:'wait',minutes:30});mode='inspector';person='ada';detailPanel='character';render()");
+ assert.match(ui.node('#app').innerHTML,/Daily life/);assert.match(ui.node('#app').innerHTML,/Serve customers/);
+ ui.run("cursor=0;render()");assert.doesNotMatch(ui.node('#app').innerHTML,/<h3>Daily life<\/h3>/);
+});
+
+test('Cancelling background deliberation leaves the whole player turn unapplied',async()=>{
+ let finish;const ui=adapter(null,{llmActive:()=>true,llmConfig:()=>({reasoning:true}),directorEnabled:()=>false,deliberateWorld:()=>new Promise(resolve=>{finish=resolve;})});
+ ui.click('start-case',{id:'bellweather-01'});const before=ui.run('exportSession(session)');
+ const pending=ui.run("runDirectedAction({type:'wait',minutes:30})");
+ assert.match(ui.node('#app').innerHTML,/considering their next activity/);
+ ui.click('cancel-character');finish({status:'cancelled'});await pending;
+ assert.equal(ui.run('exportSession(session)'),before);assert.equal(ui.run('characterBusy'),false);
+ assert.doesNotMatch(ui.node('#app').innerHTML,/considering their next activity/);
+});
+
+test('Menu generates each investigative structure with AI off',()=>{
+ const ui=adapter(null,{llmActive:()=>false});ui.click('choose-case');
+ assert.match(ui.node('#modal').innerHTML,/cleanup investigation/);
+ for(const structure of ['cleanup','clockwork']){
+  ui.click('generate-case',{structure});
+  assert.equal(ui.run('caseTables(session).kernel.model.forensics.structure'),structure);
+  assert.equal(ui.run('session.world.status'),'playing');
+  assert.equal(ui.run('session.world.player.evidence.length'),0);
+ }
+});
+
+test('A settings change cannot bypass an in-flight Director deferral',async()=>{
+ let enabled=true;
+ const ui=adapter(null,{directorEnabled:()=>enabled,commitDirectedTurn:async()=>{enabled=false;return {status:'defer',reason:'No valid route'};},llmActive:()=>false});
+ ui.click('start-case',{id:'bellweather-01'});const before=ui.run('exportSession(session)');
+ await ui.run("runDirectedAction({type:'wait',minutes:5})");
+ assert.equal(ui.run('exportSession(session)'),before);
 });

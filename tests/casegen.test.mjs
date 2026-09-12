@@ -24,13 +24,13 @@ test('Every authored configuration satisfies all four generation obligations',()
 // Teeth: the check must fail when discrimination is genuinely absent, even though
 // the case still physically solves. Removing the innocents' alibi claims leaves a
 // solvable case whose discoverable evidence no longer excludes them.
-test('Distinguishability is evidence-driven, not name-driven: removing the alibi claims fails it while the case still solves',()=>{
+test('Distinguishability is evidence-driven, not name-driven: removing the alibi claims prevents both proof and resolution',()=>{
  const spec=CONFIGS[0];
  const caseModule=makeCase(spec);
  caseModule.model.evidenceClaims.record=[];
  const report=validateCase(spec,{caseModule,runtime:createRuntime(caseModule)});
  assert.ok(report.obligations.physical.ok);
- assert.ok(report.obligations.reachability.ok,'the case still solves without the discoverable alibi');
+ assert.equal(report.obligations.reachability.ok,false,'an ambiguous case no longer resolves via a clue checklist');
  assert.equal(report.obligations.distinguishability.ok,false,'no discoverable alibi => not distinguishable');
  assert.equal(report.ok,false);
 });

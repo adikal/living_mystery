@@ -4,7 +4,7 @@
 <text x="51" y="85" class="small" text-anchor="start">Entities · events · assertions · beliefs · temporal scopes · rules · provenance</text>
 <rect x="35" y="205" width="270" height="110" rx="8" fill="#fff" stroke="#82a5aa" stroke-width="1.5" />
 <text x="51" y="232" class="label" text-anchor="start">Z3 adapter</text>
-<text x="51" y="255" class="small" text-anchor="start">Implemented: finite action IR</text>
+<text x="51" y="255" class="small" text-anchor="start">Implemented: shared finite IR</text>
 <text x="51" y="276" class="small" text-anchor="start">Time · location · possession</text>
 <rect x="345" y="205" width="270" height="110" rx="8" fill="#fcf8ed" stroke="#a88950" stroke-width="1.5" stroke-dasharray="6 4"/>
 <text x="361" y="232" class="label" text-anchor="start">ASP adapter</text>

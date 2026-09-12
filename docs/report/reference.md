@@ -49,6 +49,10 @@ These paths are relative to the repository root. The report build checks their e
 | `dist/character-turn.mjs` | Tickets, model proposal, critic and application checks | [Character turns](characters.md) |
 | `dist/modules/` | Composable narrative bricks: `contract.mjs`, `index.mjs` (registry + `activeModules`), and `misdirection`/`correction`/`secret-affair`/`concealment` | [Generation](generation.md) |
 | `dist/casegen.mjs` | Case-general validator (four obligations + module invariants) and the seeded validated sampler | [Generation](generation.md) |
+| `dist/life.mjs` | Persistent daily goals, timed activities, social commitments and replanning | [Characters](characters.md) |
+| `dist/cases/bellweather-life.mjs` | Public work and personal interests independent of culprit assignment | [Characters](characters.md) |
+| `dist/autonomy-turn.mjs` | Bounded model goal selection, stale checks and scripted fallback | [Characters](characters.md) |
+| `tests/life.test.mjs` | Daily-life, social, model-boundary and solver regressions | [Evaluation](evaluation.md) |
 | `dist/actions.mjs` | Shared NPC action vocabulary | [Symbolic layer](symbolic.md) |
 | `dist/agent-plans.mjs` | Available capabilities, queue, execution and observations | [Character turns](characters.md) |
 | `dist/symbolic.mjs` | Finite query compiler and concrete witness evaluator | [Symbolic layer](symbolic.md) |
@@ -108,3 +112,15 @@ For a research or external-review snapshot, associate a report edition with a re
 | 0.2 | 2026-09-08 | Refined hard-invariant contract, two-stage dynamic admissibility, hybrid autonomy, future-opportunity obligations and acceptance criteria; design changes only. |
 | 0.3 | 2026-09-08 | Bounded acquisition/admission, parameterized executable prehistory, three selectable authored configurations, provenance and save isolation; generation remains future work. |
 | 0.4 | 2026-09-09 | Composable narrative modules (misdirection/correction/secret-affair/concealment); case-general validator (physical/epistemic/reachability/distinguishability + module invariants); seeded validated sampler and playable generated cases; fetch/inform capabilities (live concealment and in-person correction); critic JSON-only output and a general clean-decline for out-of-knowledge questions; role-aware prose and clue-kind fixes. |
+| 0.5 | 2026-09-12 | Persistent ordinary lives, real social commitments, bounded optional model deliberation, composed-plan admission and replanning tests. |
+| 0.6 | 2026-09-12 | Typed crime/evidence sources, configured belief support, finite competing accusations, cleanup/clockwork structures and explicit Z3 certification. |
+
+### Forensic milestone source map
+
+- `dist/forensics.mjs`: source rules, history/explanation IR, finite enumeration and alternative exclusion.
+- `dist/cases/investigative-structures.mjs`: cleanup and clock-dependent evidence structures.
+- `dist/casegen.mjs`: local generation obligations and optional Z3 certification.
+- `tools/validate-case.mjs`: reproducible offline certification command.
+- `tests/forensics.test.mjs`: source forgery, ambiguity, route replay, real-Z3 and unresolved-result regressions.
+
+Edition 0.6 adds these bounded forensic contracts; it does not claim general formal verification of narrative prose.

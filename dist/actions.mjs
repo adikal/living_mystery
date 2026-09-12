@@ -1,5 +1,6 @@
 // Shared, closed action vocabulary. Inputs describe actions, never world patches.
 export const ACTION_CONTRACTS=Object.freeze({
+  activity:{fields:['location','task'],optional:['duration','deadline'],duration:'activity',effects:['time','life']},
   move:{fields:['to'],optional:['duration'],duration:'route',effects:['location']},
   observe:{fields:['location'],optional:['object'],duration:0,effects:['memory','belief']},
   communicate:{fields:['recipient','location','belief'],optional:['recipientPresent'],duration:0,effects:['speech','testimony']},

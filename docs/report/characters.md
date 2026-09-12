@@ -65,3 +65,18 @@ continued solvability for every offered choice. The
 [two-stage admission design](director.md#6-7-two-stage-admission-for-autonomous-agents)
 also addresses hidden-information leakage through capabilities and rejection
 feedback.
+
+
+## 4.7 Autonomous daily lives
+
+![Figure 10. Implemented event-based daily-life loop with scripted and optional model policies, shared constraints and replayable social commitments.](figures/lives.svg)
+
+Configured and generated cases now give each NPC public responsibilities and personal interests independent of the culprit assignment. Life state records energy, goals, task completions, active timed work, retry state and model cooldown. Work, errands and rest consume simulated time. Current work pauses for player conversation; other characters continue. Arrival, knowledge changes, completion and periodic checkpoints provide reconsideration opportunities. Mystery modules take priority when choosing a new plan, while an active plan normally runs until completion or failure.
+
+Invitations are delivered by actual co-located speech. The recipient can accept or decline; acceptance also happens in person and records a shared meeting window. The requester waits for a bounded response interval. Future partner locations come from local perception, retained sightings or public-workplace expectations, so a trip can fail. Both participants must attend before fulfillment. Expiry and capped retry delays preserve unsuccessful encounters instead of rewriting them into successes.
+
+Policy ranks currently permissible choices by responsibility, elapsed time, fatigue and social obligations. Accepted appointments constrain plans before utility selection. The shared action IR now includes a timed activity with presence, duration, deadline and frame constraints. The executor checks that the task is licensed for this NPC. A composed sequence must still fit accepted commitments; individually safe choices are not assumed safe together.
+
+Optional model deliberation receives one NPC's goals, beliefs, memories and known commitments and chooses one to three current goal IDs. Social choices stand alone until their outcomes are known. Only the trusted engine expands IDs into actions; no generated prose or patches become world facts. Each player turn can add one five-second request, with a twenty-simulated-minute cooldown per actor and oldest-opportunity rotation. Malformed or unavailable responses fall back to scripted selection. Stale responses and cancellation cannot commit the pending player turn.
+
+These are bounded ordinary lives, not a complete production economy or general cognition. Errands have timed completion records rather than inventories and money. The original case retains its legacy behavior. Tests establish orchestration and finite-domain behavior; real-model decision quality, richer relationship consequences and contingent investigative robustness require further evaluation.

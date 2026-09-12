@@ -1,16 +1,16 @@
 # Shared symbolic representation and solver integration
 
-Status: first implementation delivered for Ada’s correction and Silas’s concealment. The shared finite constraint IR, local plan admission, optional transactional Z3 adapter and engine-replayed investigation witnesses are implemented. The broader architecture below remains the target; bounded AI-selected plans and dependency invalidation are also implemented. General planning, exhaustive reachability, automatic inference re-derivation, ASP and Lean remain future work. This design applies to both scripted and AI play; a symbolic solver does not require an LLM.
+Status: the shared finite constraint IR covers physical plans, typed crime history and competing explanations. Local plan/belief admission, optional transactional Z3 verification and engine-replayed investigation witnesses are implemented for the documented domains. The broader architecture below remains the target; bounded AI-selected plans and dependency invalidation are also implemented. General planning, exhaustive reachability, automatic inference re-derivation, ASP and Lean remain future work. This design applies to both scripted and AI play; a symbolic solver does not require an LLM.
 
 ## Purpose and boundaries
 
 Build one versioned symbolic vocabulary, translate supported fragments into appropriate logics, and feed attributed inferences back through the engine's knowledge-update rules. The three main product uses are:
 
-1. Creating coherent and investigable mysteries during future procedural generation.
+1. Creating coherent and investigable mysteries in the bounded generator, later extending to broader procedural worlds.
 2. Validating structured agent outputs against world constraints and information permissions, including their global effects on continued investigation viability.
 3. Evaluating the player's final argument to the constable, with explicit evidence and assumptions.
 
-Start with Z3. Keep the representation independent of its API. Add an ASP adapter only when discrete plan/event selection provides a demonstrated benefit. Lean is an optional later target for independently checked proof certificates, not a prerequisite for readable case arguments. Finish The Last Bell as the reference case before enabling procedural generation.
+Start with Z3. Keep the representation independent of its API. Add an ASP adapter only when discrete plan/event selection provides a demonstrated benefit. Lean is an optional later target for independently checked proof certificates, not a prerequisite for readable case arguments. Retain The Last Bell as a reference while playtesting and expanding the implemented same-cast generator.
 
 The event log remains authoritative. A solver is a query service, not a second world engine. Its outputs are proposals for knowledge updates or validation results; they never directly patch canonical history.
 
@@ -93,14 +93,14 @@ The proposed sequence is: structured proposal → immediate engine checks and ap
 
 The **Game Master** is the overall coordination concept; the **World Director** is the component responsible for world consistency, continued investigation viability and permitted progression/recovery policies. It is not a fourth solver use case or necessarily an LLM. Use case 1 establishes initial coherence and investigability; use case 2 preserves them as the world changes; use case 3 evaluates the player's eventual argument.
 
-### Current implementation versus planned behavior
+### Historical baseline and current implementation
 
 Before the first Director slice, these responsibilities were distributed:
 
 - Engine action rules enforce travel, co-location, acquired evidence and authored effects.
 - Kernel diagnostics validate causal references, source-event existence and replay consistency. A replayable history is not necessarily a physically possible history.
 - Last Bell's scored character policies select routines, concealment, warnings and reports.
-- `checkCase()` grades against the canonical answer and two authored evidence bundles.
+- The original `checkCase()` grades against the canonical answer and two authored bundles. Configured cases now use a finite acquired-evidence explanation grader.
 - `caseHealth()` counts acquired evidence and performs a narrow folio-location availability check. It does not search for an executable investigative route.
 
 The World Director records and checks the authored correction/concealment plans and shared capability plans. Optional Z3 checks run transactionally around a turn, and turns containing admitted take/store/give/conceal steps require a replay-validated witness from bounded acquisition search. New configurations enforce local admission independently of this optional boundary. There is still no general contingent reachability search or automatic recovery planner. Passing these checks is evidence for the modeled plans and witness routes, not a guarantee against every dead end.
@@ -226,7 +226,7 @@ The current optional Director-off mode does not provide that guarantee.
 - Private constraints do not become character knowledge or player evidence;
   inspector explanations remain separate from agent feedback.
 
-Current scope includes selected Z3 plan checks, bounded acquisition search and mandatory local admission in three new configurations. Their preliminary capability filtering and intermediate access/deadline checks are implemented; general viability certificates, complete timed pre-deliberation filtering and broader autonomous deliberation remain future work.
+Current scope includes selected Z3 plan checks, bounded acquisition search and mandatory local admission in three new configurations. Their preliminary capability filtering and intermediate access/deadline checks are implemented; general viability certificates, complete timed pre-deliberation filtering and unrestricted autonomous planning remain future work. Bounded daily-life deliberation and replanning are implemented.
 
 ### Feasibility and viability obligations
 
@@ -324,3 +324,12 @@ rewrite evidence in the notebook, or update another character's independent
 belief without a new information transfer. Generic testimony keeps its speaker
 and unknown truth rather than promoting the source's certainty into world truth.
 Intention completion retires the pending belief through the same mechanism.
+
+
+## Autonomous life implementation
+
+Configured/generated cases now support persistent ordinary goals, timed activities, delivered social requests, accepted commitments and replanning. `life.mjs` drives scripted policies through shared move/activity constraints; `autonomy-turn.mjs` adds isolated optional model selection of bounded goal sequences. The original case retains its legacy policies. Z3 verification batches up to twelve queries per request under the existing atomic turn boundary. See [the complete implementation and test guide](autonomous-lives.md) for state, budgets, assumptions and limitations.
+
+## Shared forensic milestone
+
+New configured/generated cases now use typed source support, registered live belief rules, a shared crime/explanation IR, and a finite competing-explanation accusation grader. Generation varies `trace`, `cleanup` and `clockwork` structures and independently replays every declared route. Optional Z3 verifies recorded history and excludes competing explanations; local non-AI play uses the same finite rules. The original case retains its legacy rubric. See [the forensic model and testing contract](forensic-model.md) for exact scope, commands and limits.

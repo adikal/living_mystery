@@ -12,7 +12,7 @@ export const correction={
   // Showing Ada the greenhouse record or the fast-clock note revises her sighting.
   onInteract({K,s,id,topic,clue,event}){
     if(id==='ada'&&topic==='present'&&['record','clock'].includes(clue))
-      K.believe(s,'ada','sighting_corrected','I cannot stand by that sighting; the record shows where they actually were.',.9,'inference',event,true);
+      K.believe(s,'ada','sighting_corrected',clue==='record'?'I cannot stand by that sighting; the record shows where they actually were.':'The clock was fast. My sighting time needs correction; I still did not see a face.',.9,'inference',event,true);
   },
 
   // Ada gains a permission to inform Bell of the correction, gated on having made it.

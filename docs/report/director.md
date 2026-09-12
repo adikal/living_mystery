@@ -138,10 +138,17 @@ silently disable the invariants. The original case's optional Director-off mode 
 
 ## 6.9 Implementation boundary and next experiment
 
-The new configurations add preliminary capability filtering over projected object effects and public commitments, followed by actual transition admission. The preview is conditional: it is not a complete temporal certificate for the whole proposed plan. Execution checks the actual state and clock. General solver-assisted filtering, robust future obligations, semantic dialogue coherence and autonomous replanning remain proposed. This implements a bounded part of the governing contract, not a universal no-dead-end theorem.
+The new configurations add preliminary capability filtering over projected object effects and public commitments, followed by actual transition admission. The preview is conditional: it is not a complete temporal certificate for the whole proposed plan. Execution checks the actual state and clock. General solver-assisted filtering, robust future obligations, formal coherence of arbitrary dialogue and unrestricted replanning remain proposed. Bounded daily-life replanning and registered belief-support admission are implemented. This implements a bounded part of the governing contract, not a universal no-dead-end theorem.
 
 The next bounded experiment is hybrid deliberation for Ada's correction: compare
 authored and AI-selected alternatives while preserving the same world constraints
 and evidence opportunities. Test stale choices, last-route threats, competing
 schedules, unsupported checks, repeated deferrals and information leakage before
 expanding the agent's freedom. Three executed prehistories now provide reference fixtures for the later procedural-generation pipeline.
+
+
+## 6.10 Life commitments and solver batching
+
+Accepted personal appointments now constrain all represented plans for their participants. Physical activity uses the shared time/location IR; meeting presence and actual fulfillment are rechecked in the engine. Optional social failure is allowed because these appointments are not required by the investigation rubric. Source-linked invitations and responses do not silently create testimony about the crime.
+
+A living town can produce many short plans during a wait. Optional solver verification sends sequential batches of at most twelve queries, with a whole-turn timeout and a 96-query ceiling. Any failed batch leaves the candidate uncommitted. This preserves the service's bounded request format while supporting ordinary multi-NPC activity. The earlier finite acquisition-search limitations remain unchanged.

@@ -49,7 +49,7 @@ a case-granted concealment capability. Silas's folio capability requires his
 existing knowledge that the detective knows the accounts. Private starting
 beliefs are not automatically shareable. The LLM chooses a bounded multi-step
 plan, not arbitrary patches or newly invented entities. Unrestricted plan
-composition and autonomous background LLM turns remain future work.
+unrestricted composition remains future work. Bounded life-goal composition and optional NPC deliberation are now implemented; see [autonomous lives](autonomous-lives.md).
 
 The semantic critic checks relevance and promises against the selected plan.
 The plan's physical constraints are checked locally during admission and again
@@ -83,3 +83,8 @@ state before commit. Conditions and cached results expire when their supports
 change. General autonomous deliberation and this broader filtering stage are
 proposed, not enabled by the current capability catalog. Private Director
 feedback, including observable menu differences, must not expose hidden facts.
+
+
+## Autonomous life implementation
+
+Configured/generated cases now support persistent ordinary goals, timed activities, delivered social requests, accepted commitments and replanning. `life.mjs` drives scripted policies through shared move/activity constraints; `autonomy-turn.mjs` adds isolated optional model selection of bounded goal sequences. The original case retains its legacy policies. Z3 verification batches up to twelve queries per request under the existing atomic turn boundary. See [the complete implementation and test guide](autonomous-lives.md) for state, budgets, assumptions and limitations.

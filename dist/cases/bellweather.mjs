@@ -1,3 +1,6 @@
+import {crimeModel,assessAccusation,recordKnowledgeSupport,supportsBelief} from '../forensics.mjs';
+import {configureStructure} from './investigative-structures.mjs';
+import {BELLWEATHER_LIFE} from './bellweather-life.mjs';
 import * as Original from '../case.mjs';
 import {VERSION} from '../kernel.mjs';
 import {executePrehistory} from '../prehistory.mjs';
@@ -32,21 +35,29 @@ export function makeCase(spec){
  const claim=(key,subject,predicate,value,interval=null)=>({key,subject,predicate,value,interval,confidence:.99,attribution:'recorded evidence'});
  const evidenceClaims={medical:[claim('death','edmund','death_time','window',{start:spec.minute-4,end:spec.minute+4})],delivery:[claim('receipt',spec.culprit,'location','manor',{start:spec.minute-5,end:spec.minute-5})],record:innocents.map(id=>claim(`visit_${id}`,id,'location','greenhouse',{start:spec.minute-25,end:spec.minute+5}))};
  const CASE={id:spec.id,title:spec.title,date:'18 November 1932',victim:'Edmund Vale',culprit:spec.culprit,method:spec.weapon,motive:spec.motive,synopsis:'Edmund Vale is dead. Compare the physical traces, the estate decision, and the independent accounts of last night.',truth:`${name} killed Edmund at ${t} with the ${spec.weaponName} to ${spec.motiveText}.`,history:[],proofRoutes:[{id:'physical',title:'Physical traces and independent records',all:['medical','fragment','seal','delivery','ledger','record']},{id:'documents',title:'The carbon copy and the records',all:['medical','fragment','seal','delivery','folio','record']}],methodOptions:METHOD_OPTIONS,motiveOptions:MOTIVE_OPTIONS,resolutionText:`Bell checks the physical traces against the records. “The evidence supports your case against ${name}: the ${spec.weaponName}, the estate decision, and the opportunity. We can proceed.”`};
+ evidenceClaims.fragment=[];
+ evidenceClaims.seal=[{predicate:'trace_match',value:spec.weapon,requires:'fragment'}];
+ evidenceClaims.ledger=[{predicate:'crime_motive',subject:spec.culprit,value:spec.motive}];
+ evidenceClaims.folio=[{predicate:'crime_motive',subject:spec.culprit,value:spec.motive}];
+ evidenceClaims.clock=[{predicate:'clock_offset',value:12}];
+ configureStructure({spec,CASE,CLUES,OBJECTS,LOCATIONS,evidenceClaims});
+ for(const [id,claims]of Object.entries(evidenceClaims))evidenceClaims[id]=claims.map((c,i)=>({key:`${id}_${i}`,subject:'edmund',interval:null,confidence:.99,attribution:'recorded evidence',...c}));
  const modules=activeModules(spec);
  for(const {module,binding,roles} of modules)module.content?.({binding,roles,spec,CLUES,OBJECTS,LOCATIONS,PEOPLE,set,time,CASE,peers:modules});
  const agentPermissions={},commitments={bell:{location:'square',from:1920}};
  for(const {module,binding,roles} of modules){const cap=module.capabilities?.({binding,roles,spec,peers:modules});if(cap?.agentPermissions)for(const [k,v]of Object.entries(cap.agentPermissions))agentPermissions[k]=[...(agentPermissions[k]??[]),...v];if(cap?.commitments)Object.assign(commitments,cap.commitments);}
  function baseWorld(seed=17){const npcs={};for(const [id,p]of Object.entries(PEOPLE))npcs[id]={location:p.home,travel:null,stress:.2,trust:p.relationships.player.trust,intention:'Attend to the evening',plan:'routine',beliefs:[],memories:[],lastDecision:null};return {version:VERSION,seed,caseId:spec.id,minute:1200,status:'playing',player:{location:'transit',evidence:[],pins:[],visited:['square'],lastSeen:{},notes:[]},npcs,objects:{weapon:home,folio:'manor'},flags:{victimAlive:true,victimLocation:'manor',evidenceOrigins:{},lockedObjects:[]},ending:null};}
- const model={CASE,PEOPLE,LOCATIONS,OBJECTS,CLUES,baseWorld,evidenceClaims,containers:{drawer:'vestry'},testimonyClues:['ada','clara','alibi','rowan'],version:VERSION,commitments,agentPermissions,boundedInvestigation:true,modules};
+ const model={validateBelief:(s,id,b)=>supportsBelief(s,id,b,model),CASE,PEOPLE,LOCATIONS,OBJECTS,CLUES,baseWorld,evidenceClaims,containers:{drawer:'vestry'},testimonyClues:['ada','clara','alibi','rowan'],version:VERSION,commitments,agentPermissions,forensics:crimeModel(spec,LOCATIONS),boundedInvestigation:true,modules,life:BELLWEATHER_LIFE};
  function createBehavior(K){
   const known=(s,id,key)=>s.world.npcs[id].beliefs.find(b=>b.key===key);
   const source=(s,id)=>known(s,id,'night_account')?.sourceId;
   const line=(s,id,text,cause,topic='night',deception=false)=>K.speech(s,id,text,cause,{topic,intent:deception?'Protect my secret':'Answer from my own experience',basis:'night_account',deception:deception?'False alibi':false,sourceEvents:[source(s,id)].filter(Boolean),claims:[]});
-  function decide(s,id,cause){if(s.world.minute<1920||s.world.npcs[id].travel||s.world.player.conversation===id)return;for(const {module,binding,roles} of modules)if(module.decide?.({K,s,id,cause,binding,roles,peers:modules}))return;K.startTravel(s,id,PEOPLE[id].home,cause,'Return to my morning duties');}
+  function decide(s,id,cause){if(s.world.minute<1920||s.world.npcs[id].travel||s.world.player.conversation===id)return;for(const {module,binding,roles} of modules)if(module.decide?.({K,s,id,cause,binding,roles,peers:modules}))return;if(K.life.decide(s,id))return;K.startTravel(s,id,PEOPLE[id].home,cause,'Return to my morning duties');}
   function seedSession(s){
    const pre=executePrehistory(K,s,spec);
    for(const [id,p]of Object.entries(PEOPLE)){
     const text=id===spec.culprit?`I killed Edmund with the ${spec.weaponName} at ${t}.`:innocents.includes(id)?`I was at the greenhouse with Dr Marsh from ${time(spec.minute-25)} to ${time(spec.minute+5)}.`:id==='iris'?`I witnessed ${names} at the greenhouse and examined Edmund afterward.`:id==='ada'?'I checked the inn clock; it runs twelve minutes fast.':'Dr Marsh told me Edmund was found dead.';
+    recordKnowledgeSupport(K,s,id,'night_account',text,pre.sources[id]);
     K.believe(s,id,'night_account',text,.99,id==='bell'?'testimony':'observation',pre.sources[id],true);
     K.remember(s,id,pre.sources[id]);
    }
@@ -100,7 +111,7 @@ export function makeCase(spec){
    line(s,id,text,heard,'present');K.advance(s,4,cause);
    for(const {module,binding,roles} of modules)module.onInteract?.({K,s,id,topic:'present',clue,binding,roles,event:heard,peers:modules});
   }
-  function checkCase(s,a){const selected=[...new Set(a.evidence??[])].filter(x=>K.has(s,x));const routes=CASE.proofRoutes.filter(r=>r.all.every(x=>selected.includes(x)));const supported=routes.length>0&&a.suspect===CLUES.delivery.subject&&a.suspect===CLUES.seal.subject&&a.method===CLUES.seal.method&&a.motive===CLUES.ledger.motive;return {supported,routes:routes.map(r=>r.id),selected};}
+  function checkCase(s,a){return assessAccusation(s,a,model.forensics,evidenceClaims,CLUES,CASE.proofRoutes,PEOPLE);}
   const followupOptions=(s,id)=>{const followup=sourceFollowup(s,id);return [...(followup?[['source',followup.label]]:[]),...(id===spec.culprit&&K.has(s,'delivery')?[['challenge_delivery','Explain the receipt and your alibi.']]:[])];};
   function parseCommand(text){const words=text.toLowerCase().trim().split(/\s+/);if(['go','move','walk'].includes(words[0]))return {type:'move',to:words[1]};if(['inspect','search'].includes(words[0]))return {type:'inspect',object:words[1]};if(words[0]==='wait')return {type:'wait',minutes:Number(words[1])};if(words[0]==='ask')return {type:'ask',person:words[1],topic:words.at(-1)};return {type:'look'};}
   function caseHealth(s){return CASE.proofRoutes.map(r=>({...r,found:r.all.filter(c=>K.has(s,c)),available:r.all.every(c=>Object.entries(OBJECTS).some(([o,v])=>v.clue===c&&!s.world.flags.lockedObjects.includes(o)))}));}

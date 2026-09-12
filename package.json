@@ -9,7 +9,8 @@
     "debug": "node tools/debug-session.mjs",
     "play": "node cli.mjs",
     "docs:build": "python3 scripts/build_report.py",
-    "docs:check": "python3 scripts/build_report.py --check"
+    "docs:check": "python3 scripts/build_report.py --check",
+    "cases:verify": "node tools/validate-case.mjs"
   },
   "engines": {
     "node": ">=20"

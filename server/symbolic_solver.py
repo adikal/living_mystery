@@ -7,7 +7,7 @@ NAME = re.compile(r"^[A-Za-z][A-Za-z0-9_]{0,63}$")
 
 
 def solve(query):
-    if not isinstance(query, dict) or set(query) != {'version','kind','perspective','variables','constraints','assumptions','horizon','minute'} or type(query.get('version')) is not int or query.get('version') != 1 or query.get('kind') != 'plan-feasibility' or query.get('perspective') != 'world':
+    if not isinstance(query, dict) or set(query) != {'version','kind','perspective','variables','constraints','assumptions','horizon','minute'} or type(query.get('version')) is not int or query.get('version') != 1 or query.get('kind') not in ('plan-feasibility', 'crime-history', 'crime-explanation') or query.get('perspective') != 'world':
         raise ValueError('Unsupported symbolic query')
     if type(query['minute']) is not int or not 0 <= query['minute'] <= 1000000 or type(query['horizon']) is not int or not 0 <= query['horizon'] <= 120:
         raise ValueError('Invalid time bounds')

@@ -50,6 +50,11 @@ export function compilePlan({actor,location,objects,knowledge,locations,distance
       if(!Number.isInteger(duration)||duration<0)throw Error('Unreachable destination');
       if(step.duration!==undefined)duration=step.duration;
       condition('travel',`Travel from ${at} to ${step.to} requires ${distances[`${at}:${step.to}`]} minutes`,expr('eq',duration,distances[`${at}:${step.to}`]));at=step.to;
+    }else if(step.kind==='activity'){
+      if(!Object.hasOwn(values,step.location)||!Number.isInteger(step.duration)||step.duration<1||step.duration>60)throw Error('Invalid activity duration or location');
+      duration=step.duration;
+      if(step.deadline!==undefined){if(!Number.isInteger(step.deadline))throw Error('Invalid activity deadline');condition('deadline','Activity must finish before its deadline',expr('le',expr('add',term(`t${i}`),duration),step.deadline));}
+      condition('location','Activity requires physical presence',expr('eq',term(`loc${i}`),code(step.location)));
     }else if(step.kind==='take'){
       if(!Object.hasOwn(held,step.object))throw Error('Unknown object');
       condition('access',`${step.object} must be at ${step.from}`,expr('eq',term(`obj_${step.object}_${i}`),code(step.from)));

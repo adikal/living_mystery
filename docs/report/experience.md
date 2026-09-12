@@ -33,3 +33,11 @@ For procedural cases, visual consistency becomes part of the case-production con
 ## 8.5 Toward a spatial town
 
 A top-down, Stardew Valley–like playable town is a long-term interface direction. Movement animation should eventually reflect actual route segments and elapsed time, while text commands remain available for tests and accessibility. Spatial presentation will require stronger perception rules than current scene co-location. Visibility, audibility, room boundaries and travel interruption should enter the shared model before animation implies those mechanics exist.
+
+## 8.5 Current forensic and life interactions
+
+The case menu exposes explicit cleanup and clock-dependent generation choices, alongside general sampling and authored configurations. A new investigation replaces the active local save, so export remains available before selection. AI-off play uses the same finite case reasoning.
+
+Bell names only selected acquired records and distinguishes supported, ambiguous, contradicted and internally inconsistent bundles. Partial feedback identifies unresolved dimensions and the kind of corroboration needed; it does not reveal undiscovered clue locations. The Reasoning board remains player-organized rather than automatically placing evidence from hidden truth.
+
+The character inspector's Daily life view follows the selected history prefix: activities, energy, goals, accepted commitments, completion and retries change with the timeline. Private goals and social requests do not appear in the regular player projection. Pending model-selection and solver indicators represent unfinished transactions; cancellation cannot leave a hidden background action committed.
