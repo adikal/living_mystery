@@ -114,6 +114,7 @@ For a research or external-review snapshot, associate a report edition with a re
 | 0.4 | 2026-09-09 | Composable narrative modules (misdirection/correction/secret-affair/concealment); case-general validator (physical/epistemic/reachability/distinguishability + module invariants); seeded validated sampler and playable generated cases; fetch/inform capabilities (live concealment and in-person correction); critic JSON-only output and a general clean-decline for out-of-knowledge questions; role-aware prose and clue-kind fixes. |
 | 0.5 | 2026-09-12 | Persistent ordinary lives, real social commitments, bounded optional model deliberation, composed-plan admission and replanning tests. |
 | 0.6 | 2026-09-12 | Typed crime/evidence sources, configured belief support, finite competing accusations, cleanup/clockwork structures and explicit Z3 certification. |
+| 0.7 | 2026-09-12 | Live-verified AI paths: detached non-blocking life deliberation with turn-abort race safety and fence-tolerant selection parsing; in-character declines for out-of-account free-text questions; actionable World Director deferral guidance. Robustness/UX only. |
 
 ### Forensic milestone source map
 

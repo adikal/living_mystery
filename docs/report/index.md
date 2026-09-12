@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.6 · 12 September 2026**
+**Living technical report · Edition 0.7 · 12 September 2026**
 
 ### Abstract
 
@@ -54,3 +54,7 @@ Ordinary responsibilities, fatigue, errands and social goals now coexist with my
 ### Edition 0.6: shared forensic reasoning
 
 Configured and generated cases now use typed crime/evidence occurrences, registered belief-support rules, finite competing-explanation grading and three investigative structures. The browser and Z3 share the constraint representation. The original case retains its authored rubric; the new checks certify only the declared finite domain. See [symbolic validation](symbolic.md#5-6-shared-forensic-queries) and [structural generation](generation.md#10-9-investigative-structures).
+
+### Edition 0.7: verified and hardened AI paths
+
+The optional model paths were exercised against a live model and hardened. Life deliberation now runs **detached** after the player's action commits, so it never blocks the action or its reply, and it yields to any new player turn (an in-flight deliberation is aborted so it cannot stale the turn); its goal selection is parsed fence-tolerantly and passes the local investigation-admission check. A free-text question a character has no account for now produces a faithful **in-character decline** — the model may not answer or assert facts without a selected account — instead of a fallback. World Director deferrals in conversation now explain how to proceed. These are robustness and UX fixes; the underlying contracts and finite domains are unchanged.
