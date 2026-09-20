@@ -22,17 +22,17 @@ export const MOTIVES={
 };
 const GARMENTS={clara:'pale summer coat',rowan:'green coat',silas:'grey travelling cloak'};
 const POSSESSIVE={clara:'her',rowan:'his',silas:'his'};
-export function buildSpec({culprit,weapon,motive,minute,seen,structure='trace'}){
+export function buildSpec({culprit,weapon,motive,minute,seen,structure='trace',manner='overt'}){
  const w=WEAPONS[weapon],m=MOTIVES[motive];
- if(!['trace','cleanup','clockwork'].includes(structure)||!Number.isInteger(minute)||minute<1200||minute>1439||!w||!m||!GARMENTS[culprit]||!GARMENTS[seen]||seen===culprit)throw Error('Invalid spec components');
+ if(!['trace','cleanup','clockwork'].includes(structure)||!['overt','accident'].includes(manner)||!Number.isInteger(minute)||minute<1200||minute>1439||!w||!m||!GARMENTS[culprit]||!GARMENTS[seen]||seen===culprit)throw Error('Invalid spec components');
  const motiveText=typeof m.text==='function'?m.text({poss:POSSESSIVE[culprit]??'their'}):m.text;
- return {id:`gen-${culprit}-${weapon}-${motive}-${minute}-${seen}${structure==='trace'?'':'-'+structure}`,title:`The Last Bell — ${m.title}`,
-  structure,culprit,weapon,weaponName:w.name,motive,motiveText,minute,injury:w.injury,misdirection:{item:GARMENTS[seen],seen}};
+ return {id:`gen-${culprit}-${weapon}-${motive}-${minute}-${seen}${structure==='trace'?'':'-'+structure}${manner==='accident'?'-accident':''}`,title:`The Last Bell — ${m.title}`,
+  structure,manner,culprit,weapon,weaponName:w.name,motive,motiveText,minute,injury:w.injury,misdirection:{item:GARMENTS[seen],seen}};
 }
 // Reconstruct a spec from a generated id, so a sampled case is save/reload-safe
 // without a registry: the id encodes every component buildSpec needs.
 export function specFromId(id){
- const m=/^gen-([a-z]+)-([a-z]+)-([a-z]+)-(\d+)-([a-z]+)(?:-(cleanup|clockwork))?$/.exec(id);
+ const m=/^gen-([a-z]+)-([a-z]+)-([a-z]+)-(\d+)-([a-z]+)(?:-(cleanup|clockwork))?(?:-(accident))?$/.exec(id);
  if(!m)return null;
- try{const spec=buildSpec({culprit:m[1],weapon:m[2],motive:m[3],minute:Number(m[4]),seen:m[5],structure:m[6]??'trace'});return spec.id===id?spec:null;}catch{return null;}
+ try{const spec=buildSpec({culprit:m[1],weapon:m[2],motive:m[3],minute:Number(m[4]),seen:m[5],structure:m[6]??'trace',manner:m[7]?'accident':'overt'});return spec.id===id?spec:null;}catch{return null;}
 }

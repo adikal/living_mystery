@@ -6,10 +6,11 @@ import {misdirection} from './misdirection.mjs';
 import {correction} from './correction.mjs';
 import {secretAffair} from './secret-affair.mjs';
 import {concealment} from './concealment.mjs';
+import {mannerOfDeath} from './manner-of-death.mjs';
 
 // Order matters only for dialogue precedence: correction is registered after
 // misdirection so its withdrawal line overrides the original sighting once made.
-export const MODULES=[misdirection,correction,secretAffair,concealment];
+export const MODULES=[misdirection,correction,secretAffair,concealment,mannerOfDeath];
 
 export function activeModules(spec){
   const roles=resolveRoles(spec);

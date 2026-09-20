@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.8 · 20 September 2026**
+**Living technical report · Edition 0.9 · 20 September 2026**
 
 ### Abstract
 
@@ -62,3 +62,15 @@ The optional model paths were exercised against a live model and hardened. Life 
 ### Edition 0.8: durable autosave and conversation-focused people view
 
 Autosave now uses **IndexedDB** as the primary store, with `localStorage` kept as a synchronous mirror and fallback. A long investigation with the full AI reasoning trace could exceed the browser's ~5MB `localStorage` quota and fail to save; IndexedDB's far larger quota removes that cap, and the save degrades gracefully (compact gameplay-only `localStorage`, then an error) only if both stores fail. The Export file remains the durable off-browser copy. In the notebook's people view, the person you are currently speaking with is pinned to the top and marked, so their profile and live trust/stress meters stay visible as the conversation changes them.
+
+### Edition 0.9: structural variety — the declarative forensic model and manner-of-death
+
+The first step from *combinatorial* variety (the same puzzle with different fillers) toward *structural*
+variety (different kinds of investigation). The finite forensic model is now **declarative**: dimensions
+are data (integer domains with labels), evidence predicates are a compiler registry, and a single generic
+enumerator ranges over whatever dimensions a case declares — a behaviour-preserving refactor that leaves
+every prior case identical. On that substrate, **manner-of-death** adds the first new axis: some generated
+cases are staged to look like an accident, and the accusation is **gated** until a coroner's finding
+establishes that the death was murder. It is always ultimately a murder (staging is a disguise), manner is
+an investigative gate rather than an accusation field, and the coroner finding is load-bearing on every
+proof route. A separate design note (`docs/manner-of-death.md`) records the rationale, the declarative-model shape, and the safety rails.

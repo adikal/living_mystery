@@ -41,9 +41,11 @@ export function makeCase(spec){
  evidenceClaims.folio=[{predicate:'crime_motive',subject:spec.culprit,value:spec.motive}];
  evidenceClaims.clock=[{predicate:'clock_offset',value:12}];
  configureStructure({spec,CASE,CLUES,OBJECTS,LOCATIONS,evidenceClaims});
- for(const [id,claims]of Object.entries(evidenceClaims))evidenceClaims[id]=claims.map((c,i)=>({key:`${id}_${i}`,subject:'edmund',interval:null,confidence:.99,attribution:'recorded evidence',...c}));
  const modules=activeModules(spec);
- for(const {module,binding,roles} of modules)module.content?.({binding,roles,spec,CLUES,OBJECTS,LOCATIONS,PEOPLE,set,time,CASE,peers:modules});
+ // Modules may contribute forensic claims (e.g. the manner-of-death coroner finding), so compose
+ // their content BEFORE normalization, and normalize the merged set uniformly afterward.
+ for(const {module,binding,roles} of modules)module.content?.({binding,roles,spec,CLUES,OBJECTS,LOCATIONS,PEOPLE,set,time,CASE,evidenceClaims,peers:modules});
+ for(const [id,claims]of Object.entries(evidenceClaims))evidenceClaims[id]=claims.map((c,i)=>({key:`${id}_${i}`,subject:'edmund',interval:null,confidence:.99,attribution:'recorded evidence',...c}));
  const agentPermissions={},commitments={bell:{location:'square',from:1920}};
  for(const {module,binding,roles} of modules){const cap=module.capabilities?.({binding,roles,spec,peers:modules});if(cap?.agentPermissions)for(const [k,v]of Object.entries(cap.agentPermissions))agentPermissions[k]=[...(agentPermissions[k]??[]),...v];if(cap?.commitments)Object.assign(commitments,cap.commitments);}
  function baseWorld(seed=17){const npcs={};for(const [id,p]of Object.entries(PEOPLE))npcs[id]={location:p.home,travel:null,stress:.2,trust:p.relationships.player.trust,intention:'Attend to the evening',plan:'routine',beliefs:[],memories:[],lastDecision:null};return {version:VERSION,seed,caseId:spec.id,minute:1200,status:'playing',player:{location:'transit',evidence:[],pins:[],visited:['square'],lastSeen:{},notes:[]},npcs,objects:{weapon:home,folio:'manor'},flags:{victimAlive:true,victimLocation:'manor',evidenceOrigins:{},lockedObjects:[]},ending:null};}

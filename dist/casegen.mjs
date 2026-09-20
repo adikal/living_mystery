@@ -79,6 +79,7 @@ export function sampleCases(seed=1,count=6,{
   motives=Object.keys(MOTIVES),
   minutes=[1274,1294,1314],
   structures=STRUCTURES,
+  manners=['overt','overt','accident'],
   maxTries=count*40
 }={}){
   let state=(seed>>>0)||1;
@@ -88,7 +89,7 @@ export function sampleCases(seed=1,count=6,{
   while(valid.length<count&&tries++<maxTries){
     const culprit=pick(suspects),innocents=suspects.filter(id=>id!==culprit);
     let spec;
-    try{spec=buildSpec({culprit,weapon:pick(weapons),motive:pick(motives),minute:pick(minutes),seen:pick(innocents),structure:pick(structures)});}
+    try{spec=buildSpec({culprit,weapon:pick(weapons),motive:pick(motives),minute:pick(minutes),seen:pick(innocents),structure:pick(structures),manner:pick(manners)});}
     catch{continue;}
     if(ids.has(spec.id))continue;
     const report=validateCase(spec);

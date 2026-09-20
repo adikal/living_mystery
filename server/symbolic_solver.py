@@ -27,11 +27,16 @@ def solve(query):
     solver.set(timeout=1500, rlimit=200000)
     symbols = {}
     for name, spec in variables.items():
-        if not NAME.fullmatch(name) or not isinstance(spec, dict) or set(spec) != {'sort', 'min', 'max'} or spec['sort'] != 'int':
+        if not NAME.fullmatch(name) or not isinstance(spec, dict) or not {'sort', 'min', 'max'} <= set(spec) <= {'sort', 'min', 'max', 'labels'} or spec['sort'] != 'int':
             raise ValueError('Unsupported variable')
         lo, hi = spec['min'], spec['max']
         if type(lo) is not int or type(hi) is not int or not 0 <= lo <= hi <= 1000000:
             raise ValueError('Invalid domain')
+        # `labels` is optional display metadata (dimension value names); the solver ignores it
+        # but validates its shape, since every query field crosses the trust boundary.
+        labels = spec.get('labels')
+        if labels is not None and (not isinstance(labels, list) or len(labels) != hi - lo + 1 or len(labels) > 64 or any(not isinstance(x, str) or len(x) > 64 for x in labels)):
+            raise ValueError('Invalid labels')
         symbols[name] = z3.Int(name, ctx=context)
         solver.add(symbols[name] >= lo, symbols[name] <= hi)
     budget = [0]

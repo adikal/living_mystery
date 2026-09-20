@@ -47,7 +47,7 @@ These paths are relative to the repository root. The report build checks their e
 | `dist/claims.mjs` | Structured claims and bounded comparison | [Knowledge](knowledge.md) |
 | `dist/cases/last-bell-claims.mjs` | Authored case-night claim annotations | [Knowledge](knowledge.md) |
 | `dist/character-turn.mjs` | Tickets, model proposal, critic and application checks | [Character turns](characters.md) |
-| `dist/modules/` | Composable narrative bricks: `contract.mjs`, `index.mjs` (registry + `activeModules`), and `misdirection`/`correction`/`secret-affair`/`concealment` | [Generation](generation.md) |
+| `dist/modules/` | Composable narrative bricks: `contract.mjs`, `index.mjs` (registry + `activeModules`), and `misdirection`/`correction`/`secret-affair`/`concealment`/`manner-of-death` | [Generation](generation.md) |
 | `dist/casegen.mjs` | Case-general validator (four obligations + module invariants) and the seeded validated sampler | [Generation](generation.md) |
 | `dist/life.mjs` | Persistent daily goals, timed activities, social commitments and replanning | [Characters](characters.md) |
 | `dist/cases/bellweather-life.mjs` | Public work and personal interests independent of culprit assignment | [Characters](characters.md) |
@@ -116,6 +116,7 @@ For a research or external-review snapshot, associate a report edition with a re
 | 0.6 | 2026-09-12 | Typed crime/evidence sources, configured belief support, finite competing accusations, cleanup/clockwork structures and explicit Z3 certification. |
 | 0.7 | 2026-09-12 | Live-verified AI paths: detached non-blocking life deliberation with turn-abort race safety and fence-tolerant selection parsing; in-character declines for out-of-account free-text questions; presented-evidence recognition (a character acknowledges shown evidence instead of feigning ignorance); actionable World Director deferral guidance. Robustness/UX only. |
 | 0.8 | 2026-09-20 | Durable IndexedDB autosave (removes the ~5MB localStorage cap; localStorage kept as a synchronous mirror/fallback, Export as the off-browser copy); notebook people view pins the active conversation partner with live trust/stress. |
+| 0.9 | 2026-09-20 | First structural-variety axis: declarative finite forensic model (dimensions-as-data + predicate-compiler registry + generic enumerator, behaviour-preserving) and a manner-of-death brick. Some generated cases are staged to look like an accident; the accusation is gated until the coroner finding establishes murder. Manner is a gate, not an accusation field. |
 
 ### Forensic milestone source map
 

@@ -6,49 +6,86 @@ const domain=(max,min=0)=>({sort:'int',min,max});
 export const STRUCTURES=['trace','cleanup','clockwork'];
 export function crimeModel(spec,locations={}){
  const travel={manor:0};let changed=true;while(changed){changed=false;for(const [id,p]of Object.entries(locations))for(const [to,d]of Object.entries(p.links??{}))if((travel[id]??Infinity)>(travel[to]??Infinity)+d){travel[id]=travel[to]+d;changed=true;}}
- return {version:1,suspects:['clara','rowan','silas'],methods:['seal','candlestick','knife'],motives:['fraud','inheritance','eviction'],time:{start:1200,end:1439},travel,structure:spec.structure??'trace'};
+ const suspects=['clara','rowan','silas'],methods=['seal','candlestick','knife'],motives=['fraud','inheritance','eviction'],time={start:1200,end:1439};
+ // Dimensions are declared as data (integer domains with labels), so a new investigative
+ // axis is a new entry here + a predicate compiler, not a rewrite of the enumerator.
+ const dim=labels=>({sort:'int',min:0,max:labels.length-1,labels});
+ const variables={suspect:dim(suspects),method:dim(methods),motive:dim(motives),time:{sort:'int',min:time.start,max:time.end}};
+ // Manner-of-death axis: present only for a staged case, where the death first reads as a
+ // possible accident. Nothing constrains it until the coroner finding is acquired.
+ if(spec.manner==='accident')variables.manner=dim(['murder','accident']);
+ return {version:1,suspects,methods,motives,time,travel,structure:spec.structure??'trace',manner:spec.manner??'overt',variables};
 }
 // Rules are attached to acquired, source-checked records, never to CASE.culprit.
+// Index of a label within a declared dimension's domain.
+const IDX=(model,dim,label)=>model.variables[dim].labels.indexOf(label);
+// Each compiler turns one typed evidence claim into a finite constraint over the declared
+// variables, or returns null when the claim adds no constraint (a parameter-only claim, or a
+// comparison whose partner record is not selected). Adding an evidence type = one entry here.
+const PREDICATE_COMPILERS={
+ death_time:(c)=>and(x('ge',v('time'),c.interval.start),x('le',v('time'),c.interval.end)),
+ location:(c,model)=>c.value==='manor'?null:not(and(eq(v('suspect'),IDX(model,'suspect',c.subject)),x('ge',v('time'),c.interval.start-(model.travel[c.value]??0)+1),x('le',v('time'),c.interval.end+(model.travel[c.value]??0)-1))),
+ crime_method:(c,model)=>eq(v('method'),IDX(model,'method',c.value)),
+ crime_motive:(c,model)=>eq(v('motive'),IDX(model,'motive',c.value)),
+ // A trace comparison requires both independent records. Neither half suffices.
+ trace_match:(c,model,{selected})=>selected.includes(c.requires)?eq(v('method'),IDX(model,'method',c.value)):null,
+ exclusive_opportunity:(c,model)=>and(eq(v('suspect'),IDX(model,'suspect',c.subject)),x('ge',v('time'),c.interval.start),x('le',v('time'),c.interval.end)),
+ clock_opportunity:(c,model,{selected,collected})=>{
+  if(!selected.includes(c.requires))return null;
+  const offset=collected.find(o=>o.predicate==='clock_offset'&&o.evidence===c.requires)?.value;
+  return Number.isInteger(offset)?and(eq(v('suspect'),IDX(model,'suspect',c.subject)),x('ge',v('time'),c.interval.start-offset),x('le',v('time'),c.interval.end-offset)):null;
+ },
+ // Manner-of-death: a coroner finding pins manner to murder, excluding the staged accident.
+ manner_evidence:(c,model)=>eq(v('manner'),IDX(model,'manner',c.value)),
+ // clock_offset is a parameter consumed by clock_opportunity, not a standalone constraint.
+ clock_offset:()=>null
+};
 export function compileExplanation(model,claims,selected){
- const variables={suspect:domain(model.suspects.length-1),method:domain(model.methods.length-1),motive:domain(model.motives.length-1),time:domain(model.time.end,model.time.start)};
+ const variables=structuredClone(model.variables);
  const constraints=[];
  const rule=(id,label,formula,sources)=>constraints.push({id:`e_${id}`,label,formula,sources});
  const collected=selected.flatMap(id=>(claims[id]??[]).map(c=>({...c,evidence:id})));
  for(const [i,c] of collected.entries()){
-  const interval=c.interval,t=v('time'),s=v('suspect');let f;
-  if(c.predicate==='death_time')f=and(x('ge',t,interval.start),x('le',t,interval.end));
-  if(c.predicate==='location'&&c.value!=='manor')f=not(and(eq(s,model.suspects.indexOf(c.subject)),x('ge',t,interval.start-(model.travel[c.value]??0)+1),x('le',t,interval.end+(model.travel[c.value]??0)-1)));
-  if(c.predicate==='crime_method')f=eq(v('method'),model.methods.indexOf(c.value));
-  if(c.predicate==='crime_motive')f=eq(v('motive'),model.motives.indexOf(c.value));
-  // A trace comparison requires both independent records. Neither half suffices.
-  if(c.predicate==='trace_match'&&selected.includes(c.requires))f=eq(v('method'),model.methods.indexOf(c.value));
-  if(c.predicate==='exclusive_opportunity')f=and(eq(s,model.suspects.indexOf(c.subject)),x('ge',t,interval.start),x('le',t,interval.end));
-  if(c.predicate==='clock_opportunity'&&selected.includes(c.requires)){
-   const offset=collected.find(o=>o.predicate==='clock_offset'&&o.evidence===c.requires)?.value;
-   if(Number.isInteger(offset))f=and(eq(s,model.suspects.indexOf(c.subject)),x('ge',t,interval.start-offset),x('le',t,interval.end-offset));
-  }
+  const compiler=PREDICATE_COMPILERS[c.predicate];
+  const f=compiler?compiler(c,model,{selected,collected}):undefined;
   if(f)rule(String(i),c.label??`${c.evidence}: ${c.predicate}`,f,[c.evidence,...(c.requires?[c.requires]:[])]);
  }
  if(!constraints.length)rule('domain','No acquired evidence restricts the explanation',true,[]);
  return {version:1,kind:'crime-explanation',perspective:'world',minute:0,horizon:0,variables,constraints,assumptions:[{id:'closed_case_domain',text:'One killer, one listed method and motive, one fatal encounter at the study within the declared evening. Testimony is not automatically fact.'}]};
 }
 export function enumerateExplanations(query,model){
- // Exhaustive for this declared finite domain, not a claim about arbitrary stories.
- const result=[];
- for(let suspect=0;suspect<model.suspects.length;suspect++)for(let method=0;method<model.methods.length;method++)for(let motive=0;motive<model.motives.length;motive++){
-  let first=null,last=null;
-  for(let time=query.variables.time.min;time<=query.variables.time.max;time++){
-   const values={suspect,method,motive,time};
-   if(query.constraints.every(c=>evaluate(c.formula,values))){first??=time;last=time;}
+ // Exhaustive over the declared finite domain, not a claim about arbitrary stories.
+ // Every discrete variable is enumerated by its cartesian product; `time` is the swept window.
+ const vars=query.variables,discrete=Object.keys(vars).filter(k=>k!=='time'),time=vars.time,result=[];
+ const walk=(i,combo)=>{
+  if(i===discrete.length){
+   let first=null,last=null;
+   for(let t=time.min;t<=time.max;t++){const values={...combo,time:t};if(query.constraints.every(c=>evaluate(c.formula,values))){first??=t;last=t;}}
+   if(first!==null){const labelled={};for(const k of discrete)labelled[k]=vars[k].labels[combo[k]];result.push({...labelled,earliest:first,latest:last});}
+   return;
   }
-  if(first!==null)result.push({suspect:model.suspects[suspect],method:model.methods[method],motive:model.motives[motive],earliest:first,latest:last});
- }
+  const k=discrete[i];
+  for(let value=vars[k].min;value<=vars[k].max;value++)walk(i+1,{...combo,[k]:value});
+ };
+ walk(0,{});
  return result;
 }
 export function assessAccusation(session,action,model,claims,clues,routes,people={}){
  const selected=[...new Set(action.evidence??[])].filter(id=>session.world.player.evidence.some(e=>e.clue===id));
  const recorded=Object.fromEntries(selected.map(id=>{const acquired=session.world.player.evidence.find(e=>e.clue===id);const event=session.events.find(e=>e.id===acquired.eventId&&e.kind==='evidence'&&e.data.clue===id&&e.playerText);return [id,event?.data.claims??[]];}));
- const query=compileExplanation(model,recorded,selected),alternatives=enumerateExplanations(query,model);
+ const query=compileExplanation(model,recorded,selected);
+ let alternatives=enumerateExplanations(query,model);
+ // Manner-of-death gate: in a staged case the death may still read as an accident. The player must
+ // establish murder first (the coroner finding pins manner); only then does who/how/why grading apply.
+ if(query.variables.manner){
+  const manners=new Set(alternatives.map(h=>h.manner));
+  if(!(manners.size===1&&manners.has('murder'))){
+   const named=selected.map(id=>clues[id]?.title??id);
+   return {supported:false,status:'gated',selected,routes:[],alternatives,query,
+    feedback:`Bell reviews ${named.length?named.join(', '):'the empty evidence bundle'}. “The death still reads as it was meant to — a possible accident. Before I name anyone, show me it was no accident at all.”`};
+  }
+  alternatives=alternatives.filter(h=>h.manner==='murder');
+ }
  const matching=alternatives.filter(h=>h.suspect===action.suspect&&h.method===action.method&&h.motive===action.motive);
  const hasTime=selected.some(id=>(recorded[id]??[]).some(c=>c.predicate==='death_time'));
  const supported=hasTime&&alternatives.length===1&&matching.length===1;
@@ -174,6 +211,7 @@ export function validateEvidence(session,claims){
    case 'clock_offset':ok=d.occurrence==='clock_check'&&d.offset===c.value;break;
    case 'exclusive_opportunity':ok=d.occurrence==='entrance_watch'&&d.allEntrances===true&&d.subject===c.subject&&interval(d.start,d.end);break;
    case 'clock_opportunity':ok=d.occurrence==='clock_watch'&&d.subject===c.subject&&interval(d.start,d.end)&&session.events.find(e=>e.id===origins[c.requires])?.data.offset===d.offset;break;
+   case 'manner_evidence':ok=d.occurrence==='manner_finding'&&d.manner===c.value;break;
    default:ok=false;
   }
   if(!ok)errors.push(`${clue}: ${c.predicate} not entailed by its producer`);
