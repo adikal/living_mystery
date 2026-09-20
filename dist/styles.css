@@ -294,3 +294,11 @@ dialog{background:#1a262e;color:var(--text);border:1px solid #56636a;border-radi
 
 .notebook-person.speaking{background:#182b28;border:1px solid var(--teal);border-radius:6px;padding:14px 12px}
 .notebook-person span.speaking-badge{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:999px;background:var(--teal);color:#0c211e;font-size:.6875rem;font-weight:600;letter-spacing:.04em;vertical-align:middle}
+
+.deduction-spine{margin:0 0 18px;padding:14px 16px;border:1px solid var(--line);border-radius:7px;background:#16232b}
+.deduction-spine h3{font-size:.9rem;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+.deduction-spine.has-conflicts{border-color:#8a5a52;background:#241d1c}
+.deduction-spine .conflict-count{background:var(--red);color:#2a1512;border-radius:999px;font-size:.75rem;padding:1px 9px;font-weight:600}
+.conflict-list{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:7px}
+.conflict-list li{font-size:.8125rem;line-height:1.5;color:#e0d3cf;padding:9px 11px;background:#2f2321;border:1px solid #4a3230;border-radius:5px}
+.conflict-list strong{color:#efc9a0}

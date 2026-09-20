@@ -247,7 +247,18 @@ function reasoning(){
   const claims=playerClaims(session);
   const strip=SUSPECTS.map(id=>suspectStripCard(id,reasonSuspect)).join('');
   const body=!session.world.player.evidence.length?`<div class="reason-empty2"><h2>The board is bare</h2><p>Question the village and inspect records. As you gather evidence, place it here and build your own case for or against each suspect.</p></div>`:reasonSuspect?workspaceView(reasonSuspect,claims):`<div class="reason-empty2"><h2>Pick a suspect</h2><p>Choose someone above, then place each clue you’ve gathered under Motive, Means, Opportunity, or Alibi — and mark whether it supports or contradicts the case against them. The board draws the objective conflicts; the reasoning is yours.</p></div>`;
-  return `<main class="reason-board"><div class="reason-toolbar"><div><div class="eyebrow gold">THE EVIDENCE BOARD</div><h1>Reasoning</h1><p class="meta">Your board. Place clues and decide what each one means — <b class="sup">supports</b> or <b class="con">contradicts</b> the case. Nothing here is graded for you.</p></div><div class="reason-legend"><span class="legend-item"><i class="dot supports"></i>you marked supports</span><span class="legend-item"><i class="dot contradicts"></i>contradicts</span></div></div><div class="suspect-strip">${strip}</div><div class="reason-scroll">${body}</div></main>`;
+  return `<main class="reason-board"><div class="reason-toolbar"><div><div class="eyebrow gold">THE EVIDENCE BOARD</div><h1>Reasoning</h1><p class="meta">Your board. Place clues and decide what each one means — <b class="sup">supports</b> or <b class="con">contradicts</b> the case. Nothing here is graded for you.</p></div><div class="reason-legend"><span class="legend-item"><i class="dot supports"></i>you marked supports</span><span class="legend-item"><i class="dot contradicts"></i>contradicts</span></div></div>${contradictionSpine(claims)}<div class="suspect-strip">${strip}</div><div class="reason-scroll">${body}</div></main>`;
+}
+
+// The deduction spine: the current, unresolved contradictions among everything the player has learned
+// (testimony vs the physical record, or two accounts). A lie surfaces here as a clash; resolving it
+// (a revision that supersedes the false claim) removes it from the list — visible progress.
+function contradictionSpine(claims){
+  if(!session.world.player.evidence.length&&!claims.length)return '';
+  const conflicts=claimRelations(claims).filter(r=>r.kind==='conflicts');
+  const src=c=>c.sourceKind==='speech'?`${actorName(c.speaker)} says`:(CLUES[c.clue]?.title??esc(c.attribution));
+  if(!conflicts.length)return `<div class="deduction-spine"><h3>Contradictions</h3><p class="meta">No unresolved conflicts among what you’ve gathered. Keep questioning — a lie shows up here as a clash between an account and the record.</p></div>`;
+  return `<div class="deduction-spine has-conflicts"><h3>Contradictions to resolve <span class="conflict-count">${conflicts.length}</span></h3><p class="meta">Two things you’ve learned can’t both be true. Press the account, or find the fact that settles it.</p><ul class="conflict-list">${conflicts.map(r=>`<li><strong>${esc(PEOPLE[r.left.subject]?.name??r.left.subject)}</strong> — ${esc(src(r.left))}: “${esc(humanLabel(r.left.value))}” vs ${esc(src(r.right))}: “${esc(humanLabel(r.right.value))}”</li>`).join('')}</ul></div>`;
 }
 
 function notebookContent(v){
