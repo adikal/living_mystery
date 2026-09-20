@@ -56,3 +56,25 @@ test('The multi-hop obligation holds for every authored configuration',()=>{
   assert.match(r.obligations.multihop.detail,/motive and means each require ≥2 clues/);
  }
 });
+
+test('Break-a-lie: presenting an adjudicating fact makes a lying suspect concede and clears the contradiction',()=>{
+ const {rt,cat}=setup();
+ const s=rt.createSession();
+ rt.dispatch(s,{type:'move',to:'vestry'});
+ rt.dispatch(s,{type:'inspect',object:'delivery'});
+ rt.dispatch(s,{type:'ask',person:'silas',topic:'night'});
+ assert.equal(findContradictions(s,cat).length,1,'the false alibi conflicts with the receipt');
+ // Presenting the receipt itself (no special challenge topic, no re-ask) forces the concession.
+ rt.dispatch(s,{type:'present',person:'silas',clue:'delivery',tone:'private'});
+ assert.ok(s.world.npcs.silas.beliefs.some(b=>b.key==='alibi_broken'),'the alibi is recorded as broken');
+ assert.equal(findContradictions(s,cat).length,0,'the conceding revision supersedes the lie');
+});
+
+test('A suspect does not leak their true whereabouts when shown an unrelated clue',()=>{
+ const {rt}=setup();
+ const s=rt.createSession();
+ rt.dispatch(s,{type:'move',to:'vestry'});
+ rt.dispatch(s,{type:'inspect',object:'seal'});
+ rt.dispatch(s,{type:'present',person:'silas',clue:'seal',tone:'private'});
+ assert.ok(!s.events.some(e=>e.actor==='silas'&&(e.data.claims||[]).some(c=>c.predicate==='location')),'no alibi location claim leaks from an unrelated present');
+});

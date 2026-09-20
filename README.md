@@ -121,7 +121,7 @@ npm test
 npm run docs:check
 ```
 
-The latest implementation run passed **178 JavaScript tests and 10 Python tests**, including real Z3 checks with zero skips. Without `.venv`/Z3, real-solver JavaScript tests skip; a green suite alone does not imply solver coverage. Model tests use mocked responses. Browser layout, live model quality and human puzzle quality need separate evaluation.
+The latest implementation run passed **192 JavaScript tests and 10 Python tests**, including real Z3 checks with zero skips. Without `.venv`/Z3, real-solver JavaScript tests skip; a green suite alone does not imply solver coverage. Model tests use mocked responses. Browser layout, live model quality and human puzzle quality need separate evaluation.
 
 The forensic domain assumes one killer, listed methods/motives, reliable forensic records and a study encounter. Route replay proves a bounded successful investigation under current scheduling, not universal freedom from dead ends. No ASP, Lean certificate export, general solver-derived cognition, arbitrary new-cast/map generation, resource economy or spatial playable client is implemented. Confidence values are authored scores, not calibrated probabilities.
 

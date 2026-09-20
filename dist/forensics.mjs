@@ -251,6 +251,7 @@ export const knowledgeRules=[
  ({e,b})=>e.kind==='speech'&&e.actor==='player'&&b.key===`player_report_${e.id}`&&b.text===`The detective claims: ${e.data.assertion}`&&b.sourceType==='testimony'&&b.truth===null,
  ({e,b,model})=>e.kind==='speech'&&b.key.startsWith(`report_${e.actor}_`)&&b.text===`${model.PEOPLE[e.actor]?.name} says: ${e.data.assertion}`&&b.sourceType==='testimony'&&b.truth===null,
  ({e,b,s,model})=>b.key==='receipt_challenged'&&b.text==='The receipt contradicts my earlier alibi.'&&(e.data.clue==='delivery'||e.data.assertion===model.CLUES.delivery.text)&&s.world.player.evidence.some(c=>c.clue==='delivery'),
+ ({e,b})=>b.key==='alibi_broken'&&e.kind==='speech'&&e.actor==='player'&&typeof e.data.clue==='string'&&/ places me at .*; my earlier account was false\.$/.test(b.text),
  ({e,b,s})=>b.key==='senses_scrutiny'&&b.text==='The detective is pressing on the estate documents.'&&[e,...e.parents.map(id=>s.events.find(e=>e.id===id))].filter(Boolean).some(e=>e.data.clue==='ledger'||e.data.clue==='folio'||e.data.action?.topic==='accounts'),
  ({e,b})=>b.key==='sighting_corrected'&&(e.data.clue==='record'&&b.text==='I cannot stand by that sighting; the record shows where they actually were.'||e.data.clue==='clock'&&b.text==='The clock was fast. My sighting time needs correction; I still did not see a face.'),
  ({e,b,s,model})=>{

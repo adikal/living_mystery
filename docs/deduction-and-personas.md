@@ -1,6 +1,6 @@
 # Design note: personas, consistency, deep deduction, and resilient multi-path cases
 
-Status: **proposed** (for review before build). Extends [forensic model](forensic-model.md),
+Status: **implemented (slices 1–6)**. Extends [forensic model](forensic-model.md),
 [character turns](character-turns.md), [autonomous lives](autonomous-lives.md) and the
 [manner-of-death note](manner-of-death.md). Nothing here weakens the tenets: the deterministic
 engine owns reality, the LLM only interprets/expresses, symbolic checks preserve validity.

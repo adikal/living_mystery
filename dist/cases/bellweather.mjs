@@ -69,7 +69,7 @@ export function makeCase(spec){
    // a truthful or revised one asserts its private truth. This puts testimony in the shared claim
    // space, so a contradiction with the physical record surfaces (and a revision supersedes the lie).
    const persona=model.personas?.[id];
-   const claims=persona?(deception?persona.publicStance:persona.privateTruth):[];
+   const claims=persona&&['night','alibi'].includes(topic)?(deception?persona.publicStance:persona.privateTruth):[];
    return K.speech(s,id,text,cause,{topic,intent:deception?'Protect my secret':'Answer from my own experience',basis:'night_account',deception:deception?'False alibi':false,sourceEvents:[source(s,id)].filter(Boolean),claims});
   };
   function decide(s,id,cause){if(s.world.minute<1920||s.world.npcs[id].travel||s.world.player.conversation===id)return;for(const {module,binding,roles} of modules)if(module.decide?.({K,s,id,cause,binding,roles,peers:modules}))return;if(K.life.decide(s,id))return;K.startTravel(s,id,PEOPLE[id].home,cause,'Return to my morning duties');}
@@ -108,7 +108,7 @@ export function makeCase(spec){
    else if(id==='bell')text='Compare the examination, the trace, the damaged object, the timed receipt, the estate papers and Dr Marsh’s independent visit record. A motive alone does not establish guilt.';
    else if(id==='iris')text=`I place the death between ${time(spec.minute-4)} and ${time(spec.minute+4)}; the fatal injury is ${spec.injury}. My signed record places ${names} at the greenhouse continuously from ${time(spec.minute-25)} to ${time(spec.minute+5)}, so both were away from the study during the fatal encounter.`;
    else if(id==='ada')text=known(s,id,'night_account').text;
-   else if(id===spec.culprit){deception=!known(s,id,'receipt_challenged');text=deception?`I remained at ${LOCATIONS[home].name} all evening. I have no witness to offer.`:`The receipt establishes I attended the manor meeting. ${CLUES.ledger.text} Attendance does not by itself prove a killing.`;}
+   else if(id===spec.culprit){deception=!known(s,id,'receipt_challenged')&&!known(s,id,'alibi_broken');text=deception?`I remained at ${LOCATIONS[home].name} all evening. I have no witness to offer.`:`The receipt establishes I attended the manor meeting. ${CLUES.ledger.text} Attendance does not by itself prove a killing.`;}
    else text=known(s,id,'night_account').text;
    if(topic==='accounts')text=id===spec.culprit?'Edmund’s decision affected me. I intended to discuss it with him. That does not establish who killed him.':'I cannot offer an independent account of the estate dispute. Inspect Edmund’s papers.';
    if(topic==='sightings'||topic==='observations')text='My retained observations can establish only the movements I actually saw; they do not reveal anyone’s private purpose.';
@@ -121,14 +121,24 @@ export function makeCase(spec){
    if(!K.local(s,id)||!K.has(s,clue)){K.reject(s,'Presentation unavailable','Discover the clue and find the person first.',cause);return;}
    const heard=K.commit(s,{kind:'speech',actor:'player',title:`You show ${PEOPLE[id].name} ${CLUES[clue].title}`,parents:[cause],data:{listener:id,clue,assertion:CLUES[clue].text},playerText:K.presentLineHidden(s)?null:`You show ${PEOPLE[id].name} ${CLUES[clue].title.toLowerCase()}.`});
    K.believe(s,id,`player_has_${clue}`,`The detective showed me ${CLUES[clue].title}.`,.99,'observation',heard,true);
-   let text;if(id===spec.culprit&&clue==='delivery'){K.believe(s,id,'receipt_challenged','The receipt contradicts my earlier alibi.',.99,'inference',heard,true);text='I did attend the meeting. My earlier claim was false. You must still establish what happened there.';}
+   // Break-a-lie (generic): a presented physical fact placing a suspect where they truly were, against
+   // the whereabouts they claimed, forces them to concede. The conceding reply records the corrected
+   // (true) alibi claim, which supersedes the lie and clears the contradiction.
+   const persona=model.personas?.[id];
+   const stance=persona?.publicStance.find(c=>c.predicate==='location'&&c.subject===id);
+   const truth=persona?.privateTruth.find(c=>c.predicate==='location'&&c.subject===id);
+   const shownAt=(evidenceClaims[clue]||[]).find(c=>c.predicate==='location'&&c.subject===id);
+   const breaksAlibi=Boolean(stance&&truth&&shownAt&&stance.value!==truth.value&&shownAt.value===truth.value&&!known(s,id,'alibi_broken'));
+   let text,revised=false;
+   if(breaksAlibi){revised=true;K.believe(s,id,'alibi_broken',`The ${CLUES[clue].title} places me at ${LOCATIONS[shownAt.value].name}; my earlier account was false.`,.99,'observation',heard,true);if(clue==='delivery')K.believe(s,id,'receipt_challenged','The receipt contradicts my earlier alibi.',.99,'inference',heard,true);text='I did attend. My earlier claim was false — but attendance is not a killing. You must still establish what happened.';}
    else if(id==='iris'&&clue==='medical')text=`I place the death between ${time(spec.minute-4)} and ${time(spec.minute+4)}; the fatal injury is ${spec.injury}.`;
    else if(id==='iris'&&clue==='record')text=`My signed record places ${names} at the greenhouse from ${time(spec.minute-25)} to ${time(spec.minute+5)}. Both were away from the study during the fatal encounter.`;
    else if(innocents.includes(id)&&clue==='record')text=`That matches my recollection. ${known(s,id,'night_account').text}`;
    else if(id===spec.culprit&&['ledger','folio'].includes(clue))text=`Edmund and I did not see eye to eye about the estate. A disagreement is not a killing, and I won’t be led into saying otherwise.`;
    else text=`I’ve seen ${CLUES[clue].title.toLowerCase()}. I can speak only to what I witnessed myself; I won’t claim more than that.`;
    for(const {module,binding,roles} of modules){const t=module.dialogue?.({binding,roles,spec,PEOPLE,id,topic:'present',clue,K,s});if(t!=null)text=t;}
-   line(s,id,text,heard,'present');K.advance(s,4,cause);
+   // A conceding revision speaks as an alibi (so the corrected claim is recorded); otherwise as a present reply.
+   line(s,id,text,heard,revised?'alibi':'present');K.advance(s,4,cause);
    for(const {module,binding,roles} of modules)module.onInteract?.({K,s,id,topic:'present',clue,binding,roles,event:heard,peers:modules});
   }
   function checkCase(s,a){return assessAccusation(s,a,model.forensics,evidenceClaims,CLUES,CASE.proofRoutes,PEOPLE);}

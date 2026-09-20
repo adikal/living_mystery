@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.9 · 20 September 2026**
+**Living technical report · Edition 0.10 · 20 September 2026**
 
 ### Abstract
 
