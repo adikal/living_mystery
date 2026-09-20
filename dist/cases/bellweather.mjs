@@ -38,14 +38,24 @@ export function makeCase(spec){
  const CASE={id:spec.id,title:spec.title,date:'18 November 1932',victim:'Edmund Vale',culprit:spec.culprit,method:spec.weapon,motive:spec.motive,synopsis:'Edmund Vale is dead. Compare the physical traces, the estate decision, and the independent accounts of last night.',truth:`${name} killed Edmund at ${t} with the ${spec.weaponName} to ${spec.motiveText}.`,history:[],proofRoutes:[{id:'physical',title:'Physical traces and independent records',all:['medical','fragment','seal','delivery','ledger','record']},{id:'documents',title:'The carbon copy and the records',all:['medical','fragment','seal','delivery','folio','record']}],methodOptions:METHOD_OPTIONS,motiveOptions:MOTIVE_OPTIONS,resolutionText:`Bell checks the physical traces against the records. “The evidence supports your case against ${name}: the ${spec.weaponName}, the estate decision, and the opportunity. We can proceed.”`};
  evidenceClaims.fragment=[];
  evidenceClaims.seal=[{predicate:'trace_match',value:spec.weapon,requires:'fragment'}];
- evidenceClaims.ledger=[{predicate:'crime_motive',subject:spec.culprit,value:spec.motive}];
- evidenceClaims.folio=[{predicate:'crime_motive',subject:spec.culprit,value:spec.motive}];
+ // Motive is a 2-hop chain: an estate document only *narrows* the motive (rules one out), and Edmund's
+ // confrontation memo pins the exact motive — but only alongside a document. Neither settles it alone.
+ const ruledOut=['fraud','inheritance','eviction'].find(m=>m!==spec.motive);
+ evidenceClaims.ledger=[{predicate:'motive_class',value:ruledOut}];
+ evidenceClaims.folio=[{predicate:'motive_class',value:ruledOut}];
+ evidenceClaims.intent=[{predicate:'crime_motive',subject:spec.culprit,value:spec.motive,requiresAny:['ledger','folio']}];
+ set('intent','Edmund’s confrontation memo',`In his own hand, Edmund noted he meant to confront ${name} that evening — but the note names only the grievance, not its nature. Read it against the estate documents to see what he was truly acting on.`,['Motive'],{kind:'Document'});
+ OBJECTS.intent={label:'The confrontation memo',clue:'intent',description:'Read Edmund’s note on the confrontation'};
+ if(!LOCATIONS.manor.objects.includes('intent'))LOCATIONS.manor.objects.push('intent');
  evidenceClaims.clock=[{predicate:'clock_offset',value:12}];
  configureStructure({spec,CASE,CLUES,OBJECTS,LOCATIONS,evidenceClaims});
  const modules=activeModules(spec);
  // Modules may contribute forensic claims (e.g. the manner-of-death coroner finding), so compose
  // their content BEFORE normalization, and normalize the merged set uniformly afterward.
  for(const {module,binding,roles} of modules)module.content?.({binding,roles,spec,CLUES,OBJECTS,LOCATIONS,PEOPLE,set,time,CASE,evidenceClaims,peers:modules});
+ // Motive's bridging memo is load-bearing on every route, whatever the structure or composed bricks
+ // (added after configureStructure/modules, which can replace or extend the route set).
+ for(const route of CASE.proofRoutes)if(!route.all.includes('intent'))route.all.push('intent');
  for(const [id,claims]of Object.entries(evidenceClaims))evidenceClaims[id]=claims.map((c,i)=>({key:`${id}_${i}`,subject:'edmund',interval:null,confidence:.99,attribution:'recorded evidence',...c}));
  const agentPermissions={},commitments={bell:{location:'square',from:1920}};
  for(const {module,binding,roles} of modules){const cap=module.capabilities?.({binding,roles,spec,peers:modules});if(cap?.agentPermissions)for(const [k,v]of Object.entries(cap.agentPermissions))agentPermissions[k]=[...(agentPermissions[k]??[]),...v];if(cap?.commitments)Object.assign(commitments,cap.commitments);}

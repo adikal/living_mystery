@@ -26,7 +26,15 @@ const PREDICATE_COMPILERS={
  death_time:(c)=>and(x('ge',v('time'),c.interval.start),x('le',v('time'),c.interval.end)),
  location:(c,model)=>c.value==='manor'?null:not(and(eq(v('suspect'),IDX(model,'suspect',c.subject)),x('ge',v('time'),c.interval.start-(model.travel[c.value]??0)+1),x('le',v('time'),c.interval.end+(model.travel[c.value]??0)-1))),
  crime_method:(c,model)=>eq(v('method'),IDX(model,'method',c.value)),
- crime_motive:(c,model)=>eq(v('motive'),IDX(model,'motive',c.value)),
+ crime_motive:(c,model,{selected})=>{
+  if(c.requires&&!selected.includes(c.requires))return null;
+  if(c.requiresAny&&!c.requiresAny.some(id=>selected.includes(id)))return null;
+  return eq(v('motive'),IDX(model,'motive',c.value));
+ },
+ // Narrowing predicates: a clue that only *excludes* one value of a dimension (a partial constraint).
+ // Multiple such clues intersect; none pins a pillar alone. `value` is the excluded label.
+ motive_class:(c,model)=>not(eq(v('motive'),IDX(model,'motive',c.value))),
+ method_class:(c,model)=>not(eq(v('method'),IDX(model,'method',c.value))),
  // A trace comparison requires both independent records. Neither half suffices.
  trace_match:(c,model,{selected})=>selected.includes(c.requires)?eq(v('method'),IDX(model,'method',c.value)):null,
  exclusive_opportunity:(c,model)=>and(eq(v('suspect'),IDX(model,'suspect',c.subject)),x('ge',v('time'),c.interval.start),x('le',v('time'),c.interval.end)),
@@ -208,6 +216,7 @@ export function validateEvidence(session,claims){
     ok=c.value===d.method&&(d.occurrence==='fatal_action'&&other?.id===e.id||d.occurrence==='laboratory'&&other?.data.occurrence==='cleanup'&&e.parents.includes(other.id)&&other.data.method===d.method);break;
    }
    case 'crime_motive':ok=d.occurrence==='estate_document'&&d.motive===c.value&&d.subject===c.subject;break;
+   case 'motive_class':ok=d.occurrence==='estate_document'&&c.value!==d.motive;break;
    case 'clock_offset':ok=d.occurrence==='clock_check'&&d.offset===c.value;break;
    case 'exclusive_opportunity':ok=d.occurrence==='entrance_watch'&&d.allEntrances===true&&d.subject===c.subject&&interval(d.start,d.end);break;
    case 'clock_opportunity':ok=d.occurrence==='clock_watch'&&d.subject===c.subject&&interval(d.start,d.end)&&session.events.find(e=>e.id===origins[c.requires])?.data.offset===d.offset;break;

@@ -53,11 +53,11 @@ test('Each structural variant has independently replayable routes and reload-saf
 test('Missing calibration leaves timing contradictory; the independent route bypasses it',()=>{
  const r=createRuntime(makeCase(spec('clockwork'))),m=r.kernel.model;
  const q=ids=>compileExplanation(m.forensics,m.evidenceClaims,ids);
- const without=enumerateExplanations(q(['medical','fragment','seal','watch','ledger']),m.forensics);
+ const without=enumerateExplanations(q(['medical','fragment','seal','watch','ledger','intent']),m.forensics);
  assert.equal(without.length,3,'uncalibrated watch cannot identify the killer');
- assert.equal(enumerateExplanations(q(['medical','fragment','seal','watch','clock','ledger']),m.forensics).length,1);
+ assert.equal(enumerateExplanations(q(['medical','fragment','seal','watch','clock','ledger','intent']),m.forensics).length,1);
  const wrong=structuredClone(m.evidenceClaims);wrong.clock[0].value=0;
- assert.equal(enumerateExplanations(compileExplanation(m.forensics,wrong,['medical','fragment','seal','watch','clock','ledger']),m.forensics).length,0);
+ assert.equal(enumerateExplanations(compileExplanation(m.forensics,wrong,['medical','fragment','seal','watch','clock','ledger','intent']),m.forensics).length,0);
 });
 
 test('Accusation checks selected acquired evidence and all competing dimensions',()=>{

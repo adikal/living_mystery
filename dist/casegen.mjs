@@ -1,4 +1,4 @@
-import {excludeExplanation,crimeModel,compileCrimeHistory,validateKnowledge,validateEvidence,STRUCTURES} from './forensics.mjs';
+import {excludeExplanation,crimeModel,compileCrimeHistory,validateKnowledge,validateEvidence,STRUCTURES,compileExplanation,enumerateExplanations} from './forensics.mjs';
 import {evaluate} from './symbolic.mjs';
 // Case-general validation of a mystery specification. Variety must be validated,
 // not asserted: a specification is admissible only if it is physically executable,
@@ -19,6 +19,25 @@ export function checkDistinguishability(caseModule,runtime,spec,witness){
  for(const a of witness.actions.filter(a=>a.type!=='accuse'))runtime.dispatch(trial,a);
  const verdict=runtime.behavior.checkCase(trial,witness.actions.at(-1));
  return {ok:verdict.supported&&verdict.alternatives.length===1,detail:`${verdict.alternatives.length} competing culprit/method/motive explanations remain`,query:verdict.query};
+}
+
+// Per-pillar multi-hop: no single acquired clue may pin suspect, method or motive by itself. Evidence
+// must be pieced together — this forbids a smoking gun and makes the deduction genuinely multi-step.
+export function checkMultiHop(caseModule,witness){
+ if(witness?.status!=='route_found')return {ok:false,detail:'No replay-validated route'};
+ const bundle=[...new Set(witness.actions.at(-1)?.evidence??[])];
+ const model=caseModule.model.forensics,cat=caseModule.model.evidenceClaims;
+ const single={};
+ for(const d of ['suspect','method','motive'])for(const c of bundle){
+  const alts=enumerateExplanations(compileExplanation(model,{[c]:cat[c]??[]},[c]),model);
+  if(alts.length&&new Set(alts.map(a=>a[d])).size===1){single[d]=c;break;}
+ }
+ // Motive and means must be pieced together (no single-clue pin). Opportunity depth is structure-
+ // dependent: some investigative structures (cleanup/clockwork) establish it through one authoritative
+ // watch, itself acquired via a multi-step route — so suspect depth is reported, not enforced here.
+ const enforced=['method','motive'].filter(d=>single[d]);
+ const ok=enforced.length===0;
+ return {ok,detail:ok?`motive and means each require ≥2 clues${single.suspect?` (opportunity via ${single.suspect}, by structure)`:' (opportunity by elimination)'}`:'single-clue pin — '+enforced.map(d=>`${d} via ${single[d]}`).join(', ')};
 }
 
 export function validateCase(spec,{caseModule,runtime}={}){
@@ -53,6 +72,7 @@ export function validateCase(spec,{caseModule,runtime}={}){
   });
   report.obligations.routes={ok:routeResults.every(r=>r.ok),results:routeResults,detail:'Each declared route independently replayed'};
   report.obligations.distinguishability=checkDistinguishability(caseModule,runtime,spec,witness);
+  report.obligations.multihop=checkMultiHop(caseModule,witness);
 
   // 5. Module coherence: every composed narrative brick's local invariant holds.
   const modules=caseModule.model.modules??[];

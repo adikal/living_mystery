@@ -14,7 +14,7 @@ export function executePrehistory(K,s,spec){
   executePlanStep(K,s,plan,event);return event;
  };
  const setup=record('world','Edmund prepares the documents for the evening meeting',{}, {occurrence:'estate_document',author:'Edmund Vale',location:'manor',motive:spec.motive,subject:culprit});
- origin('ledger',setup);origin('folio',setup);origin('appointment',setup);
+ origin('ledger',setup);origin('folio',setup);origin('appointment',setup);origin('intent',setup);
  at(minute-45);
  const innocents=['clara','rowan','silas'].filter(id=>id!==culprit);
  for(const id of [...innocents,'iris'])arrive(id,'greenhouse');

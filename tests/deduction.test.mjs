@@ -4,6 +4,9 @@ import {makeCase} from '../dist/cases/bellweather.mjs';
 import {createRuntime} from '../dist/engine-runtime.mjs';
 import {buildSpec} from '../dist/cases/bellweather-configs.mjs';
 import {findContradictions} from '../dist/claims.mjs';
+import {compileExplanation,enumerateExplanations} from '../dist/forensics.mjs';
+import {CONFIGS} from '../dist/cases/bellweather-configs.mjs';
+import {validateCase} from '../dist/casegen.mjs';
 
 const setup=()=>{const cm=makeCase(buildSpec({culprit:'silas',weapon:'seal',motive:'fraud',minute:1274,seen:'rowan'}));return {cm,rt:createRuntime(cm),cat:cm.model.evidenceClaims};};
 
@@ -35,4 +38,21 @@ test('A truthful innocent account produces no contradiction with the record',()=
  rt.dispatch(s,{type:'move',to:'manor'});
  if(rt.behavior && s.world.npcs.clara.location==='manor'&&!s.world.npcs.clara.travel)rt.dispatch(s,{type:'ask',person:'clara',topic:'night'});
  assert.equal(findContradictions(s,cat).filter(r=>r.left.subject==='clara'||r.right.subject==='clara').length,0);
+});
+
+test('Motive is a multi-hop chain: neither the estate document nor the memo pins it alone',()=>{
+ const {cm}=setup();
+ const model=cm.model.forensics,cat=cm.model.evidenceClaims;
+ const motiveCount=sel=>new Set(enumerateExplanations(compileExplanation(model,Object.fromEntries(sel.map(x=>[x,cat[x]??[]])),sel),model).map(a=>a.motive)).size;
+ assert.ok(motiveCount(['ledger'])>1,'the ledger only narrows the motive');
+ assert.ok(motiveCount(['intent'])>1,'the confrontation memo needs a document to pin the motive');
+ assert.equal(motiveCount(['ledger','intent']),1,'document + memo together pin the exact motive');
+});
+
+test('The multi-hop obligation holds for every authored configuration',()=>{
+ for(const cfg of CONFIGS){
+  const r=validateCase(cfg);
+  assert.ok(r.obligations.multihop.ok,`${cfg.id}: ${r.obligations.multihop.detail}`);
+  assert.match(r.obligations.multihop.detail,/motive and means each require ≥2 clues/);
+ }
 });
