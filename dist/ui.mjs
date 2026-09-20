@@ -4,6 +4,7 @@ import {prepareCharacterTurn,proposeCharacterTurn,applyCharacterTurn} from './ch
 import {ART} from './art.mjs';
 import {claimsAt,claimRelations} from './claims.mjs';
 import {exportDialogueSave,importDialogueSave,dialogueEntities,normalizeBoardNotes} from './dialogue-save.mjs';
+import {idbGet,idbSet} from './idb-save.mjs';
 import {perspectiveAt,missedAt} from './inspector.mjs';
 import {caseTables,CASE_OPTIONS,SUSPECTS,PILLARS,copy,createSession,dispatch,followupOptions,playerClaims,parseCommand,playerView,worldAt,timeLabel,distance,diagnostics,caseHealth,exportSession,importSession,generateCase} from './engine.mjs';
 import {llmActive,llmConfig,setLlmConfig} from './llm.mjs';
@@ -11,8 +12,8 @@ import {llmActive,llmConfig,setLlmConfig} from './llm.mjs';
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const storageKey='living-mystery.bellweather.v1';
 const BOARD_KEY='living-mystery.board.v1';
-let session,loadedAudit=new Map(),loadedBoard={},saveError=false;
-try{const saved=localStorage.getItem(storageKey);if(saved){const restored=importDialogueSave(saved);session=restored.session;loadedAudit=restored.audit;loadedBoard=restored.boardNotes;if(!restored.hasBoard){try{loadedBoard=normalizeBoardNotes(session,JSON.parse(localStorage.getItem(BOARD_KEY)));}catch{}}}else session=createSession(17);}catch{session=createSession(17);saveError=true;}
+let session,loadedAudit=new Map(),loadedBoard={},saveError=false,hadLocalSave=false;
+try{const saved=localStorage.getItem(storageKey);if(saved){hadLocalSave=true;const restored=importDialogueSave(saved);session=restored.session;loadedAudit=restored.audit;loadedBoard=restored.boardNotes;if(!restored.hasBoard){try{loadedBoard=normalizeBoardNotes(session,JSON.parse(localStorage.getItem(BOARD_KEY)));}catch{}}}else session=createSession(17);}catch{session=createSession(17);saveError=true;}
 let {CASE,LOCATIONS,PEOPLE,CLUES,OBJECTS}=caseTables(session);
 function syncCase(){({CASE,LOCATIONS,PEOPLE,CLUES,OBJECTS}=caseTables(session));}
 let perspective='world',detailPanel=null,missedRevealed=false;
@@ -73,14 +74,19 @@ function selectedWorld(){return cursor===null?session.world:worldAt(session,sele
 function selectEvent(index){cursor=Number(index);if(cursor<0||cursor>=session.events.length)cursor=null;stopReplay();render();}
 function toast(message){const el=$('#toast');el.textContent=message;el.classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('visible'),4200);}
 function persist(){
-  try{localStorage.setItem(storageKey,exportDialogueSave(session,dialogueAudit,boardNotes,{pretty:false}));saveError=false;localStorage.removeItem?.(BOARD_KEY);}
-  catch{
-    // Most likely the browser's ~5MB localStorage quota, exceeded by the accumulated AI
-    // reasoning trace. Retry a compact, gameplay-only save (drop the heavy audits) so the
-    // investigation itself is never lost; the full trace still survives Export.
-    try{localStorage.setItem(storageKey,exportDialogueSave(session,new Map(),boardNotes,{pretty:false}));saveError=false;localStorage.removeItem?.(BOARD_KEY);toast('Low on browser storage: your progress was saved, but AI reasoning traces were dropped from autosave. Use Export to keep the full record.');}
-    catch{saveError=true;toast('This browser could not save the investigation. Use Export to keep a copy.');}
-  }
+  const full=exportDialogueSave(session,dialogueAudit,boardNotes,{pretty:false});
+  // Synchronous mirror to localStorage for instant boot and browsers without IndexedDB.
+  // If the full blob exceeds the ~5MB quota, keep a compact gameplay-only copy (audits dropped).
+  let localFull=false,localOk=false;
+  try{localStorage.setItem(storageKey,full);localStorage.removeItem?.(BOARD_KEY);localFull=localOk=true;}
+  catch{try{localStorage.setItem(storageKey,exportDialogueSave(session,new Map(),boardNotes,{pretty:false}));localStorage.removeItem?.(BOARD_KEY);localOk=true;}catch{}}
+  // Primary large-capacity durable store: IndexedDB. Keeps the full AI trace even when the
+  // localStorage mirror had to drop it under quota.
+  const idb=idbSet(storageKey,full);
+  if(localFull){saveError=false;idb.catch(()=>{});return;}
+  if(localOk){saveError=false;idb.catch(()=>toast('Low on browser storage: your progress was saved, but AI reasoning traces were dropped from autosave. Use Export to keep the full record.'));return;}
+  // localStorage rejected everything — depend entirely on IndexedDB.
+  idb.then(()=>{saveError=false;}).catch(()=>{saveError=true;toast('This browser could not save the investigation. Use Export to keep a copy.');});
 }
 function act(action){if(characterBusy){toast('Wait for the reply or cancel it before acting.');return;}if(llmActive()&&llmConfig().reasoning&&['ask','present'].includes(action.type)){const label=action.type==='present'?`I'd like to discuss ${CLUES[action.clue]?.title?.toLowerCase()}.${action.tone==='press'?' If you refuse, I will expose your private affairs.':''}`:([...topicsFor(action.person),...followupOptions(session,action.person)].find(([topic])=>topic===action.topic)?.[1]??action.topic??'Tell me about last night.');runCharacter(action.person,label,action);return;}if(directorEnabled()||(llmActive()&&llmConfig().reasoning&&session.world.flags.lifeVersion)){runDirectedAction(action);return;}stopReplay();cursor=null;try{const from=session.world.player.location;dispatch(session,action);sceneTransition=from!==session.world.player.location?{from,to:session.world.player.location}:null;if(sceneTransition){chat=null;actionGroup='inspect';}healthCache=null;persist();render();if(sceneTransition){$('.scene-heading')?.focus({preventScroll:true});}}catch(error){toast(`The action could not be completed: ${error.message}`);}}
 async function runDirectedAction(action){
@@ -255,7 +261,7 @@ function notebookContent(v){
     const cards=shown.map(e=>`<article class="evidence-card ${v.pins.includes(e.clue)?'pinned':''}"><button class="evidence-open" data-do="clue" data-id="${e.clue}">${artifactArt(e.clue)}<span class="eyebrow kind-label">${e.kind} · ${timeLabel(e.minute)}</span><strong>${e.title}</strong><small>${esc(e.source)}</small></button><button class="pin-button ${v.pins.includes(e.clue)?'on':''}" data-do="pin" data-id="${e.clue}" aria-label="${v.pins.includes(e.clue)?'Unpin':'Pin'} ${e.title}" aria-pressed="${v.pins.includes(e.clue)}">${v.pins.includes(e.clue)?'◆':'◇'}</button></article>`).join('')||`<p class="empty-state">No ${esc(active.toLowerCase())} evidence recorded yet.</p>`;
     return subtabs+cards;
   }
-  if(notebook==='people')return v.profiles.map(p=>{const id=p.id,seen=v.lastSeen[id],here=v.people.some(x=>x.id===id);return `<div class="notebook-person ${here?'present-person':''}">${avatar(id)}<div><strong>${p.name}</strong><span>${p.role}</span><p>${esc(p.public)}</p>${p.metrics?`<div class="notebook-metrics">${meter('Trust in you',p.metrics.trust,'teal')}${meter('Stress factor',p.metrics.stress,'amber')}</div>`:'<p class="meta">Meet in person to see trust and stress.</p>'}<small>${v.people.some(x=>x.id===id)?'● Here with you':seen?`Last seen: ${placeName(seen.location)} · ${timeLabel(seen.minute)}${seen.departed?' (departed)':''}`:'Not yet encountered'}</small>${here&&v.status!=='solved'?`<button class="soft-button full" data-do="chat" data-id="${id}">Conversation options →</button>`:''}</div></div>`;}).join('');
+  if(notebook==='people')return (chat?[...v.profiles].sort((a,b)=>(b.id===chat?1:0)-(a.id===chat?1:0)):v.profiles).map(p=>{const id=p.id,seen=v.lastSeen[id],here=v.people.some(x=>x.id===id),talking=id===chat;return `<div class="notebook-person ${here?'present-person':''}${talking?' speaking':''}">${avatar(id)}<div><strong>${p.name}</strong>${talking?'<span class="speaking-badge">In conversation</span>':''}<span>${p.role}</span><p>${esc(p.public)}</p>${p.metrics?`<div class="notebook-metrics">${meter('Trust in you',p.metrics.trust,'teal')}${meter('Stress factor',p.metrics.stress,'amber')}</div>`:'<p class="meta">Meet in person to see trust and stress.</p>'}<small>${v.people.some(x=>x.id===id)?'● Here with you':seen?`Last seen: ${placeName(seen.location)} · ${timeLabel(seen.minute)}${seen.departed?' (departed)':''}`:'Not yet encountered'}</small>${here&&v.status!=='solved'?`<button class="soft-button full" data-do="chat" data-id="${id}">Conversation options →</button>`:''}</div></div>`;}).join('');
   return `<p class="muted">Keep your own theories. A hypothesis stays separate from a discovered fact.</p><form id="note-form"><label class="sr-only" for="note">Your hypothesis</label><textarea id="note" name="note" rows="4" maxlength="1000" placeholder="What do you think happened?"></textarea><button class="soft-button full" type="submit">Add hypothesis</button></form><div class="notes-list">${v.notes.slice().reverse().map(n=>`<article><span class="meta">${timeLabel(n.minute)}</span><p>${esc(n.text)}</p></article>`).join('')}</div>`;
 }
 
@@ -481,6 +487,22 @@ document.addEventListener('input',event=>{if(event.target.id==='character-questi
 }});
 $('#modal').addEventListener('click',event=>{if(event.target===$('#modal')){const r=event.target.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)event.target.close();}});
 render();if(saveError)toast('A previous save could not be loaded. The original remains until your next action; you are starting a fresh case.');
+// Best-effort async upgrade to the IndexedDB copy. It holds the full AI reasoning trace even when
+// the synchronous localStorage mirror had to drop it under quota (or was cleared). No-op without
+// IndexedDB. Written together with localStorage in persist(), so this only ever adds detail.
+(async()=>{
+  const full=await idbGet(storageKey);
+  if(typeof full!=='string'||!full)return;
+  let imported;try{imported=importDialogueSave(full);}catch{return;}
+  const richer=!hadLocalSave
+    ||imported.session.events.length>session.events.length
+    ||(imported.session.events.length===session.events.length&&imported.audit.size>dialogueAudit.size);
+  if(!richer)return;
+  session=imported.session;boardNotes=imported.boardNotes;syncCase();
+  resetRealized();
+  for(const [id,r]of imported.audit){dialogueAudit.set(id,r);const e=session.events.find(ev=>ev.id===id);if(e)realized.set(id,`${actorName(e.actor)}\n"${r.text}"`);}
+  render();
+})();
 
 // Asset failures must never prevent play or remove accessible text labels.
 document.addEventListener('error',event=>{if(event.target?.classList?.contains('game-art'))event.target.hidden=true;},true);

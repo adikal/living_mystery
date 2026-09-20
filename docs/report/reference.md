@@ -115,6 +115,7 @@ For a research or external-review snapshot, associate a report edition with a re
 | 0.5 | 2026-09-12 | Persistent ordinary lives, real social commitments, bounded optional model deliberation, composed-plan admission and replanning tests. |
 | 0.6 | 2026-09-12 | Typed crime/evidence sources, configured belief support, finite competing accusations, cleanup/clockwork structures and explicit Z3 certification. |
 | 0.7 | 2026-09-12 | Live-verified AI paths: detached non-blocking life deliberation with turn-abort race safety and fence-tolerant selection parsing; in-character declines for out-of-account free-text questions; presented-evidence recognition (a character acknowledges shown evidence instead of feigning ignorance); actionable World Director deferral guidance. Robustness/UX only. |
+| 0.8 | 2026-09-20 | Durable IndexedDB autosave (removes the ~5MB localStorage cap; localStorage kept as a synchronous mirror/fallback, Export as the off-browser copy); notebook people view pins the active conversation partner with live trust/stress. |
 
 ### Forensic milestone source map
 

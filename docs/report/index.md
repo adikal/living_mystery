@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.7 · 12 September 2026**
+**Living technical report · Edition 0.8 · 20 September 2026**
 
 ### Abstract
 
@@ -58,3 +58,7 @@ Configured and generated cases now use typed crime/evidence occurrences, registe
 ### Edition 0.7: verified and hardened AI paths
 
 The optional model paths were exercised against a live model and hardened. Life deliberation now runs **detached** after the player's action commits, so it never blocks the action or its reply, and it yields to any new player turn (an in-flight deliberation is aborted so it cannot stale the turn); its goal selection is parsed fence-tolerantly and passes the local investigation-admission check. A free-text question a character has no account for now produces a faithful **in-character decline** — the model may not answer or assert facts without a selected account — instead of a fallback. World Director deferrals in conversation now explain how to proceed. These are robustness and UX fixes; the underlying contracts and finite domains are unchanged.
+
+### Edition 0.8: durable autosave and conversation-focused people view
+
+Autosave now uses **IndexedDB** as the primary store, with `localStorage` kept as a synchronous mirror and fallback. A long investigation with the full AI reasoning trace could exceed the browser's ~5MB `localStorage` quota and fail to save; IndexedDB's far larger quota removes that cap, and the save degrades gracefully (compact gameplay-only `localStorage`, then an error) only if both stores fail. The Export file remains the durable off-browser copy. In the notebook's people view, the person you are currently speaking with is pinned to the top and marked, so their profile and live trust/stress meters stay visible as the conversation changes them.

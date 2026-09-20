@@ -11,6 +11,7 @@ import * as claims from '../dist/claims.mjs';
 import * as inspector from '../dist/inspector.mjs';
 import * as llm from '../dist/llm.mjs';
 import * as dialogueSave from '../dist/dialogue-save.mjs';
+import * as idbSave from '../dist/idb-save.mjs';
 
 // Exercise the adapter's rendering and handlers without pretending to test browser layout.
 function adapter(saved=null,overrides={}){
@@ -23,7 +24,7 @@ function adapter(saved=null,overrides={}){
   // Expose only explicitly imported names, matching browser module scope.
   // Injecting every engine export previously masked missing UI imports.
   const source=readFileSync(new URL('../dist/ui.mjs',import.meta.url),'utf8');
-  const modules={'./autonomy-turn.mjs':autonomy,'./director-turn.mjs':directorTurns,'./character-turn.mjs':characterTurns,'./art.mjs':art,'./engine.mjs':engine,'./inspector.mjs':inspector,'./claims.mjs':claims,'./llm.mjs':llm,'./dialogue-save.mjs':dialogueSave};
+  const modules={'./autonomy-turn.mjs':autonomy,'./director-turn.mjs':directorTurns,'./character-turn.mjs':characterTurns,'./art.mjs':art,'./engine.mjs':engine,'./inspector.mjs':inspector,'./claims.mjs':claims,'./llm.mjs':llm,'./dialogue-save.mjs':dialogueSave,'./idb-save.mjs':idbSave};
   const bindings={};
   for(const match of source.matchAll(/^import \{([^}]+)\} from '([^']+)';$/gm)){
     for(const name of match[1].split(',').map(s=>s.trim())){
