@@ -13,7 +13,7 @@ const runtimes=new Map();
 // so sampled cases play (and save/reload) like any authored configuration.
 export function runtimeFor(s){const id=typeof s==='string'?s:s?.world?.caseId??CASE.id;if(!definitions.has(id)){const spec=typeof id==='string'&&id.startsWith('gen-')?specFromId(id):null;if(!spec)throw Error('Unknown case configuration');definitions.set(id,makeCase(spec));}if(!runtimes.has(id))runtimes.set(id,createRuntime(definitions.get(id)));return runtimes.get(id);}
 // Sample a validated case and return its id/title for the UI to start.
-export function generateCase(seed,{structure}={}){const s=Number.isInteger(seed)?seed:(Math.floor(Math.random()*0x7ffffffe)+1);const found=sampleCases(s,1,structure?{structures:[structure]}:{});return found.length?{id:found[0].spec.id,title:found[0].spec.title,seed:s}:null;}
+export function generateCase(seed,{structure,manner}={}){const s=Number.isInteger(seed)?seed:(Math.floor(Math.random()*0x7ffffffe)+1);const found=sampleCases(s,1,{...(structure?{structures:[structure]}:{}),...(manner?{manners:[manner]}:{})});return found.length?{id:found[0].spec.id,title:found[0].spec.title,seed:s}:null;}
 export const caseTables=s=>runtimeFor(s);
 export const CASE_OPTIONS=[{id:CASE.id,title:CASE.title+' — original'},...CONFIGS.map(({id,title})=>({id,title}))];
 export const createSession=(seed=17,caseId=CASE.id)=>runtimeFor(caseId).createSession(seed);
