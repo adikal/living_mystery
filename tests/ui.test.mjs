@@ -397,7 +397,7 @@ test('Menu generates each investigative structure with AI off',()=>{
  const ui=adapter(null,{llmActive:()=>false});ui.click('choose-case');
  assert.match(ui.node('#modal').innerHTML,/cleanup investigation/);
  for(const structure of ['cleanup','clockwork']){
-  ui.click('generate-case',{structure});
+  ui.run(`generateAndStart({structure:'${structure}'})`);
   assert.equal(ui.run('caseTables(session).kernel.model.forensics.structure'),structure);
   assert.equal(ui.run('session.world.status'),'playing');
   assert.equal(ui.run('session.world.player.evidence.length'),0);
