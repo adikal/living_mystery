@@ -54,7 +54,14 @@ export function makeCase(spec){
  function createBehavior(K){
   const known=(s,id,key)=>s.world.npcs[id].beliefs.find(b=>b.key===key);
   const source=(s,id)=>known(s,id,'night_account')?.sourceId;
-  const line=(s,id,text,cause,topic='night',deception=false)=>K.speech(s,id,text,cause,{topic,intent:deception?'Protect my secret':'Answer from my own experience',basis:'night_account',deception:deception?'False alibi':false,sourceEvents:[source(s,id)].filter(Boolean),claims:[]});
+  const line=(s,id,text,cause,topic='night',deception=false)=>{
+   // Type the spoken account as claims: a lying suspect asserts its public stance (the false alibi),
+   // a truthful or revised one asserts its private truth. This puts testimony in the shared claim
+   // space, so a contradiction with the physical record surfaces (and a revision supersedes the lie).
+   const persona=model.personas?.[id];
+   const claims=persona?(deception?persona.publicStance:persona.privateTruth):[];
+   return K.speech(s,id,text,cause,{topic,intent:deception?'Protect my secret':'Answer from my own experience',basis:'night_account',deception:deception?'False alibi':false,sourceEvents:[source(s,id)].filter(Boolean),claims});
+  };
   function decide(s,id,cause){if(s.world.minute<1920||s.world.npcs[id].travel||s.world.player.conversation===id)return;for(const {module,binding,roles} of modules)if(module.decide?.({K,s,id,cause,binding,roles,peers:modules}))return;if(K.life.decide(s,id))return;K.startTravel(s,id,PEOPLE[id].home,cause,'Return to my morning duties');}
   function seedSession(s){
    const pre=executePrehistory(K,s,spec);

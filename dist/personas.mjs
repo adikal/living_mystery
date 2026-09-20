@@ -4,8 +4,9 @@
 // systematically. The consistency contract makes those lies durable and catchable. This module is pure
 // data + verifiers — the deterministic engine still owns reality and the LLM never mutates it.
 
-// A typed claim in the shared claim shape (see cases/last-bell-claims.mjs).
-const claim=(subject,predicate,value,interval=null,attribution='persona',confidence=.95)=>({subject,predicate,value,interval,attribution,confidence});
+// A typed claim in the shared claim shape (see cases/last-bell-claims.mjs). The key is shared per
+// subject+predicate so a later truthful revision supersedes the earlier lie in the claim ledger.
+const claim=(subject,predicate,value,interval=null,attribution='persona',confidence=.95)=>({key:`${subject}_${predicate}`,subject,predicate,value,interval,attribution,confidence});
 
 // Strong authored bond ⇒ this NPC would shield that person. Weak trust ⇒ distrust.
 const bonds=(id,PEOPLE,test)=>Object.entries(PEOPLE[id]?.relationships??{}).filter(([other,r])=>other!=='player'&&test(r)).map(([other])=>other);

@@ -26,3 +26,9 @@ export function claimRelations(claims){
   }
   return links;
 }
+// The current, unsuperseded contradictions in what the player has learned — testimony vs testimony
+// or testimony vs the physical record. This is the deduction spine: a lie shows up as a conflict, and
+// a revision (a superseding claim) clears it. Reads only player-available statements.
+export function findContradictions(session,evidenceCatalog={}){
+  return claimRelations(claimsAt(session,session.events.length-1,evidenceCatalog)).filter(r=>r.kind==='conflicts');
+}
