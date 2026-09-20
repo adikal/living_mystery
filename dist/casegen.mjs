@@ -40,6 +40,20 @@ export function checkMultiHop(caseModule,witness){
  return {ok,detail:ok?`motive and means each require ≥2 clues${single.suspect?` (opportunity via ${single.suspect}, by structure)`:' (opportunity by elimination)'}`:'single-clue pin — '+enforced.map(d=>`${d} via ${single[d]}`).join(', ')};
 }
 
+// Multi-path resilience: a case must offer >=2 independent solution routes, and every clue an NPC can
+// conceal/block at runtime must have an alternative route that avoids it — so blocking one path forces
+// another rather than dead-ending. (The World Director enforces the same at runtime via searchInvestigation.)
+export function checkMultipath(caseModule){
+ const routes=caseModule.CASE.proofRoutes??[];
+ if(routes.length<2)return {ok:false,detail:`only ${routes.length} proof route(s); need ≥2 independent routes`};
+ const blockable=new Set();
+ for(const perms of Object.values(caseModule.model.agentPermissions??{}))for(const p of perms)if(p.object&&(p.to||/conceal|hide|store/.test(p.id??'')))blockable.add(p.object);
+ const unguarded=[...blockable].filter(clue=>routes.some(r=>r.all.includes(clue))&&!routes.some(r=>!r.all.includes(clue)));
+ if(unguarded.length)return {ok:false,detail:`no alternative route avoids blockable clue(s): ${unguarded.join(', ')}`};
+ const differ=routes.some((r,i)=>routes.slice(i+1).some(q=>r.all.some(c=>!q.all.includes(c))||q.all.some(c=>!r.all.includes(c))));
+ return {ok:differ,detail:differ?`${routes.length} independent routes; blocking any concealable clue leaves an open route`:'routes are not independent (no substitutable clue)'};
+}
+
 export function validateCase(spec,{caseModule,runtime}={}){
   const report={spec:spec?.id??null,ok:false,obligations:{}};
   const fail=(name,detail)=>{report.obligations[name]={ok:false,detail};return report;};
@@ -73,6 +87,7 @@ export function validateCase(spec,{caseModule,runtime}={}){
   report.obligations.routes={ok:routeResults.every(r=>r.ok),results:routeResults,detail:'Each declared route independently replayed'};
   report.obligations.distinguishability=checkDistinguishability(caseModule,runtime,spec,witness);
   report.obligations.multihop=checkMultiHop(caseModule,witness);
+  report.obligations.multipath=checkMultipath(caseModule);
 
   // 5. Module coherence: every composed narrative brick's local invariant holds.
   const modules=caseModule.model.modules??[];
