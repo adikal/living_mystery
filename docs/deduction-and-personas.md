@@ -131,13 +131,12 @@ typed predicates only (no NL entailment, no new solver); every consequential tra
 
 Slices 1–2 are pure substrate (low risk); 3–4 change generation (validated); 5–6 change the felt loop.
 
-## 9. Open questions (for review)
+## 9. Decisions (locked)
 
-- **Win condition:** does "resolve the contradictions / name the lies" *become* the accusation, or stay
-  a richer path *into* the existing accusation? (Recommend: richer path into the same accusation first.)
-- **Consistency strictness:** how hard is persona layer 2 — deterministic allegiance gates only, or also
-  critic-judged voice? (Recommend: deterministic gates first; voice later.)
-- **Lie authoring:** per-persona lies generated from role+allegiance (systematic) vs authored per case?
-  (Recommend: systematic from `privateTruth`/`publicStance` divergence.)
-- **Difficulty:** multi-hop raises difficulty — do we want a "confidence/hint" surface, kept separate
-  from the omniscient inspector?
+- **Win condition:** catching lies / resolving contradictions is a **richer path *into* the existing
+  accusation**, not a replacement. The accusation stays the capstone.
+- **Consistency strictness:** **deterministic** allegiance/stance gates (verifiable offline); critic-
+  judged voice is deferred.
+- **Lie authoring:** **systematic**, from the `privateTruth` ↔ `publicStance` divergence per persona.
+- **Difficulty:** a **progressive-disclosure hint ladder** (modern adventure-game style: nudge → focus
+  → concrete next step, revealed only on request), kept separate from the omniscient inspector.

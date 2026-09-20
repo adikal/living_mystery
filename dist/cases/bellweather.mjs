@@ -6,6 +6,7 @@ import {VERSION} from '../kernel.mjs';
 import {executePrehistory} from '../prehistory.mjs';
 import {METHOD_OPTIONS,MOTIVE_OPTIONS} from './bellweather-configs.mjs';
 import {activeModules} from '../modules/index.mjs';
+import {buildPersonas} from '../personas.mjs';
 const clone=x=>structuredClone(x),time=m=>`${Math.floor(m/60)%24}:${String(m%60).padStart(2,'0')}`;
 export function makeCase(spec){
  const PEOPLE=clone(Original.PEOPLE),LOCATIONS=clone(Original.LOCATIONS),OBJECTS=clone(Original.OBJECTS),CLUES=clone(Original.CLUES);
@@ -49,7 +50,7 @@ export function makeCase(spec){
  const agentPermissions={},commitments={bell:{location:'square',from:1920}};
  for(const {module,binding,roles} of modules){const cap=module.capabilities?.({binding,roles,spec,peers:modules});if(cap?.agentPermissions)for(const [k,v]of Object.entries(cap.agentPermissions))agentPermissions[k]=[...(agentPermissions[k]??[]),...v];if(cap?.commitments)Object.assign(commitments,cap.commitments);}
  function baseWorld(seed=17){const npcs={};for(const [id,p]of Object.entries(PEOPLE))npcs[id]={location:p.home,travel:null,stress:.2,trust:p.relationships.player.trust,intention:'Attend to the evening',plan:'routine',beliefs:[],memories:[],lastDecision:null};return {version:VERSION,seed,caseId:spec.id,minute:1200,status:'playing',player:{location:'transit',evidence:[],pins:[],visited:['square'],lastSeen:{},notes:[]},npcs,objects:{weapon:home,folio:'manor'},flags:{victimAlive:true,victimLocation:'manor',evidenceOrigins:{},lockedObjects:[]},ending:null};}
- const model={validateBelief:(s,id,b)=>supportsBelief(s,id,b,model),CASE,PEOPLE,LOCATIONS,OBJECTS,CLUES,baseWorld,evidenceClaims,containers:{drawer:'vestry'},testimonyClues:['ada','clara','alibi','rowan'],version:VERSION,commitments,agentPermissions,forensics:crimeModel(spec,LOCATIONS),boundedInvestigation:true,modules,life:BELLWEATHER_LIFE};
+ const model={validateBelief:(s,id,b)=>supportsBelief(s,id,b,model),CASE,PEOPLE,LOCATIONS,OBJECTS,CLUES,baseWorld,evidenceClaims,containers:{drawer:'vestry'},testimonyClues:['ada','clara','alibi','rowan'],version:VERSION,commitments,agentPermissions,forensics:crimeModel(spec,LOCATIONS),boundedInvestigation:true,modules,life:BELLWEATHER_LIFE,personas:buildPersonas(spec,{PEOPLE})};
  function createBehavior(K){
   const known=(s,id,key)=>s.world.npcs[id].beliefs.find(b=>b.key===key);
   const source=(s,id)=>known(s,id,'night_account')?.sourceId;
