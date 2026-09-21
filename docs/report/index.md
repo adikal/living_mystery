@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.10 · 20 September 2026**
+**Living technical report · Edition 0.11 · 20 September 2026**
 
 ### Abstract
 
@@ -74,3 +74,26 @@ cases are staged to look like an accident, and the accusation is **gated** until
 establishes that the death was murder. It is always ultimately a murder (staging is a disguise), manner is
 an investigative gate rather than an accusation field, and the coroner finding is load-bearing on every
 proof route. A separate design note (`docs/manner-of-death.md`) records the rationale, the declarative-model shape, and the safety rails.
+
+### Edition 0.11: the primitive-algebra pipeline, an affordance grammar, and an LLM composer
+
+Generation now runs on a named, versioned **primitive algebra** (`dist/primitives.mjs`) with a
+**declarative composition compiler** (`dist/composition.mjs`): a composition is pure data that compiles
+to the same certified prehistory/claims/routes a hand-authored brick produces (two live bricks were
+re-expressed as compositions to prove adequacy). Three deliberately **divergent** case types exercise it —
+staged-suicide, two-person **collusion** (a shielding ally's false alibi, caught by the contradiction
+engine), and **delayed-effect poisoning** (toxicology fixes the administration window, not the death).
+The "means" axis became an **affordance grammar** (`AFFORDANCES` in `primitives.mjs` + an object catalog
+in `dist/objects.mjs` + a mechanism compiler in `dist/mechanism.mjs`): each affordance reduces to a
+validated kernel predicate, so new murder objects — an icicle that melts, a silk-scarf ligature, a rigged
+set-and-leave chandelier — are mostly data. A **forced-insight** obligation certifies that a declared
+twist is load-bearing (removing its clue drops the true accusation's support), and a manner×method
+coherence guardrail rejects logically contradictory stagings. A prep-time **LLM composer**
+(`dist/llm-composer.mjs`, surfaced as "Generate with AI") proposes specifications over the validated
+palette, compiles and validates them with the same oracle, repairs from structured feedback, caches per
+seed, and falls back to the deterministic sampler when the model cannot produce a valid case. Character
+dialogue was made markedly more natural: per-character pronoun/address/voice, a warmer generation
+temperature, an explicit "don't recite records" instruction, witnesses that confirm the objective records
+shown to them, and a relaxed number gate that permits natural time phrasing while still blocking invented
+figures. See [Generation](generation.md#10-10-the-primitive-algebra-and-the-composition-compiler) and the
+design note `docs/primitive-algebra.md`.

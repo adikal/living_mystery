@@ -324,7 +324,7 @@ test('Scripted turns with no symbolic plans never display a checking indicator',
 });
 
 test('Case selection, restart and restore keep scenario-specific evidence and accusation options',()=>{
- const ui=adapter(null,{llmActive:()=>false});ui.click('choose-case');assert.match(ui.node('#modal').innerHTML,/The Codicil/);
+ const ui=adapter(null,{llmActive:()=>false});ui.click('choose-case');assert.match(ui.node('#modal').innerHTML,/Generate a new validated case/);
  ui.click('start-case',{id:'bellweather-02'});
  assert.equal(ui.run('session.world.caseId'),'bellweather-02');assert.match(ui.node('#app').innerHTML,/The Codicil/);
  ui.run("act({type:'move',to:'manor'});act({type:'inspect',object:'body'});act({type:'move',to:'square'})");ui.click('accusation');
@@ -393,9 +393,8 @@ test('A new player turn aborts in-flight background deliberation so it cannot st
  assert.ok(ui.run("session.events.some(e=>e.kind==='speech'&&e.actor==='bell')"),'the character turn applied, not stale');
 });
 
-test('Menu generates each investigative structure with AI off',()=>{
- const ui=adapter(null,{llmActive:()=>false});ui.click('choose-case');
- assert.match(ui.node('#modal').innerHTML,/cleanup investigation/);
+test('Structure generation still works with AI off',()=>{
+ const ui=adapter(null,{llmActive:()=>false});
  for(const structure of ['cleanup','clockwork']){
   ui.run(`generateAndStart({structure:'${structure}'})`);
   assert.equal(ui.run('caseTables(session).kernel.model.forensics.structure'),structure);

@@ -4,7 +4,7 @@
 
 ## 9.1 What current tests establish
 
-The implementation was validated on 2026-09-20 with 192 passing JavaScript tests and 10 passing Python tests. The real-solver JavaScript subset is opt-in: it skips cleanly when the `.venv`/Z3 dependency is absent, so a checkout without the solver still reports a green suite. The suite covers engine behavior, claims, saved dialogue, character orchestration, shared plans, solver integration, configured cases, composable narrative modules, case generation and UI adapter logic. These are engineering regression results for this working tree, not player-study or model-quality measurements.
+The implementation was validated on 2026-09-20 with 232 passing JavaScript tests and 10 passing Python tests. The real-solver JavaScript subset is opt-in: it skips cleanly when the `.venv`/Z3 dependency is absent, so a checkout without the solver still reports a green suite. The suite covers engine behavior, claims, saved dialogue, character orchestration, shared plans, solver integration, configured cases, composable narrative modules, case generation and UI adapter logic, and now the primitive algebra, the declarative composition compiler, the affordance grammar and mechanism compiler (including the icicle/scarf/chandelier objects and forced-insight), and the LLM composer's propose→compile→validate→repair→fallback loop under a scripted mock model. These are engineering regression results for this working tree, not player-study or model-quality measurements.
 
 | Property | Representative evidence | Boundary of the conclusion |
 | --- | --- | --- |

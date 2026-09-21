@@ -307,3 +307,4 @@ dialog{background:#1a262e;color:var(--text);border:1px solid #56636a;border-radi
 .conflict-list{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:7px}
 .conflict-list li{font-size:.8125rem;line-height:1.5;color:#e0d3cf;padding:9px 11px;background:#2f2321;border:1px solid #4a3230;border-radius:5px}
 .conflict-list strong{color:#efc9a0}
+.case-premise{margin:0 0 14px;padding:12px 14px;border-left:3px solid var(--gold);background:rgba(198,161,91,.08);border-radius:0 8px 8px 0;font-style:italic;color:var(--ink-soft,#cfc6b4);line-height:1.5;}

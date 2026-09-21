@@ -67,14 +67,18 @@ def bedrock_client():
 def validate_payload(payload, profile="dialogue-v2"):
     field_cap = 32000 if profile == "character-v1" else _MAX_FIELD
     token_cap = 1500 if profile == "character-v1" else _MAX_TOKENS_CAP
-    if not isinstance(payload, dict) or set(payload) != {"system", "prompt", "max_tokens"}:
-        raise ValueError("Expected system, prompt, and max_tokens")
+    if not isinstance(payload, dict) or not {"system", "prompt", "max_tokens"} <= set(payload) <= {"system", "prompt", "max_tokens", "temperature"}:
+        raise ValueError("Expected system, prompt, max_tokens (optional temperature)")
     for field in ("system", "prompt"):
         if not isinstance(payload[field], str) or not payload[field].strip() or len(payload[field]) > field_cap:
             raise ValueError("Invalid " + field)
     tokens = payload["max_tokens"]
     if type(tokens) is not int or not 1 <= tokens <= token_cap:
         raise ValueError("Invalid max_tokens")
+    if "temperature" in payload:
+        temp = payload["temperature"]
+        if not isinstance(temp, (int, float)) or isinstance(temp, bool) or not 0 <= temp <= 1:
+            raise ValueError("Invalid temperature")
     return payload
 
 
@@ -135,7 +139,7 @@ class Handler(BaseHTTPRequestHandler):
             kwargs = dict(
                 modelId=(CHARACTER_MODEL if profile == "character-v1" else MODEL_ID),
                 messages=[{"role": "user", "content": [{"text": prompt}]}],
-                inferenceConfig={"maxTokens": max_tokens, "temperature": TEMPERATURE},
+                inferenceConfig={"maxTokens": max_tokens, "temperature": payload.get("temperature", TEMPERATURE)},
             )
             if system.strip():
                 kwargs["system"] = [{"text": system}]

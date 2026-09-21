@@ -3,6 +3,7 @@
 import {recordPlan,executePlanStep} from './world-director.mjs';
 import {structurePrehistory} from './cases/investigative-structures.mjs';
 import {activeModules} from './modules/index.mjs';
+import {OBJECTS} from './objects.mjs';
 export function executePrehistory(K,s,spec){
  const {culprit,minute,weapon,weaponName,motiveText}=spec,origins={},sources={};
  const origin=(key,event)=>{origins[key]=event;};
@@ -39,7 +40,18 @@ export function executePrehistory(K,s,spec){
  if(['cleanup','clockwork'].includes(spec.structure))record('bell','Bell begins watching every entrance to the study',{}, {occurrence:'watch_start',subject:culprit,start:minute-5});
  at(minute);
  if(s.world.objects.weapon!==culprit||s.world.npcs[culprit].location!==s.world.flags.victimLocation||!s.world.flags.victimAlive)throw Error('Invalid fatal action');
- const strike=record(culprit,`${K.model.PEOPLE[culprit].name} fatally strikes Edmund`,{'flags.victimAlive':false,'flags.deathMinute':minute,'flags.weaponDamaged':true},{occurrence:'fatal_action',deathMinute:minute,weaponName,weapon,method:weapon,motive:spec.motive,motiveText},[setup,signature]);
+ const fatalName=K.model.PEOPLE[culprit].name;
+ const harmKind=(OBJECTS[weapon]?.affords||[]).find(a=>a.a==='harm')?.kind;
+ // Narrate the fatal act by how the object kills, so the method's role is visible in the crime history
+ // (a rigged fall or a poisoning is an act performed at this moment, not a generic "strike").
+ const fatalVerb={
+  blunt:`strikes Edmund down with the ${weaponName}`,
+  sharp:`stabs Edmund with the ${weaponName}`,
+  asphyxiant:`strangles Edmund with the ${weaponName}`,
+  toxic:`administers a fatal dose to Edmund in the ${weaponName}`,
+  fall:`rigs the ${weaponName} to fall on Edmund`,
+ }[harmKind]||`fatally strikes Edmund`;
+ const strike=record(culprit,`${fatalName} ${fatalVerb}`,{'flags.victimAlive':false,'flags.deathMinute':minute,'flags.weaponDamaged':true},{occurrence:'fatal_action',deathMinute:minute,weaponName,weapon,method:weapon,motive:spec.motive,motiveText},[setup,signature]);
  origin('fragment',strike);origin('seal',strike);sources[culprit]=strike;
  structurePrehistory({K,s,spec,record,origin,strike});
  at(minute+5);

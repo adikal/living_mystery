@@ -1,53 +1,26 @@
 // Shared finite crime model. Both the browser evaluator and Z3 consume this IR.
 // Evidence restricts explanations; hidden truth is used only by the authoring gate.
 import {expr as x,term as v,evaluate} from './symbolic.mjs';
+import {PREDICATE_COMPILERS,occurrenceFacts} from './primitives.mjs';
 const eq=(a,b)=>x('eq',a,b),and=(...a)=>x('and',...a),or=(...a)=>x('or',...a),not=a=>x('not',a);
 const domain=(max,min=0)=>({sort:'int',min,max});
 export const STRUCTURES=['trace','cleanup','clockwork'];
 export function crimeModel(spec,locations={}){
  const travel={manor:0};let changed=true;while(changed){changed=false;for(const [id,p]of Object.entries(locations))for(const [to,d]of Object.entries(p.links??{}))if((travel[id]??Infinity)>(travel[to]??Infinity)+d){travel[id]=travel[to]+d;changed=true;}}
- const suspects=['clara','rowan','silas'],methods=['seal','candlestick','knife'],motives=['fraud','inheritance','eviction'],time={start:1200,end:1439};
+ const suspects=['clara','rowan','silas'],base=['seal','candlestick','knife'],methods=base.includes(spec.weapon)?base:[...base,spec.weapon],motives=['fraud','inheritance','eviction'],time={start:1200,end:1439};
  // Dimensions are declared as data (integer domains with labels), so a new investigative
  // axis is a new entry here + a predicate compiler, not a rewrite of the enumerator.
  const dim=labels=>({sort:'int',min:0,max:labels.length-1,labels});
  const variables={suspect:dim(suspects),method:dim(methods),motive:dim(motives),time:{sort:'int',min:time.start,max:time.end}};
  // Manner-of-death axis: present only for a staged case, where the death first reads as a
  // possible accident. Nothing constrains it until the coroner finding is acquired.
- if(spec.manner==='accident')variables.manner=dim(['murder','accident']);
+ if(spec.manner==='accident'||spec.manner==='suicide')variables.manner=dim(['murder',spec.manner]);
  return {version:1,suspects,methods,motives,time,travel,structure:spec.structure??'trace',manner:spec.manner??'overt',variables};
 }
 // Rules are attached to acquired, source-checked records, never to CASE.culprit.
-// Index of a label within a declared dimension's domain.
-const IDX=(model,dim,label)=>model.variables[dim].labels.indexOf(label);
-// Each compiler turns one typed evidence claim into a finite constraint over the declared
-// variables, or returns null when the claim adds no constraint (a parameter-only claim, or a
-// comparison whose partner record is not selected). Adding an evidence type = one entry here.
-const PREDICATE_COMPILERS={
- death_time:(c)=>and(x('ge',v('time'),c.interval.start),x('le',v('time'),c.interval.end)),
- location:(c,model)=>c.value==='manor'?null:not(and(eq(v('suspect'),IDX(model,'suspect',c.subject)),x('ge',v('time'),c.interval.start-(model.travel[c.value]??0)+1),x('le',v('time'),c.interval.end+(model.travel[c.value]??0)-1))),
- crime_method:(c,model)=>eq(v('method'),IDX(model,'method',c.value)),
- crime_motive:(c,model,{selected})=>{
-  if(c.requires&&!selected.includes(c.requires))return null;
-  if(c.requiresAny&&!c.requiresAny.some(id=>selected.includes(id)))return null;
-  return eq(v('motive'),IDX(model,'motive',c.value));
- },
- // Narrowing predicates: a clue that only *excludes* one value of a dimension (a partial constraint).
- // Multiple such clues intersect; none pins a pillar alone. `value` is the excluded label.
- motive_class:(c,model)=>not(eq(v('motive'),IDX(model,'motive',c.value))),
- method_class:(c,model)=>not(eq(v('method'),IDX(model,'method',c.value))),
- // A trace comparison requires both independent records. Neither half suffices.
- trace_match:(c,model,{selected})=>selected.includes(c.requires)?eq(v('method'),IDX(model,'method',c.value)):null,
- exclusive_opportunity:(c,model)=>and(eq(v('suspect'),IDX(model,'suspect',c.subject)),x('ge',v('time'),c.interval.start),x('le',v('time'),c.interval.end)),
- clock_opportunity:(c,model,{selected,collected})=>{
-  if(!selected.includes(c.requires))return null;
-  const offset=collected.find(o=>o.predicate==='clock_offset'&&o.evidence===c.requires)?.value;
-  return Number.isInteger(offset)?and(eq(v('suspect'),IDX(model,'suspect',c.subject)),x('ge',v('time'),c.interval.start-offset),x('le',v('time'),c.interval.end-offset)):null;
- },
- // Manner-of-death: a coroner finding pins manner to murder, excluding the staged accident.
- manner_evidence:(c,model)=>eq(v('manner'),IDX(model,'manner',c.value)),
- // clock_offset is a parameter consumed by clock_opportunity, not a standalone constraint.
- clock_offset:()=>null
-};
+// The predicate compilers and occurrence-fact vocabulary live in the primitive algebra (the trusted
+// kernel); this module composes them into explanation/history queries and the accusation grader.
+export {occurrenceFacts};
 export function compileExplanation(model,claims,selected){
  const variables=structuredClone(model.variables);
  const constraints=[];
@@ -112,16 +85,6 @@ export function assessAccusation(session,action,model,claims,clues,routes,people
 
 // Extract factual support from typed occurrences. Natural-language similarity is
 // deliberately not an entailment rule. Testimony supports what was said, not truth.
-export function occurrenceFacts(event){
- const d=event.data,f=[];
- if(d.occurrence==='fatal_action')f.push(['killing',event.actor,d.method,d.deathMinute]);
- if(d.occurrence==='appointment_observation')for(const person of d.people)f.push(['location',person,'greenhouse',d.start,d.end]);
- if(d.occurrence==='examination')f.push(['death_time','edmund',d.deathMinute-4,d.deathMinute+4],['injury',d.method]);
- if(d.occurrence==='clock_check')f.push(['clock_offset',d.offset]);
- if(d.occurrence==='document_observation')f.push(['document_location','folio','manor']);
- if(d.occurrence==='report')f.push(['said',event.actor,d.listener,d.assertion]);
- return f;
-}
 export function validateKnowledge(session,people){
  const errors=[];
  for(const [person,npc]of Object.entries(session.world.npcs))for(const b of npc.beliefs){
@@ -236,6 +199,7 @@ export function renderSupportedAccount(e,people){
  if(d.occurrence==='examination')return `I witnessed ${d.people.map(id=>people[id].name).join(' and ')} at the greenhouse and examined Edmund afterward.`;
  if(d.occurrence==='clock_check'&&d.offset===12)return 'I checked the inn clock; it runs twelve minutes fast.';
  if(d.occurrence==='report'&&d.assertion==='Edmund Vale was found dead in the study.')return 'Dr Marsh told me Edmund was found dead.';
+ if(d.occurrence==='entrance_watch')return `I kept a continuous watch on every entrance to the study; only ${people[d.subject].name} was admitted during the fatal window.`;
  if(d.occurrence==='document_observation')return 'The carbon copy of the transfers is kept in Edmund’s study.';
  return null;
 }
@@ -243,7 +207,7 @@ export function renderSupportedAccount(e,people){
 // Extensible support rules for live structured knowledge. No rule means no belief
 // admission in configured cases. Testimony retains attribution and unknown truth.
 export const knowledgeRules=[
- ({e,b,model})=>['night_account','knows_copy_location'].includes(b.key)&&renderSupportedAccount(e,model.PEOPLE)===b.text,
+ ({e,b,model})=>['night_account','knows_copy_location','watch_account'].includes(b.key)&&renderSupportedAccount(e,model.PEOPLE)===b.text,
  ({e,b,model})=>e.kind==='speech'&&e.actor==='player'&&b.key===`player_has_${e.data.clue??e.data.presented}`&&[
   `The detective showed me ${model.CLUES[e.data.clue]?.title}.`,
   `The detective has shown me ${model.CLUES[e.data.presented]?.title.toLowerCase()}.`
@@ -251,7 +215,7 @@ export const knowledgeRules=[
  ({e,b})=>e.kind==='speech'&&e.actor==='player'&&b.key===`player_report_${e.id}`&&b.text===`The detective claims: ${e.data.assertion}`&&b.sourceType==='testimony'&&b.truth===null,
  ({e,b,model})=>e.kind==='speech'&&b.key.startsWith(`report_${e.actor}_`)&&b.text===`${model.PEOPLE[e.actor]?.name} says: ${e.data.assertion}`&&b.sourceType==='testimony'&&b.truth===null,
  ({e,b,s,model})=>b.key==='receipt_challenged'&&b.text==='The receipt contradicts my earlier alibi.'&&(e.data.clue==='delivery'||e.data.assertion===model.CLUES.delivery.text)&&s.world.player.evidence.some(c=>c.clue==='delivery'),
- ({e,b})=>b.key==='alibi_broken'&&e.kind==='speech'&&e.actor==='player'&&typeof e.data.clue==='string'&&/ places me at .*; my earlier account was false\.$/.test(b.text),
+ ({e,b})=>b.key==='alibi_broken'&&e.kind==='speech'&&e.actor==='player'&&typeof e.data.clue==='string'&&/ places .+ at .+; (my earlier account was false|I was covering for them)\.$/.test(b.text),
  ({e,b,s})=>b.key==='senses_scrutiny'&&b.text==='The detective is pressing on the estate documents.'&&[e,...e.parents.map(id=>s.events.find(e=>e.id===id))].filter(Boolean).some(e=>e.data.clue==='ledger'||e.data.clue==='folio'||e.data.action?.topic==='accounts'),
  ({e,b})=>b.key==='sighting_corrected'&&(e.data.clue==='record'&&b.text==='I cannot stand by that sighting; the record shows where they actually were.'||e.data.clue==='clock'&&b.text==='The clock was fast. My sighting time needs correction; I still did not see a face.'),
  ({e,b,s,model})=>{

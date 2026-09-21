@@ -54,6 +54,24 @@ export function checkMultipath(caseModule){
  return {ok:differ,detail:differ?`${routes.length} independent routes; blocking any concealable clue leaves an open route`:'routes are not independent (no substitutable clue)'};
 }
 
+// Forced insight: a divergent twist must be *load-bearing*, not decorative. Each clue a brick declares
+// via `forces` must be required to support the true accusation — removing it from the winning bundle
+// must drop support. This is what makes a generated twist deep (the player MUST reach the insight)
+// rather than a flavour a solver can ignore.
+export function checkForcedInsight(caseModule,runtime,spec,witness){
+ const modules=caseModule.model.modules??[];
+ const forced=[...new Set(modules.flatMap(({module,binding,roles})=>module.forces?(module.forces({binding,roles,spec})||[]):[]))];
+ if(!forced.length)return {ok:true,detail:'no forced-insight clue declared'};
+ if(witness?.status!=='route_found')return {ok:false,detail:'no replay-validated route to test against'};
+ const accuse=witness.actions.at(-1);
+ const bundle=accuse?.evidence??[];
+ const trial=runtime.createSession();
+ for(const a of witness.actions.filter(a=>a.type!=='accuse'))runtime.dispatch(trial,a);
+ if(!runtime.behavior.checkCase(trial,accuse).supported)return {ok:false,detail:'the winning route is not supported with the full bundle'};
+ const removable=forced.filter(f=>runtime.behavior.checkCase(trial,{...accuse,evidence:bundle.filter(c=>c!==f)}).supported);
+ return {ok:removable.length===0,detail:removable.length?`insight not load-bearing: ${removable.join(', ')} can be dropped and the accusation still holds`:`load-bearing insight(s): ${forced.join(', ')}`};
+}
+
 export function validateCase(spec,{caseModule,runtime}={}){
   const report={spec:spec?.id??null,ok:false,obligations:{}};
   const fail=(name,detail)=>{report.obligations[name]={ok:false,detail};return report;};
@@ -88,6 +106,7 @@ export function validateCase(spec,{caseModule,runtime}={}){
   report.obligations.distinguishability=checkDistinguishability(caseModule,runtime,spec,witness);
   report.obligations.multihop=checkMultiHop(caseModule,witness);
   report.obligations.multipath=checkMultipath(caseModule);
+  report.obligations.forcedInsight=checkForcedInsight(caseModule,runtime,spec,witness);
 
   // 5. Module coherence: every composed narrative brick's local invariant holds.
   const modules=caseModule.model.modules??[];
@@ -114,7 +133,8 @@ export function sampleCases(seed=1,count=6,{
   motives=Object.keys(MOTIVES),
   minutes=[1274,1294,1314],
   structures=STRUCTURES,
-  manners=['overt','overt','accident'],
+  manners=['overt','overt','accident','suicide'],
+  collusions=[false,false,true],
   maxTries=count*40
 }={}){
   let state=(seed>>>0)||1;
@@ -124,7 +144,7 @@ export function sampleCases(seed=1,count=6,{
   while(valid.length<count&&tries++<maxTries){
     const culprit=pick(suspects),innocents=suspects.filter(id=>id!==culprit);
     let spec;
-    try{spec=buildSpec({culprit,weapon:pick(weapons),motive:pick(motives),minute:pick(minutes),seen:pick(innocents),structure:pick(structures),manner:pick(manners)});}
+    try{spec=buildSpec({culprit,weapon:pick(weapons),motive:pick(motives),minute:pick(minutes),seen:pick(innocents),structure:pick(structures),manner:pick(manners),collusion:pick(collusions)});}
     catch{continue;}
     if(ids.has(spec.id))continue;
     const report=validateCase(spec);

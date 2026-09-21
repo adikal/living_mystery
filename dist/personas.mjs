@@ -22,15 +22,18 @@ export function buildPersonas(spec,{PEOPLE,suspects=['clara','rowan','silas']}={
   const personas={};
   for(const id of suspects){
     const protects=protectsOf(id,PEOPLE),distrusts=distrustsOf(id,PEOPLE);
-    const stance=id===culprit?'self-protective':(protects.includes(culprit)?'shielding-ally':'truthful');
-    // Private truth: where they actually were during the fatal window. The culprit is at the scene;
-    // the innocents are at Dr Marsh's witnessed appointment.
+    // A shielding ally only *actively* lies for the culprit in a collusion case; otherwise a protector
+    // is merely disposed to shield and stays truthful about the crime.
+    const stance=id===culprit?'self-protective':(spec.collusion&&protects.includes(culprit)?'shielding-ally':'truthful');
+    // Private truth: own true whereabouts; a shielding ally also privately knows the culprit was at the scene.
     const trueLocation=id===culprit?'manor':'greenhouse';
-    const privateTruth=[claim(id,'location',trueLocation,window,'private truth',.99)];
-    // Public stance: what they say unpressed. Self-protective places itself elsewhere (a false alibi);
-    // a shielding ally falsely places the culprit away from the scene; the truthful state the truth.
+    const privateTruth=stance==='shielding-ally'
+      ? [claim(id,'location','greenhouse',window,'private truth',.99),claim(culprit,'location','manor',window,'private truth',.95)]
+      : [claim(id,'location',trueLocation,window,'private truth',.99)];
+    // Public stance: what they say unpressed. Self-protective places itself elsewhere; a shielding ally
+    // falsely places the CULPRIT with them at the greenhouse (a false alibi); the truthful state the truth.
     const publicStance=stance==='self-protective'?[claim(id,'location',PEOPLE[id].home,window,'stated alibi',.9)]
-      :stance==='shielding-ally'?[claim(culprit,'location','greenhouse',window,'stated alibi for an ally',.8)]
+      :stance==='shielding-ally'?[claim(id,'location','greenhouse',window,'stated account',.9),claim(culprit,'location','greenhouse',window,'stated alibi for an ally',.8)]
       :privateTruth.map(c=>({...c,attribution:'stated account'}));
     personas[id]={id,disposition:{traits:PEOPLE[id].traits,values:PEOPLE[id].values},allegiance:{protects,distrusts},stance,privateTruth,publicStance};
   }

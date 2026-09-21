@@ -69,5 +69,30 @@ test('The seeded sampler produces validated manner-of-death cases',()=>{
  assert.ok(sampled.every(c=>c.report.ok),'every sampled case is validated');
  const manner=sampled.filter(c=>c.spec.manner==='accident');
  assert.ok(manner.length>0,'the sample includes at least one staged-accident case');
- assert.ok(manner.every(c=>c.spec.id.endsWith('-accident')),'manner cases carry the -accident id suffix');
+ assert.ok(manner.every(c=>c.spec.id.includes('-accident')),'manner cases carry the -accident id marker');
+});
+
+test('Staged-suicide is a second manner flavor: validated, id round-trips, and gated like accident',()=>{
+ const spec=buildSpec({culprit:'silas',weapon:'knife',motive:'fraud',minute:1274,seen:'rowan',manner:'suicide'});
+ assert.equal(spec.id,'gen-silas-knife-fraud-1274-rowan-suicide');
+ assert.equal(specFromId(spec.id)?.manner,'suicide');
+ assert.ok(validateCase(spec).ok,'staged-suicide validates');
+ const cm=makeCase(spec),rt=createRuntime(cm),B=rt.behavior;
+ assert.ok(cm.CASE.proofRoutes.every(r=>r.all.includes('coroner')),'coroner gates every route');
+ const s=rt.createSession(),witness=searchInvestigation(s,rt);
+ for(const a of witness.actions.filter(a=>a.type!=='accuse'))rt.dispatch(s,a);
+ const acquired=s.world.player.evidence.map(e=>e.clue);
+ const accuse=sel=>B.checkCase(s,{type:'accuse',suspect:spec.culprit,method:spec.weapon,motive:spec.motive,evidence:sel});
+ assert.equal(accuse(acquired.filter(c=>c!=='coroner')).status,'gated','without the coroner finding it still reads as suicide');
+ assert.equal(accuse(acquired).status,'supported','establishing murder unlocks the accusation');
+});
+
+test('Coherence guardrail: an incoherent manner×method combination is rejected by the oracle',()=>{
+ // A chandelier already IS a fall; staging it as an accidental fall is a logical contradiction.
+ const bad=validateCase(buildSpec({culprit:'silas',weapon:'chandelier',motive:'fraud',minute:1274,seen:'rowan',manner:'accident'}));
+ assert.equal(bad.ok,false,'chandelier + staged-fall is rejected');
+ assert.equal(bad.obligations.modules.ok,false,'the manner brick invariant catches it');
+ assert.match(bad.obligations.modules.detail,/cannot stage a fall method/);
+ // Poison has no wound to stage as self-inflicted.
+ assert.equal(validateCase(buildSpec({culprit:'silas',weapon:'poison',motive:'fraud',minute:1274,seen:'rowan',manner:'suicide'})).ok,false,'poison + staged-suicide is rejected');
 });

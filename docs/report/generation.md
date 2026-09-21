@@ -1,6 +1,6 @@
 # 10. From a reference case to procedural mysteries
 
-**Status: three authored configurations, a composable narrative-module system, a case-general validator and a seeded sampler are implemented (a bounded slice of G2 over the fixed cast); new-cast, relationship and map generation, and richly generated prose, remain proposed.**
+**Status: three authored configurations, a composable narrative-module system, a named primitive algebra with a declarative composition compiler, an affordance grammar for means, a forced-insight obligation, a seeded sampler and a prep-time LLM composer (with deterministic fallback) are implemented over the fixed cast; new-cast, relationship and map generation, richer prose, and machine-checkable difficulty remain proposed.**
 
 ## 10.1 Complete the reference case first
 
@@ -39,7 +39,7 @@ The current finite layer tests alternative assignments and produces bounded expl
 | G0: reference case | Finish authored mechanics and interactions | Repeatable case paths and clearly explained failures |
 | G1: authored variation — implemented slice | Three same-cast culprit/method/motive/time configurations | Executed prehistory and replayed solutions; richer narrative playtests remain |
 | G2: controlled sampling — implemented slice | Seeded sampling of validated same-cast specifications, composed from narrative modules | Now enforced: physical, epistemic, reachability and distinguishability obligations plus per-module invariants, over the fixed cast. Implemented additionally: typed crime/evidence rules and finite alternative-explanation checks with optional Z3 certification. Remaining: broader domains, richer prose and human playtests |
-| G3: generative authoring | New case structures within a declared domain | Artifact validation, bounded repair and diverse playtests |
+| G3: generative authoring — implemented slice | New case structures within a declared domain; a prep-time LLM composer that proposes over the validated palette, plus an affordance grammar for open object/means | Now implemented: compile→validateCase→structured-feedback repair with a deterministic fallback, per-seed cache, and forced-insight for load-bearing twists. Remaining: new casts/maps, richer prose, and machine-checkable difficulty grading |
 | G4: richer playable world | Spatial actions and larger social networks | Perception semantics, performance budgets and recovery coverage |
 
 These are development gates, not delivery dates. At every stage the deterministic mode remains a playable and testable path. Procedural cases must include sufficient authored or generated-and-validated scripted dialogue to remain usable when runtime AI is disabled.
@@ -77,3 +77,77 @@ The **case-general validator** executes the prehistory, checks the shared physic
 The `trace` structure preserves the physical comparison and independent-alibi investigation. `cleanup` adds a real post-strike wiping action, discarded residue, and a laboratory-plus-entrance-watch route that bypasses the damaged-object and alibi chain. `clockwork` requires either a calibrated timed watch or an independently timed record, paired with different motive-document routes. Bell's entrance watch is a physically executed appointment, not remote knowledge of the killing.
 
 Each declared route is separately searched and replayed. Multiple routes can share premises; the original physical/carbon-copy pair intentionally shares most clues. The new branches provide different acquisition and inference work, but still use the same cast, map, fatal-action family and trusted-document assumptions. Broader story synthesis, uncertain forensic reliability, social acquisition and contingent recovery remain research work.
+
+## 10.10 The primitive algebra and the composition compiler
+
+The forensic checks were refactored into a named, versioned **primitive algebra** (`dist/primitives.mjs`,
+`PRIMITIVE_ALGEBRA_VERSION`): a typed entity ontology and a small set of `CONSTRAINT` primitives
+(`within`, `is`, `isNot`, `elsewhere`, `soleAt`, `soleAtOffset`) over the finite IR. Every claim
+predicate (`death_time`, `location`, `crime_method`, `trace_match`, `exclusive_opportunity`,
+`manner_evidence`, …) is now a thin composition of those primitives. This is the human-authored kernel:
+compositions may combine primitives without limit but may not redefine them, because an oracle cannot be
+produced by the thing it validates.
+
+On top of the kernel, a **declarative composition compiler** (`dist/composition.mjs`) turns a
+composition — pure data: clues, typed claims, proof-route membership, method options, and a prehistory
+occurrence-DAG (with links to existing occurrence types or intra-composition ids), plus an *optional,
+non-authoritative* dialogue passthrough — into the same brick hooks a hand-authored module provides.
+Adequacy was demonstrated by re-expressing two live bricks (`manner-of-death`, `poisoning`) as
+compositions with the whole suite still green. This is the data format the LLM composer targets: every
+fact lives in the validated fields, and prose can never change a fact.
+
+## 10.11 An affordance grammar: means as an open object catalog
+
+The "means" axis was generalized from a fixed enum to a finite **affordance grammar** so that new murder
+objects are mostly data. `dist/primitives.mjs` declares a small vocabulary of affordances —
+`harm(kind)`, `transfer`, `times`, `gates`, `marks`, `conceals`, `vanishes`, `fakes` — and each reduces
+to a validated kernel predicate (for example `harm`/`transfer`/`marks → trace_match`, `times →
+death_time`, `gates → exclusive_opportunity`, `conceals → manner_evidence`). `dist/objects.mjs` is the
+*surface*: an object is a name, a narrative injury, and a bundle of affordances, validated fail-closed
+against the grammar at load. `dist/mechanism.mjs` compiles an affordance-typed composition, first
+checking that each affordance-tagged clue leaves exactly the predicate its affordance is allowed to
+leave, then reusing the composition compiler.
+
+This is the seam that lets creativity expand at the object/narrative layer while correctness stays
+bounded in a finite, decidable kernel. Three genuinely new objects were added this way, each roughly one
+data entry plus a small mechanism: an **icicle** (a blunt weapon that *vanishes* — no weapon is found,
+so a casting-mould/meltwater trace pins the method), a **silk scarf** (an everyday object as an
+asphyxiant ligature, pinned by matching fibres), and a **rigged chandelier** (a *set-and-leave* fall
+where the culprit sabotages the fixing and is gone before it drops — the sabotage timing, not the death,
+fixes the crime window). The crime-history narration is now harm-kind-aware, so the method's act is
+visible in the timeline ("rigs the chandelier to fall", "administers a fatal dose") rather than a generic
+strike. `crimeModel`'s method dimension is generic (the three base weapons plus the spec's own object),
+so new objects join the sampler and the LLM palette automatically.
+
+## 10.12 Forced insight: making a twist load-bearing
+
+Solvability is table stakes; depth needs a machine-checkable property. The `forcedInsight` obligation
+(`checkForcedInsight` in `dist/casegen.mjs`) certifies that each clue a brick declares via `forces` is
+*load-bearing*: it replays the winning route and re-grades the bundle with that clue removed, and rejects
+the case if the true accusation still holds. Manner-of-death declares the coroner finding forced; poison
+declares the toxicology finding forced (its delayed death is real — the medical exam carries no time pin,
+and toxicology fixes the administration window on the examination occurrence); the icicle declares its
+meltwater trace forced. A manner×method coherence guardrail (in the manner brick's invariant) additionally
+rejects logically contradictory combinations — staging a fall (chandelier) as a fall, or a poisoning as a
+self-inflicted wound — following the split "LLM common sense for plausibility, symbolic layer for
+logical/causal/temporal coherence".
+
+## 10.13 The LLM composer
+
+`dist/llm-composer.mjs` closes the loop the pipeline was built for. The model **composes** a mystery by
+choosing values over the fixed, validated **palette** (never inventing characters, methods, motives, or
+predicates): `composeCase` parses the proposal, compiles it with `buildSpec`, validates it with the same
+`validateCase` oracle the whole engine trusts, and on rejection feeds **structured feedback** (the failing
+obligations by name, or the `buildSpec` error) back for a bounded repair loop. If the model cannot produce
+a valid case within its attempts, it falls back to the deterministic sampler, which is always certified;
+results are cached per seed. Model prose (title/synopsis) is threaded through as non-authoritative flavor.
+A live proxy adapter (`llmFromProxy`, contract in `server/llm_proxy.py`) carries the request; the app
+exposes it as "Generate with AI", and the composer was verified live producing validated, divergent cases.
+Variety is driven by a per-generation temperature and a seed-derived "lead" so repeated generations spread
+across the palette rather than collapsing to one favourite combination.
+
+This realizes the trust boundary end to end: **the LLM proposes with world knowledge inside the palette
+guardrails; the symbolic engine enforces logical, causal and temporal coherence and hands back structured
+feedback when something does not hold.** What remains is richer *machine-checkable difficulty* — obligations
+that grade inference depth and red-herring pressure so generated cases are scored on being genuinely
+hard to solve, not merely valid — and generation of new casts, maps and settings.

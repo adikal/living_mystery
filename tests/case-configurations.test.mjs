@@ -16,10 +16,10 @@ test('All authored configurations execute a sourced prehistory and solve in scri
   const s=createSession(17,spec.id),r=runtimeFor(s),entry=s.events.find(e=>e.kind==='arrival'&&e.data.boundary);
   assert.ok(entry);assert.ok(s.events.slice(0,entry.index).every(e=>!e.playerText),'Prehistory is not player observation');
   assert.equal(s.world.minute,1920);assert.equal(s.world.flags.deathMinute,spec.minute);assert.equal(s.world.flags.victimAlive,false);
-  const death=s.events.find(e=>e.title.includes('fatally strikes'));assert.equal(death.actor,spec.culprit);assert.equal(death.data.weapon,spec.weapon);
+  const death=s.events.find(e=>e.data?.occurrence==='fatal_action');assert.equal(death.actor,spec.culprit);assert.equal(death.data.weapon,spec.weapon);
   const before=worldAt(s,death.index-1);assert.equal(before.flags.victimAlive,true);assert.equal(before.objects.weapon,spec.culprit);assert.equal(before.npcs[spec.culprit].location,'manor');
   for(const npc of Object.values(s.world.npcs))for(const belief of npc.beliefs)assert.ok(s.events.some(e=>e.id===belief.sourceId));
-  assert.equal(playerView(s).evidence.length,0);assert.doesNotMatch(JSON.stringify(playerView(s)),/I killed|fatally strikes|evidenceOrigins/);
+  assert.equal(playerView(s).evidence.length,0);assert.doesNotMatch(JSON.stringify(playerView(s)),/I killed|evidenceOrigins/);assert.ok(!JSON.stringify(playerView(s)).includes(death.title),'the fatal-action title is not leaked to the player');
   const route=investigateReachability(s);assert.equal(route.status,'route_found');
   for(const action of route.actions)dispatch(s,action);
   assert.equal(s.world.status,'solved');assert.equal(s.world.ending.suspect,spec.culprit);assert.ok(diagnostics(s).ok);
