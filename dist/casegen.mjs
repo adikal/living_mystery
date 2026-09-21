@@ -9,7 +9,7 @@ import {evaluate} from './symbolic.mjs';
 // authored configuration and a future generated one.
 import {createRuntime} from './engine-runtime.mjs';
 import {makeCase} from './cases/bellweather.mjs';
-import {searchInvestigation} from './investigation.mjs';
+import {searchInvestigation,acquisitionDomain} from './investigation.mjs';
 import {buildSpec,WEAPONS,MOTIVES} from './cases/bellweather-configs.mjs';
 
 // Check the acquired bundle against every alternative in the shared finite domain.
@@ -72,6 +72,76 @@ export function checkForcedInsight(caseModule,runtime,spec,witness){
  return {ok:removable.length===0,detail:removable.length?`insight not load-bearing: ${removable.join(', ')} can be dropped and the accusation still holds`:`load-bearing insight(s): ${forced.join(', ')}`};
 }
 
+// Fair-play (Knox/Van Dine): every inference premise must be *earnable*. For each evidence claim that
+// requires other clues (a multi-hop inference), those required clues must be acquirable — present as an
+// inspectable object/testimony, or reachable by unlocking a discovery gate. An inference standing on an
+// unreachable premise is a plot hole; reject it.
+export function checkFairPlay(caseModule){
+ const world=caseModule.baseWorld();
+ const acquirable=new Set([...acquisitionDomain(caseModule.model,world).map(d=>d.clue),...(caseModule.model.testimonyClues??[])]);
+ // Discovery gates unlock further clues; treat a gated clue as acquirable once its gate prerequisites are
+ // (closure), so a gated *premise* is fair as long as its own prerequisites are earnable.
+ const gates=(caseModule.model.modules??[]).flatMap(m=>m.module?.artifact?.gates??[]);
+ let grew=true;while(grew){grew=false;for(const g of gates)if(!acquirable.has(g.clue)&&g.requires.every(r=>acquirable.has(r))){acquirable.add(g.clue);grew=true;}}
+ const missing=[];
+ for(const [clue,claims] of Object.entries(caseModule.model.evidenceClaims))for(const c of claims){
+  if(c.requires)for(const r of [].concat(c.requires))if(!acquirable.has(r))missing.push(`${clue}.${c.predicate} needs ${r}`);
+  if(c.requiresAny&&!c.requiresAny.some(r=>acquirable.has(r)))missing.push(`${clue}.${c.predicate} needs one of [${c.requiresAny}]`);
+ }
+ return {ok:missing.length===0,detail:missing.length?`unreachable inference premises: ${missing.join('; ')}`:'every inference premise is acquirable'};
+}
+
+// Discovery depth: how many gate-hops of prerequisite discovery stand between the start and a clue.
+export function discoveryDepth(caseModule){
+ const gates=caseModule.model.gates??{},memo={};
+ const depthOf=(clue,seen=new Set())=>{
+  if(memo[clue]!=null)return memo[clue];
+  if(seen.has(clue))return 0;seen.add(clue);
+  const reqs=gates[clue];if(!reqs||!reqs.length)return memo[clue]=0;
+  return memo[clue]=1+Math.max(0,...reqs.map(r=>depthOf(r,new Set(seen))));
+ };
+ const forced=[...new Set((caseModule.model.modules??[]).flatMap(m=>{try{return m.module?.forces?(m.module.forces({})||[]):[];}catch{return [];}}))];
+ const maxDepth=Object.keys(gates).length?Math.max(0,...Object.keys(gates).map(c=>depthOf(c))):0;
+ const maxForcedDepth=forced.length?Math.max(0,...forced.map(c=>depthOf(c))):0;
+ return {maxDepth,maxForcedDepth,gateCount:Object.keys(gates).length};
+}
+
+// Enforced only for cases that DECLARE a depth target (deep cases). Flat authored/sampled cases have no
+// target and pass informationally, so the obligation has teeth exactly where depth is promised.
+export function checkDiscoveryDepth(caseModule,spec){
+ const {maxDepth,maxForcedDepth,gateCount}=discoveryDepth(caseModule);
+ const target=spec?.depthTarget??0;
+ if(!target)return {ok:true,detail:`discovery depth ${maxDepth} across ${gateCount} gate(s); no target (not a deep case)`,maxDepth,maxForcedDepth};
+ const ok=maxForcedDepth>=target;
+ return {ok,detail:ok?`a load-bearing clue sits ${maxForcedDepth} gate-hop(s) deep (target ${target})`:`deepest load-bearing clue is only ${maxForcedDepth} gate-hop(s) (target ${target})`,maxDepth,maxForcedDepth};
+}
+
+// Inversion-anchor contract (docs/depth-operators.md §8): a declared twist is fair iff its anchor is
+// reachable, necessary (removing it drops the true accusation's support), and the surface-without-anchor
+// is a coherent WRONG/uncertain reading (misdirection). Sufficiency + grounding are already covered by
+// distinguishability + evidence. N/A (pass) for cases that declare no inversion.
+export function checkInversion(caseModule,runtime,spec,witness){
+ const inversions=(caseModule.model.modules??[]).map(m=>m.module?.artifact?.inversion).filter(Boolean);
+ if(!inversions.length)return {ok:true,detail:'no inversion declared'};
+ if(witness?.status!=='route_found')return {ok:false,detail:'no replay-validated route to test the inversion'};
+ const accuse=witness.actions.at(-1),bundle=accuse?.evidence??[];
+ const trial=runtime.createSession();for(const a of witness.actions.filter(a=>a.type!=='accuse'))runtime.dispatch(trial,a);
+ if(!runtime.behavior.checkCase(trial,accuse).supported)return {ok:false,detail:'winning route not supported with the full bundle'};
+ const results=inversions.map(inv=>{
+  const A=inv.anchor;
+  const minus=runtime.behavior.checkCase(trial,{...accuse,evidence:bundle.filter(c=>c!==A)});
+  const reachable=bundle.includes(A);
+  const necessary=!minus.supported;                       // removing the anchor drops support (forced-insight)
+  const misdirects=minus.status!=='supported';            // the surface-without-anchor is not a confident true reading
+  const reReads=(inv.reReads||[]).filter(c=>bundle.includes(c)).length;
+  return {anchor:A,reachable,necessary,misdirects,reReads,ok:reachable&&necessary&&misdirects};
+ });
+ const bad=results.filter(r=>!r.ok);
+ return {ok:bad.length===0,results,detail:bad.length
+  ?`unfair inversion: ${bad.map(r=>`${r.anchor}[reachable=${r.reachable},necessary=${r.necessary}]`).join('; ')}`
+  :`fair inversion(s): ${results.map(r=>`${r.anchor} (re-reads ${r.reReads})`).join(', ')}`};
+}
+
 export function validateCase(spec,{caseModule,runtime}={}){
   const report={spec:spec?.id??null,ok:false,obligations:{}};
   const fail=(name,detail)=>{report.obligations[name]={ok:false,detail};return report;};
@@ -107,6 +177,9 @@ export function validateCase(spec,{caseModule,runtime}={}){
   report.obligations.multihop=checkMultiHop(caseModule,witness);
   report.obligations.multipath=checkMultipath(caseModule);
   report.obligations.forcedInsight=checkForcedInsight(caseModule,runtime,spec,witness);
+  report.obligations.fairPlay=checkFairPlay(caseModule);
+  report.obligations.discoveryDepth=checkDiscoveryDepth(caseModule,spec);
+  report.obligations.inversion=checkInversion(caseModule,runtime,spec,witness);
 
   // 5. Module coherence: every composed narrative brick's local invariant holds.
   const modules=caseModule.model.modules??[];

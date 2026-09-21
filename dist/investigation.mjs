@@ -2,13 +2,16 @@
 // This abstraction is optimistic about future NPC presence; only actual replay
 // authorizes a witness. Exhaustion is unresolved unless the domain is complete.
 export function acquisitionDomain(model,world){
- const locked=new Set(world.flags.lockedObjects??[]),domain=[];
+ const locked=new Set(world.flags.lockedObjects??[]),gates=model.gates??{},domain=[];
  for(const [location,place]of Object.entries(model.LOCATIONS))for(const object of place.objects){
-  if(locked.has(object)||world.flags.closedLocations?.includes(location))continue;
+  if(world.flags.closedLocations?.includes(location))continue;
+  // A locked object is skipped UNLESS it is a discovery gate — then it enters the domain gated by its
+  // prerequisites (reachability v2: acquire the prerequisite clue, and the hidden object becomes reachable).
+  if(locked.has(object)&&!gates[object])continue;
   if(object==='folio'&&world.objects.folio!=='manor')continue;
   if(object==='drawer'&&world.objects.folio!=='drawer')continue;
   if(object==='seal'&&model.CASE.id!=='last-bell'&&world.objects.weapon!==location)continue;
-  const clue=model.OBJECTS[object]?.clue;if(clue)domain.push({id:`inspect:${object}`,location,clue,duration:3,requires:[],action:{type:'inspect',object},expires:world.flags.evidenceExpiry?.[clue]??null});
+  const clue=model.OBJECTS[object]?.clue;if(clue)domain.push({id:`inspect:${object}`,location,clue,duration:3,requires:gates[object]??[],action:{type:'inspect',object},expires:world.flags.evidenceExpiry?.[clue]??null});
  }
  if(model.CASE.id==='last-bell')domain.push(
   {id:'clara-letter',location:'manor',clue:'clara',requires:['letter'],duration:4,action:{type:'present',person:'clara',clue:'letter',tone:'private'}},

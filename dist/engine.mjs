@@ -3,6 +3,8 @@ import {guardedDispatch,filterPlans,assessTransition} from './admission.mjs';
 import * as Original from './cases/last-bell.mjs';
 import {makeCase} from './cases/bellweather.mjs';
 import {CONFIGS,specFromId} from './cases/bellweather-configs.mjs';
+import {deepFromId,generateDeepCase} from './deep-generator.mjs';
+export {generateDeepCase};
 import {createRuntime} from './engine-runtime.mjs';
 import {sampleCases} from './casegen.mjs';
 export {VERSION,copy,timeLabel} from './kernel.mjs';
@@ -11,10 +13,13 @@ const definitions=new Map([[CASE.id,Original],...CONFIGS.map(c=>[c.id,makeCase(c
 const runtimes=new Map();
 // Generated cases resolve lazily: a gen-* id reconstructs its spec via specFromId,
 // so sampled cases play (and save/reload) like any authored configuration.
-export function runtimeFor(s){const id=typeof s==='string'?s:s?.world?.caseId??CASE.id;if(!definitions.has(id)){const spec=typeof id==='string'&&id.startsWith('gen-')?specFromId(id):null;if(!spec)throw Error('Unknown case configuration');definitions.set(id,makeCase(spec));}if(!runtimes.has(id))runtimes.set(id,createRuntime(definitions.get(id)));return runtimes.get(id);}
+export function runtimeFor(s){const id=typeof s==='string'?s:s?.world?.caseId??CASE.id;if(!definitions.has(id)){const spec=typeof id==='string'?(id.startsWith('gen-')?specFromId(id):id.startsWith('deep-')?deepFromId(id):null):null;if(!spec)throw Error('Unknown case configuration');definitions.set(id,makeCase(spec));}if(!runtimes.has(id))runtimes.set(id,createRuntime(definitions.get(id)));return runtimes.get(id);}
 // Sample a validated case and return its id/title for the UI to start.
 export function generateCase(seed,{structure,manner}={}){const s=Number.isInteger(seed)?seed:(Math.floor(Math.random()*0x7ffffffe)+1);const found=sampleCases(s,1,{...(structure?{structures:[structure]}:{}),...(manner?{manners:[manner]}:{})});return found.length?{id:found[0].spec.id,title:found[0].spec.title,seed:s}:null;}
 export const caseTables=s=>runtimeFor(s);
+// Register a fully-built spec (e.g. an LLM-authored deep artifact) so it is playable this session; on a
+// fresh reload a deep-* id regenerates deterministically (LLM-authored artifacts are not yet persisted).
+export function registerCase(spec){definitions.set(spec.id,makeCase(spec));runtimes.delete(spec.id);return spec.id;}
 export const CASE_OPTIONS=[{id:CASE.id,title:CASE.title+' — original'},...CONFIGS.map(({id,title})=>({id,title}))];
 export const createSession=(seed=17,caseId=CASE.id)=>runtimeFor(caseId).createSession(seed);
 export function importSession(text){if(typeof text!=='string'||text.length>20000000)throw Error('Save file is too large.');const raw=JSON.parse(text);return runtimeFor(raw).importSession(text);}

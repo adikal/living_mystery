@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.11 · 20 September 2026**
+**Living technical report · Edition 0.13 · 21 September 2026**
 
 ### Abstract
 
@@ -97,3 +97,42 @@ temperature, an explicit "don't recite records" instruction, witnesses that conf
 shown to them, and a relaxed number gate that permits natural time phrasing while still blocking invented
 figures. See [Generation](generation.md#10-10-the-primitive-algebra-and-the-composition-compiler) and the
 design note `docs/primitive-algebra.md`.
+
+### Edition 0.12: depth — gated discovery, inference chains, and a certified inversion
+
+A first end-to-end **deep** case model, built as a parallel path that rides the existing engine (the flat
+path stays green). A case is now expressible as an **artifact** (`dist/case-artifact.mjs`): *neutral*
+observations that don't announce their meaning, each grounded and carrying the typed claim it licenses,
+with **discovery gates** (a clue's object stays locked until its prerequisites are acquired) and a
+declared **inversion**. New obligations certify depth: **fair-play** (every inference premise is
+earnable), **discovery-depth** (a load-bearing clue sits N gate-hops deep), and the **inversion-anchor**
+contract (the anchor is reachable, necessary, and overturns a coherent naive reading). A library of
+coherence-preserving **operators** (`dist/operators.mjs`) deepens an artifact, and a deterministic
+generator (`dist/deep-generator.mjs`) produces an always-certified deep case — a delayed poisoning whose
+decisive toxicology finding is hidden behind a washed-decanter → discarded-dregs chain, with the recorded
+time of death as a misdirecting alibi the toxicology overturns. The LLM composer picks who/why and falls
+back to the deterministic deep case. The chooser offers "🧩 Generate a deep case"; reachability was
+extended so the bounded search finds the gated path. See the design note `docs/depth-operators.md`.
+
+### Edition 0.13: breadth, deeper ladders, red-herring fog, and in-room disclosure
+
+Edition 0.12's single deep shape becomes a family. The generator now selects among **three deep shapes**,
+each hiding a *different* forced anchor: **delayed-poison** (the toxicology time-of-death), **buried-motive**
+(a reconstructed confrontation memo), and **hidden-means** (a tool-mark trace that clears the obvious
+weapon). Each anchor is now buried behind a **~5-hop discovery ladder** rather than two, so investigation
+becomes a point-and-click chain — examine one lead to reveal the next. Every deep case also carries
+**red-herring fog**: neutral observations with no bearing on the crime (a hidden love-letter, an unpaid
+wine bill, a stopped clock), some hidden behind one another, which are *never* forced and *never* a premise
+of a forced clue — so the solver's route ignores them while the player must sift them. The binding
+constraint is the bounded solver's 30-clue bitset; a deep case now uses ~23–24 of 30, and all sampled seeds
+certify at depth 5 across all three shapes.
+
+The interface gains **in-room disclosure**: the inspect panel groups reachable objects into **sections** by
+the kind of evidence they yield, and *hides* gated objects until their prerequisites are found (removing the
+old inspect-and-reject on locked objects). A quiet hint signals that hidden leads remain. Finally the LLM
+can author a **full deep artifact** (`composeArtifactCase`): it proposes a whole discovery chain of neutral
+observations gating a forced anchor plus the inversion; a safe expander (`expandArtifact`) rejects
+malformed structure and never admits ungrounded claims; the engine certifies every obligation, repairs from
+structured feedback, and falls back to the deterministic deep case. A small operational fix lets the local
+LLM proxy self-heal a stale cached credential by rebuilding its client once on failure. See
+`docs/depth-operators.md`.

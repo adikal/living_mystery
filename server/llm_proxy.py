@@ -144,7 +144,14 @@ class Handler(BaseHTTPRequestHandler):
             if system.strip():
                 kwargs["system"] = [{"text": system}]
 
-            resp = bedrock_client().converse(**kwargs)
+            try:
+                resp = bedrock_client().converse(**kwargs)
+            except Exception:
+                # A long-lived cached client can hold stale credentials; rebuild once and retry so the
+                # proxy self-heals without a manual restart (still fails cleanly if the creds are truly gone).
+                global _client
+                _client = None
+                resp = bedrock_client().converse(**kwargs)
             text = "".join(
                 block.get("text", "")
                 for block in resp["output"]["message"]["content"]

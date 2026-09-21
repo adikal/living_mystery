@@ -91,6 +91,14 @@ function dispatch(s, action) {
       if (CASE.id==='last-bell' && action.object === 'folio' && s.world.objects.folio !== 'manor') commit(s, { kind: 'observation', title: 'The red folio is missing', actor: 'player', parents: [inspected], playerText: 'A clean rectangle in the dust marks where the red folio lay. It has been moved. The estate solicitor keeps related files at the vestry.' });
       else if (CASE.id==='last-bell' && action.object === 'drawer' && s.world.objects.folio !== 'drawer') commit(s, { kind: 'observation', title: 'Routine deeds in the drawer', actor: 'player', parents: [inspected], playerText: 'The drawer contains routine parish deeds. The red estate folio is not here.' });
       else if (!K.addEvidence(s, obj.clue, inspected, `${LOCATIONS[at].name} · ${obj.label}`)) commit(s, { kind: 'observation', title: 'You review an existing clue', actor: 'player', parents: [inspected], playerText: `You have already recorded ${obj.label.toLowerCase()}. ${CLUES[obj.clue].text}` });
+      // Discovery gates: acquiring a clue can unlock a previously hidden object whose prerequisites are met.
+      const gates = ActiveCase.model.gates;
+      if (gates && s.world.flags.lockedObjects?.length) {
+        const acq = new Set(s.world.player.evidence.map(e => e.clue));
+        const stillLocked = s.world.flags.lockedObjects.filter(o => !(gates[o] && gates[o].every(r => acq.has(r))));
+        if (stillLocked.length !== s.world.flags.lockedObjects.length)
+          commit(s, { kind: 'observation', actor: 'player', title: 'A further lead opens up', parents: [inspected], changes: { 'flags.lockedObjects': stillLocked }, playerText: 'What you just found points you to something you had overlooked — a new lead is now within reach.' });
+      }
       K.advance(s, 3, start);
       break;
     }
@@ -167,5 +175,5 @@ function playerView(s) {
 }
 const publicPerson = (id) => ({ name: PEOPLE[id].name, initials: PEOPLE[id].initials, role: PEOPLE[id].role, color: PEOPLE[id].color, public: PEOPLE[id].public });
 
-return {CASE,LOCATIONS,PEOPLE,CLUES,OBJECTS,SUSPECTS,PILLARS,baseWorld,commit,distance,worldAt,diagnostics,exportSession,importSession,parseCommand,followupOptions,playerClaims,checkCase,caseHealth,characterPlans,scheduleCharacterPlan,createSession,dispatch,dispatchCharacter,playerView,publicPerson,kernel:K,behavior:B};
+return {CASE,LOCATIONS,PEOPLE,CLUES,OBJECTS,gates:ActiveCase.model.gates,SUSPECTS,PILLARS,baseWorld,commit,distance,worldAt,diagnostics,exportSession,importSession,parseCommand,followupOptions,playerClaims,checkCase,caseHealth,characterPlans,scheduleCharacterPlan,createSession,dispatch,dispatchCharacter,playerView,publicPerson,kernel:K,behavior:B};
 }

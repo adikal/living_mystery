@@ -410,3 +410,17 @@ test('A settings change cannot bypass an in-flight Director deferral',async()=>{
  await ui.run("runDirectedAction({type:'wait',minutes:5})");
  assert.equal(ui.run('exportSession(session)'),before);
 });
+
+test('In-room disclosure groups objects into sections and hides gated leads until they are reached',()=>{
+ const ui=adapter(null,{llmActive:()=>false});
+ // deep-1 is a delayed-poison case: at the manor only the decanter is reachable; the tray ring is gated behind it.
+ ui.run("session=createSession(1,'deep-1');syncCase();actionGroup='inspect';act({type:'move',to:'manor'});render()");
+ const html=ui.node('#app').innerHTML;
+ assert.match(html,/room-section-head/,'reachable objects are grouped into sections');
+ assert.match(html,/the rinsed decanter/,'the first, reachable ladder step is shown');
+ assert.doesNotMatch(html,/a faint tray ring/,'the gated next step is hidden until its prerequisite is found');
+ assert.match(html,/only come to light/,'a hint signals that hidden leads remain');
+ // Inspecting the prerequisite reveals the next lead in place (progressive disclosure).
+ ui.run("act({type:'inspect',object:'vessel'});render()");
+ assert.match(ui.node('#app').innerHTML,/a faint tray ring/,'the next lead appears once its prerequisite is examined');
+});

@@ -8,6 +8,8 @@
 // (title/synopsis) is non-authoritative flavor that can never change a fact.
 import {buildSpec,PROTECTOR,WEAPONS} from './cases/bellweather-configs.mjs';
 import {validateCase,sampleCases} from './casegen.mjs';
+import {deepSpec,deepSpecWith} from './deep-generator.mjs';
+import {expandArtifact} from './case-artifact.mjs';
 
 // The validated palette — the ONLY things the composer may draw from. Not new physics: choices over the
 // kernel. Widening this is a deliberate, human-authored act (a new dimension + predicate), never the LLM's.
@@ -106,8 +108,7 @@ export async function composeCase(llm,{seed,attempts=3,cache}={}){
 }
 
 // Flavor is non-authoritative prose; clamp it and keep only display strings.
-function sanitizeFlavor(proposal){
-  const clamp=(v,n)=>typeof v==='string'?v.slice(0,n):null;
+function sanitizeFlavor(proposal){  const clamp=(v,n)=>typeof v==='string'?v.slice(0,n):null;
   const title=clamp(proposal.title,120),synopsis=clamp(proposal.synopsis,600);
   return (title||synopsis)?{title,synopsis}:null;
 }
@@ -125,4 +126,71 @@ export function llmFromProxy(endpoint,{system='You compose deterministic detecti
     if(typeof data.text!=='string')throw Error('proxy returned no text');
     return data.text;
   };
+}
+
+// A deep case: the deterministic artifact supplies the certified DEPTH (a gated toxicology anchor behind a
+// washed-vessel -> dregs discovery chain, with the recorded time of death as a misdirecting alibi). The
+// model contributes only who/why + flavor over the validated palette; validity and depth never depend on
+// it, and it always falls back to the fully-certified deterministic deep case.
+export function deepComposerPrompt({feedback}={}){
+ return [
+  'You are seeding a DEEP detective case: a delayed poisoning where the recorded time of death is a false',
+  'alibi and the true window is fixed by a toxicology finding hidden behind a discovery chain.',
+  'Choose only WHO and WHY over this palette; the puzzle structure is fixed by the engine.',
+  'Reply with ONLY one JSON object: {"reasoning":"short","spec":{"culprit":"clara|rowan|silas","motive":"fraud|inheritance|eviction"},"title":"","synopsis":""}',
+  'Pick a fresh, plausible culprit + motive; keep title/synopsis short.',
+  feedback?('Your previous attempt was rejected: '+feedback):''
+ ].filter(Boolean).join('\n\n');
+}
+
+export async function composeDeepCase(llm,{seed,attempts=3,cache}={}){
+ const s=Number.isInteger(seed)?(seed>>>0):(Math.floor(Math.random()*0x7ffffffe)+1);
+ const key=`deep:${s}`;if(cache&&cache.has(key))return cache.get(key);
+ let feedback=null;
+ for(let i=0;i<attempts;i++){
+  let proposal;
+  try{proposal=parseComposition(await llm(deepComposerPrompt({feedback})));}
+  catch(e){feedback=`Return ONLY the required JSON object: ${e.message}`;continue;}
+  const {culprit,motive}=proposal.spec||{};
+  const spec=deepSpecWith(s,{culprit,motive});
+  const report=validateCase(spec);
+  if(report.ok){const r={source:'llm',spec,report,flavor:sanitizeFlavor(proposal),reasoning:String(proposal.reasoning||'').slice(0,600),attempts:i+1};cache?.set(key,r);return r;}
+  feedback=rejectionFeedback({report});
+ }
+ const spec=deepSpec(s);const r={source:'fallback',spec,report:validateCase(spec),flavor:null,attempts};cache?.set(key,r);return r;
+}
+
+// (b) LLM authors a FULL deep artifact: the true crime + a discovery chain of neutral observations that
+// gate an existing forced ANCHOR, plus the inversion framing. The engine certifies it (all obligations);
+// on failure it repairs from structured feedback, and always falls back to a deterministic deep case.
+export function artifactComposerPrompt({feedback}={}){
+ return [
+  'Author a DEEP detective case: the decisive clue is HIDDEN behind a chain of other clues, and the obvious reading is a trap. Emit ONE JSON object only:',
+  '{"reasoning":"short","spec":{"culprit":"clara|rowan|silas","weapon":"seal|candlestick|knife|poison","motive":"fraud|inheritance|eviction","minute":1290,"seen":"a suspect different from culprit","structure":"trace","manner":"overt"},',
+  '"observations":[{"id":"snake_case_id","title":"short","text":"a NEUTRAL clue that does not name the culprit or announce its meaning","at":"manor|surgery|vestry|inn|greenhouse|square"}],',
+  '"gates":{"clueId":["prereqId"]},"forces":["anchorId"],"inversion":{"anchor":"anchorId","naive":"the coherent WRONG reading before the anchor is found","reReads":["clueId"]},"title":"","synopsis":""}',
+  'RULES: add exactly 2 neutral discovery observations that CHAIN to a forced ANCHOR which is an EXISTING clue —',
+  'if weapon is "poison" the anchor is "toxicology"; otherwise the anchor is "intent" (a motive memo) or "seal" (the weapon trace).',
+  'gates must chain them, e.g. {"obsB":["obsA"],"anchor":["obsB"]}: the anchor is reachable only after obsA then obsB.',
+  'forces=[anchor]; inversion.anchor=anchor. Observations carry NO claims (they are stepping-stones). "seen" != "culprit". Keep texts under ~30 words and never name the culprit.',
+  feedback?('Your previous attempt was rejected: '+feedback):''
+ ].filter(Boolean).join('\n');
+}
+
+export async function composeArtifactCase(llm,{seed,attempts=3,cache}={}){
+ const s=Number.isInteger(seed)?(seed>>>0):(Math.floor(Math.random()*0x7ffffffe)+1);
+ const key=`artifact:${s}`;if(cache&&cache.has(key))return cache.get(key);
+ let feedback=null;
+ for(let i=0;i<attempts;i++){
+  let json;
+  try{json=parseComposition(await llm(artifactComposerPrompt({feedback})));}
+  catch(e){feedback=`Return ONLY the required JSON object: ${e.message}`;continue;}
+  let spec;
+  try{const base=buildSpec(json.spec||{});const art=expandArtifact(json,{id:`deep-${s}-art`});spec={...base,id:`deep-${s}`,deep:true,depthTarget:2,shape:'llm',artifact:art};}
+  catch(e){feedback=`Invalid spec or artifact: ${e.message}`;continue;}
+  const report=validateCase(spec);
+  if(report.ok){const r={source:'llm-artifact',spec,report,flavor:sanitizeFlavor(json),reasoning:String(json.reasoning||'').slice(0,600),attempts:i+1};cache?.set(key,r);return r;}
+  feedback=rejectionFeedback({report});
+ }
+ const spec=deepSpec(s);const r={source:'fallback',spec,report:validateCase(spec),flavor:null,attempts};cache?.set(key,r);return r;
 }

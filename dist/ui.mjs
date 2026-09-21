@@ -6,7 +6,7 @@ import {claimsAt,claimRelations} from './claims.mjs';
 import {exportDialogueSave,importDialogueSave,dialogueEntities,normalizeBoardNotes} from './dialogue-save.mjs';
 import {idbGet,idbSet} from './idb-save.mjs';
 import {perspectiveAt,missedAt} from './inspector.mjs';
-import {caseTables,CASE_OPTIONS,SUSPECTS,PILLARS,copy,createSession,dispatch,followupOptions,playerClaims,parseCommand,playerView,worldAt,timeLabel,distance,diagnostics,caseHealth,exportSession,importSession,generateCase} from './engine.mjs';
+import {caseTables,CASE_OPTIONS,SUSPECTS,PILLARS,copy,createSession,dispatch,followupOptions,playerClaims,parseCommand,playerView,worldAt,timeLabel,distance,diagnostics,caseHealth,exportSession,importSession,generateCase,generateDeepCase} from './engine.mjs';
 import {llmActive,llmConfig,setLlmConfig} from './llm.mjs';
 
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -179,7 +179,26 @@ function actionDone(action){
 function doneLabel(done){return done?'<small class="done-label">✓ Done · repeat anytime</small>':'';}
 function presentButton(person,tone,label){const done=actionDone({type:'present',person,clue:chosenClue,tone});return `<button class="soft-button ${tone==='press'?'danger-soft':''} ${done?'action-done':''}" data-do="present" data-person="${person}" data-tone="${tone}"><span>${label}${doneLabel(done)}</span></button>`;}
 
-function gameActions(v){return `<nav class="small-tabs action-tabs" aria-label="Action groups">${[['inspect','Inspect'],['talk',`Talk (${v.people.length})`],['wait','Wait']].map(([id,label])=>`<button data-do="action-group" data-id="${id}" class="${actionGroup===id?'active':''}" aria-pressed="${actionGroup===id}">${label}</button>`).join('')}</nav>${actionGroup==='talk'?(chat?conversation(v):`<p class="meta">Choose someone here to see what you can ask.</p><div class="people-here">${v.people.map(p=>`<button class="person-row present-person" data-do="chat" data-id="${p.id}">${avatar(p.id)}<span><strong>${p.name}</strong><small>View conversation options →</small></span></button>`).join('')||'<p class="muted">No one is here. Travel or wait for someone to arrive.</p>'}</div>`):actionGroup==='wait'?`<p class="meta">Let the village carry on. People may arrive or leave.</p><div class="two-actions">${[5,10,30].map(n=>`<button class="soft-button" data-do="wait" data-minutes="${n}">Wait ${n} min</button>`).join('')}</div>`:`<div class="panel-heading"><span class="meta">Choose something to examine · 3 min each</span></div><div class="object-actions">${v.scene.objects.map(id=>{const done=actionDone({type:'inspect',object:id});return `<button class="object-button ${done?'action-done':''}" data-do="inspect" data-id="${id}">${artifactArt(OBJECTS[id].clue)}<span>${OBJECTS[id].label}</span><small>${OBJECTS[id].description}</small>${doneLabel(done)}</button>`;}).join('')||'<p class="meta">Nothing to inspect here. Talk to someone nearby or choose another place in the village.</p>'}</div>`}`;}
+// In-room progressive disclosure. Objects that are still gated (locked) are HIDDEN until their
+// prerequisites are found — inspecting a lead reveals the next (the engine fires "A further lead opens
+// up"). The reachable objects are grouped into sections by the kind of evidence they yield, so a room is
+// a set of areas to work rather than one flat rack of cards.
+function roomInspect(v){
+ const locked=new Set(session.world.flags.lockedObjects||[]);
+ const all=(v.scene.objects||[]).filter(id=>OBJECTS[id]);
+ const visible=all.filter(id=>!locked.has(id));
+ const hiddenLeads=all.length-visible.length;
+ const head=`<div class="panel-heading"><span class="meta">Choose something to examine · 3 min each</span></div>`;
+ const hint=hiddenLeads?`<p class="room-hint meta">Some things here only come to light once you examine what is in plain sight.</p>`:'';
+ if(!visible.length)return `${head}<div class="object-actions"><p class="meta">${hiddenLeads?'Nothing is within reach yet — follow a lead elsewhere, then return.':'Nothing to inspect here. Talk to someone nearby or choose another place in the village.'}</p></div>${hint}`;
+ const card=id=>{const done=actionDone({type:'inspect',object:id});return `<button class="object-button ${done?'action-done':''}" data-do="inspect" data-id="${id}">${artifactArt(OBJECTS[id].clue)}<span>${esc(OBJECTS[id].label)}</span><small>${esc(OBJECTS[id].description)}</small>${doneLabel(done)}</button>`;};
+ const sections=new Map();
+ for(const id of visible){const kind=CLUES[OBJECTS[id]?.clue]?.kind||'Around the room';(sections.get(kind)||sections.set(kind,[]).get(kind)).push(id);}
+ if(sections.size<=1)return `${head}<div class="object-actions">${visible.map(card).join('')}</div>${hint}`;
+ const html=[...sections].map(([label,ids])=>`<section class="room-section"><h3 class="room-section-head">${esc(label)} <span class="room-section-count">${ids.length}</span></h3><div class="object-actions">${ids.map(card).join('')}</div></section>`).join('');
+ return `${head}${html}${hint}`;
+}
+function gameActions(v){return `<nav class="small-tabs action-tabs" aria-label="Action groups">${[['inspect','Inspect'],['talk',`Talk (${v.people.length})`],['wait','Wait']].map(([id,label])=>`<button data-do="action-group" data-id="${id}" class="${actionGroup===id?'active':''}" aria-pressed="${actionGroup===id}">${label}</button>`).join('')}</nav>${actionGroup==='talk'?(chat?conversation(v):`<p class="meta">Choose someone here to see what you can ask.</p><div class="people-here">${v.people.map(p=>`<button class="person-row present-person" data-do="chat" data-id="${p.id}">${avatar(p.id)}<span><strong>${p.name}</strong><small>View conversation options →</small></span></button>`).join('')||'<p class="muted">No one is here. Travel or wait for someone to arrive.</p>'}</div>`):actionGroup==='wait'?`<p class="meta">Let the village carry on. People may arrive or leave.</p><div class="two-actions">${[5,10,30].map(n=>`<button class="soft-button" data-do="wait" data-minutes="${n}">Wait ${n} min</button>`).join('')}</div>`:roomInspect(v)}`;}
 const dialogueTopics={bell:[['case','What makes a convincing case?'],['night','Can you give me a lead?'],['sightings','What have you observed around town today?']],clara:[['alibi','Where were you last night?'],['accounts','What can you tell me about Edmund’s accounts?'],['sightings','What have you observed around town today?']],rowan:[['night','Tell me about the coat and your whereabouts.'],['sightings','What have you observed around town today?']],silas:[['alibi','Where were you last night?'],['accounts','Explain the account discrepancies.'],['sightings','What have you observed around town today?']],ada:[['night','What did you see last night?'],['sightings','What have you observed around town today?']],iris:[['night','What do the medical findings and your visit establish?'],['sightings','What have you observed around town today?']]};
 
 function topicsFor(id){return session.world.caseId?[['night','What is your account of last night?'],['accounts','What can you tell me about the estate dispute?'],['sightings','What have you observed today?']]:dialogueTopics[id];}
@@ -482,6 +501,30 @@ async function runGenerateAI(){
     else toast('Generation failed. Please try again.');
   }
 }
+async function runGenerateDeep(){
+  openModal(`<div class="eyebrow gold">GENERATING · DEEP</div><h2>Building a multi-hop mystery…</h2><p class="generating-row"><span class="spinner"></span> <span id="gen-status">Composing a gated, multi-step case and certifying it…</span></p><p class="meta">A deep case hides its decisive evidence behind other clues: you must find one thing to know where to look for the next. The recorded time of death is a misdirection until you reach the toxicology finding — which is gated behind a discovery chain. Every deep case is certified (fair-play, discovery-depth, a load-bearing inversion) before it starts.</p>`,'Composing a deep case');
+  await new Promise(r=>setTimeout(r,45));
+  try{
+    if(llmActive()){
+      const {composeArtifactCase,llmFromProxy}=await import('./llm-composer.mjs');
+      const {registerCase}=await import('./engine.mjs');
+      const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),45000);
+      const seed=Math.floor(Math.random()*0x7ffffffe)+1;
+      const result=await composeArtifactCase(llmFromProxy(llmConfig().endpoint,{max_tokens:512,signal:controller.signal}),{seed,attempts:3}).finally(()=>clearTimeout(timer));
+      registerCase(result.spec);
+      startGenerated(result.spec.id,result.flavor?.title||result.spec.title,result.flavor);
+      toast(result.source==='llm-artifact'?'AI authored a deep, multi-hop case.':'The AI model was unavailable, so I started a validated deep case.');
+    }else{
+      const g=generateDeepCase();
+      startGenerated(g.id,g.title);
+      toast('A deeper, multi-hop case is ready — some evidence is hidden behind other clues.');
+    }
+  }catch(e){
+    $('#modal')?.close?.();
+    if(generateAndStart({}))toast('Could not build a deep case; started a validated case instead.');
+    else toast('Generation failed. Please try again.');
+  }
+}
 function menuModal(){openModal(`<div class="eyebrow gold">THE BELLWEATHER CASE</div><h2>Your investigation</h2><p>Progress is saved on this device. Export keeps a portable copy, including the full inspector history.</p><div class="menu-actions"><button class="soft-button" data-do="export">Export investigation & trace</button><button class="soft-button" data-do="import">Import saved investigation</button><button class="soft-button" data-do="llm">AI characters…</button><button class="soft-button" data-do="director">World Director…</button><button class="soft-button" data-do="choose-case">Choose a case configuration…</button><button class="soft-button" data-do="restart-confirm">Restart this case</button></div>`,'Investigation options');}
 function llmModal(){const c=llmConfig();openModal(`<div class="eyebrow teal">OPTIONAL · EXPERIMENTAL</div><h2>AI characters</h2><p>Character reasoning combines response decisions with natural dialogue. Characters receive their own beliefs, memories, goals and conversation history. They can answer, evade, clarify, challenge, refuse or end a conversation. The engine limits disclosures and consequences; a separate critic checks the proposal before it is recorded. Failed turns use an authored fallback. The critic can still make mistakes.</p><form id="llm-form"><div class="accusation-fields"><label>Proxy endpoint URL<input name="endpoint" autocomplete="off" placeholder="http://127.0.0.1:8787" value="${esc(c.endpoint||'http://127.0.0.1:8787')}"></label><label style="flex-direction:row;align-items:center;gap:10px"><input type="checkbox" name="reasoning" ${c.enabled&&c.reasoning?'checked':''} style="width:16px;height:16px;accent-color:var(--teal)"> Enable character reasoning and free-text conversation</label></div><button class="primary full" type="submit">Save settings</button></form><p class="meta">With this setting off, responses are immediate and scripted; no AI requests are made. Reasoning permits up to two proposals and two critic calls per turn, with a 30-second total timeout. Accepted turns and audits survive export and replay. In configured cases this also enables occasional autonomous goal selection: at most one additional request per player turn, a five-second timeout, and a twenty-minute cooldown per NPC. Scripted life continues when the request fails. Your local proxy receives this character’s private perspective, not the full world. Restart the proxy after updating its code.</p>`,'AI character settings');}
 
@@ -521,10 +564,11 @@ document.addEventListener('click',event=>{const b=event.target.closest('[data-do
     case 'accusation':accusationModal();break;
     case 'visit-bell':$('#modal').close();chat=null;act({type:'move',to:'square'});accusationModal();break;
     case 'menu':menuModal();break;
-    case 'choose-case':openModal(`<h2>Choose a case</h2><p>Generate a fresh, validated mystery, or replay the authored original. Every generated case is certified — source checks, finite-explanation checks and a played-through solution route — before it starts. Starting a case replaces your current investigation, so export it first if you want to keep it.</p><button class="soft-button" data-do="export">Export current investigation</button><div class="menu-actions"><button class="soft-button" data-do="generate-ai">🤖 Generate with AI (experimental)</button><button class="soft-button" data-do="generate-case">🎲 Generate a new validated case</button>${CASE_OPTIONS.slice(0,1).map(c=>`<button class="soft-button" data-do="start-case" data-id="${c.id}">${esc(c.title)}</button>`).join('')}</div>`,'Choose a case');break;
+    case 'choose-case':openModal(`<h2>Choose a case</h2><p>Generate a fresh, validated mystery, or replay the authored original. Every generated case is certified — source checks, finite-explanation checks and a played-through solution route — before it starts. Starting a case replaces your current investigation, so export it first if you want to keep it.</p><button class="soft-button" data-do="export">Export current investigation</button><div class="menu-actions"><button class="soft-button" data-do="generate-ai">🤖 Generate with AI (experimental)</button><button class="soft-button" data-do="generate-deep">🧩 Generate a deep case (multi-hop, experimental)</button><button class="soft-button" data-do="generate-case">🎲 Generate a new validated case</button>${CASE_OPTIONS.slice(0,1).map(c=>`<button class="soft-button" data-do="start-case" data-id="${c.id}">${esc(c.title)}</button>`).join('')}</div>`,'Choose a case');break;
     case 'start-case':{const fresh=createSession(17,id);cancelCharacter();stopReplay();session=fresh;resetRealized();boardNotes={};healthCache=null;cursor=null;chat=null;chosenClue=null;reasonSuspect=null;detailPanel=null;missedRevealed=false;sceneTransition=null;actionGroup='inspect';mode='game';persist();$('#modal').close();render();break;}
     case 'generate-case':runGenerate({structure:b.dataset.structure,manner:b.dataset.manner});break;
     case 'generate-ai':runGenerateAI();break;
+    case 'generate-deep':runGenerateDeep();break;
 
     case 'close-modal':$('#modal').close();break;
     case 'director':directorModal();break;

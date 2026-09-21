@@ -156,7 +156,9 @@ stays as fallback and offline oracle. **Never runs at play time.**
   but "solvability" is still table stakes: many sampled cases remain shallow (a single obvious means).
   The next lever is obligations that grade *inference depth* (minimum hop count on the means/motive/
   time axes), *red-herring pressure* (tempting wrong paths), and *required-insight density*, so the
-  generator/composer is scored on being genuinely hard-to-solve, not merely valid.
+  generator/composer is scored on being genuinely hard-to-solve, not merely valid. The full architecture
+  for this — the operator library (composition + recursion) and the inversion-anchor contract — is worked
+  out in [depth-operators.md](depth-operators.md).
 - Motive/psychology only partially primitivizes; keep pure narrative as *uncertified dressing* over a
   certified physical/epistemic skeleton.
 - Kernel scope creep (guarded by the litmus, versioning, and human review).
