@@ -1,5 +1,8 @@
 # Design note: depth by composition + recursion, certified by a thin solver
 
+Successor design (proposed): docs/mystery-kernel.md generalizes this work into a setting-independent kernel
+of four primitives, a block library and three refine operators.
+
 Status: **implemented through M5** (a first end-to-end vertical slice; local, not pushed). Extends
 [primitive-algebra.md](primitive-algebra.md). This note records the architecture for getting
 *Christie/Holmes-grade depth* out of generated cases, after we diagnosed that today's cases are shallow by

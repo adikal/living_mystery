@@ -82,6 +82,7 @@ function dispatch(s, action) {
       const arr = commit(s, { kind: 'arrival', title: `You reach ${LOCATIONS[action.to].name}`, actor: 'player', location: action.to, parents: [start], changes: { 'player.location': action.to, 'player.visited': [...new Set([...s.world.player.visited, action.to])] }, playerText: LOCATIONS[action.to].description });
       K.witnessMovement(s, 'player', 'arrival', action.to, arr);
       for (const id of Object.keys(PEOPLE)) K.notice(s, id, arr, `${PEOPLE[id].name} is here.`);
+      B.afterAction?.(s, arr);
       break;
     }
     case 'inspect': {
@@ -99,12 +100,13 @@ function dispatch(s, action) {
         if (stillLocked.length !== s.world.flags.lockedObjects.length)
           commit(s, { kind: 'observation', actor: 'player', title: 'A further lead opens up', parents: [inspected], changes: { 'flags.lockedObjects': stillLocked }, playerText: 'What you just found points you to something you had overlooked — a new lead is now within reach.' });
       }
+      B.afterAction?.(s, inspected);
       K.advance(s, 3, start);
       break;
     }
     case 'endConversation': break;
-    case 'ask': B.ask(s, action.person, action.topic || 'night', start); break;
-    case 'present': B.present(s, action.person, action.clue, action.tone || 'private', start); break;
+    case 'ask': B.ask(s, action.person, action.topic || 'night', start); B.afterAction?.(s, start); break;
+    case 'present': B.present(s, action.person, action.clue, action.tone || 'private', start); B.afterAction?.(s, start); break;
     case 'wait': { const n = Math.max(1, Math.min(60, Math.round(Number(action.minutes) || 10))); commit(s, { kind: 'observation', title: `You wait ${n} minutes`, actor: 'player', parents: [start], playerText: `You wait for ${n} minutes. The village continues around you.` }); K.advance(s, n, start); break; }
     case 'pin': {
       if (!K.has(s, action.clue)) { K.reject(s, 'Unknown notebook entry', 'Discover the evidence before pinning it.', start); break; }

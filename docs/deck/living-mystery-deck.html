@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Living Mystery — certified stories, living characters</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap');
+:root{
+  --bg:#faf9f7; --bg-warm:#f3f1ed; --bg-card:#ffffff;
+  --border:#e5e2dc; --border-light:#eeebe6;
+  --text-primary:#1a1718; --text-secondary:#5a5556; --text-muted:#9a9596;
+  --accent:#7c3aed; --accent-light:#a78bfa; --accent-dark:#5b21b6;
+  --gold:#d97706; --gold-star:#f59e0b; --green:#059669; --blue:#2563eb; --teal:#0891b2; --red:#dc2626;
+  --font:'Inter',system-ui,-apple-system,sans-serif;
+  --font-display:'Playfair Display',Georgia,serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font);background:var(--bg);color:var(--text-primary);overflow:hidden;width:100vw;height:100vh;}
+.slide{display:none;width:100vw;height:100vh;padding:44px 64px 64px;position:relative;overflow:hidden;flex-direction:column;font-size:16px;}
+.slide.active{display:flex;}
+.tag{display:inline-block;padding:6px 18px;border-radius:100px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;}
+.tag-purple{background:rgba(124,58,237,0.08);color:var(--accent);border:1px solid rgba(124,58,237,0.15);}
+.tag-gold{background:rgba(217,119,6,0.08);color:var(--gold);border:1px solid rgba(217,119,6,0.15);}
+.tag-blue{background:rgba(37,99,235,0.08);color:var(--blue);border:1px solid rgba(37,99,235,0.15);}
+.tag-teal{background:rgba(8,145,178,0.08);color:var(--teal);border:1px solid rgba(8,145,178,0.15);}
+.tag-green{background:rgba(5,150,105,0.08);color:var(--green);border:1px solid rgba(5,150,105,0.15);}
+.tag-red{background:rgba(220,38,38,0.07);color:var(--red);border:1px solid rgba(220,38,38,0.15);}
+h1{font-weight:800;line-height:1.08;letter-spacing:-2px;}
+h2{font-weight:700;line-height:1.12;letter-spacing:-1.2px;font-size:42px;margin-top:6px;}
+p{line-height:1.6;color:var(--text-secondary);}
+.sub{font-size:18px;margin-top:8px;max-width:1150px;}
+.highlight{color:var(--accent);} .highlight-gold{color:var(--gold);}
+.serif{font-family:var(--font-display);}
+.slide-number{position:absolute;bottom:22px;right:44px;font-size:14px;color:var(--text-muted);font-weight:500;letter-spacing:1px;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-light));transition:width .4s ease;z-index:100;}
+.card{background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.dark-card{background:linear-gradient(135deg,#1a1718,#2d2528);border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,0.1);color:#fff;}
+.eyebrow{font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;}
+.grid{display:grid;gap:18px;margin-top:18px;flex:1;align-content:center;}
+.num{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:4px;}
+.ct{font-size:19px;font-weight:700;margin-bottom:8px;}
+.card p{font-size:14.5px;}
+.note{background:var(--bg-warm);border-radius:7px;padding:8px 11px;font-size:13px;color:var(--text-secondary);border-left:3px solid var(--accent);margin-top:10px;}
+table.data{width:100%;border-collapse:collapse;font-size:15px;}
+table.data th{text-align:left;color:var(--text-muted);font-weight:600;padding:9px 12px;border-bottom:2px solid var(--border);font-size:12.5px;text-transform:uppercase;letter-spacing:.5px;}
+table.data td{padding:9px 12px;border-bottom:1px solid var(--border-light);color:var(--text-primary);vertical-align:top;}
+table.data tr:last-child td{border-bottom:none;}
+td.n{font-variant-numeric:tabular-nums;text-align:right;font-weight:600;}
+.pill{display:inline-block;padding:3px 11px;border-radius:100px;font-size:12.5px;font-weight:600;border:1.5px solid;margin:2px 3px 2px 0;}
+svg.dia{width:100%;flex:1;min-height:0;margin-top:6px;}
+svg text{font-family:var(--font);}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font-weight:600;}
+.quote{font-family:var(--font-display);font-style:italic;font-size:17px;color:var(--text-primary);line-height:1.5;}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{animation:fadeInUp .55s ease forwards;opacity:0;}
+.delay-1{animation-delay:.08s;}.delay-2{animation-delay:.16s;}.delay-3{animation-delay:.24s;}.delay-4{animation-delay:.32s;}.delay-5{animation-delay:.40s;}.delay-6{animation-delay:.48s;}
+</style>
+</head>
+<body>
+<div class="progress-bar"></div>
+
+<!-- shared SVG arrow markers -->
+<svg width="0" height="0" style="position:absolute">
+ <defs>
+  <marker id="aP" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+  <marker id="aG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#059669"/></marker>
+  <marker id="aR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+  <marker id="aB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+  <marker id="aO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+  <marker id="aT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0891b2"/></marker>
+  <marker id="aS" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+ </defs>
+</svg>
+
+<!-- 1. TITLE -->
+<div class="slide" id="s-title">
+  <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;text-align:center;">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:760px;height:760px;background:radial-gradient(circle,rgba(124,58,237,0.06) 0%,transparent 70%);pointer-events:none;"></div>
+    <span class="tag tag-purple fade-in delay-1">LIVING MYSTERY &middot; DESIGN REVIEW &middot; SEP 2026</span>
+    <h1 style="font-size:80px;margin-bottom:18px;max-width:1150px;" class="fade-in delay-2">Certified stories, <span class="highlight">living characters</span></h1>
+    <p style="font-size:23px;max-width:900px;margin-bottom:40px;line-height:1.5;" class="fade-in delay-3">A detective game where language models write the mystery and play the suspects, and a deterministic engine guarantees every case is fair, deep and solvable.</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;" class="fade-in delay-4">
+      <span class="pill" style="color:var(--accent);border-color:#c4b5fd;">event-sourced engine</span>
+      <span class="pill" style="color:var(--green);border-color:#86efac;">mystery kernel</span>
+      <span class="pill" style="color:var(--gold);border-color:#fcd34d;">recursive refinement</span>
+      <span class="pill" style="color:var(--blue);border-color:#93c5fd;">validated character turns</span>
+      <span class="pill" style="color:var(--red);border-color:#fca5a5;">solver-checked playability</span>
+    </div>
+    <div style="position:absolute;bottom:44px;font-size:13px;color:var(--text-muted);" class="fade-in delay-5">Press <kbd style="background:var(--bg-warm);padding:2px 8px;border-radius:4px;border:1px solid var(--border);">&rarr;</kbd> to advance &middot; <kbd style="background:var(--bg-warm);padding:2px 8px;border-radius:4px;border:1px solid var(--border);">F</kbd> for full screen</div>
+  </div>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 2. WHY IT'S HARD -->
+<div class="slide" style="background:var(--bg-warm);">
+  <div class="fade-in delay-1"><span class="tag tag-gold">WHY IT'S HARD</span><h2>Five things a good generated mystery must get right</h2>
+  <p class="sub">It is easy to generate a case that is technically solvable but trivial: every clue in view at once, clues that name the culprit, nothing that misleads. A real mystery has to hold all five of these at the same time.</p></div>
+  <div class="grid" style="grid-template-columns:repeat(5,1fr);">
+    <div class="card fade-in delay-2" style="padding:22px 20px;"><div style="font-size:30px;">🧩</div><div class="num">01</div><div class="ct">Coherence</div><p>The hidden history must be physically possible: one place at a time, travel takes time, causes come first.</p><div class="note">Checked by code, never by the model</div></div>
+    <div class="card fade-in delay-3" style="padding:22px 20px;"><div style="font-size:30px;">⚖️</div><div class="num">02</div><div class="ct">Fairness</div><p>Everything the solution needs can be found, and every lie has a reason and a deeper clue that breaks it.</p><div class="note" style="border-color:var(--green)">Justification + defeater checks</div></div>
+    <div class="card fade-in delay-4" style="padding:22px 20px;"><div style="font-size:30px;">🔎</div><div class="num">03</div><div class="ct">Depth</div><p>The answer takes many layers to reach: hidden leads, clues that only mean something together.</p><div class="note" style="border-color:var(--gold)">Solve depth 4–7 today</div></div>
+    <div class="card fade-in delay-5" style="padding:22px 20px;"><div style="font-size:30px;">🎭</div><div class="num">04</div><div class="ct">Misdirection</div><p>The surface should point the wrong way, for reasons inside the story, and be overturned fairly.</p><div class="note" style="border-color:var(--red)">Twist = a defeated default</div></div>
+    <div class="card fade-in delay-6" style="padding:22px 20px;"><div style="font-size:30px;">🗣️</div><div class="num">05</div><div class="ct">Living characters</div><p>Suspects talk freely and act on their own lives, without inventing facts or breaking the case.</p><div class="note" style="border-color:var(--blue)">Validated LLM turns</div></div>
+  </div>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 3. NORTH STAR / TRUST BOUNDARY -->
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-purple">THE CORE IDEA</span><h2>The model proposes; the engine decides</h2>
+  <p class="sub">Language models have unbounded imagination and no guarantees. A small deterministic core has guarantees and no imagination. Each does only what it is good at, and meaning always lives in typed data, never in prose.</p></div>
+  <svg class="dia fade-in delay-2" viewBox="0 0 1400 470">
+    <rect x="40" y="40" width="560" height="380" rx="18" fill="#faf5ff" stroke="#a78bfa" stroke-width="2"/>
+    <text x="320" y="82" text-anchor="middle" font-size="15" font-weight="700" fill="#7c3aed" letter-spacing="2">LANGUAGE MODELS</text>
+    <text x="320" y="108" text-anchor="middle" font-size="15" fill="#5a5556">imagination, taste, voice</text>
+    <g font-size="15" fill="#1a1718">
+      <rect x="80" y="135" width="480" height="48" rx="24" fill="#fff" stroke="#c4b5fd" stroke-width="1.5"/><text x="320" y="165" text-anchor="middle">write the true story, motives, secrets and each layer</text>
+      <rect x="80" y="195" width="480" height="48" rx="24" fill="#fff" stroke="#c4b5fd" stroke-width="1.5"/><text x="320" y="225" text-anchor="middle">review each layer for common-sense plausibility</text>
+      <rect x="80" y="255" width="480" height="48" rx="24" fill="#fff" stroke="#c4b5fd" stroke-width="1.5"/><text x="320" y="285" text-anchor="middle">speak as each character, in their own voice</text>
+      <rect x="80" y="315" width="480" height="48" rx="24" fill="#fff" stroke="#c4b5fd" stroke-width="1.5"/><text x="320" y="345" text-anchor="middle">choose everyday plans for characters' lives</text>
+    </g>
+    <rect x="800" y="40" width="560" height="380" rx="18" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="2"/>
+    <text x="1080" y="82" text-anchor="middle" font-size="15" font-weight="700" fill="#059669" letter-spacing="2">DETERMINISTIC ENGINE</text>
+    <text x="1080" y="108" text-anchor="middle" font-size="15" fill="#5a5556">state, truth, guarantees</text>
+    <g font-size="15" fill="#1a1718">
+      <rect x="840" y="135" width="480" height="48" rx="24" fill="#fff" stroke="#86efac" stroke-width="1.5"/><text x="1080" y="165" text-anchor="middle">owns every state change (append-only event log)</text>
+      <rect x="840" y="195" width="480" height="48" rx="24" fill="#fff" stroke="#86efac" stroke-width="1.5"/><text x="1080" y="225" text-anchor="middle">computes what every clue means and rules out</text>
+      <rect x="840" y="255" width="480" height="48" rx="24" fill="#fff" stroke="#86efac" stroke-width="1.5"/><text x="1080" y="285" text-anchor="middle">certifies cases: coherent, fair, unique, deep, misleading</text>
+      <rect x="840" y="315" width="480" height="48" rx="24" fill="#fff" stroke="#86efac" stroke-width="1.5"/><text x="1080" y="345" text-anchor="middle">admits a turn only if the case stays solvable</text>
+    </g>
+    <path d="M610 190 L790 190" stroke="#7c3aed" stroke-width="2.5" fill="none" marker-end="url(#aP)"/>
+    <text x="700" y="178" text-anchor="middle" font-size="14" fill="#7c3aed" font-weight="600">proposals</text>
+    <text x="700" y="210" text-anchor="middle" font-size="12.5" fill="#9a9596">typed JSON only</text>
+    <path d="M790 300 L610 300" stroke="#059669" stroke-width="2.5" fill="none" marker-end="url(#aG)"/>
+    <text x="700" y="288" text-anchor="middle" font-size="14" fill="#059669" font-weight="600">accept / structured feedback</text>
+    <text x="700" y="320" text-anchor="middle" font-size="12.5" fill="#9a9596">"the alibi has no defeater"</text>
+    <text x="700" y="455" text-anchor="middle" font-size="14" fill="#9a9596">Prose is generated from records and checked against them — it can never change a fact.</text>
+  </svg>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 4. SYSTEM ARCHITECTURE -->
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-blue">ARCHITECTURE</span><h2>The system at a glance</h2>
+  <p class="sub">A zero-build browser game over a DOM-free engine. Two small local servers carry model calls and solver checks. Case generation runs offline and ships certified case records.</p></div>
+  <svg class="dia fade-in delay-2" viewBox="0 0 1400 520">
+    <!-- offline generation -->
+    <rect x="30" y="40" width="330" height="440" rx="16" fill="#fffbeb" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="195" y="75" text-anchor="middle" font-size="14" font-weight="700" fill="#d97706" letter-spacing="2">OFFLINE GENERATION</text>
+    <rect x="60" y="95" width="270" height="70" rx="12" fill="#fff" stroke="#d97706" stroke-width="2"/><text x="195" y="125" text-anchor="middle" font-size="16" font-weight="700">Refinement harness</text><text x="195" y="148" text-anchor="middle" font-size="13" fill="#5a5556">tools/refine-c (Python)</text>
+    <rect x="60" y="185" width="125" height="58" rx="12" fill="#fff" stroke="#a78bfa" stroke-width="2"/><text x="122" y="211" text-anchor="middle" font-size="14" font-weight="600">Opus</text><text x="122" y="230" text-anchor="middle" font-size="12" fill="#5a5556">story steps</text>
+    <rect x="205" y="185" width="125" height="58" rx="12" fill="#fff" stroke="#a78bfa" stroke-width="2"/><text x="267" y="211" text-anchor="middle" font-size="14" font-weight="600">Sonnet</text><text x="267" y="230" text-anchor="middle" font-size="12" fill="#5a5556">plausibility critic</text>
+    <rect x="60" y="263" width="270" height="62" rx="12" fill="#fff" stroke="#059669" stroke-width="2"/><text x="195" y="290" text-anchor="middle" font-size="15" font-weight="700">Kernel checker</text><text x="195" y="311" text-anchor="middle" font-size="12.5" fill="#5a5556">certify every step (parity with JS)</text>
+    <rect x="60" y="345" width="270" height="62" rx="12" fill="#fff" stroke="#d97706" stroke-width="2"/><text x="195" y="372" text-anchor="middle" font-size="15" font-weight="700">Publish</text><text x="195" y="393" text-anchor="middle" font-size="12.5" fill="#5a5556">questions, evening accounts</text>
+    <text x="195" y="452" text-anchor="middle" font-size="13" fill="#9a9596">→ dist/cases/generated/*.json</text>
+    <!-- browser -->
+    <rect x="420" y="40" width="600" height="440" rx="16" fill="#fff" stroke="#e5e2dc" stroke-width="2"/>
+    <text x="720" y="75" text-anchor="middle" font-size="14" font-weight="700" fill="#2563eb" letter-spacing="2">BROWSER (ZERO-BUILD ES MODULES)</text>
+    <rect x="450" y="95" width="540" height="56" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/><text x="720" y="120" text-anchor="middle" font-size="16" font-weight="700">UI adapter</text><text x="720" y="140" text-anchor="middle" font-size="12.5" fill="#5a5556">investigation · reasoning board · inspector (time travel)</text>
+    <rect x="450" y="170" width="265" height="120" rx="12" fill="#fff" stroke="#7c3aed" stroke-width="2"/><text x="582" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#7c3aed">Character turns</text><text x="582" y="222" text-anchor="middle" font-size="12.5" fill="#5a5556">perspective → proposal</text><text x="582" y="241" text-anchor="middle" font-size="12.5" fill="#5a5556">validate → critic → apply</text><text x="582" y="260" text-anchor="middle" font-size="12.5" fill="#5a5556">NPC lives &amp; autonomy</text>
+    <rect x="725" y="170" width="265" height="120" rx="12" fill="#fff" stroke="#dc2626" stroke-width="2"/><text x="857" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#dc2626">Admission &amp; Director</text><text x="857" y="222" text-anchor="middle" font-size="12.5" fill="#5a5556">trial turn on a copy</text><text x="857" y="241" text-anchor="middle" font-size="12.5" fill="#5a5556">bounded search + replay</text><text x="857" y="260" text-anchor="middle" font-size="12.5" fill="#5a5556">plan checks (Z3)</text>
+    <rect x="450" y="310" width="540" height="64" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/><text x="720" y="337" text-anchor="middle" font-size="16" font-weight="700">Engine + kernel</text><text x="720" y="358" text-anchor="middle" font-size="12.5" fill="#5a5556">commit · event log · replay · knowledge &amp; beliefs · clock · travel</text>
+    <rect x="450" y="392" width="265" height="64" rx="12" fill="#fff" stroke="#d97706" stroke-width="2"/><text x="582" y="419" text-anchor="middle" font-size="14.5" font-weight="700">Cases</text><text x="582" y="440" text-anchor="middle" font-size="12" fill="#5a5556">Last Bell · Bellweather · kernel cases</text>
+    <rect x="725" y="392" width="265" height="64" rx="12" fill="#fff" stroke="#059669" stroke-width="2"/><text x="857" y="419" text-anchor="middle" font-size="14.5" font-weight="700">Mystery kernel</text><text x="857" y="440" text-anchor="middle" font-size="12" fill="#5a5556">dist/mk · grading at play time</text>
+    <!-- servers -->
+    <rect x="1080" y="95" width="290" height="110" rx="14" fill="#fff" stroke="#7c3aed" stroke-width="2"/><text x="1225" y="128" text-anchor="middle" font-size="16" font-weight="700">LLM proxy :8787</text><text x="1225" y="152" text-anchor="middle" font-size="12.5" fill="#5a5556">loopback · origin + header checks</text><text x="1225" y="172" text-anchor="middle" font-size="12.5" fill="#5a5556">Bedrock: Haiku / Sonnet</text><text x="1225" y="191" text-anchor="middle" font-size="12.5" fill="#5a5556">self-heals stale credentials</text>
+    <rect x="1080" y="240" width="290" height="92" rx="14" fill="#fff" stroke="#dc2626" stroke-width="2"/><text x="1225" y="273" text-anchor="middle" font-size="16" font-weight="700">Z3 solver :8788</text><text x="1225" y="297" text-anchor="middle" font-size="12.5" fill="#5a5556">optional independent checks</text><text x="1225" y="316" text-anchor="middle" font-size="12.5" fill="#5a5556">of plans and crime history</text>
+    <rect x="1080" y="365" width="290" height="92" rx="14" fill="#fff" stroke="#2563eb" stroke-width="2"/><text x="1225" y="398" text-anchor="middle" font-size="16" font-weight="700">Static server :8000</text><text x="1225" y="422" text-anchor="middle" font-size="12.5" fill="#5a5556">dist/ · art · generated cases</text><text x="1225" y="441" text-anchor="middle" font-size="12.5" fill="#5a5556">saves in IndexedDB</text>
+    <path d="M360 420 L445 420" stroke="#d97706" stroke-width="2.5" fill="none" marker-end="url(#aO)"/>
+    <path d="M582 170 L582 160 L1000 160 L1000 150 L1075 150" stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#aP)"/>
+    <text x="1047" y="140" text-anchor="middle" font-size="11.5" fill="#7c3aed">model calls</text>
+    <path d="M990 286 L1075 286" stroke="#dc2626" stroke-width="2" fill="none" marker-end="url(#aR)"/>
+    <text x="1033" y="278" text-anchor="middle" font-size="11.5" fill="#dc2626">proofs</text>
+  </svg>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 5. ENGINE -->
+<div class="slide" style="background:var(--bg-warm);">
+  <div class="fade-in delay-1"><span class="tag tag-green">THE GAME ENGINE</span><h2>Every change is an event with a cause</h2>
+  <p class="sub">The engine is event-sourced. Actions become causal events with reversible patches; the world can be rebuilt at any moment, and characters know only what they perceived or were told.</p></div>
+  <svg class="dia fade-in delay-2" viewBox="0 0 1400 470">
+    <rect x="30" y="170" width="190" height="96" rx="14" fill="#fff" stroke="#94a3b8" stroke-width="2"/><text x="125" y="208" text-anchor="middle" font-size="16" font-weight="700">Player action</text><text x="125" y="232" text-anchor="middle" font-size="12.5" fill="#5a5556">move · inspect · ask</text><text x="125" y="250" text-anchor="middle" font-size="12.5" fill="#5a5556">present · wait · accuse</text>
+    <path d="M220 218 L290 218" stroke="#059669" stroke-width="2.5" marker-end="url(#aG)"/>
+    <rect x="295" y="150" width="230" height="136" rx="14" fill="#fff" stroke="#d97706" stroke-width="2"/><text x="410" y="182" text-anchor="middle" font-size="16" font-weight="700" fill="#d97706">Case behaviour</text><text x="410" y="208" text-anchor="middle" font-size="12.5" fill="#5a5556">who can say what, when</text><text x="410" y="228" text-anchor="middle" font-size="12.5" fill="#5a5556">gates · accounts · reactions</text><text x="410" y="248" text-anchor="middle" font-size="12.5" fill="#5a5556">grading the accusation</text><text x="410" y="268" text-anchor="middle" font-size="12.5" fill="#5a5556">NPC decision policy</text>
+    <path d="M525 218 L595 218" stroke="#059669" stroke-width="2.5" marker-end="url(#aG)"/>
+    <rect x="600" y="110" width="330" height="216" rx="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/><text x="765" y="142" text-anchor="middle" font-size="16" font-weight="700" fill="#059669">Kernel: commit()</text>
+    <g font-size="13" fill="#1a1718"><rect x="625" y="160" width="280" height="34" rx="17" fill="#fff" stroke="#86efac"/><text x="765" y="182" text-anchor="middle">event: id · minute · actor · kind</text>
+    <rect x="625" y="202" width="280" height="34" rx="17" fill="#fff" stroke="#86efac"/><text x="765" y="224" text-anchor="middle">causal parents (why it happened)</text>
+    <rect x="625" y="244" width="280" height="34" rx="17" fill="#fff" stroke="#86efac"/><text x="765" y="266" text-anchor="middle">before/after patches (reversible)</text>
+    <rect x="625" y="286" width="280" height="30" rx="15" fill="#fff" stroke="#86efac"/><text x="765" y="306" text-anchor="middle">player text only if you perceived it</text></g>
+    <path d="M930 218 L1000 218" stroke="#059669" stroke-width="2.5" marker-end="url(#aG)"/>
+    <path d="M1136 170 L1136 150" stroke="#059669" stroke-width="0"/>
+    <ellipse cx="1110" cy="148" rx="95" ry="16" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <path d="M1015 148 L1015 290 A95 16 0 0 0 1205 290 L1205 148" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text x="1110" y="210" text-anchor="middle" font-size="16" font-weight="700">Event log</text><text x="1110" y="234" text-anchor="middle" font-size="12.5" fill="#5a5556">append-only</text><text x="1110" y="253" text-anchor="middle" font-size="12.5" fill="#5a5556">the save file</text>
+    <rect x="1240" y="110" width="140" height="64" rx="12" fill="#fff" stroke="#2563eb" stroke-width="2"/><text x="1310" y="138" text-anchor="middle" font-size="14" font-weight="700">worldAt(i)</text><text x="1310" y="158" text-anchor="middle" font-size="12" fill="#5a5556">replay to any point</text>
+    <rect x="1240" y="190" width="140" height="64" rx="12" fill="#fff" stroke="#2563eb" stroke-width="2"/><text x="1310" y="218" text-anchor="middle" font-size="14" font-weight="700">Inspector</text><text x="1310" y="238" text-anchor="middle" font-size="12" fill="#5a5556">causal debugger</text>
+    <rect x="1240" y="270" width="140" height="64" rx="12" fill="#fff" stroke="#2563eb" stroke-width="2"/><text x="1310" y="298" text-anchor="middle" font-size="14" font-weight="700">diagnostics</text><text x="1310" y="318" text-anchor="middle" font-size="12" fill="#5a5556">integrity on load</text>
+    <path d="M1205 160 L1235 142" stroke="#2563eb" stroke-width="2" marker-end="url(#aB)"/><path d="M1205 222 L1235 222" stroke="#2563eb" stroke-width="2" marker-end="url(#aB)"/><path d="M1205 285 L1235 300" stroke="#2563eb" stroke-width="2" marker-end="url(#aB)"/>
+    <!-- knowledge row -->
+    <rect x="295" y="360" width="910" height="92" rx="14" fill="#fff" stroke="#7c3aed" stroke-width="2"/><text x="750" y="390" text-anchor="middle" font-size="15" font-weight="700" fill="#7c3aed">Knowledge: beliefs and memories are sourced</text><text x="750" y="414" text-anchor="middle" font-size="13" fill="#5a5556">witnesses see arrivals and departures, not motives or routes</text><text x="750" y="434" text-anchor="middle" font-size="13" fill="#5a5556">a lie never becomes a world fact · a correction reaches only the people it is told to</text>
+    <path d="M765 326 L765 355" stroke="#7c3aed" stroke-width="2" marker-end="url(#aP)"/>
+    <text x="125" y="290" text-anchor="middle" font-size="12.5" fill="#9a9596">the clock advances minute by minute;</text><text x="125" y="307" text-anchor="middle" font-size="12.5" fill="#9a9596">characters travel, decide, perceive</text>
+  </svg>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 6. CHARACTERS -->
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-purple">LIVING CHARACTERS</span><h2>Characters speak freely, but only from what they know</h2>
+  <p class="sub">For a free-text question, the character receives only its own perspective. The model picks one of the accounts the engine allows (true, or a permitted lie) and phrases it in voice. Code and an independent critic reject invented facts.</p></div>
+  <svg class="dia fade-in delay-2" viewBox="0 0 1400 470">
+    <rect x="30" y="60" width="300" height="330" rx="16" fill="#faf5ff" stroke="#a78bfa" stroke-width="2"/>
+    <text x="180" y="95" text-anchor="middle" font-size="14" font-weight="700" fill="#7c3aed" letter-spacing="1.5">PERSPECTIVE (ONLY THEIRS)</text>
+    <g font-size="13.5"><rect x="55" y="115" width="250" height="36" rx="18" fill="#fff" stroke="#c4b5fd"/><text x="180" y="138" text-anchor="middle">voice · role · relationships</text>
+    <rect x="55" y="160" width="250" height="36" rx="18" fill="#fff" stroke="#c4b5fd"/><text x="180" y="183" text-anchor="middle">memories of the night</text>
+    <rect x="55" y="205" width="250" height="36" rx="18" fill="#fff" stroke="#c4b5fd"/><text x="180" y="228" text-anchor="middle">beliefs, fears, wants</text>
+    <rect x="55" y="250" width="250" height="36" rx="18" fill="#fff" stroke="#c4b5fd"/><text x="180" y="273" text-anchor="middle">conversation so far</text>
+    <rect x="55" y="295" width="250" height="36" rx="18" fill="#fef2f2" stroke="#fca5a5"/><text x="180" y="318" text-anchor="middle">allowed accounts (lies flagged)</text>
+    <rect x="55" y="340" width="250" height="36" rx="18" fill="#fff" stroke="#c4b5fd"/><text x="180" y="363" text-anchor="middle">evidence being shown</text></g>
+    <path d="M330 225 L400 225" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#aP)"/>
+    <rect x="405" y="160" width="210" height="130" rx="14" fill="#fff" stroke="#7c3aed" stroke-width="2"/><text x="510" y="195" text-anchor="middle" font-size="16" font-weight="700">Character model</text><text x="510" y="220" text-anchor="middle" font-size="12.5" fill="#5a5556">intent: answer · deceive</text><text x="510" y="238" text-anchor="middle" font-size="12.5" fill="#5a5556">evade · refuse · clarify</text><text x="510" y="262" text-anchor="middle" font-size="12.5" fill="#5a5556">+ utterance in voice</text>
+    <path d="M615 225 L685 225" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#aP)"/>
+    <rect x="690" y="130" width="230" height="190" rx="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/><text x="805" y="162" text-anchor="middle" font-size="15" font-weight="700" fill="#059669">CODE VALIDATION</text>
+    <g font-size="12.5" fill="#1a1718"><text x="805" y="190" text-anchor="middle">account must be allowed</text><text x="805" y="212" text-anchor="middle">a lie only where it is permitted</text><text x="805" y="234" text-anchor="middle">no invented numbers or times</text><text x="805" y="256" text-anchor="middle">claims and sources copied exactly</text><text x="805" y="278" text-anchor="middle">no account → no facts</text></g>
+    <path d="M920 225 L990 225" stroke="#059669" stroke-width="2.5" marker-end="url(#aG)"/>
+    <rect x="995" y="150" width="190" height="150" rx="14" fill="#fff" stroke="#dc2626" stroke-width="2"/><text x="1090" y="185" text-anchor="middle" font-size="15" font-weight="700" fill="#dc2626">Independent critic</text><text x="1090" y="210" text-anchor="middle" font-size="12.5" fill="#5a5556">separate context</text><text x="1090" y="230" text-anchor="middle" font-size="12.5" fill="#5a5556">added or changed facts?</text><text x="1090" y="250" text-anchor="middle" font-size="12.5" fill="#5a5556">wrong names? leaks?</text><text x="1090" y="270" text-anchor="middle" font-size="12.5" fill="#5a5556">irrelevant answer?</text>
+    <path d="M1185 225 L1245 225" stroke="#059669" stroke-width="2.5" marker-end="url(#aG)"/>
+    <rect x="1250" y="170" width="130" height="110" rx="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/><text x="1315" y="205" text-anchor="middle" font-size="15" font-weight="700">Engine</text><text x="1315" y="228" text-anchor="middle" font-size="12" fill="#5a5556">applies speech,</text><text x="1315" y="246" text-anchor="middle" font-size="12" fill="#5a5556">trust, memory</text><text x="1315" y="264" text-anchor="middle" font-size="12" fill="#5a5556">atomically</text>
+    <path d="M1090 300 L1090 360 L510 360 L510 295" stroke="#dc2626" stroke-width="2" fill="none" marker-end="url(#aR)" stroke-dasharray="6 4"/>
+    <text x="800" y="385" text-anchor="middle" font-size="13" fill="#dc2626">reject → retry with the violations; after two failures an in-character fallback</text>
+    <text x="700" y="440" text-anchor="middle" class="quote" font-size="16" fill="#1a1718" font-style="italic">Rowan, asked where Clara was: “Miss Vale came down to the Rook about twenty to ten… She never went near the greenhouse.” — a permitted lie, told in character.</text>
+  </svg>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 7. LIVES -->
+<div class="slide" style="background:var(--bg-warm);">
+  <div class="fade-in delay-1"><span class="tag tag-purple">LIVES AND ACTIONS</span><h2>Characters also act, and their actions are checked too</h2>
+  <p class="sub">Between conversations the village keeps living. Ordinary routines are authored; optional model deliberation chooses among bounded plans. Any plan that could touch evidence must pass the same playability check as the player's turn.</p></div>
+  <div class="grid" style="grid-template-columns:repeat(3,1fr);">
+    <div class="card fade-in delay-2" style="padding:24px;"><div class="num">DAILY LIFE</div><div class="ct">Routines and appointments</div><p>Each character has a home, duties and meetings. The clock drives travel and arrivals; witnesses see only what happens where they are.</p><div class="note">life.mjs · minute-by-minute clock</div></div>
+    <div class="card fade-in delay-3" style="padding:24px;"><div class="num">AUTONOMY</div><div class="ct">Bounded plans</div><p>A model may pick a plan from a typed catalogue (move, take, give, conceal, report, correct). It runs detached, never blocking the player, and is dropped if the world changed.</p><div class="note" style="border-color:var(--blue)">agent-plans · autonomy-turn</div></div>
+    <div class="card fade-in delay-4" style="padding:24px;"><div class="num">ADMISSION</div><div class="ct">No plan may break the case</div><p>Plans are shape-checked, optionally proved in Z3, and only committed if a validated route to the solution still exists afterwards.</p><div class="note" style="border-color:var(--red)">world-director · admission</div></div>
+  </div>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 8. PLAYABILITY -->
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-red">NO DEAD ENDS</span><h2>How the solver keeps every case playable</h2>
+  <p class="sub">Every turn — the player's, a character's, the Director's — first runs on a copy of the world. It is kept only if the case can still be solved from the resulting state. Otherwise it is discarded as if it never happened.</p></div>
+  <svg class="dia fade-in delay-2" viewBox="0 0 1400 440">
+    <rect x="30" y="160" width="170" height="90" rx="14" fill="#fff" stroke="#94a3b8" stroke-width="2"/><text x="115" y="198" text-anchor="middle" font-size="16" font-weight="700">Proposed turn</text><text x="115" y="222" text-anchor="middle" font-size="12.5" fill="#5a5556">player · NPC · Director</text>
+    <path d="M200 205 L245 205" stroke="#2563eb" stroke-width="2.5" marker-end="url(#aB)"/>
+    <rect x="250" y="160" width="180" height="90" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/><text x="340" y="198" text-anchor="middle" font-size="16" font-weight="700">Trial copy</text><text x="340" y="222" text-anchor="middle" font-size="12.5" fill="#5a5556">run the turn on a clone</text>
+    <path d="M430 205 L475 205" stroke="#2563eb" stroke-width="2.5" marker-end="url(#aB)"/>
+    <rect x="480" y="80" width="400" height="250" rx="16" fill="#fef2f2" stroke="#fca5a5" stroke-width="2"/><text x="680" y="115" text-anchor="middle" font-size="15" font-weight="700" fill="#dc2626" letter-spacing="1.5">PLAYABILITY CHECK</text>
+    <g font-size="13.5"><rect x="505" y="135" width="350" height="40" rx="20" fill="#fff" stroke="#fca5a5"/><text x="680" y="160" text-anchor="middle">search for a route to the solution from here</text>
+    <rect x="505" y="185" width="350" height="40" rx="20" fill="#fff" stroke="#fca5a5"/><text x="680" y="210" text-anchor="middle">replay that route through the real engine</text>
+    <rect x="505" y="235" width="350" height="40" rx="20" fill="#fff" stroke="#fca5a5"/><text x="680" y="260" text-anchor="middle">character plans: preconditions, optional Z3 proof</text>
+    <rect x="505" y="285" width="350" height="32" rx="16" fill="#fff" stroke="#fca5a5"/><text x="680" y="306" text-anchor="middle">re-checked after any change to evidence</text></g>
+    <path d="M880 205 L960 205 L960 120 L1045 120" stroke="#059669" stroke-width="2.5" fill="none" marker-end="url(#aG)"/>
+    <path d="M960 205 L960 300 L1045 300" stroke="#dc2626" stroke-width="2.5" fill="none" marker-end="url(#aR)"/>
+    <text x="1002" y="108" text-anchor="middle" font-size="12.5" fill="#059669" font-weight="700">route exists</text>
+    <text x="1002" y="288" text-anchor="middle" font-size="12.5" fill="#dc2626" font-weight="700">no route</text>
+    <rect x="1050" y="75" width="320" height="90" rx="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/><text x="1210" y="110" text-anchor="middle" font-size="16" font-weight="700">Keep the turn</text><text x="1210" y="134" text-anchor="middle" font-size="12.5" fill="#5a5556">applied, with the check recorded on it</text>
+    <rect x="1050" y="255" width="320" height="90" rx="14" fill="#fff" stroke="#dc2626" stroke-width="2"/><text x="1210" y="290" text-anchor="middle" font-size="16" font-weight="700">Discard the turn</text><text x="1210" y="312" text-anchor="middle" font-size="12.5" fill="#5a5556">nothing changes and no time passes</text><text x="1210" y="330" text-anchor="middle" font-size="12.5" fill="#5a5556">(a character simply picks another plan)</text>
+    <text x="700" y="395" text-anchor="middle" font-size="14" fill="#5a5556">Example: a culprit's plan to burn the ledger is discarded if the ledger is the only remaining way to prove the motive.</text>
+    <text x="700" y="418" text-anchor="middle" font-size="14" fill="#9a9596">Generated cases are certified before play and evidence can only be found, never lost, so every turn passes by construction.</text>
+  </svg>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 9. MYSTERY KERNEL PRIMITIVES -->
+<div class="slide" style="background:var(--bg-warm);">
+  <div class="fade-in delay-1"><span class="tag tag-green">NARRATIVE DESIGN · THE KERNEL</span><h2>Four primitives and a question describe any mystery</h2>
+  <p class="sub">No murder, manor or fixed cast is built in. Settings supply their own nouns and domain rules; the kernel supplies the logic of evidence.</p></div>
+  <div class="grid" style="grid-template-columns:repeat(5,1fr);">
+    <div class="card fade-in delay-2" style="padding:22px;border-top:4px solid var(--blue);"><div class="num" style="color:var(--blue)">BEING</div><div class="ct">Entity</div><p>Anything with identity: people, places, objects, documents, groups — with traits.</p></div>
+    <div class="card fade-in delay-3" style="padding:22px;border-top:4px solid var(--green);"><div class="num" style="color:var(--green)">BECOMING</div><div class="ct">Event</div><p>Happens over a time span at a place, with participants, preconditions, effects — and the attitude that caused it.</p></div>
+    <div class="card fade-in delay-4" style="padding:22px;border-top:4px solid var(--accent);"><div class="num">MIND</div><div class="ct">Attitude</div><p>A stance toward a proposition: believes, knows, wants, fears, intends, feels. Motive, secrets, lies.</p></div>
+    <div class="card fade-in delay-5" style="padding:22px;border-top:4px solid var(--gold);"><div class="num" style="color:var(--gold)">LAW</div><div class="ct">Rule</div><p>How things generally go — strict or a default with exceptions. Commonsense and each setting's domain rules.</p></div>
+    <div class="card fade-in delay-6" style="padding:22px;border-top:4px solid var(--red);"><div class="num" style="color:var(--red)">FRAME</div><div class="ct">Question</div><p>What the player must determine, with a finite set of candidate answers. Solved when exactly one survives.</p></div>
+  </div>
+  <div class="card fade-in delay-6" style="padding:18px 24px;margin-top:14px;">
+    <p style="font-size:15px;"><b style="color:var(--text-primary)">Signs are not primitives.</b> A clue is any observable effect of an event: a trace on an object, a document, a speech (testimony), a behaviour. Reading a sign means reasoning back to its cause. A lie is a speech whose speaker believes otherwise; a staged scene is a physical lie. Minds act on the world; the world changes minds.</p>
+  </div>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 10. SIGN KINDS -->
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-green">LOGIC ONLY WHERE IT ADDS VALUE</span><h2>Clues carry typed facts; the engine works out what they prove</h2>
+  <p class="sub">Models are unreliable at multi-step logic. So the model writes each clue's text plus one small typed fact, and fixed engine code decides which suspects that fact rules out, whether it is true or a lie, and how deep in the case it sits. The model never gets to assert “this clears Rowan”.</p></div>
+  <svg class="dia fade-in delay-2" viewBox="0 0 1400 240" style="flex:0 0 auto;height:30vh;">
+    <rect x="30" y="40" width="300" height="160" rx="14" fill="#faf5ff" stroke="#7c3aed" stroke-width="2"/><text x="180" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#7c3aed" letter-spacing="1.5">MODEL WRITES</text><text x="30" y="24" font-size="12" fill="#9a9596">Example from a generated case set at an Antarctic research station</text>
+    <text x="180" y="104" text-anchor="middle" font-size="14" font-style="italic">“The cut through the heater tape</text><text x="180" y="124" text-anchor="middle" font-size="14" font-style="italic">angles down from right to left.”</text>
+    <rect x="60" y="145" width="240" height="36" rx="18" fill="#fff" stroke="#c4b5fd"/><text x="180" y="168" text-anchor="middle" font-size="13" font-family="ui-monospace,Menlo,monospace">trait: handed = left</text>
+    <path d="M330 120 L400 120" stroke="#059669" stroke-width="2.5" marker-end="url(#aG)"/>
+    <rect x="405" y="40" width="420" height="160" rx="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/><text x="615" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#059669" letter-spacing="1.5">ENGINE CHECKS EACH SUSPECT</text>
+    <g font-size="14"><text x="440" y="106">Park — left-handed</text><text x="790" y="106" text-anchor="end" fill="#059669" font-weight="700">remains</text>
+    <text x="440" y="132">Reyes — right-handed</text><text x="790" y="132" text-anchor="end" fill="#dc2626" font-weight="700">ruled out</text>
+    <text x="440" y="158">Moss — right-handed</text><text x="790" y="158" text-anchor="end" fill="#dc2626" font-weight="700">ruled out</text>
+    <text x="440" y="184">Tanaka — right-handed</text><text x="790" y="184" text-anchor="end" fill="#dc2626" font-weight="700">ruled out</text></g>
+    <path d="M825 120 L895 120" stroke="#059669" stroke-width="2.5" marker-end="url(#aG)"/>
+    <rect x="900" y="40" width="470" height="160" rx="14" fill="#fff" stroke="#e5e2dc" stroke-width="2"/><text x="1135" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#5a5556" letter-spacing="1.5">ALSO COMPUTED</text>
+    <g font-size="14" fill="#1a1718"><text x="1135" y="104" text-anchor="middle">true or a lie? (checked against the hidden history)</text><text x="1135" y="132" text-anchor="middle">how deep? (what must be found or read first)</text><text x="1135" y="160" text-anchor="middle">is it load-bearing? (does the case fall without it?)</text><text x="1135" y="186" text-anchor="middle">does it overturn a lie told earlier?</text></g>
+  </svg>
+  <div class="card fade-in delay-3" style="padding:6px 18px;margin-top:10px;">
+  <table class="data">
+    <tr><th>Fact kind</th><th>Rules out suspects who…</th><th>Example</th></tr>
+    <tr><td><b>place</b></td><td>could not have reached the scene in time (an alibi)</td><td>“Mr Pike sat on the stool the whole hour.”</td></tr>
+    <tr><td><b>time</b></td><td>narrows when the crime happened, for every other check</td><td>the fast surgery clock</td></tr>
+    <tr><td><b>trait · possession</b></td><td>lack the property, or had no access to the item</td><td>a left-handed cut · the only key to the poison</td></tr>
+    <tr><td><b>relation · fact</b></td><td>lack the motive or other fact the clue establishes</td><td>Edmund's audit of Voss's ledgers</td></tr>
+  </table></div>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 11. REFINE -->
+<div class="slide" style="background:var(--bg-warm);">
+  <div class="fade-in delay-1"><span class="tag tag-gold">RECURSIVE REFINEMENT</span><h2>Three operators peel a mystery layer by layer</h2>
+  <p class="sub">A player learns a fact by accessing a sign, reading it and trusting it. Difficulty can only live in those three links — so there are exactly three operators, applied recursively.</p></div>
+  <svg class="dia fade-in delay-2" viewBox="0 0 1400 460">
+    <rect x="30" y="50" width="420" height="220" rx="16" fill="#fff" stroke="#2563eb" stroke-width="2"/><text x="240" y="88" text-anchor="middle" font-size="15" font-weight="700" fill="#2563eb" letter-spacing="2">CONCEAL · ACCESS</text>
+    <text x="240" y="118" text-anchor="middle" font-size="14" fill="#5a5556">the sign gains a precondition</text>
+    <g font-size="13"><rect x="60" y="138" width="170" height="34" rx="17" fill="#eff6ff" stroke="#93c5fd"/><text x="145" y="160" text-anchor="middle">a key, a search</text><rect x="250" y="138" width="170" height="34" rx="17" fill="#eff6ff" stroke="#93c5fd"/><text x="335" y="160" text-anchor="middle">trust, a favour</text>
+    <rect x="60" y="182" width="170" height="34" rx="17" fill="#eff6ff" stroke="#93c5fd"/><text x="145" y="204" text-anchor="middle">the right question</text><rect x="250" y="182" width="170" height="34" rx="17" fill="#eff6ff" stroke="#93c5fd"/><text x="335" y="204" text-anchor="middle">moved, burned</text></g>
+    <text x="240" y="248" text-anchor="middle" font-size="13" fill="#9a9596">Secret · Cover-up · Lock and key · Trade · Topic</text>
+    <rect x="490" y="50" width="420" height="220" rx="16" fill="#fff" stroke="#059669" stroke-width="2"/><text x="700" y="88" text-anchor="middle" font-size="15" font-weight="700" fill="#059669" letter-spacing="2">FRAGMENT · READING</text>
+    <text x="700" y="118" text-anchor="middle" font-size="14" fill="#5a5556">the sign no longer settles it alone</text>
+    <g font-size="13"><rect x="520" y="138" width="360" height="34" rx="17" fill="#ecfdf5" stroke="#86efac"/><text x="700" y="160" text-anchor="middle">needs a second clue or a rule to be read</text>
+    <rect x="520" y="182" width="360" height="34" rx="17" fill="#ecfdf5" stroke="#86efac"/><text x="700" y="204" text-anchor="middle">a decoy candidate also fits the first clue</text></g>
+    <text x="700" y="248" text-anchor="middle" font-size="13" fill="#9a9596">Decoy · Recipe · Tool · Dying message</text>
+    <rect x="950" y="50" width="420" height="220" rx="16" fill="#fff" stroke="#dc2626" stroke-width="2"/><text x="1160" y="88" text-anchor="middle" font-size="15" font-weight="700" fill="#dc2626" letter-spacing="2">MISLEAD · TRUST</text>
+    <text x="1160" y="118" text-anchor="middle" font-size="14" fill="#5a5556">a default points the wrong way</text>
+    <g font-size="13"><rect x="980" y="138" width="360" height="34" rx="17" fill="#fef2f2" stroke="#fca5a5"/><text x="1160" y="160" text-anchor="middle">“people tell the truth” → a false alibi</text>
+    <rect x="980" y="182" width="360" height="34" rx="17" fill="#fef2f2" stroke="#fca5a5"/><text x="1160" y="204" text-anchor="middle">“the nervous one did it” → a red herring</text></g>
+    <text x="1160" y="248" text-anchor="middle" font-size="13" fill="#9a9596">Lie · Staged scene · Frame-up · Time trick</text>
+    <rect x="200" y="310" width="1000" height="118" rx="16" fill="#1a1718"/>
+    <text x="700" y="346" text-anchor="middle" font-size="15" font-weight="700" fill="#fcd34d" letter-spacing="2">TWO LAWS</text>
+    <text x="700" y="376" text-anchor="middle" font-size="16" fill="#fff"><tspan font-weight="700">Output preserved:</tspan> the refined chain still delivers the same fact, never earlier, and settles nothing else early.</text>
+    <text x="700" y="406" text-anchor="middle" font-size="16" fill="#fff"><tspan font-weight="700">Justified:</tspan> someone did it for a reason — so each refinement is a story beat, and it leaves new signs to refine.</text>
+  </svg>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 12. GENERATION LOOP -->
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-gold">STORY GENERATION</span><h2>Code decides where; the model decides how and why</h2>
+  <p class="sub">Generation starts from a trivial, certified case and deepens it one justified beat at a time. Every step is checked by code and reviewed by a second model before it is kept.</p></div>
+  <svg class="dia fade-in delay-2" viewBox="0 0 1400 480">
+    <rect x="30" y="170" width="170" height="100" rx="14" fill="#fff" stroke="#d97706" stroke-width="2"/><text x="115" y="205" text-anchor="middle" font-size="16" font-weight="700">Seed</text><text x="115" y="228" text-anchor="middle" font-size="12.5" fill="#5a5556">setting · cast · truth</text><text x="115" y="246" text-anchor="middle" font-size="12.5" fill="#5a5556">trivial surface</text>
+    <path d="M200 220 L255 220" stroke="#d97706" stroke-width="2.5" marker-end="url(#aO)"/>
+    <rect x="260" y="140" width="230" height="160" rx="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/><text x="375" y="172" text-anchor="middle" font-size="15" font-weight="700" fill="#059669">1 · SCHEDULE (code)</text>
+    <g font-size="12.5" fill="#1a1718"><text x="375" y="200" text-anchor="middle">twist first, then motive</text><text x="375" y="220" text-anchor="middle">and means, a red herring,</text><text x="375" y="240" text-anchor="middle">then deepen the shallowest</text><text x="375" y="260" text-anchor="middle">thread via its critical clues</text></g>
+    <path d="M490 220 L545 220" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#aP)"/>
+    <rect x="550" y="140" width="230" height="160" rx="14" fill="#faf5ff" stroke="#7c3aed" stroke-width="2"/><text x="665" y="172" text-anchor="middle" font-size="15" font-weight="700" fill="#7c3aed">2 · STORY STEP (Opus)</text>
+    <g font-size="12.5" fill="#1a1718"><text x="665" y="200" text-anchor="middle">“who would hide this,</text><text x="665" y="220" text-anchor="middle">and why?” → a block,</text><text x="665" y="240" text-anchor="middle">its events and attitudes,</text><text x="665" y="260" text-anchor="middle">new signs · ×2 in parallel</text></g>
+    <path d="M780 220 L835 220" stroke="#059669" stroke-width="2.5" marker-end="url(#aG)"/>
+    <rect x="840" y="140" width="230" height="160" rx="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/><text x="955" y="172" text-anchor="middle" font-size="15" font-weight="700" fill="#059669">3 · CERTIFY (code)</text>
+    <g font-size="12.5" fill="#1a1718"><text x="955" y="200" text-anchor="middle">consistent, justified,</text><text x="955" y="220" text-anchor="middle">unique, fair, the twist holds,</text><text x="955" y="240" text-anchor="middle">the thread got deeper,</text><text x="955" y="260" text-anchor="middle">reasons for every unlock</text></g>
+    <path d="M1070 220 L1125 220" stroke="#dc2626" stroke-width="2.5" marker-end="url(#aR)"/>
+    <rect x="1130" y="140" width="240" height="160" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/><text x="1250" y="172" text-anchor="middle" font-size="15" font-weight="700" fill="#dc2626">4 · REVIEW (Sonnet)</text>
+    <g font-size="12.5" fill="#1a1718"><text x="1250" y="200" text-anchor="middle">plausible unlocks? in</text><text x="1250" y="220" text-anchor="middle">character? neutral clues?</text><text x="1250" y="240" text-anchor="middle">contradictions? best</text><text x="1250" y="260" text-anchor="middle">passing candidate wins</text></g>
+    <path d="M1250 300 L1250 380 L375 380 L375 305" stroke="#059669" stroke-width="2.5" fill="none" marker-end="url(#aG)"/>
+    <text x="810" y="400" text-anchor="middle" font-size="14" fill="#059669" font-weight="600">commit and repeat until depth, twist, herring, motive and means are met</text>
+    <path d="M955 140 L955 95 L665 95 L665 135" stroke="#dc2626" stroke-width="2" fill="none" marker-end="url(#aR)" stroke-dasharray="6 4"/>
+    <text x="810" y="85" text-anchor="middle" font-size="13" fill="#dc2626">rejected → feedback in story terms (“the false alibi has no defeater”), one retry round</text>
+    <text x="700" y="455" text-anchor="middle" font-size="14" fill="#9a9596">Cached prompts · structured output via tool calls · two candidates per step in parallel · ~8–10 minutes per case</text>
+  </svg>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 13. THREADS -->
+<div class="slide" style="background:var(--bg-warm);">
+  <div class="fade-in delay-1"><span class="tag tag-green">HOW DEPTH IS MEASURED</span><h2>One thread per suspect</h2>
+  <p class="sub">A case is solved when every innocent suspect has been ruled out and the culprit is confirmed. Each of those is a <b style="color:var(--text-primary)">thread</b>, and its depth is how many discovery steps it takes to settle. The case is solved when its <i>deepest</i> thread is settled, so that sets the solve depth. The generator always deepens the thread that is settled <i>soonest</i>, so no suspect can be cleared on the first page and every suspect takes real work.</p></div>
+  <svg class="dia fade-in delay-2" viewBox="0 0 1400 330">
+    <text x="30" y="30" font-size="13" font-weight="700" fill="#9a9596" letter-spacing="1.5">A SUPPER AT VALE MANOR · DISCOVERY STEPS NEEDED TO SETTLE EACH THREAD</text>
+    <g font-size="14">
+      <text x="30" y="85" font-weight="700">Clara Vale ruled out</text><rect x="300" y="64" width="700" height="30" rx="15" fill="#fff" stroke="#e5e2dc"/><rect x="300" y="64" width="500" height="30" rx="15" fill="#c4b5fd"/><text x="1015" y="85" font-weight="700" fill="#7c3aed">5</text>
+      <text x="30" y="140" font-weight="700">Ada Finch ruled out</text><rect x="300" y="119" width="700" height="30" rx="15" fill="#fff" stroke="#e5e2dc"/><rect x="300" y="119" width="500" height="30" rx="15" fill="#c4b5fd"/><text x="1015" y="140" font-weight="700" fill="#7c3aed">5</text>
+      <text x="30" y="195" font-weight="700">Rowan Pike ruled out</text><rect x="300" y="174" width="700" height="30" rx="15" fill="#fff" stroke="#e5e2dc"/><rect x="300" y="174" width="600" height="30" rx="15" fill="#c4b5fd"/><text x="1015" y="195" font-weight="700" fill="#7c3aed">6</text>
+      <text x="30" y="250" font-weight="700">Silas Voss confirmed</text><rect x="300" y="229" width="700" height="30" rx="15" fill="#fff" stroke="#e5e2dc"/><rect x="300" y="229" width="700" height="30" rx="15" fill="#fcd34d"/><text x="1015" y="250" font-weight="700" fill="#d97706">7</text>
+    </g>
+    <rect x="1060" y="60" width="310" height="200" rx="14" fill="#1a1718"/>
+    <text x="1215" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="#fcd34d" letter-spacing="1.5">SOLVE DEPTH 7</text>
+    <text x="1215" y="135" text-anchor="middle" font-size="14" fill="#fff">the culprit is the last thread:</text>
+    <text x="1215" y="158" text-anchor="middle" font-size="14" fill="#fff">his forged day-book clears him</text>
+    <text x="1215" y="181" text-anchor="middle" font-size="14" fill="#fff">until step 7 overturns it</text>
+    <text x="1215" y="222" text-anchor="middle" font-size="13" fill="#d6d3d1">24 clues · 35 events · 2 lies · 1 herring</text>
+    <text x="700" y="305" text-anchor="middle" font-size="14" fill="#5a5556">To deepen a thread, the generator refines the clues that currently settle it — only those can make it later.</text>
+  </svg>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 13b. THE CASE: SETTING AND CAST -->
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-gold">A GENERATED CASE · THE SETTING</span><h2>A Supper at Vale Manor</h2>
+  <p class="sub">Bellweather, an English village in the 1920s: a square, Vale Manor, the Rook &amp; Lantern inn, a greenhouse, St Alden's vestry and Dr Marsh's surgery. The cast and places are fixed; the generator invented everyone's secrets, the night's events and every clue. Edmund Vale is found dead in his bed at dawn. <b style="color:var(--text-primary)">Who poisoned him?</b></p></div>
+  <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:14px;">
+    <div class="card fade-in delay-2" style="padding:16px 18px;border-left:4px solid var(--red);"><div class="num" style="color:var(--red)">SUSPECT · THE CULPRIT</div><div class="ct" style="font-size:17px;margin-bottom:4px;">Silas Voss, estate solicitor</div><p style="font-size:13.5px;">Left-handed; keeps the estate ledgers. Has quietly drawn on estate funds for two years and fears Edmund's audit will ruin him.</p></div>
+    <div class="card fade-in delay-2" style="padding:16px 18px;"><div class="num">SUSPECT</div><div class="ct" style="font-size:17px;margin-bottom:4px;">Clara Vale, the victim's sister</div><p style="font-size:13.5px;">Edmund's heir. Secretly slipped out to collect a private letter from the inn, and hides it the next morning — the red herring.</p></div>
+    <div class="card fade-in delay-3" style="padding:16px 18px;"><div class="num">SUSPECT</div><div class="ct" style="font-size:17px;margin-bottom:4px;">Rowan Pike, groundskeeper</div><p style="font-size:13.5px;">Just dismissed by Edmund; has access to the greenhouse weedkiller. Cut his hand badly that evening.</p></div>
+    <div class="card fade-in delay-3" style="padding:16px 18px;"><div class="num">SUSPECT</div><div class="ct" style="font-size:17px;margin-bottom:4px;">Ada Finch, innkeeper</div><p style="font-size:13.5px;">Edmund's tenant. Promised Clara to say nothing of her visit — so she lies about the night and hides the bar slate.</p></div>
+    <div class="card fade-in delay-4" style="padding:16px 18px;"><div class="num" style="color:var(--blue)">WITNESS</div><div class="ct" style="font-size:17px;margin-bottom:4px;">Dr Iris Marsh, village doctor</div><p style="font-size:13.5px;">Stitched Rowan's hand at the greenhouse. Keeps her surgery clock ten minutes fast, which skews her own records.</p></div>
+    <div class="card fade-in delay-4" style="padding:16px 18px;"><div class="num" style="color:var(--blue)">WITNESS</div><div class="ct" style="font-size:17px;margin-bottom:4px;">Arthur Bell, constable</div><p style="font-size:13.5px;">Sat over pints at the Rook when he should have walked his rounds, and is ashamed of it. Receives your accusation.</p></div>
+  </div>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 13c. THE CASE: WHAT HAPPENED -->
+<div class="slide" style="background:var(--bg-warm);">
+  <div class="fade-in delay-1"><span class="tag tag-gold">A GENERATED CASE · THE HIDDEN HISTORY</span><h2>What really happened that night</h2>
+  <p class="sub">The true history the player must reconstruct. Every event has a cause in someone's motive or fear, and every clue in the case is left behind by one of these events.</p></div>
+  <svg class="dia fade-in delay-2" viewBox="0 0 1400 440">
+    <path d="M60 60 L60 410" stroke="#e5e2dc" stroke-width="3"/>
+    <g font-size="14">
+      <circle cx="60" cy="70" r="7" fill="#dc2626"/><text x="85" y="75"><tspan font-weight="700" fill="#dc2626">18:20</tspan>  Silas fills a small glass phial from the weedkiller tin in the empty greenhouse.</text>
+      <circle cx="60" cy="110" r="7" fill="#94a3b8"/><text x="85" y="115"><tspan font-weight="700">19:00</tspan>  Edmund hosts supper for Clara and Silas; afterwards he keeps Silas in the study to question the accounts.</text>
+      <circle cx="60" cy="150" r="7" fill="#94a3b8"/><text x="85" y="155"><tspan font-weight="700">21:00</tspan>  Dr Marsh stitches Rowan's cut hand at the greenhouse. Clara collects a private letter at the inn.</text>
+      <circle cx="60" cy="190" r="7" fill="#dc2626"/><text x="85" y="195"><tspan font-weight="700" fill="#dc2626">21:10</tspan>  While Edmund steps out, Silas tips the weedkiller into the study brandy decanter.</text>
+      <circle cx="60" cy="230" r="7" fill="#dc2626"/><text x="85" y="235"><tspan font-weight="700" fill="#dc2626">21:52</tspan>  At the vestry, Silas writes day-book entries timed from 21:00 — a forged alibi — then burns the phial in the stove.</text>
+      <circle cx="60" cy="270" r="7" fill="#d97706"/><text x="85" y="275"><tspan font-weight="700" fill="#d97706">21:55</tspan>  Clara asks Ada to tell no one she came in tonight.</text>
+      <circle cx="60" cy="310" r="7" fill="#94a3b8"/><text x="85" y="315"><tspan font-weight="700">23:00</tspan>  Edmund drinks his usual brandy nightcap. He dies of arsenic poisoning around one in the morning.</text>
+      <circle cx="60" cy="350" r="7" fill="#d97706"/><text x="85" y="355"><tspan font-weight="700" fill="#d97706">05:30</tspan>  Clara finds him, and locks his pencilled audit sheets in her bureau. At dawn Ada hides the bar slate in the cellar.</text>
+      <circle cx="60" cy="390" r="7" fill="#2563eb"/><text x="85" y="395"><tspan font-weight="700" fill="#2563eb">08:00</tspan>  The investigation begins. Ada says the night was quiet; Dr Marsh won't talk without the constable's word.</text>
+    </g>
+    <g font-size="12.5"><circle cx="1110" cy="70" r="6" fill="#dc2626"/><text x="1125" y="75">the crime and its cover-up</text>
+    <circle cx="1110" cy="96" r="6" fill="#d97706"/><text x="1125" y="101">innocent secrets that mislead</text>
+    <circle cx="1110" cy="122" r="6" fill="#2563eb"/><text x="1125" y="127">the morning, when play starts</text></g>
+  </svg>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 14. WORKED PEEL -->
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-gold">A GENERATED CASE, AS PLAYED</span><h2>A Supper at Vale Manor — the peel</h2>
+  <p class="sub">Truth: while Edmund steps out, Silas Voss tips weedkiller into the study brandy decanter to stop Edmund's audit. On the surface, everything clears him.</p></div>
+  <svg class="dia fade-in delay-2" viewBox="0 0 1400 470">
+    <g font-size="13">
+    <rect x="30" y="30" width="300" height="400" rx="16" fill="#fef2f2" stroke="#fca5a5" stroke-width="2"/><text x="180" y="62" text-anchor="middle" font-size="14" font-weight="700" fill="#dc2626" letter-spacing="1.5">SURFACE · DEPTH 0</text>
+    <rect x="50" y="80" width="260" height="62" rx="12" fill="#fff" stroke="#dc2626" stroke-width="1.5"/><text x="180" y="104" text-anchor="middle" font-weight="700">Silas's vestry day-book</text><text x="180" y="124" text-anchor="middle" fill="#dc2626">a forged alibi — LIE</text>
+    <rect x="50" y="152" width="260" height="62" rx="12" fill="#fff" stroke="#dc2626" stroke-width="1.5"/><text x="180" y="176" text-anchor="middle" font-weight="700">Ada: “quiet as the grave”</text><text x="180" y="196" text-anchor="middle" fill="#dc2626">covering for Miss Vale — LIE</text>
+    <rect x="50" y="224" width="260" height="62" rx="12" fill="#fff" stroke="#d97706" stroke-width="1.5"/><text x="180" y="248" text-anchor="middle" font-weight="700">Miss Vale at the grate</text><text x="180" y="268" text-anchor="middle" fill="#d97706">looks guilty — RED HERRING</text>
+    <rect x="50" y="296" width="260" height="62" rx="12" fill="#fff" stroke="#94a3b8" stroke-width="1.5"/><text x="180" y="320" text-anchor="middle" font-weight="700">The surgery door</text><text x="180" y="340" text-anchor="middle" fill="#5a5556">Dr Marsh won't let you in</text>
+    <text x="180" y="395" text-anchor="middle" font-size="13" fill="#5a5556">Surface suspects: Clara, Rowan, Ada</text><text x="180" y="413" text-anchor="middle" font-size="13" fill="#dc2626" font-weight="600">— never Silas</text>
+    <rect x="370" y="30" width="300" height="400" rx="16" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/><text x="520" y="62" text-anchor="middle" font-size="14" font-weight="700" fill="#2563eb" letter-spacing="1.5">DEPTH 1–3</text>
+    <rect x="390" y="80" width="260" height="62" rx="12" fill="#fff" stroke="#2563eb" stroke-width="1.5"/><text x="520" y="104" text-anchor="middle" font-weight="700">A page from Bell's pocket-book</text><text x="520" y="124" text-anchor="middle" fill="#5a5556">gets you past Dr Marsh</text>
+    <rect x="390" y="152" width="260" height="62" rx="12" fill="#fff" stroke="#2563eb" stroke-width="1.5"/><text x="520" y="176" text-anchor="middle" font-weight="700">The slate behind the bar</text><text x="520" y="196" text-anchor="middle" fill="#5a5556">… and a clean oblong behind it</text>
+    <rect x="390" y="224" width="260" height="62" rx="12" fill="#fff" stroke="#2563eb" stroke-width="1.5"/><text x="520" y="248" text-anchor="middle" font-weight="700">The barrel-chute flap</text><text x="520" y="268" text-anchor="middle" fill="#5a5556">unbolted, fresh mud</text>
+    <rect x="390" y="296" width="260" height="62" rx="12" fill="#fff" stroke="#2563eb" stroke-width="1.5"/><text x="520" y="320" text-anchor="middle" font-weight="700">The surgery wall clock</text><text x="520" y="340" text-anchor="middle" fill="#5a5556">read with what Dr Marsh says</text>
+    <rect x="710" y="30" width="300" height="400" rx="16" fill="#ecfdf5" stroke="#86efac" stroke-width="2"/><text x="860" y="62" text-anchor="middle" font-size="14" font-weight="700" fill="#059669" letter-spacing="1.5">DEPTH 4–6</text>
+    <rect x="730" y="80" width="260" height="62" rx="12" fill="#fff" stroke="#059669" stroke-width="1.5"/><text x="860" y="104" text-anchor="middle" font-weight="700">The tab slate in the cellar</text><text x="860" y="124" text-anchor="middle" fill="#5a5556">breaks Ada's story</text>
+    <rect x="730" y="152" width="260" height="62" rx="12" fill="#fff" stroke="#059669" stroke-width="1.5"/><text x="860" y="176" text-anchor="middle" font-weight="700">Dr Marsh's case-book</text><text x="860" y="196" text-anchor="middle" fill="#5a5556">times Rowan's stitches</text>
+    <rect x="730" y="224" width="260" height="62" rx="12" fill="#fff" stroke="#059669" stroke-width="1.5"/><text x="860" y="248" text-anchor="middle" font-weight="700">The letter from London</text><text x="860" y="268" text-anchor="middle" fill="#5a5556">explains Miss Vale's secret</text>
+    <rect x="730" y="296" width="260" height="62" rx="12" fill="#fff" stroke="#059669" stroke-width="1.5"/><text x="860" y="320" text-anchor="middle" font-weight="700">Glass in the vestry stove</text><text x="860" y="340" text-anchor="middle" fill="#5a5556">a stopper, half-burned — means</text>
+    <rect x="1050" y="30" width="320" height="400" rx="16" fill="#1a1718"/><text x="1210" y="62" text-anchor="middle" font-size="14" font-weight="700" fill="#fcd34d" letter-spacing="1.5">DEPTH 7 · THE TURN</text>
+    <rect x="1070" y="90" width="280" height="80" rx="12" fill="#2d2528" stroke="#fcd34d" stroke-width="1.5"/><text x="1210" y="122" text-anchor="middle" fill="#fff" font-weight="700">Edmund's pencilled sheets</text><text x="1210" y="146" text-anchor="middle" fill="#d6d3d1">ledger vs bank book — motive</text>
+    <rect x="1070" y="185" width="280" height="80" rx="12" fill="#2d2528" stroke="#fcd34d" stroke-width="1.5"/><text x="1210" y="217" text-anchor="middle" fill="#fff" font-weight="700">Rowan on the study window</text><text x="1210" y="241" text-anchor="middle" fill="#d6d3d1">the vestry lamp — the day-book falls</text>
+    <text x="1210" y="310" text-anchor="middle" fill="#fcd34d" font-size="15" font-weight="700">Only Silas remains.</text>
+    <text x="1210" y="340" text-anchor="middle" fill="#d6d3d1" font-size="13">Bell accepts the case only with</text><text x="1210" y="360" text-anchor="middle" fill="#d6d3d1" font-size="13">evidence you hold — no lie relied on.</text>
+    </g>
+    <path d="M330 230 L365 230" stroke="#2563eb" stroke-width="2.5" marker-end="url(#aB)"/><path d="M670 230 L705 230" stroke="#059669" stroke-width="2.5" marker-end="url(#aG)"/><path d="M1010 230 L1045 230" stroke="#d97706" stroke-width="2.5" marker-end="url(#aO)"/>
+  </svg>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 15. BRIDGE -->
+<div class="slide" style="background:var(--bg-warm);">
+  <div class="fade-in delay-1"><span class="tag tag-blue">INTO THE GAME</span><h2>Certified records become a playable case</h2>
+  <p class="sub">Generated cases use the Bellweather setting, so the original cast, places, portraits and voices carry over. A bridge compiles the records into the case interface the engine already plays.</p></div>
+  <div class="card fade-in delay-2" style="padding:8px 18px;margin-top:16px;">
+  <table class="data">
+    <tr><th>Case record</th><th>In play</th></tr>
+    <tr><td><b>true-history events</b></td><td>executed before the morning; everyone present remembers them — memories for dialogue</td></tr>
+    <tr><td><b>attitudes</b></td><td>each character's beliefs, goals and fears, sourced to the events they caused</td></tr>
+    <tr><td><b>signs with <code>requires</code></b></td><td>hidden in their room until earned; they open only where they are, with the case's in-world reason</td></tr>
+    <tr><td><b>signs with <code>needs</code></b></td><td>“You put it together” reveals the reading once its prerequisite is in the notebook</td></tr>
+    <tr><td><b>testimony</b></td><td>accounts a character can give once earned; lies are flagged so the character lies in character</td></tr>
+    <tr><td><b>evening accounts</b></td><td>every suspect answers “where were you?” — vague, claimless, the culprit's false</td></tr>
+    <tr><td><b>showing evidence</b></td><td>a defeater forces a remembered concession; a herring's explanation draws out the secret; otherwise a stance by relation</td></tr>
+    <tr><td><b>accusation</b></td><td>the kernel filters suspects using only the evidence the player holds; Bell explains what is missing</td></tr>
+  </table></div>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 16. EVIDENCE OF QUALITY -->
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-green">WHAT IS VERIFIED</span><h2>Guarantees, and how we know</h2></div>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="card fade-in delay-2" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--accent);">277</div><div class="ct">JS tests</div><p>engine, claims, characters, Director, generation, kernel, UI — plus 10 Python</p></div>
+    <div class="card fade-in delay-3" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--green);">443</div><div class="ct">cases in parity</div><p>Python and JS checkers agree on every generated case, 0 mismatches</p></div>
+    <div class="card fade-in delay-4" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--gold);">5</div><div class="ct">playable deep cases</div><p>depth 4–7; each auto-played: gated start, solved only by the truth, every wrong suspect rejected, save/reload</p></div>
+    <div class="card fade-in delay-5" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--blue);">~40%</div><div class="ct">bad steps caught</div><p>code-valid steps the plausibility review rejected for real common-sense faults</p></div>
+  </div>
+  <div class="card fade-in delay-6" style="padding:18px 24px;margin-top:6px;"><p style="font-size:15px;"><b style="color:var(--text-primary)">Honest limits.</b> The kernel certifies fair, solvable, deep and misleading — not fun. Characters know only what the case records, so reactions to unrelated evidence are thin. No take/use/combine yet, no art for new objects, questions are “who” only, and generation still takes 8–10 minutes per case.</p></div>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 17. NEXT STEPS -->
+<div class="slide" style="background:var(--bg-warm);">
+  <div class="fade-in delay-1"><span class="tag tag-purple">TOWARD THE NORTH STAR</span><h2>Next steps</h2>
+  <p class="sub"><b style="color:var(--text-primary)">North star:</b> an endless supply of Christie-grade mysteries in any setting, with characters who live and talk believably, and an engine that guarantees every case stays fair and solvable however the player behaves.</p></div>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="card fade-in delay-2" style="padding:20px;"><div class="num">01 · CONTENT</div><div class="ct">Richer cases</div><p>Public facts of the morning, per-character reactions to the clues that concern them, more witness detail — all certified.</p></div>
+    <div class="card fade-in delay-2" style="padding:20px;"><div class="num">02 · PLAY</div><div class="ct">Adventure verbs</div><p>Take, use, combine, give, tone; an inventory; a dead-end check in certification.</p></div>
+    <div class="card fade-in delay-3" style="padding:20px;"><div class="num">03 · SPEED</div><div class="ct">5–7 min, then instant</div><p>Parallel steps and smaller prompts; a background pool so a fresh case is always ready.</p></div>
+    <div class="card fade-in delay-3" style="padding:20px;"><div class="num">04 · LIBRARY</div><div class="ct">Blocks as code</div><p>The block library compiled and tested, with the five design examples as acceptance cases.</p></div>
+    <div class="card fade-in delay-4" style="padding:20px;"><div class="num">05 · QUESTIONS</div><div class="ct">Beyond “who”</div><p>How, why, when, identity and “what happened”, with matching accusation forms.</p></div>
+    <div class="card fade-in delay-4" style="padding:20px;"><div class="num">06 · LIVES</div><div class="ct">Culprits who act</div><p>Autonomous plans driven by the case's attitudes — a culprit who fears a witness acts — with the per-turn check back on.</p></div>
+    <div class="card fade-in delay-5" style="padding:20px;"><div class="num">07 · WORLDS</div><div class="ct">New settings</div><p>Generated setting ontologies and art, from ocean liners to generation ships.</p></div>
+    <div class="card fade-in delay-5" style="padding:20px;"><div class="num">08 · EVALUATION</div><div class="ct">Is it good?</div><p>Blind-solve agents and player studies: does the twist mislead, does the solution satisfy?</p></div>
+  </div>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 18. TAKEAWAYS -->
+<div class="slide">
+  <div style="display:flex;flex-direction:column;justify-content:center;height:100%;max-width:1150px;margin:0 auto;">
+    <span class="tag tag-purple fade-in delay-1" style="align-self:flex-start;">TAKEAWAYS</span>
+    <div style="display:flex;flex-direction:column;gap:22px;margin-top:12px;">
+      <div class="fade-in delay-2" style="display:flex;gap:18px;"><div style="font-size:30px;font-weight:800;width:28px;flex-shrink:0;text-align:center;color:var(--accent);">1</div><div><div class="ct" style="font-size:24px;">A mystery is four primitives and a question.</div><p style="font-size:17px;">Entities, events, attitudes and rules describe any setting; clues are just effects of events.</p></div></div>
+      <div class="fade-in delay-3" style="display:flex;gap:18px;"><div style="font-size:30px;font-weight:800;width:28px;flex-shrink:0;text-align:center;color:var(--green);">2</div><div><div class="ct" style="font-size:24px;">Depth comes from justified refinement.</div><p style="font-size:17px;">Conceal, Fragment, Mislead — each a story beat with a cause — applied to the shallowest thread.</p></div></div>
+      <div class="fade-in delay-4" style="display:flex;gap:18px;"><div style="font-size:30px;font-weight:800;width:28px;flex-shrink:0;text-align:center;color:var(--gold);">3</div><div><div class="ct" style="font-size:24px;">Models imagine; code decides.</div><p style="font-size:17px;">The model never states what a clue proves or what happens next; the engine computes it and certifies it.</p></div></div>
+      <div class="fade-in delay-5" style="display:flex;gap:18px;"><div style="font-size:30px;font-weight:800;width:28px;flex-shrink:0;text-align:center;color:var(--red);">4</div><div><div class="ct" style="font-size:24px;">Playability is a checked invariant.</div><p style="font-size:17px;">Every turn is tried on a copy and kept only if the case can still be solved.</p></div></div>
+    </div>
+  </div>
+  <div class="slide-number"></div>
+</div>
+
+<script>
+let current=0;
+function getVisible(){return Array.from(document.querySelectorAll('.slide')).filter(s=>s.dataset.hidden!=='true');}
+function showSlide(n){
+  const all=document.querySelectorAll('.slide');const vis=getVisible();
+  all[current].classList.remove('active');
+  const ci=vis.indexOf(all[current]);
+  let ti=n>current?Math.min(ci+1,vis.length-1):Math.max(ci-1,0);
+  const target=vis[ti];current=Array.from(all).indexOf(target);
+  target.classList.add('active');
+  const bar=document.querySelector('.progress-bar');if(bar)bar.style.width=((ti+1)/vis.length*100)+'%';
+  vis.forEach((s,i)=>{const num=s.querySelector('.slide-number');if(num)num.textContent=(i+1)+' / '+vis.length;});
+  target.querySelectorAll('.fade-in').forEach(el=>{el.style.animation='none';el.offsetHeight;el.style.animation='';});
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();showSlide(current+1);}
+  if(e.key==='ArrowLeft'){e.preventDefault();showSlide(current-1);}
+  if(e.key==='f'||e.key==='F'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+});
+document.addEventListener('click',e=>{
+  if(e.target.closest('button,a,input,select,[onclick]'))return;
+  if(e.clientX/window.innerWidth<0.33)showSlide(current-1);else showSlide(current+1);
+});
+(function(){
+  const all=document.querySelectorAll('.slide');all.forEach(s=>s.classList.remove('active'));
+  const vis=getVisible();const want=Math.max(0,Math.min(vis.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
+  if(vis.length){vis[want].classList.add('active');current=Array.from(all).indexOf(vis[want]);}
+  vis.forEach((s,i)=>{const num=s.querySelector('.slide-number');if(num)num.textContent=(i+1)+' / '+vis.length;});
+  const bar=document.querySelector('.progress-bar');if(bar)bar.style.width=((want+1)/vis.length*100)+'%';
+})();
+</script>
+</body>
+</html>

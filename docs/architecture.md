@@ -18,6 +18,15 @@ The simulation is split into three layers so that content and generation can gro
 
 This is the foundation for the roadmap's harder phases: generation produces a new Case `model`; verification checks the event log + action catalog; and the optional character-turn pipeline now proposes bounded conversation decisions behind validation. See [Character turns](character-turns.md) for the implemented contract.
 
+## Generated kernel cases
+
+A second case family is compiled from certified mystery-kernel records (see [the mystery kernel](mystery-kernel.md)).
+`cases/kernel-case.mjs` turns a record set into the same `ActiveCase` interface: the true history executes as
+prehistory, attitudes become beliefs, signs become gated objects and earned testimony, and accusations are graded by
+`dist/mk/kernel.mjs` over held evidence. `engine.mjs` rebuilds these cases from the records carried in the save
+(`world.caseRecords`), so they survive reload. The runtime calls an optional `afterAction` hook after inspect, ask,
+present and arrival, which opens earned leads at their own location and reveals completed readings.
+
 ## Wording-only dialogue, critic, and audit
 
 This section describes the retired delivery mode for compatibility with saved audits. The UI now has one character-reasoning toggle; when off, all new responses are scripted without model calls. Character reasoning is a separate opt-in path: its accepted speech, decisions, attributed player memories, belief stance and dialogue state are engine events, with the full audit attached to the decision. It uses a 30-second combined budget and atomic trial execution. Neither mode is a symbolic proof of coherence.

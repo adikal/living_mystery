@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.13 · 21 September 2026**
+**Living technical report · Edition 0.14 · 26 September 2026**
 
 ### Abstract
 
@@ -136,3 +136,17 @@ malformed structure and never admits ungrounded claims; the engine certifies eve
 structured feedback, and falls back to the deterministic deep case. A small operational fix lets the local
 LLM proxy self-heal a stale cached credential by rebuilding its client once on failure. See
 `docs/depth-operators.md`.
+
+### Edition 0.14: a general mystery kernel, recursive refinement, and playable generated cases
+
+Case generation was redesigned from first principles as a setting-independent **mystery kernel**: four primitives
+(entity, event, attitude, rule) plus a question, a fixed set of sign kinds whose meaning is computed by code, and one
+recursive operator family — **Conceal, Fragment, Mislead** — under two laws (the refined chain delivers the same
+proposition, and every refinement is justified by an event caused by someone's attitude). Misdirection is defined as a
+defeated default. A refinement harness lets code choose where a case gets harder and check every step while a
+language model writes the story beat and a second model reviews its plausibility. The kernel is implemented in
+JavaScript (`dist/mk/kernel.mjs`) and agrees with the harness's Python checker on every generated case. Run in the
+Bellweather setting with the original cast, map and art, the generator produced five certified cases at solve depth
+4–7 (14–24 clues, 27–35 history events, a certified twist, lies and red herrings), which play in the existing game
+through a bridge (`dist/cases/kernel-case.mjs`) including free-text character dialogue grounded in each character's
+memories and beliefs. See `docs/mystery-kernel.md`.

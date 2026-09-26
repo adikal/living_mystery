@@ -1,0 +1,1183 @@
+{
+ "setting": {
+  "name": "Bellweather",
+  "era": "An English village, 1920s",
+  "summary": "A small village of a square, a manor, an inn, a greenhouse, a church vestry and a doctor's surgery. Edmund Vale of Vale Manor is dead; the investigation begins the next morning.",
+  "places": [
+   {
+    "id": "square",
+    "name": "Village square"
+   },
+   {
+    "id": "manor",
+    "name": "Vale Manor"
+   },
+   {
+    "id": "inn",
+    "name": "The Rook & Lantern"
+   },
+   {
+    "id": "greenhouse",
+    "name": "The greenhouse"
+   },
+   {
+    "id": "vestry",
+    "name": "St. Alden\u2019s vestry"
+   },
+   {
+    "id": "surgery",
+    "name": "Dr Marsh\u2019s surgery"
+   }
+  ],
+  "links": [
+   {
+    "a": "square",
+    "b": "manor",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "inn",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "vestry",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "surgery",
+    "minutes": 3
+   },
+   {
+    "a": "manor",
+    "b": "greenhouse",
+    "minutes": 3
+   },
+   {
+    "a": "inn",
+    "b": "greenhouse",
+    "minutes": 6
+   }
+  ]
+ },
+ "rules": [
+  {
+   "id": "r_travel",
+   "text": "Getting between any two places in Bellweather takes at least the walking time along the lanes; nobody can be in two places at once.",
+   "knowledge": "common"
+  },
+  {
+   "id": "r_blow",
+   "text": "When a person faces someone and strikes with the right hand, the blow lands on the victim's left side. A left-handed blow lands on the victim's right side.",
+   "knowledge": "common"
+  },
+  {
+   "id": "r_cape_cover",
+   "text": "A village constable who is first on the scene of a death covers the body with his own cape until the doctor arrives.",
+   "knowledge": "common"
+  }
+ ],
+ "people": [
+  {
+   "id": "clara",
+   "name": "Clara Vale",
+   "role": "The victim\u2019s sister",
+   "traits": {
+    "handed": "right",
+    "inherits": "yes"
+   },
+   "pronoun": "she",
+   "address": "Miss Vale",
+   "voice": "Composed and guarded; courteous but says little, quietly deflecting private matters. Speaks briefly.",
+   "public": "Edmund\u2019s younger sister. She manages the manor and has asked that its private affairs remain private.",
+   "home": "manor"
+  },
+  {
+   "id": "rowan",
+   "name": "Rowan Pike",
+   "role": "The groundskeeper",
+   "traits": {
+    "handed": "right",
+    "injury": "cut left hand"
+   },
+   "pronoun": "he",
+   "address": "Mr Pike",
+   "voice": "A plain-spoken working man; blunt and practical, short sentences, no flourishes.",
+   "public": "The manor\u2019s groundskeeper. His bandaged hand and green coat have become subjects of village conversation.",
+   "home": "greenhouse"
+  },
+  {
+   "id": "silas",
+   "name": "Silas Voss",
+   "role": "The estate solicitor",
+   "traits": {
+    "handed": "left",
+    "skill": "bookkeeping"
+   },
+   "pronoun": "he",
+   "address": "Mr Voss",
+   "voice": "A precise, careful solicitor; measured and a touch formal, but concise \u2014 never rambling.",
+   "public": "A precise, courteous solicitor who keeps an office in the vestry. He handled Edmund\u2019s estate accounts.",
+   "home": "vestry"
+  },
+  {
+   "id": "ada",
+   "name": "Ada Finch",
+   "role": "The innkeeper",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "she",
+   "address": "Mrs Finch",
+   "voice": "A warm, chatty innkeeper; colloquial and quick to share impressions, though she runs on a little.",
+   "public": "The Rook & Lantern\u2019s proprietor. She knows everyone\u2019s habits and is certain she saw something useful last night.",
+   "home": "inn"
+  },
+  {
+   "id": "iris",
+   "name": "Dr Iris Marsh",
+   "role": "The village doctor",
+   "traits": {
+    "skill": "medicine"
+   },
+   "pronoun": "she",
+   "address": "Dr Marsh",
+   "voice": "Measured and clinical; direct and concise, stays to what she observed.",
+   "public": "Methodical and direct. She examined Edmund\u2019s body and treated a patient at the greenhouse last night.",
+   "home": "surgery"
+  },
+  {
+   "id": "bell",
+   "name": "Arthur Bell",
+   "role": "The village constable",
+   "traits": {},
+   "pronoun": "he",
+   "address": "Constable Bell",
+   "voice": "A plain, gruff country constable; terse and matter-of-fact, everyday speech \u2014 never bureaucratic or long-winded.",
+   "public": "Bell has secured the manor and asked you to investigate. He will hear an accusation when you can explain it with evidence.",
+   "home": "square"
+  },
+  {
+   "id": "edmund",
+   "name": "Edmund Vale",
+   "role": "The victim",
+   "traits": {},
+   "pronoun": "he",
+   "address": "Mr Vale",
+   "public": "Master of Vale Manor, found dead the morning the investigation begins.",
+   "home": "manor"
+  }
+ ],
+ "objects": [
+  {
+   "id": "letter",
+   "name": "Half-burned letter",
+   "desc": "A letter in Edmund's hand, mostly burned in the study grate; a few lines about estate figures survive."
+  },
+  {
+   "id": "candlestick",
+   "name": "Brass candlestick",
+   "desc": "A heavy candlestick from the study mantel, found on the hearthrug."
+  },
+  {
+   "id": "ledger",
+   "name": "Estate ledger",
+   "desc": "The account book of Vale Manor, kept by the estate solicitor."
+  },
+  {
+   "id": "cape",
+   "name": "Constable's cape",
+   "desc": "A dark wool police cape with a numbered collar badge, left hanging in the inn taproom."
+  },
+  {
+   "id": "daybook",
+   "name": "Office day-book",
+   "desc": "Silas Voss's daily record of office work, kept open on his vestry desk."
+  },
+  {
+   "id": "pm_notes",
+   "name": "Post-mortem notes",
+   "desc": "Dr Marsh's written findings on Edmund Vale's body, prepared for the coroner."
+  },
+  {
+   "id": "dustsheet",
+   "name": "Drawing-room dust sheet",
+   "desc": "A linen dust sheet taken off the drawing-room sofa and spread over Edmund's body."
+  }
+ ],
+ "relations": [
+  {
+   "a": "clara",
+   "rel": "heir_of",
+   "b": "edmund"
+  },
+  {
+   "a": "clara",
+   "rel": "quarrelled_with",
+   "b": "edmund"
+  },
+  {
+   "a": "silas",
+   "rel": "solicitor_to",
+   "b": "edmund"
+  },
+  {
+   "a": "silas",
+   "rel": "embezzled_from",
+   "b": "edmund"
+  },
+  {
+   "a": "rowan",
+   "rel": "employed_by",
+   "b": "edmund"
+  }
+ ],
+ "possession": [
+  {
+   "person": "silas",
+   "item": "ledger"
+  },
+  {
+   "person": "clara",
+   "item": "candlestick"
+  },
+  {
+   "person": "silas",
+   "item": "candlestick"
+  },
+  {
+   "person": "bell",
+   "item": "cape"
+  },
+  {
+   "person": "silas",
+   "item": "daybook"
+  }
+ ],
+ "question": {
+  "text": "Who killed Edmund Vale?",
+  "candidates": [
+   {
+    "id": "c_clara",
+    "label": "Clara Vale, his sister and heir",
+    "facts": {
+     "actor": "clara"
+    }
+   },
+   {
+    "id": "c_rowan",
+    "label": "Rowan Pike, the groundskeeper",
+    "facts": {
+     "actor": "rowan"
+    }
+   },
+   {
+    "id": "c_silas",
+    "label": "Silas Voss, the estate solicitor",
+    "facts": {
+     "actor": "silas"
+    }
+   },
+   {
+    "id": "c_ada",
+    "label": "Ada Finch, the innkeeper",
+    "facts": {
+     "actor": "ada"
+    }
+   }
+  ],
+  "truth": "c_silas",
+  "crime": {
+   "event": "e_murder",
+   "place": "manor",
+   "window": [
+    1290,
+    1320
+   ]
+  }
+ },
+ "attitudes": [
+  {
+   "id": "a_edmund_knows",
+   "agent": "edmund",
+   "mode": "knows",
+   "content": "The estate ledger does not reconcile; money has been diverted.",
+   "because": []
+  },
+  {
+   "id": "a_edmund_intends",
+   "agent": "edmund",
+   "mode": "intends",
+   "content": "To confront Silas and put the matter before the county law society.",
+   "because": [
+    "a_edmund_knows"
+   ]
+  },
+  {
+   "id": "a_silas_fears",
+   "agent": "silas",
+   "mode": "fears",
+   "content": "Ruin and prison if Edmund exposes the embezzlement.",
+   "because": []
+  },
+  {
+   "id": "a_silas_intends",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "To silence Edmund and destroy his letter before it is posted.",
+   "because": [
+    "a_silas_fears"
+   ]
+  },
+  {
+   "id": "a_silas_work",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "To keep ordinary office hours so that nothing seems amiss.",
+   "because": [
+    "a_silas_fears"
+   ]
+  },
+  {
+   "id": "a_clara_wants",
+   "agent": "clara",
+   "mode": "wants",
+   "content": "An evening away from the manor after quarrelling with Edmund.",
+   "because": []
+  },
+  {
+   "id": "a_rowan_work",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "To finish potting the late cuttings.",
+   "because": []
+  },
+  {
+   "id": "a_iris_duty",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "To attend any patient who sends for her.",
+   "because": []
+  },
+  {
+   "id": "a_ada_work",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "To keep the inn running through the evening.",
+   "because": []
+  },
+  {
+   "id": "a_bell_rest",
+   "agent": "bell",
+   "mode": "wants",
+   "content": "A pint after his rounds.",
+   "because": []
+  },
+  {
+   "id": "a_clara_home",
+   "agent": "clara",
+   "mode": "intends",
+   "content": "To go home to bed and settle things with Edmund in the morning.",
+   "because": [
+    "a_clara_wants"
+   ]
+  },
+  {
+   "id": "a_bell_shame",
+   "agent": "bell",
+   "mode": "fears",
+   "content": "That the village will learn he sat in the Rook through hours he should have spent walking the late beat.",
+   "because": [
+    "a_bell_rest"
+   ]
+  },
+  {
+   "id": "a_clara_private",
+   "agent": "clara",
+   "mode": "wants",
+   "content": "That nobody gossip about her crying alone at the inn after the quarrel.",
+   "because": [
+    "a_clara_wants"
+   ]
+  },
+  {
+   "id": "a_ada_loyal",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "To keep her promise to Miss Vale and say nothing of her evening unless it is already known.",
+   "because": [
+    "a_ada_work"
+   ]
+  },
+  {
+   "id": "a_silas_alibi",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "To make his office day-book show he was at his desk through the evening.",
+   "because": [
+    "a_silas_fears"
+   ]
+  },
+  {
+   "id": "a_clara_fear_letter",
+   "agent": "clara",
+   "mode": "fears",
+   "content": "That the letter's line about her allowance will make her, the heir who quarrelled with Edmund, look guilty.",
+   "because": [
+    "a_clara_wants"
+   ]
+  },
+  {
+   "id": "a_iris_coroner",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "To keep her post-mortem findings for the coroner and release them only on the constable's authority.",
+   "because": [
+    "a_iris_duty"
+   ]
+  },
+  {
+   "id": "a_clara_guard",
+   "agent": "clara",
+   "mode": "intends",
+   "content": "To keep her writing case out of anyone's hands until she is sure she is not suspected.",
+   "because": [
+    "a_clara_fear_letter"
+   ]
+  },
+  {
+   "id": "a_iris_precise",
+   "agent": "iris",
+   "mode": "believes",
+   "content": "A doctor should vouch only for what she observed; she did not look at a clock during the call.",
+   "because": [
+    "a_iris_duty"
+   ]
+  },
+  {
+   "id": "a_iris_slate",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "To keep the night's door slate with her coroner's papers, since her own movements bear on the inquest.",
+   "because": [
+    "a_iris_coroner"
+   ]
+  },
+  {
+   "id": "a_iris_glimpse",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "Not to name a gentleman on a lamp-lit glimpse unless something solid shows she did not imagine it.",
+   "because": [
+    "a_iris_precise"
+   ]
+  },
+  {
+   "id": "a_bell_cordon",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "To keep everyone out of the manor and its garden until he trusts whoever is asking.",
+   "because": [
+    "a_bell_shame"
+   ]
+  },
+  {
+   "id": "a_ada_spare",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "To spare Constable Bell the gossip of his cape being left in her taproom, and keep it out of sight until someone asks after it.",
+   "because": [
+    "a_ada_work"
+   ]
+  },
+  {
+   "id": "a_ada_hops",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "To cover the bare peg so no regular asks whose coat hung there all evening.",
+   "because": [
+    "a_ada_spare"
+   ]
+  },
+  {
+   "id": "a_bell_decency",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "To cover Mr Vale decently at once, even though his cape is gone and he must use whatever the house has.",
+   "because": [
+    "a_bell_shame"
+   ]
+  }
+ ],
+ "events": [
+  {
+   "id": "e_edmund_study",
+   "type": "write",
+   "agent": "edmund",
+   "others": [],
+   "place": "manor",
+   "start": 1080,
+   "end": 1275,
+   "causedBy": "a_edmund_intends",
+   "summary": "Edmund writes a letter about the ledger discrepancies in his study."
+  },
+  {
+   "id": "e_silas_office",
+   "type": "work",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1080,
+   "end": 1262,
+   "causedBy": "a_silas_work",
+   "summary": "Silas works in his vestry office."
+  },
+  {
+   "id": "e_confront",
+   "type": "meeting",
+   "agent": "silas",
+   "others": [
+    "edmund"
+   ],
+   "place": "manor",
+   "start": 1275,
+   "end": 1295,
+   "causedBy": "a_silas_intends",
+   "summary": "Silas calls at the study; Edmund confronts him about the accounts."
+  },
+  {
+   "id": "e_murder",
+   "type": "murder",
+   "agent": "silas",
+   "others": [
+    "edmund"
+   ],
+   "place": "manor",
+   "start": 1295,
+   "end": 1305,
+   "causedBy": "a_silas_intends",
+   "summary": "Silas strikes Edmund with the brass candlestick."
+  },
+  {
+   "id": "e_burn",
+   "type": "destroy",
+   "agent": "silas",
+   "others": [],
+   "place": "manor",
+   "start": 1305,
+   "end": 1311,
+   "causedBy": "a_silas_intends",
+   "summary": "Silas throws Edmund's letter into the grate and leaves before it fully burns."
+  },
+  {
+   "id": "e_silas_back",
+   "type": "work",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1335,
+   "end": 1440,
+   "causedBy": "a_silas_work",
+   "summary": "Silas works on in his office, and its lamps burn late."
+  },
+  {
+   "id": "e_clara_inn",
+   "type": "dine",
+   "agent": "clara",
+   "others": [],
+   "place": "inn",
+   "start": 1260,
+   "end": 1380,
+   "causedBy": "a_clara_wants",
+   "summary": "Clara dines alone in the inn's private parlour."
+  },
+  {
+   "id": "e_clara_home",
+   "type": "sleep",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1395,
+   "end": 1795,
+   "causedBy": "a_clara_home",
+   "summary": "Clara returns to the manor and retires without disturbing Edmund's closed study."
+  },
+  {
+   "id": "e_discover",
+   "type": "discover",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1800,
+   "end": 1810,
+   "causedBy": "a_clara_home",
+   "summary": "Clara finds Edmund dead in his study at dawn."
+  },
+  {
+   "id": "e_rowan_work",
+   "type": "work",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1080,
+   "end": 1250,
+   "causedBy": "a_rowan_work",
+   "summary": "Rowan pots cuttings in the greenhouse."
+  },
+  {
+   "id": "e_rowan_cut",
+   "type": "accident",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1250,
+   "end": 1255,
+   "causedBy": "nature",
+   "summary": "A pane gives way and cuts Rowan's left hand badly."
+  },
+  {
+   "id": "e_iris_surgery",
+   "type": "work",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1080,
+   "end": 1265,
+   "causedBy": "a_iris_duty",
+   "summary": "Iris sees evening patients at the surgery until sent for."
+  },
+  {
+   "id": "e_treat",
+   "type": "treat",
+   "agent": "iris",
+   "others": [
+    "rowan"
+   ],
+   "place": "greenhouse",
+   "start": 1280,
+   "end": 1340,
+   "causedBy": "a_iris_duty",
+   "summary": "Iris stitches and bandages Rowan's hand in the greenhouse."
+  },
+  {
+   "id": "e_rowan_rest",
+   "type": "rest",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1340,
+   "end": 1440,
+   "causedBy": "a_rowan_work",
+   "summary": "Rowan rests in his greenhouse quarters."
+  },
+  {
+   "id": "e_iris_back",
+   "type": "work",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1355,
+   "end": 1440,
+   "causedBy": "a_iris_duty",
+   "summary": "Iris returns to the surgery and writes up her notes."
+  },
+  {
+   "id": "e_ada_inn",
+   "type": "work",
+   "agent": "ada",
+   "others": [],
+   "place": "inn",
+   "start": 1080,
+   "end": 1440,
+   "causedBy": "a_ada_work",
+   "summary": "Ada serves the taproom and parlour all evening."
+  },
+  {
+   "id": "e_bell_inn",
+   "type": "drink",
+   "agent": "bell",
+   "others": [],
+   "place": "inn",
+   "start": 1260,
+   "end": 1400,
+   "causedBy": "a_bell_rest",
+   "summary": "Bell drinks in the taproom after his rounds."
+  },
+  {
+   "id": "e_clara_asks",
+   "type": "talk",
+   "agent": "clara",
+   "others": [
+    "ada"
+   ],
+   "place": "inn",
+   "start": 1375,
+   "end": 1380,
+   "causedBy": "a_clara_private",
+   "summary": "Leaving the parlour, Clara quietly asks Ada to keep her evening to herself."
+  },
+  {
+   "id": "e_bell_cape",
+   "type": "leave",
+   "agent": "bell",
+   "others": [],
+   "place": "inn",
+   "start": 1395,
+   "end": 1400,
+   "causedBy": "a_bell_shame",
+   "summary": "Bell hurries out of the taproom unseen and leaves his cape on the peg."
+  },
+  {
+   "id": "e_silas_daybook",
+   "type": "forge",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1325,
+   "end": 1335,
+   "causedBy": "a_silas_alibi",
+   "summary": "Silas writes timed day-book entries for 21:30 to 22:00, as if he had worked at his desk throughout."
+  },
+  {
+   "id": "e_clara_letter",
+   "type": "conceal",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1810,
+   "end": 1815,
+   "causedBy": "a_clara_fear_letter",
+   "summary": "Clara pulls the unburnt corner of Edmund's letter from the grate and hides it in her writing case."
+  },
+  {
+   "id": "e_postmortem",
+   "type": "examine",
+   "agent": "iris",
+   "others": [],
+   "place": "manor",
+   "start": 1830,
+   "end": 1870,
+   "causedBy": "a_iris_coroner",
+   "summary": "Iris examines Edmund's body in the study and writes up her findings for the coroner."
+  },
+  {
+   "id": "e_clara_guard",
+   "type": "conceal",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1815,
+   "end": 1825,
+   "causedBy": "a_clara_guard",
+   "summary": "Clara hurriedly wipes the soot off her fingers, misses her cuff, and locks her writing case, keeping it with her."
+  },
+  {
+   "id": "e_iris_slate_out",
+   "type": "write",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1264,
+   "end": 1265,
+   "causedBy": "a_iris_duty",
+   "summary": "Leaving on the greenhouse call, Iris chalks where she has gone on the surgery door slate."
+  },
+  {
+   "id": "e_iris_slate_back",
+   "type": "write",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1355,
+   "end": 1356,
+   "causedBy": "a_iris_duty",
+   "summary": "Back at the surgery, Iris chalks her return time under the earlier line."
+  },
+  {
+   "id": "e_bell_point",
+   "type": "sign",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1255,
+   "end": 1257,
+   "causedBy": "a_bell_rest",
+   "summary": "Bell signs his beat card at the square pillar box at 20:55, then heads for the Rook."
+  },
+  {
+   "id": "e_iris_slate_in",
+   "type": "move",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1820,
+   "end": 1822,
+   "causedBy": "a_iris_slate",
+   "summary": "Before leaving for the manor, Iris unhooks the unwiped door slate and files it with her coroner's papers."
+  },
+  {
+   "id": "e_silas_exit",
+   "type": "leave",
+   "agent": "silas",
+   "others": [],
+   "place": "manor",
+   "start": 1311,
+   "end": 1312,
+   "causedBy": "a_silas_intends",
+   "summary": "Silas slips out of the garden door; his cane and shoes sink into the watered border under the terrace lamp."
+  },
+  {
+   "id": "e_bell_cordon",
+   "type": "guard",
+   "agent": "bell",
+   "others": [],
+   "place": "manor",
+   "start": 1818,
+   "end": 1830,
+   "causedBy": "a_bell_cordon",
+   "summary": "Bell secures the manor and ropes off the garden door and terrace border."
+  },
+  {
+   "id": "e_ada_hide_cape",
+   "type": "conceal",
+   "agent": "ada",
+   "others": [],
+   "place": "inn",
+   "start": 1440,
+   "end": 1445,
+   "causedBy": "a_ada_spare",
+   "summary": "At closing, Ada lifts Bell's cape off the taproom peg and hides it under her aprons in the scullery."
+  },
+  {
+   "id": "e_ada_hops",
+   "type": "conceal",
+   "agent": "ada",
+   "others": [],
+   "place": "inn",
+   "start": 1445,
+   "end": 1448,
+   "causedBy": "a_ada_hops",
+   "summary": "Ada hangs a dried hop bine over the bare peg by the settle, hiding the pale patch."
+  },
+  {
+   "id": "e_bell_nocape",
+   "type": "guard",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1840,
+   "end": 1900,
+   "causedBy": "a_bell_shame",
+   "summary": "Bell stands his morning post in the square in tunic alone, cold and evasive about his missing cape."
+  },
+  {
+   "id": "e_bell_sheet",
+   "type": "cover",
+   "agent": "bell",
+   "others": [],
+   "place": "manor",
+   "start": 1815,
+   "end": 1818,
+   "causedBy": "a_bell_decency",
+   "summary": "With no cape, Bell drags a dust sheet off the drawing-room sofa and spreads it over Edmund's body."
+  }
+ ],
+ "signs": [
+  {
+   "id": "s_surface_ada",
+   "kind": "testimony",
+   "speaker": "ada",
+   "surface": true,
+   "title": "Ada Finch on the evening",
+   "text": "Oh, I was run off my feet all evening, love, taproom and parlour both - never had a moment to sit down. Can't say I noticed much else with all that going on, truth be told.",
+   "ask": "Where were you last night?",
+   "deceptive": false
+  },
+  {
+   "id": "s_surface_silas",
+   "kind": "testimony",
+   "speaker": "silas",
+   "surface": true,
+   "title": "Silas Voss on the evening",
+   "text": "I was at my desk in the vestry office the whole evening, working through the accounts by lamplight, as my day-book will show. I kept to my usual hours and saw no one after I finished at the church.",
+   "ask": "Where were you last night?",
+   "deceptive": true
+  },
+  {
+   "id": "s_surface_rowan",
+   "kind": "testimony",
+   "speaker": "rowan",
+   "surface": true,
+   "title": "Rowan Pike on the evening",
+   "text": "Was in the greenhouse, potting up the late cuttings. Cut my hand on a broken pane, got it bandaged, then stopped in my quarters there the rest of the night.",
+   "ask": "Where were you last night?",
+   "deceptive": false
+  },
+  {
+   "id": "s_surface_clara",
+   "kind": "testimony",
+   "speaker": "clara",
+   "surface": true,
+   "title": "Clara Vale on the evening",
+   "text": "I took a quiet supper alone in the parlour at the inn, then came straight home to the manor and went up to bed. I didn't look in on Edmund's study - I meant to sort things out with him this morning.",
+   "ask": "Where were you last night?",
+   "deceptive": false
+  },
+  {
+   "id": "s_iris_rowan",
+   "kind": "testimony",
+   "title": "Dr Marsh on the greenhouse call",
+   "text": "\"I left the surgery as soon as I was sent for and went straight to the greenhouse. I didn't look at a clock; I was busy. Mr Pike's left palm was laid open by glass. Eleven stitches. I stayed until he was steady, then walked straight back. He never left the bench the whole time I was there. He'd lost too much blood to go anywhere.\"",
+   "at": "surgery",
+   "speaker": "iris",
+   "source": "e_treat",
+   "claim": {
+    "kind": "place",
+    "person": "rowan",
+    "place": "greenhouse",
+    "start": 1280,
+    "end": 1340
+   },
+   "needs": [
+    "s_slate",
+    "r_travel"
+   ],
+   "reading": "The door slate shows she went out at 21:05 and was back at 22:55. The walk each way takes ten minutes, so she was at the greenhouse with Pike from about 21:15 to 22:45. That covers the whole of the treatment, from 21:20 to 22:40.",
+   "because": [
+    "a_iris_precise"
+   ],
+   "ask": "Dr Marsh, what happened when you were called to the greenhouse?"
+  },
+  {
+   "id": "s_bell_ada",
+   "kind": "testimony",
+   "title": "Constable Bell's evening",
+   "text": "\"Right. That's mine. Signed my first point and walked straight into the Rook. Should've been walking the beat. Don't know the clock time. Stayed till twenty past eleven. Mrs Finch was behind that bar the whole time, never stepped out. Saw Miss Vale go through to the little parlour too.\"",
+   "at": "square",
+   "speaker": "bell",
+   "source": "e_bell_inn",
+   "claim": {
+    "kind": "place",
+    "person": "ada",
+    "place": "inn",
+    "start": 1260,
+    "end": 1400
+   },
+   "requires": [
+    "s_cape"
+   ],
+   "unlock": "When you hand Bell the cape he left at the Rook, he knows you've found out where he spent the evening and stops dodging the question.",
+   "needs": [
+    "s_beatcard",
+    "r_travel"
+   ],
+   "reading": "The beat card shows Bell signed at the square pillar box at 20:55. The square is three minutes' walk from the Rook, so he was in the taproom by 21:00. From then until 23:20 he could see Mrs Finch.",
+   "ask": "Constable Bell, how did you spend your evening?"
+  },
+  {
+   "id": "s_ada_clara",
+   "kind": "testimony",
+   "title": "Mrs Finch on the parlour guest",
+   "text": "\"Well, if the constable's said it... Miss Vale came in at nine, took the little parlour, had the soup and the chop and sat with her tea till gone eleven. I was in and out with the pot every quarter hour, so I'd know. She'd been crying, poor thing, and asked me not to say.\"",
+   "at": "inn",
+   "speaker": "ada",
+   "source": "e_clara_inn",
+   "claim": {
+    "kind": "place",
+    "person": "clara",
+    "place": "inn",
+    "start": 1260,
+    "end": 1380
+   },
+   "requires": [
+    "s_bell_ada"
+   ],
+   "unlock": "Mrs Finch promised Miss Vale she'd keep quiet. Once you tell her the constable has already said Miss Vale was in the parlour, she thinks the promise no longer matters.",
+   "ask": "Mrs Finch, what can you tell me about your guest in the parlour?"
+  },
+  {
+   "id": "s_cape",
+   "kind": "item",
+   "title": "A cape from the scullery",
+   "text": "Mrs Finch goes into the scullery and brings out a dark wool police cape from under a pile of aprons. The collar badge is numbered. It smells of pipe smoke and beer, and something stiff is folded into the inside pocket.",
+   "at": "inn",
+   "source": "e_ada_hide_cape",
+   "requires": [
+    "s_peg_thread"
+   ],
+   "unlock": "You show Mrs Finch the blue wool from the bare peg. She has no wish to lie about her own taproom, so she admits she put away what was left hanging there and fetches it from the scullery."
+  },
+  {
+   "id": "s_daybook",
+   "kind": "document",
+   "title": "The vestry office day-book",
+   "text": "Mr Voss's day-book lies open on his desk. In his neat hand: '9.30 p.m. Hollins conveyance, fair copy begun. 9.45 Copy finished; rent summary posted. 10.00 Ledger, Michaelmas quarter, to close.' The entries above, for the afternoon, are just as tidy.",
+   "at": "vestry",
+   "source": "e_silas_daybook",
+   "claim": {
+    "kind": "place",
+    "person": "silas",
+    "place": "vestry",
+    "start": 1290,
+    "end": 1320
+   }
+  },
+  {
+   "id": "s_iris_window",
+   "kind": "testimony",
+   "title": "Dr Marsh at the greenhouse door",
+   "text": "\"His office? No. At about ten to ten I stepped out of the greenhouse door to empty the basin. Someone came out of the manor's garden door and passed under the terrace lamp. He wore a grey homburg and carried a silver-topped cane. That was Mr Voss. He crossed the border and made quickly for the lane. I took it for a late call on a client.\"",
+   "at": "surgery",
+   "speaker": "iris",
+   "source": "e_burn",
+   "requires": [
+    "s_daybook",
+    "s_border"
+   ],
+   "unlock": "Dr Marsh won't name a man on a lamp-lit glimpse. You tell her the day-book puts Mr Voss at his desk, then describe the cane holes and shoe prints in the border under that lamp. She's satisfied she didn't imagine him, and she says what she saw.",
+   "claim": {
+    "kind": "place",
+    "person": "silas",
+    "place": "manor",
+    "start": 1308,
+    "end": 1312
+   },
+   "defeats": [
+    "s_daybook"
+   ],
+   "ask": "Dr Marsh, what did you see at the greenhouse door?"
+  },
+  {
+   "id": "s_letter",
+   "kind": "document",
+   "title": "A scorched corner of paper",
+   "text": "A corner of notepaper in Edmund's hand, browned at the edges: '...cannot let Voss's handling of the Michaelmas accounts pass. Near four hundred pounds unaccounted for... I shall put it before the county law society... Clara's allowance must wait until...' The rest is ash.",
+   "at": "manor",
+   "source": "e_clara_letter",
+   "requires": [
+    "s_ada_clara"
+   ],
+   "unlock": "Miss Vale hid the scrap because of the line about her allowance. Once Mrs Finch has vouched for her whole evening at the inn, she is no longer afraid of it and takes it out of her writing case.",
+   "claim": {
+    "kind": "relation",
+    "a": "silas",
+    "rel": "embezzled_from",
+    "b": "edmund"
+   }
+  },
+  {
+   "id": "s_postmortem",
+   "kind": "document",
+   "title": "Dr Marsh's post-mortem notes",
+   "text": "'Single depressed fracture to the right temple, above the ear. Blow delivered from in front and slightly above. Flecks of brass in the wound. No other injuries. No sign that the deceased turned away.'",
+   "at": "surgery",
+   "source": "e_postmortem",
+   "requires": [
+    "s_bell_ada"
+   ],
+   "unlock": "Dr Marsh keeps her findings for the coroner and releases them only on the constable's say-so. Once Bell stops dodging and is cooperating, he authorises it and she hands over the notes.",
+   "needs": [
+    "r_blow"
+   ],
+   "reading": "The blow came from in front and landed on Edmund's right temple. By the rule of how a facing blow falls, it was struck left-handed.",
+   "claim": {
+    "kind": "trait",
+    "trait": "handed",
+    "value": "left"
+   }
+  },
+  {
+   "id": "s_clara_case",
+   "kind": "behavior",
+   "title": "Miss Vale and her writing case",
+   "text": "Miss Vale receives you in the morning room with a small leather writing case held on her lap, and she keeps a hand on it the whole time. There is a grey smear of ash on her right cuff. When the study grate comes up, she looks away and asks whether you would like tea.",
+   "at": "manor",
+   "source": "e_clara_guard",
+   "about": "clara",
+   "explainedBy": [
+    "s_letter"
+   ]
+  },
+  {
+   "id": "s_slate",
+   "kind": "trace",
+   "title": "The surgery door slate",
+   "text": "The small blackboard from the surgery door, now lying among Dr Marsh's coroner's papers. The chalk has not been wiped. In a brisk hand: 'Out: Vale greenhouse, 9.05 p.m.' Beneath it, in the same chalk: 'Returned 10.55. I.M.'",
+   "at": "surgery",
+   "source": "e_iris_slate_in",
+   "requires": [
+    "s_bell_ada"
+   ],
+   "unlock": "Dr Marsh has put the slate with her papers for the coroner and gives them out only on the constable's authority. Once Bell is cooperating, he authorises it and she hands the slate over."
+  },
+  {
+   "id": "s_beatcard",
+   "kind": "record",
+   "title": "A beat card in the cape pocket",
+   "text": "A folded police beat card from the cape's inside pocket, dated last night. 'Square, pillar box: 8.55 p.m. A.B.' is initialled in pencil. The later points, 'Greenhouse lane 10.30' and 'Church gate 11.30', have been left blank.",
+   "at": "inn",
+   "source": "e_bell_point",
+   "requires": [
+    "s_cape"
+   ],
+   "unlock": "The card is folded in the inside pocket of the cape; you find it when you take the cape down."
+  },
+  {
+   "id": "s_border",
+   "kind": "trace",
+   "title": "The border by the garden door",
+   "text": "The border below the terrace lamp was watered at dusk and is still soft. It holds a line of narrow heel prints from a town shoe, heading for the lane gate. Beside them, at every second step, is a small round hole ringed by a crisp metal rim.",
+   "at": "manor",
+   "source": "e_silas_exit",
+   "requires": [
+    "s_bell_ada"
+   ],
+   "unlock": "Bell has roped off the garden door. Once he has stopped dodging and is cooperating, he lifts the rope and lets you look at the terrace border."
+  },
+  {
+   "id": "s_peg_thread",
+   "kind": "trace",
+   "title": "The peg behind the hops",
+   "text": "A dried hop bine hangs on the wall by the settle. When you lift it, you find a wooden peg with nothing on it. Around the peg the wall is yellow with pipe smoke, except for a long, narrow pale patch that hangs down from it. A few fibres of dark blue wool are caught on a splinter under the peg's head.",
+   "at": "inn",
+   "source": "e_ada_hide_cape",
+   "requires": [
+    "s_bell_shoulders"
+   ],
+   "unlock": "Bell has plainly lost his cape and won't say where. Since the Rook is where a man sheds a coat, you search the taproom pegs and lift the hop bine that hangs over the one by the settle."
+  },
+  {
+   "id": "s_bell_shoulders",
+   "kind": "behavior",
+   "title": "The constable in the morning chill",
+   "text": "Constable Bell stands by the pillar box in his tunic alone, though there is frost on the grass. He keeps rubbing his upper arms. When you remark on the cold, he says he's warm enough and turns the talk back to the manor.",
+   "at": "square",
+   "source": "e_bell_nocape",
+   "about": "bell",
+   "explainedBy": [
+    "s_cape"
+   ],
+   "requires": [
+    "s_study_sheet"
+   ],
+   "unlock": "The sheet in the study means the constable came to the manor without his cape. So you go and find him at his post in the square and watch how he is standing up to the frost, rather than taking his word that he's warm enough."
+  },
+  {
+   "id": "s_study_sheet",
+   "kind": "trace",
+   "title": "The covering in the study",
+   "text": "Edmund Vale lies on the study floor under a linen dust sheet. It is creased from the drawing-room sofa and has a sofa-shaped grey outline of dust on it. Fluff trails across the hall from the drawing-room door. Nothing else has been laid over him.",
+   "at": "manor",
+   "source": "e_bell_sheet",
+   "needs": [
+    "r_cape_cover"
+   ],
+   "reading": "The constable was the first official at the scene, and he would normally have covered the body with his own cape. Since a sofa sheet had to be used instead, he did not have his cape with him at dawn."
+  }
+ ],
+ "id": "mk-bw-letter",
+ "title": "The Half-Burned Letter",
+ "synopsis": "Edmund Vale was found dead in his study at Vale Manor."
+}

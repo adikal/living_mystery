@@ -424,3 +424,38 @@ test('In-room disclosure groups objects into sections and hides gated leads unti
  ui.run("act({type:'inspect',object:'vessel'});render()");
  assert.match(ui.node('#app').innerHTML,/a faint tray ring/,'the next lead appears once its prerequisite is examined');
 });
+
+test('A generated kernel case plays in the Bellweather UI: case suspects, no method field, hidden leads, case topics',()=>{
+ const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-bw-pair.json',import.meta.url),'utf8'));
+ const ui=adapter(null,{llmActive:()=>false});
+ ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
+ assert.equal(ui.run('session.world.caseId'),'mk-bw-pair');
+ assert.ok(ui.run('CASE.kernel'),'the runtime case is the kernel case');
+ const surface=records.signs.find(s=>s.kind!=='testimony'&&!(s.requires||[]).length);
+ ui.run(`act({type:'move',to:${JSON.stringify(surface.at)}});act({type:'inspect',object:${JSON.stringify(surface.id)}})`);
+ ui.click('accusation');
+ const form=ui.node('#modal').innerHTML;
+ for(const h of records.question.candidates)assert.match(form,new RegExp(`value="${h.facts.actor}"`),'every candidate is accusable');
+ assert.doesNotMatch(form,/name="method"/,'no method picker for a who-question');
+ const hidden=records.signs.find(s=>s.kind!=='testimony'&&(s.requires||[]).length);
+ ui.run(`act({type:'move',to:${JSON.stringify(hidden.at)}});actionGroup='inspect';render()`);
+ assert.ok(!ui.node('#app').innerHTML.includes(`data-id="${hidden.id}"`),'a gated clue is hidden until earned');
+ assert.deepEqual(JSON.parse(ui.run('JSON.stringify(topicsFor("bell"))')).map(([t])=>t),['case','night'],'Bell briefs the detective');
+ assert.deepEqual(JSON.parse(ui.run('JSON.stringify(topicsFor("clara"))')).map(([t])=>t),['night']);
+});
+
+test('Every UI mode and inspector tab renders for a generated kernel case, before and after play',()=>{
+ const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-bw-poison.json',import.meta.url),'utf8'));
+ const ui=adapter(null,{llmActive:()=>false});
+ ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
+ const surface=records.signs.find(s=>s.kind!=='testimony'&&!(s.requires||[]).length);
+ ui.run(`act({type:'move',to:${JSON.stringify(surface.at)}});act({type:'inspect',object:${JSON.stringify(surface.id)}})`);
+ for(const code of ["mode='game';notebook='evidence';render()","notebook='people';render()","notebook='notes';render()",
+   "mode='reasoning';reasonSuspect=null;render()","reasonSuspect='silas';render()",
+   "mode='inspector';inspectorTab='world';render()","inspectorTab='timeline';render()","inspectorTab='missed';missedRevealed=true;render()",
+   "detailPanel='character';person='ada';personTab='profile';render()","personTab='memories';render()"])
+  assert.doesNotThrow(()=>ui.run(code),code);
+ const restored=adapter(ui.saved(),{llmActive:()=>false});
+ assert.equal(restored.run('session.world.caseId'),'mk-bw-poison');
+ assert.match(restored.node('#app').innerHTML,/Vale Manor|Rook/);
+});

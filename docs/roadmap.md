@@ -206,3 +206,20 @@ Every declared route is independently replayed. This milestone does not establis
 3. Add social acquisition, appointment-dependent evidence, explicit recovery routes and contingent investigation search. Validate robustness against bounded autonomous disruptions, beyond one successful replay.
 4. Compose more distinct evidence-production sequences and relationships, with rejection diagnostics and bounded repair. Use symbolic planning when it adds measurable value over the finite sampler.
 5. Broaden to new casts and maps after those contracts hold. Apply cached artwork and generation cost budgets during preparation; runtime image generation remains unnecessary.
+
+## North star and next steps (September 2026)
+
+North star: an endless supply of mysteries as rich as Christie's, in any setting, whose characters live and talk
+believably, and where the engine guarantees every case stays fair and solvable however the player behaves.
+
+1. **Richer case content from the generator**: the public facts of the morning (who found the body, what the village
+   knows), per-character reactions to the clues that concern them, and more witness detail, all certified.
+2. **Adventure verbs**: take, use, combine, give, and tone, with an inventory and a dead-end check in certification.
+3. **Generation speed and scale**: 5–7 minutes per case (parallel steps, smaller prompts), and a pool of cases
+   generated in the background so the game can offer a fresh one instantly.
+4. **Blocks as code**: the block library compiled and tested, with the five design-note examples as acceptance cases.
+5. **Beyond "who"**: how, why, when, identity and "what happened" questions in play, with matching accusation forms.
+6. **Living characters in generated cases**: daily lives and autonomous plans driven by the case's attitudes (a culprit
+   who fears a witness acts), re-admitted by the step search because such plans can change evidence.
+7. **New settings**: generate setting ontologies and art, not only Bellweather.
+8. **Evaluation**: blind-solve agents and player tests measuring whether the twist misleads and the solution satisfies.

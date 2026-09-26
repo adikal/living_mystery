@@ -57,6 +57,11 @@ These paths are relative to the repository root. The report build checks their e
 | `dist/case-artifact.mjs` | Deep-case artifact schema + compiler (neutral observations, gates, forces, inversion) and `expandArtifact` (safe LLM-artifact expander) | Depth note (docs/depth-operators.md) |
 | `dist/operators.mjs` | Coherence-preserving artifact→artifact depth operators (add/gate/interpolate/force/declare-inversion) | Depth note (docs/depth-operators.md) |
 | `dist/deep-generator.mjs` | Deterministic seed-driven deep-case generator: three shapes (time/motive/means), ~5-hop discovery ladders + load-free red-herring fog | Depth note (docs/depth-operators.md) |
+| `dist/mk/kernel.mjs` | Mystery kernel: sign semantics, access/reading depth, thread depths and certification | Mystery kernel note (docs/mystery-kernel.md) |
+| `dist/cases/kernel-case.mjs` | Bridge from certified kernel records to the runtime case interface (history, beliefs, gated signs, accounts, grading) | Mystery kernel note (docs/mystery-kernel.md) |
+| `tools/refine-c/refine.py` | Refinement harness: code-scheduled, model-written, code-certified generation with a plausibility critic | Mystery kernel note (docs/mystery-kernel.md) |
+| `tools/refine-c/publish.py` | Selects certified cases, adds questions and evening accounts, publishes to `dist/cases/generated/` | Mystery kernel note (docs/mystery-kernel.md) |
+| `tools/mk-certify.mjs` | Command-line certification with the JS kernel (used by the harness and parity check) | Mystery kernel note (docs/mystery-kernel.md) |
 | `dist/life.mjs` | Persistent daily goals, timed activities, social commitments and replanning | [Characters](characters.md) |
 | `dist/cases/bellweather-life.mjs` | Public work and personal interests independent of culprit assignment | [Characters](characters.md) |
 | `dist/autonomy-turn.mjs` | Bounded model goal selection, stale checks and scripted fallback | [Characters](characters.md) |
@@ -139,3 +144,4 @@ For a research or external-review snapshot, associate a report edition with a re
 - `tests/forensics.test.mjs`: source forgery, ambiguity, route replay, real-Z3 and unresolved-result regressions.
 
 Edition 0.6 adds these bounded forensic contracts; it does not claim general formal verification of narrative prose.
+| 0.14 | 2026-09-26 | The mystery kernel: four primitives, computed sign kinds, Conceal/Fragment/Mislead with two laws, misdirection as a defeated default; a refinement harness (code schedules and certifies, a model writes each beat, a second model reviews it); the kernel in JS with parity against the Python checker; five certified Bellweather cases (depth 4–7) playable through a bridge, with free-text dialogue grounded in each character's memories and beliefs. 277 JS + 10 Python tests. |

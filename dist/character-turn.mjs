@@ -51,7 +51,8 @@ export function prepareCharacterTurn(s,{person,text,action=null}){
   if(typeof text!=='string'||!text.trim()||text.length>1200)throw Error('Use a question of 1–1200 characters.');
   if(action&&(!['ask','present'].includes(action.type)||action.person!==person))throw Error('Invalid dialogue action.');
   if(action?.type==='present'&&!s.world.player.evidence.some(e=>e.clue===action.clue))throw Error('Discover the evidence before presenting it.');
-  const actions=action?[copy(action)]:[...TOPICS[person],...followupOptions(s,person).map(([key])=>key)].map(topic=>({type:'ask',person,topic}));
+  const C=caseTables(s).CASE,baseTopics=C.topics?(C.topicsFor?.[person]??C.topics).map(([t])=>t):TOPICS[person];
+  const actions=action?[copy(action)]:[...baseTopics,...followupOptions(s,person).map(([key])=>key)].map(topic=>({type:'ask',person,topic}));
   const accounts=[],routes={};let presentedInfo=null;
   for(const a of actions){
     const preview=copy(s),start=preview.events.length;dispatch(preview,a);
@@ -151,7 +152,7 @@ export function applyCharacterTurn(s,ticket,result){
   // Free text fallback asks for a supported topic; never guesses an accusation or threat.
   const written=ticket.action?ticket.context.accounts[0]:null;
   const fallback={intent:written?(written.deceptive?'deceive':'answer'):'clarify',account:written?.id??null,
-    utterance:written?.statement??'Please put a specific question to me, or show me the evidence you want to discuss.',
+    utterance:written?.statement??"I can't speak to that from what I know myself. Ask me about something I saw, or show me what you have found.",
     claims:written?.claims??[],sources:written?.sources??[],trust:'unchanged',belief:'remember_only',engagement:'continue',rationale:'The model was unavailable or its proposal did not pass validation.'};
   dispatchCharacter(trial,{person:ticket.person,text:ticket.text,proposal:p??fallback,action:p?.account?ticket.routes[p.account]:!p?ticket.action:null,audit:result.audit,useAuthored:!p&&Boolean(ticket.action),presented:ticket.action?.type==='present'?ticket.action.clue:null,origin:ticket.action,queuedPlan:p?.plan?ticket.context.character.plans.find(plan=>plan.id===p.plan):null});
   const health=diagnostics(trial);if(!health.ok)throw Error(`Character turn failed integrity checks: ${health.errors[0]}`);

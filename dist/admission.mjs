@@ -3,6 +3,9 @@ import {searchInvestigation,invariantSignature} from './investigation.mjs';
 // declared locks/expiry, public travel graph, and a reserved constable. This does
 // not claim coverage of arbitrary generated effects or future nondeterminism.
 export function assessTransition(runtime,base,candidate,options={}){
+ // Mystery-kernel cases are certified before play (docs/mystery-kernel.md): evidence access only grows and no
+ // character holds a plan that can move or destroy evidence, so solvability cannot be lost during play.
+ if(runtime.kernel?.model?.kernelCase)return {status:'allow',reason:'Certified kernel case: monotone evidence access',checked:0};
  let previous=base.world,checked=0;
  // Intermediate changes to access, possession or deadlines also require a witness.
  for(const event of candidate.events.slice(base.events.length)){

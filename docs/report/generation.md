@@ -151,3 +151,28 @@ guardrails; the symbolic engine enforces logical, causal and temporal coherence 
 feedback when something does not hold.** What remains is richer *machine-checkable difficulty* — obligations
 that grade inference depth and red-herring pressure so generated cases are scored on being genuinely
 hard to solve, not merely valid — and generation of new casts, maps and settings.
+
+## 10.14 A general mystery kernel and recursive refinement
+
+**Status: implemented for "who" questions in a fixed setting; other question types, adventure verbs and new settings
+proposed.**
+
+The composable-brick pipeline above is tied to one village's forensic enumeration. The mystery kernel replaces it with
+a model that does not depend on the setting. A case is a set of typed records: entities, events (with time span,
+place, participants and the attitude that caused them), attitudes (an agent's stance toward a proposition), rules,
+signs (observable effects of events: traces, documents, testimony, behaviour) and a question with candidate answers.
+The language model never states what a sign rules out; it picks a sign kind (place, time, trait, possession,
+relation, fact) and the kernel computes eliminations, truth values, access depth and reading depth.
+
+Certification is plain code: interval and travel checks for the true history; a justification check that every
+intentional event and every false sign has its cause; monotone reachability for access; set filtering for uniqueness;
+per-candidate **thread depths** (when each innocent is cleared and when the truth finally survives); a twist check
+(the surface survivors exclude the truth); and checks that false signs have deeper true defeaters, that every access
+and reading edge states an in-world reason, and that spoken times match the timeline.
+
+Generation is a loop. Code seeds a trivial case, then repeatedly schedules the shallowest thread and asks the model
+for a refinement that deepens it (or, early on, a twist, positive motive and means evidence, and a red herring). Each
+candidate patch must certify, obey the refinement laws, make progress, and pass an independent plausibility review;
+several candidates run in parallel and the best passing one is kept. Across the experiment runs this reliably reached
+solve depth 5–9 with every target met. In the fixed Bellweather setting, published cases are compiled into the
+existing runtime by a bridge, so they play with the original characters, including model-driven dialogue.

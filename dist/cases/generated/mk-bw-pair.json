@@ -1,0 +1,1113 @@
+{
+ "setting": {
+  "name": "Bellweather",
+  "era": "An English village, 1920s",
+  "summary": "A small village of a square, a manor, an inn, a greenhouse, a church vestry and a doctor's surgery. Edmund Vale of Vale Manor is dead; the investigation begins the next morning.",
+  "places": [
+   {
+    "id": "square",
+    "name": "Village square"
+   },
+   {
+    "id": "manor",
+    "name": "Vale Manor"
+   },
+   {
+    "id": "inn",
+    "name": "The Rook & Lantern"
+   },
+   {
+    "id": "greenhouse",
+    "name": "The greenhouse"
+   },
+   {
+    "id": "vestry",
+    "name": "St. Alden\u2019s vestry"
+   },
+   {
+    "id": "surgery",
+    "name": "Dr Marsh\u2019s surgery"
+   }
+  ],
+  "links": [
+   {
+    "a": "square",
+    "b": "manor",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "inn",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "vestry",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "surgery",
+    "minutes": 3
+   },
+   {
+    "a": "manor",
+    "b": "greenhouse",
+    "minutes": 3
+   },
+   {
+    "a": "inn",
+    "b": "greenhouse",
+    "minutes": 6
+   }
+  ]
+ },
+ "rules": [
+  {
+   "id": "r_travel",
+   "text": "On foot, the greenhouse is three minutes from the manor and six from the inn; the vestry is eight minutes from the inn by way of the square.",
+   "knowledge": "common"
+  }
+ ],
+ "people": [
+  {
+   "id": "clara",
+   "name": "Clara Vale",
+   "role": "The victim\u2019s sister",
+   "traits": {
+    "handed": "right",
+    "temper": "cold"
+   },
+   "pronoun": "she",
+   "address": "Miss Vale",
+   "voice": "Composed and guarded; courteous but says little, quietly deflecting private matters. Speaks briefly.",
+   "public": "Edmund\u2019s younger sister. She manages the manor and has asked that its private affairs remain private.",
+   "home": "manor"
+  },
+  {
+   "id": "rowan",
+   "name": "Rowan Pike",
+   "role": "The groundskeeper",
+   "traits": {
+    "handed": "right",
+    "injury": "cut left palm"
+   },
+   "pronoun": "he",
+   "address": "Mr Pike",
+   "voice": "A plain-spoken working man; blunt and practical, short sentences, no flourishes.",
+   "public": "The manor\u2019s groundskeeper. His bandaged hand and green coat have become subjects of village conversation.",
+   "home": "greenhouse"
+  },
+  {
+   "id": "silas",
+   "name": "Silas Voss",
+   "role": "The estate solicitor",
+   "traits": {
+    "handed": "left"
+   },
+   "pronoun": "he",
+   "address": "Mr Voss",
+   "voice": "A precise, careful solicitor; measured and a touch formal, but concise \u2014 never rambling.",
+   "public": "A precise, courteous solicitor who keeps an office in the vestry. He handled Edmund\u2019s estate accounts.",
+   "home": "vestry"
+  },
+  {
+   "id": "ada",
+   "name": "Ada Finch",
+   "role": "The innkeeper",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "she",
+   "address": "Mrs Finch",
+   "voice": "A warm, chatty innkeeper; colloquial and quick to share impressions, though she runs on a little.",
+   "public": "The Rook & Lantern\u2019s proprietor. She knows everyone\u2019s habits and is certain she saw something useful last night.",
+   "home": "inn"
+  },
+  {
+   "id": "iris",
+   "name": "Dr Iris Marsh",
+   "role": "The village doctor",
+   "traits": {
+    "skill": "medicine"
+   },
+   "pronoun": "she",
+   "address": "Dr Marsh",
+   "voice": "Measured and clinical; direct and concise, stays to what she observed.",
+   "public": "Methodical and direct. She examined Edmund\u2019s body and treated a patient at the greenhouse last night.",
+   "home": "surgery"
+  },
+  {
+   "id": "bell",
+   "name": "Arthur Bell",
+   "role": "The village constable",
+   "traits": {
+    "habit": "keeps a patrol notebook"
+   },
+   "pronoun": "he",
+   "address": "Constable Bell",
+   "voice": "A plain, gruff country constable; terse and matter-of-fact, everyday speech \u2014 never bureaucratic or long-winded.",
+   "public": "Bell has secured the manor and asked you to investigate. He will hear an accusation when you can explain it with evidence.",
+   "home": "square"
+  },
+  {
+   "id": "edmund",
+   "name": "Edmund Vale",
+   "role": "The victim",
+   "traits": {},
+   "pronoun": "he",
+   "address": "Mr Vale",
+   "public": "Master of Vale Manor, found dead the morning the investigation begins.",
+   "home": "manor"
+  }
+ ],
+ "objects": [
+  {
+   "id": "notebook",
+   "name": "Constable Bell's patrol notebook",
+   "desc": "A pocket book of timed entries from the night rounds."
+  },
+  {
+   "id": "sale_letter",
+   "name": "Letter of intent to sell",
+   "desc": "Edmund's draft agreeing to sell Vale Manor and its grounds."
+  },
+  {
+   "id": "pane",
+   "name": "Broken greenhouse pane",
+   "desc": "A cracked glass pane Rowan was replacing at dusk."
+  },
+  {
+   "id": "med_bag",
+   "name": "Dr Marsh's medical bag",
+   "desc": "A worn leather doctor's bag with the initials I.M. on the clasp."
+  },
+  {
+   "id": "jet_shawl",
+   "name": "Black jet-beaded shawl",
+   "desc": "A black wool evening shawl edged with small faceted jet beads."
+  },
+  {
+   "id": "jet_bead",
+   "name": "Loose jet bead",
+   "desc": "A small faceted jet bead on a torn scrap of black thread."
+  },
+  {
+   "id": "licence",
+   "name": "Inn licence renewal",
+   "desc": "The Rook & Lantern's renewed licence application, with a witness's signature."
+  },
+  {
+   "id": "old_bag",
+   "name": "Old H.M. doctor's bag",
+   "desc": "A cracked, empty leather bag with the initials H.M. on the clasp, once her father's."
+  }
+ ],
+ "relations": [
+  {
+   "a": "rowan",
+   "rel": "loves",
+   "b": "clara"
+  },
+  {
+   "a": "rowan",
+   "rel": "employed_by",
+   "b": "edmund"
+  },
+  {
+   "a": "silas",
+   "rel": "employed_by",
+   "b": "edmund"
+  },
+  {
+   "a": "clara",
+   "rel": "sister_of",
+   "b": "edmund"
+  },
+  {
+   "a": "clara",
+   "rel": "to_be_turned_out_by",
+   "b": "edmund"
+  }
+ ],
+ "possession": [
+  {
+   "person": "edmund",
+   "item": "sale_letter"
+  },
+  {
+   "person": "bell",
+   "item": "notebook"
+  },
+  {
+   "person": "rowan",
+   "item": "pane"
+  },
+  {
+   "person": "iris",
+   "item": "med_bag"
+  },
+  {
+   "person": "clara",
+   "item": "jet_shawl"
+  },
+  {
+   "person": "ada",
+   "item": "licence"
+  },
+  {
+   "person": "iris",
+   "item": "old_bag"
+  }
+ ],
+ "question": {
+  "text": "Who caused Edmund Vale's death at the greenhouse steps?",
+  "candidates": [
+   {
+    "id": "c_clara",
+    "label": "Clara Vale",
+    "facts": {
+     "actor": "clara"
+    }
+   },
+   {
+    "id": "c_rowan",
+    "label": "Rowan Pike",
+    "facts": {
+     "actor": "rowan"
+    }
+   },
+   {
+    "id": "c_silas",
+    "label": "Silas Voss",
+    "facts": {
+     "actor": "silas"
+    }
+   },
+   {
+    "id": "c_ada",
+    "label": "Ada Finch",
+    "facts": {
+     "actor": "ada"
+    }
+   }
+  ],
+  "truth": "c_clara",
+  "crime": {
+   "event": "e_push",
+   "place": "greenhouse",
+   "window": [
+    1310,
+    1350
+   ]
+  }
+ },
+ "attitudes": [
+  {
+   "id": "a_ed_sell",
+   "agent": "edmund",
+   "mode": "intends",
+   "content": "Sell Vale Manor and dismiss the staff, Rowan first",
+   "because": []
+  },
+  {
+   "id": "a_ed_inspect",
+   "agent": "edmund",
+   "mode": "intends",
+   "content": "Look over the greenhouse before showing it to the buyer",
+   "because": [
+    "a_ed_sell"
+   ]
+  },
+  {
+   "id": "a_clara_home",
+   "agent": "clara",
+   "mode": "wants",
+   "content": "Keep the manor she has run for years, and keep Rowan near",
+   "because": []
+  },
+  {
+   "id": "a_clara_rage",
+   "agent": "clara",
+   "mode": "feels",
+   "content": "Fury at Edmund for selling her home over her head",
+   "because": [
+    "a_ed_sell",
+    "a_clara_home"
+   ]
+  },
+  {
+   "id": "a_clara_confront",
+   "agent": "clara",
+   "mode": "intends",
+   "content": "Follow Edmund to the greenhouse and stop the sale",
+   "because": [
+    "a_clara_rage"
+   ]
+  },
+  {
+   "id": "a_rowan_love",
+   "agent": "rowan",
+   "mode": "feels",
+   "content": "Devotion to Clara Vale",
+   "because": []
+  },
+  {
+   "id": "a_rowan_protect",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "Shield Clara from suspicion, whatever he suspects",
+   "because": [
+    "a_rowan_love"
+   ]
+  },
+  {
+   "id": "a_rowan_mend",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "Replace the cracked greenhouse pane before the frost",
+   "because": []
+  },
+  {
+   "id": "a_rowan_drink",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "Drink at the inn after being stitched",
+   "because": []
+  },
+  {
+   "id": "a_iris_treat",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "Stitch Rowan's cut hand",
+   "because": []
+  },
+  {
+   "id": "a_iris_supper",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "Take a late supper at the inn",
+   "because": []
+  },
+  {
+   "id": "a_ada_work",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "Keep the inn's bar until closing",
+   "because": []
+  },
+  {
+   "id": "a_silas_accounts",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "Finish the estate accounts for the sale",
+   "because": []
+  },
+  {
+   "id": "a_bell_patrol",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "Walk his evening rounds",
+   "because": []
+  },
+  {
+   "id": "a_clara_dinner",
+   "agent": "clara",
+   "mode": "intends",
+   "content": "Dine with Edmund as usual",
+   "because": []
+  },
+  {
+   "id": "a_rowan_morning",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "Start the morning's work at the greenhouse",
+   "because": []
+  },
+  {
+   "id": "a_iris_discreet",
+   "agent": "iris",
+   "mode": "fears",
+   "content": "Village talk about its doctor supping late and alone at a public house",
+   "because": [
+    "a_iris_supper"
+   ]
+  },
+  {
+   "id": "a_rowan_suspect",
+   "agent": "rowan",
+   "mode": "fears",
+   "content": "That Clara went out to quarrel with Edmund over the sale and will be blamed for his fall",
+   "because": [
+    "a_rowan_love",
+    "a_ed_sell"
+   ]
+  },
+  {
+   "id": "a_rowan_hide",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "Hide the jet bead he found by the body, knowing it came from Clara's shawl",
+   "because": [
+    "a_rowan_protect",
+    "a_rowan_suspect"
+   ]
+  },
+  {
+   "id": "a_rowan_coat",
+   "agent": "rowan",
+   "mode": "fears",
+   "content": "That the dried blood from his own cut palm on his coat will be taken for Edmund's",
+   "because": [
+    "a_rowan_suspect"
+   ]
+  },
+  {
+   "id": "a_ada_promise",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "Keep Dr Marsh's late suppers at the inn out of village talk, as she promised",
+   "because": [
+    "a_iris_discreet"
+   ]
+  },
+  {
+   "id": "a_clara_hide",
+   "agent": "clara",
+   "mode": "fears",
+   "content": "That the sale draft and the shawl, still damp from the night garden, will show she went out and why",
+   "because": [
+    "a_clara_confront"
+   ]
+  },
+  {
+   "id": "a_silas_private",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "Keep the confidential sale figures out of sight of anyone passing the vestry window",
+   "because": [
+    "a_silas_accounts"
+   ]
+  },
+  {
+   "id": "a_ada_stow",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "Put the doctor's bag out of sight so no customer asks why it was left at the inn",
+   "because": [
+    "a_ada_promise"
+   ]
+  },
+  {
+   "id": "a_ada_licence",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "Have her licence renewal witnessed by the solicitor and keep it safe",
+   "because": []
+  },
+  {
+   "id": "a_iris_cover",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "Hang her father's old bag on the hook so no patient notices her own bag is missing and asks where she left it",
+   "because": [
+    "a_iris_discreet"
+   ]
+  }
+ ],
+ "events": [
+  {
+   "id": "e_dinner",
+   "type": "dinner",
+   "agent": "clara",
+   "others": [
+    "edmund"
+   ],
+   "place": "manor",
+   "start": 1080,
+   "end": 1260,
+   "causedBy": "a_clara_dinner",
+   "summary": "Clara and Edmund dine; he tells her of the sale."
+  },
+  {
+   "id": "e_mend",
+   "type": "repair",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1180,
+   "end": 1200,
+   "causedBy": "a_rowan_mend",
+   "summary": "Rowan replaces a pane; the glass slips and cuts his left palm."
+  },
+  {
+   "id": "e_iris_surgery",
+   "type": "work",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1080,
+   "end": 1195,
+   "causedBy": "a_iris_treat",
+   "summary": "Dr Marsh sees patients, then is summoned to the greenhouse."
+  },
+  {
+   "id": "e_stitch",
+   "type": "treatment",
+   "agent": "iris",
+   "others": [
+    "rowan"
+   ],
+   "place": "greenhouse",
+   "start": 1210,
+   "end": 1240,
+   "causedBy": "a_iris_treat",
+   "summary": "Dr Marsh stitches and bandages Rowan's hand."
+  },
+  {
+   "id": "e_rowan_inn",
+   "type": "drinking",
+   "agent": "rowan",
+   "others": [],
+   "place": "inn",
+   "start": 1270,
+   "end": 1420,
+   "causedBy": "a_rowan_drink",
+   "summary": "Rowan drinks at the bar of the Rook & Lantern until closing."
+  },
+  {
+   "id": "e_iris_inn",
+   "type": "supper",
+   "agent": "iris",
+   "others": [],
+   "place": "inn",
+   "start": 1260,
+   "end": 1380,
+   "causedBy": "a_iris_supper",
+   "summary": "Dr Marsh takes a late supper at the inn."
+  },
+  {
+   "id": "e_ada_bar",
+   "type": "work",
+   "agent": "ada",
+   "others": [],
+   "place": "inn",
+   "start": 1080,
+   "end": 1440,
+   "causedBy": "a_ada_work",
+   "summary": "Ada keeps the bar all evening."
+  },
+  {
+   "id": "e_silas_work",
+   "type": "work",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1200,
+   "end": 1440,
+   "causedBy": "a_silas_accounts",
+   "summary": "Silas works on the estate accounts in his vestry office."
+  },
+  {
+   "id": "e_ed_inspect",
+   "type": "inspection",
+   "agent": "edmund",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1290,
+   "end": 1320,
+   "causedBy": "a_ed_inspect",
+   "summary": "Edmund walks the greenhouse by lamplight."
+  },
+  {
+   "id": "e_push",
+   "type": "killing",
+   "agent": "clara",
+   "others": [
+    "edmund"
+   ],
+   "place": "greenhouse",
+   "start": 1320,
+   "end": 1330,
+   "causedBy": "a_clara_confront",
+   "summary": "Clara confronts Edmund on the steps and shoves him; he falls and dies."
+  },
+  {
+   "id": "e_clara_return",
+   "type": "return",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1340,
+   "end": 1500,
+   "causedBy": "a_clara_confront",
+   "summary": "Clara returns to the manor and says nothing."
+  },
+  {
+   "id": "e_bell_sq1",
+   "type": "patrol",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1260,
+   "end": 1295,
+   "causedBy": "a_bell_patrol",
+   "summary": "Bell walks the square."
+  },
+  {
+   "id": "e_bell_vestry1",
+   "type": "patrol",
+   "agent": "bell",
+   "others": [],
+   "place": "vestry",
+   "start": 1300,
+   "end": 1305,
+   "causedBy": "a_bell_patrol",
+   "summary": "Bell checks the vestry door and window."
+  },
+  {
+   "id": "e_bell_sq2",
+   "type": "patrol",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1310,
+   "end": 1375,
+   "causedBy": "a_bell_patrol",
+   "summary": "Bell walks the square again."
+  },
+  {
+   "id": "e_bell_vestry2",
+   "type": "patrol",
+   "agent": "bell",
+   "others": [],
+   "place": "vestry",
+   "start": 1380,
+   "end": 1385,
+   "causedBy": "a_bell_patrol",
+   "summary": "Bell checks the vestry a second time."
+  },
+  {
+   "id": "e_bell_sq3",
+   "type": "patrol",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1390,
+   "end": 1440,
+   "causedBy": "a_bell_patrol",
+   "summary": "Bell finishes his rounds in the square."
+  },
+  {
+   "id": "e_found",
+   "type": "discovery",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1830,
+   "end": 1840,
+   "causedBy": "a_rowan_morning",
+   "summary": "Rowan finds Edmund at the foot of the greenhouse steps at dawn."
+  },
+  {
+   "id": "e_iris_forget",
+   "type": "departure",
+   "agent": "iris",
+   "others": [],
+   "place": "inn",
+   "start": 1375,
+   "end": 1380,
+   "causedBy": "a_iris_supper",
+   "summary": "Leaving the inn at eleven, Dr Marsh forgets her medical bag under the window table."
+  },
+  {
+   "id": "e_rowan_story",
+   "type": "false statement",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1845,
+   "end": 1855,
+   "causedBy": "a_rowan_protect",
+   "summary": "After finding the body, Rowan settles on a story that puts Clara beside him at the inn all evening."
+  },
+  {
+   "id": "e_rowan_hide",
+   "type": "concealment",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1840,
+   "end": 1845,
+   "causedBy": "a_rowan_hide",
+   "summary": "Rowan picks a jet bead off the steps beside the body and pushes it into a seed tin."
+  },
+  {
+   "id": "e_rowan_wash",
+   "type": "washing",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1856,
+   "end": 1880,
+   "causedBy": "a_rowan_coat",
+   "summary": "Rowan scrubs old bloodstains from the left cuff of his green coat at the greenhouse water butt."
+  },
+  {
+   "id": "e_clara_lock",
+   "type": "concealment",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1850,
+   "end": 1860,
+   "causedBy": "a_clara_hide",
+   "summary": "Clara locks Edmund's study and puts her damp jet shawl away in the hall cupboard, then locks it."
+  },
+  {
+   "id": "e_bell_secure",
+   "type": "securing",
+   "agent": "bell",
+   "others": [
+    "clara"
+   ],
+   "place": "manor",
+   "start": 1870,
+   "end": 1880,
+   "causedBy": "a_bell_patrol",
+   "summary": "Bell secures the manor; Clara gives him the house keys and asks that family rooms stay private."
+  },
+  {
+   "id": "e_silas_blind",
+   "type": "precaution",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1196,
+   "end": 1199,
+   "causedBy": "a_silas_private",
+   "summary": "Silas draws the vestry blind right down before spreading the sale accounts on his desk."
+  },
+  {
+   "id": "e_ada_stow",
+   "type": "concealment",
+   "agent": "ada",
+   "others": [],
+   "place": "inn",
+   "start": 1445,
+   "end": 1450,
+   "causedBy": "a_ada_stow",
+   "summary": "After closing, Ada moves Dr Marsh's forgotten bag from under the bar into the locked snug cupboard."
+  },
+  {
+   "id": "e_licence",
+   "type": "witnessing",
+   "agent": "ada",
+   "others": [
+    "silas"
+   ],
+   "place": "inn",
+   "start": 600,
+   "end": 615,
+   "causedBy": "a_ada_licence",
+   "summary": "Silas witnesses Ada's licence renewal at the inn; she locks the paper in the snug cupboard."
+  },
+  {
+   "id": "e_iris_spare",
+   "type": "staging",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1800,
+   "end": 1805,
+   "causedBy": "a_iris_cover",
+   "summary": "At six in the morning Dr Marsh hangs her father's old empty bag on the surgery hook where hers usually hangs."
+  }
+ ],
+ "signs": [
+  {
+   "id": "s_surface_ada",
+   "kind": "testimony",
+   "speaker": "ada",
+   "surface": true,
+   "title": "Ada Finch on the evening",
+   "text": "Kept the bar going all evening same as always, rushed off my feet as usual, and after we closed up I saw to a bit of tidying before I got to my bed.",
+   "ask": "Where were you last night?",
+   "deceptive": false
+  },
+  {
+   "id": "s_surface_silas",
+   "kind": "testimony",
+   "speaker": "silas",
+   "surface": true,
+   "title": "Silas Voss on the evening",
+   "text": "I was in the vestry office, blind drawn, working through the estate accounts. I saw no one and spoke to no one.",
+   "ask": "Where were you last night?",
+   "deceptive": false
+  },
+  {
+   "id": "s_surface_rowan",
+   "kind": "testimony",
+   "speaker": "rowan",
+   "surface": true,
+   "title": "Rowan Pike on the evening",
+   "text": "Cut my hand fixing a pane, got it stitched, then went down the Rook & Lantern till they shut. Clara was there beside me the whole while.",
+   "ask": "Where were you last night?",
+   "deceptive": false
+  },
+  {
+   "id": "s_surface_clara",
+   "kind": "testimony",
+   "speaker": "clara",
+   "surface": true,
+   "title": "Clara Vale on the evening",
+   "text": "I dined with Edmund and then retired to my rooms for the night. I've little else to tell you, and I'd ask that the family rooms be left private.",
+   "ask": "Where were you last night?",
+   "deceptive": true
+  },
+  {
+   "id": "s_ada_rowan",
+   "kind": "testimony",
+   "title": "Mrs Finch on Rowan Pike",
+   "text": "\"Rowan? Propped on my bar, he was, hand all bandaged, poor lamb. Came in not ten minutes after my late-supper guest sat down. I'll not say who, she's asked me to keep it quiet. And he never stirred off that stool till I called time at a quarter to midnight. I'd have noticed, he was in my way all night!\"",
+   "at": "inn",
+   "speaker": "ada",
+   "claim": {
+    "kind": "place",
+    "person": "rowan",
+    "place": "inn",
+    "start": 1270,
+    "end": 1420
+   },
+   "needs": [
+    "s_iris_ada"
+   ],
+   "reading": "Dr Marsh says she sat down to supper at the Rook & Lantern at about twenty past nine. She is the guest Mrs Finch won't name, so Rowan came in at about half past nine and stayed until a quarter to midnight.",
+   "ask": "Mrs Finch, what can you tell me about Mr Pike?"
+  },
+  {
+   "id": "s_iris_ada",
+   "kind": "testimony",
+   "title": "Dr Marsh on the inn",
+   "text": "She takes the bag and sighs. \"So you know. I took supper at the Rook & Lantern from about twenty past nine until eleven. Mrs Finch was behind the bar the whole time. She served me twice and talked more than that. I'd rather the village didn't hear of it.\"",
+   "at": "surgery",
+   "speaker": "iris",
+   "claim": {
+    "kind": "place",
+    "person": "ada",
+    "place": "inn",
+    "start": 1260,
+    "end": 1380
+   },
+   "requires": [
+    "s_bag"
+   ],
+   "unlock": "Dr Marsh has avoided saying where she spent the evening because she fears gossip. When you hand back the bag she left at the inn, it is plain you already know she was there, so she stops dodging and tells you about her supper.",
+   "ask": "Dr Marsh, what happened at the inn that night?"
+  },
+  {
+   "id": "s_bell_notebook",
+   "kind": "document",
+   "title": "Constable Bell's patrol notebook",
+   "text": "Pencilled entries: \"21:40 \u2014 vestry. Blind down, lamp lit behind. Shadow at the desk, pen going.\" \"23:00 \u2014 vestry. Same. Shadow still at desk, still writing.\" The entries between those two only mention the square: \"quiet\".",
+   "at": "square",
+   "claim": {
+    "kind": "place",
+    "person": "silas",
+    "place": "vestry",
+    "start": 1300,
+    "end": 1380
+   },
+   "needs": [
+    "s_vestry_ledger"
+   ],
+   "reading": "Bell only saw a shadow writing behind the blind. The ledger on that desk is filled with last night's figures, and the hand matches Mr Voss's signature on the inn licence. So the writer Bell saw at 21:40 and again at 23:00 was Mr Voss."
+  },
+  {
+   "id": "s_bag",
+   "kind": "item",
+   "title": "A bag in the snug cupboard",
+   "text": "In the locked cupboard of the inn's back snug, behind the spare glasses, is a worn leather doctor's bag with I.M. on the clasp. A scrap of paper tied to the handle reads, in Mrs Finch's hand: \"Window table, eleven o'clock. Keep for the Doctor.\"",
+   "at": "inn",
+   "source": "e_ada_stow",
+   "requires": [
+    "s_iris_nobag"
+   ],
+   "unlock": "When you mention at the Rook & Lantern that Dr Marsh has lost her bag, Mrs Finch gets flustered and keeps looking at the snug cupboard. She gives in and unlocks it for you."
+  },
+  {
+   "id": "s_rowan_clara",
+   "kind": "testimony",
+   "title": "Mr Pike on Miss Vale",
+   "text": "\"Miss Vale came down to the Rook about twenty to ten. Came in the side door, hood up. Stood by me at the end of the bar till half eleven. We talked about the sale. She never went near the greenhouse. You can leave her out of it.\"",
+   "at": "greenhouse",
+   "speaker": "rowan",
+   "because": [
+    "a_rowan_suspect",
+    "a_rowan_protect"
+   ],
+   "claim": {
+    "kind": "place",
+    "person": "clara",
+    "place": "inn",
+    "start": 1300,
+    "end": 1410
+   },
+   "ask": "Mr Pike, what can you tell me about Miss Vale?"
+  },
+  {
+   "id": "s_ada_alone",
+   "kind": "testimony",
+   "title": "Mrs Finch on the end of the bar",
+   "text": "\"Miss Vale? Stood by Rowan? Bless you, no. I topped up that man's ale every few minutes all night, and he sat at the end of my bar on his own, hood or no hood. The side door sticks, too. It shrieks like a cat when it opens. Nobody used it last night. Oh, the poor lad. He's sweet on her, you know.\"",
+   "at": "inn",
+   "speaker": "ada",
+   "requires": [
+    "s_rowan_clara",
+    "s_bag"
+   ],
+   "unlock": "Mrs Finch has been careful about who was in her bar last night, because of what she promised the doctor. Once you've found the bag, the doctor's secret is out, so she talks freely. When you tell her what Rowan said, her pride in knowing her own bar makes her put you right.",
+   "defeats": [
+    "s_rowan_clara"
+   ],
+   "ask": "Mrs Finch, what happened at the end of the bar?"
+  },
+  {
+   "id": "s_sale_draft",
+   "kind": "document",
+   "title": "Draft in Edmund's study",
+   "text": "On the blotter in Vale Manor's locked study, in Edmund's hand: \"...vacant possession of the house and grounds by Lady Day. The present staff to be given notice. My sister will take rooms in Bath on a suitable allowance.\" The last line is underlined twice.",
+   "at": "manor",
+   "claim": {
+    "kind": "relation",
+    "a": "clara",
+    "rel": "to_be_turned_out_by",
+    "b": "edmund"
+   },
+   "requires": [
+    "s_locked",
+    "s_ada_alone"
+   ],
+   "unlock": "Bell holds the keys Miss Vale gave him and won't open family rooms on a guess. Once you show him that Mrs Finch has broken Rowan's account of where Miss Vale was, he agrees her movements are police business and unlocks the study."
+  },
+  {
+   "id": "s_shawl",
+   "kind": "observation",
+   "title": "A shawl in the hall cupboard",
+   "text": "Inside the locked hall cupboard at Vale Manor, a black wool shawl edged with small faceted jet beads is folded over a hanger. The wool is still faintly damp. Near one corner a short length of the edging is bare, and two cut thread ends stick out there.",
+   "at": "manor",
+   "claim": {
+    "kind": "possession",
+    "person": "clara",
+    "item": "jet_shawl"
+   },
+   "requires": [
+    "s_locked",
+    "s_ada_alone"
+   ],
+   "unlock": "Having unlocked the study, Bell opens the hall cupboard with the same bunch of keys, since that is where Miss Vale's things from the empty peg must have gone."
+  },
+  {
+   "id": "s_bead",
+   "kind": "trace",
+   "title": "In a seed tin",
+   "text": "In a tin of marrow seed on the potting bench, pushed under the seed, is a small faceted jet bead. A scrap of torn black thread is still knotted through it. There is grit from the steps on it.",
+   "at": "greenhouse",
+   "source": "e_rowan_hide",
+   "requires": [
+    "s_ada_alone"
+   ],
+   "unlock": "Once Mrs Finch has broken his story, Rowan cannot stand still in the greenhouse. He keeps looking at the seed tins on the potting bench, and when you search them you find what he hid.",
+   "needs": [
+    "s_shawl"
+   ],
+   "reading": "The bead and its black thread match the jet edging of the shawl in the manor hall, where a length of beads is missing. So the bead came off that shawl.",
+   "claim": {
+    "kind": "possession",
+    "item": "jet_shawl"
+   }
+  },
+  {
+   "id": "s_rowan_wash",
+   "kind": "behavior",
+   "title": "Mr Pike at the water butt",
+   "text": "Behind the greenhouse, Rowan Pike stands at the water butt, working a brush hard into the left cuff of his green coat with his good hand. The water in the pail has gone pink. When he sees you he stops, wrings the sleeve and puts the coat on wet.",
+   "at": "greenhouse",
+   "source": "e_rowan_wash",
+   "about": "rowan",
+   "explainedBy": [
+    "s_iris_daybook"
+   ]
+  },
+  {
+   "id": "s_iris_daybook",
+   "kind": "record",
+   "title": "Dr Marsh's daybook",
+   "text": "An entry in Dr Marsh's surgery daybook: \"19:55 \u2014 called to greenhouse. 20:10 \u2014 R. Pike, deep laceration of left palm from pane glass, bled freely. Coat sleeve soaked through. Six stitches, bandaged. 20:40 \u2014 done.\"",
+   "at": "surgery",
+   "requires": [
+    "s_rowan_wash"
+   ],
+   "unlock": "When you tell Dr Marsh that Rowan was scrubbing blood out of his coat, she sees nothing private in it. She opens her daybook to the previous evening's entry and shows you.",
+   "source": "e_stitch"
+  },
+  {
+   "id": "s_locked",
+   "kind": "absence",
+   "title": "Locked doors at the manor",
+   "text": "At Vale Manor the study door is locked and so is the hall cupboard. The peg by the front door, where Miss Vale's evening things usually hang, is empty. Miss Vale says quietly that the family rooms are private, and that Constable Bell has the keys.",
+   "at": "manor",
+   "source": "e_clara_lock"
+  },
+  {
+   "id": "s_vestry_ledger",
+   "kind": "trace",
+   "title": "The ledger on the vestry desk",
+   "text": "On the desk in the vestry, pushed up against the window, lies the estate ledger. Last night's pages are covered in columns of figures in one neat, back-slanted hand, and every line is smeared towards the right where a hand dragged across wet ink. The blotter holds the same smears. The inkwell is almost dry and the blind is still drawn.",
+   "at": "vestry",
+   "source": "e_silas_work",
+   "needs": [
+    "s_licence"
+   ],
+   "reading": "The ledger is written in the same back-slanted hand as Mr Voss's witness signature on the inn licence, and both are smudged towards the right in the same way. So Mr Voss wrote last night's pages."
+  },
+  {
+   "id": "s_iris_nobag",
+   "kind": "absence",
+   "title": "The bag on the hook",
+   "text": "Dr Marsh takes her needle and gut from a dented tin box, not from the bag on the hook. When you lift the bag down it is light and empty, the leather is cracked, and the clasp reads H.M. She colours and says it was her father's. Her own bag went astray somewhere yesterday evening, she says, and then she changes the subject.",
+   "at": "surgery",
+   "source": "e_iris_forget",
+   "requires": [
+    "s_iris_daybook"
+   ],
+   "unlock": "While she shows you the daybook entry for Rowan's stitches, you ask what she carried to the greenhouse. She reaches for the tin box instead of the bag on the hook, and that makes you look at the bag.",
+   "defeats": [
+    "s_spare_bag"
+   ]
+  },
+  {
+   "id": "s_licence",
+   "kind": "item",
+   "title": "A licence paper in the snug cupboard",
+   "text": "Folded on the shelf of the snug cupboard is the inn's licence renewal, dated yesterday. Under Mrs Finch's round signature, a witness has signed \"S. Voss\" in a neat hand that slants backwards. The tail of the V is smudged sideways to the right.",
+   "at": "inn",
+   "source": "e_licence",
+   "requires": [
+    "s_bag"
+   ],
+   "unlock": "The paper is on the same shelf of the locked snug cupboard where Mrs Finch put the doctor's bag, so you see it when she opens the cupboard."
+  },
+  {
+   "id": "s_spare_bag",
+   "kind": "observation",
+   "title": "The hook by the surgery door",
+   "text": "In Dr Marsh's surgery a brown leather doctor's bag hangs on the hook by the door, as it always does. Dr Marsh is at her desk writing, and when you ask about last night she answers briskly and does not look up.",
+   "at": "surgery",
+   "source": "e_iris_spare"
+  }
+ ],
+ "id": "mk-bw-pair",
+ "title": "The Greenhouse Steps",
+ "synopsis": "Edmund Vale was found at the foot of the greenhouse steps."
+}
