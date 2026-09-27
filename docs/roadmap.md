@@ -1,5 +1,11 @@
 # Roadmap: finish The Last Bell before generating mysteries
 
+## Latest (September 2026)
+
+Generated cases are certified for motive, means and opportunity, checked independently by Z3, and varied by a premise
+deck. Next: make each case's hidden secret discoverable in play (not only in the ending), generate faster than about
+fifteen minutes per case, and extend questions beyond "who".
+
 ## Direction
 
 The long-term goal is a playable town with simulated characters and generated, investigable mysteries. First make The Last Bell a complete reference case: believable interactions, actionable memories, executable history, and explanations for every consequential event. Keep the deterministic engine as the regression oracle. Optional AI character turns now combine response decisions and natural wording through perspective-limited context, a separate critic and atomic engine validation. Authored accounts bound disclosures and story consequences. Optional Z3 checks validate authored and bounded AI-selected plans; ASP and general symbolic cognition remain future work.

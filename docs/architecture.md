@@ -33,7 +33,7 @@ present and arrival, which opens earned leads at their own location and reveals 
 |---|---|---|
 | 8000 | `server/static_server.py` | serves `dist/` with no-cache headers; `POST /__log` appends browser events to `logs/game.log` |
 | 8787 | `server/llm_proxy.py` | loopback proxy to Bedrock for dialogue and character turns; logs each call to `logs/proxy.log` |
-| 8788 | `server/director_server.py` | optional Z3 checks for the World Director |
+| 8788 | `server/director_server.py` | Z3: the case oracle (`/case`, accusation feedback) and World Director plan checks (`/solve`); logs to `logs/director.log` |
 | 8789 | `server/generator_server.py` | case generation jobs with progress events; logs to `logs/generator.log` |
 
 ## Wording-only dialogue, critic, and audit
@@ -227,3 +227,19 @@ Configured/generated cases now support persistent ordinary goals, timed activiti
 ## Shared forensic milestone
 
 New configured/generated cases now use typed source support, registered live belief rules, a shared crime/explanation IR, and a finite competing-explanation accusation grader. Generation varies `trace`, `cleanup` and `clockwork` structures and independently replays every declared route. Optional Z3 verifies recorded history and excludes competing explanations; local non-AI play uses the same finite rules. The original case retains its legacy rubric. See [the forensic model and testing contract](forensic-model.md) for exact scope, commands and limits.
+
+
+## Generated cases: premise, certification and play (September 2026)
+
+- **Premise deck** (`tools/refine-c/premise.py`): code draws the victim, culprit, four suspects, method, motive, scene and
+  case shape, favouring what was used least recently (`runs/premise-history.json`). The seed is rejected unless it
+  honours the draw.
+- **Village** (`dist/cases/village.mjs`): 10 places with walking times and 11 people with public identities and
+  character sheets; the generator's setting file is extracted from it. The Last Bell keeps its own data (`dist/case.mjs`).
+- **Certification** requires motive, means and opportunity to be reachable. A case is published only when the Python
+  kernel, the JavaScript kernel and the Z3 oracle (`server/case_oracle.py`) all certify it and agree (`publish.gate`).
+- **Publish-time content** (`publish.enrich_case`): questions, evening accounts checked against the true history, the
+  examination (by crime kind), the answer's method and motive, concessions, loose ends, everyday knowledge, moods, show
+  lines and reactions, then a review against the true history that drops faulty lines. Independent steps run in parallel.
+- **Accusation**: who, how and why, graded on held evidence; Bell names the missing pillar, and the Z3 oracle supplies a
+  concrete alternative story when the evidence still allows someone else.

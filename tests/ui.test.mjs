@@ -148,7 +148,7 @@ test('Case artwork decorates views without changing text labels or revealing una
   assert.match(html,/assets\/last-bell\/bell\.jpg/);
   assert.match(html,/Village square/);
   assert.doesNotMatch(ui.run('notebookContent(playerView(session))'),/artifact-art/);
-  ui.run("dispatch(session,{type:'move',to:'manor'});dispatch(session,{type:'inspect',object:'folio'});render()");
+  ui.run("notebook='evidence';dispatch(session,{type:'move',to:'manor'});dispatch(session,{type:'inspect',object:'folio'});render()");
   assert.match(ui.run('notebookContent(playerView(session))'),/assets\/last-bell\/folio\.jpg/);
   assert.match(ui.run("avatar('clara')"),/CV<img[^>]*alt=""/);
   assert.equal(ui.run("artImage(undefined,'artifact-art')"),'');
@@ -415,7 +415,7 @@ test('In-room disclosure groups objects into sections and hides gated leads unti
  assert.match(ui.node('#app').innerHTML,/a faint tray ring/,'the next lead appears once its prerequisite is examined');
 });
 
-test('A generated kernel case plays in the Bellweather UI: case suspects, no method field, hidden leads, case topics',()=>{
+test('A generated kernel case plays in the Bellweather UI: case suspects, how and why pickers, pillar status, hidden leads, case topics',()=>{
  const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-bw-pair.json',import.meta.url),'utf8'));
  const ui=adapter(null,{llmActive:()=>false});
  ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
@@ -426,7 +426,9 @@ test('A generated kernel case plays in the Bellweather UI: case suspects, no met
  ui.click('accusation');
  const form=ui.node('#modal').innerHTML;
  for(const h of records.question.candidates)assert.match(form,new RegExp(`value="${h.facts.actor}"`),'every candidate is accusable');
- assert.doesNotMatch(form,/name="method"/,'no method picker for a who-question');
+ assert.match(form,/name="method"/,'the player names how it was done');
+ assert.match(form,/name="motive"/,'and why');
+ assert.match(form,/pillar-strip/,'motive, means and opportunity status from the held evidence');
  const hidden=records.signs.find(s=>s.kind!=='testimony'&&(s.requires||[]).length);
  ui.run(`act({type:'move',to:${JSON.stringify(hidden.at)}});actionGroup='inspect';render()`);
  assert.ok(!ui.node('#app').innerHTML.includes(`data-id="${hidden.id}"`),'a gated clue is hidden until earned');
@@ -505,4 +507,18 @@ test('Generation reports a missing generator server clearly',async()=>{
  const ui=adapter(null,{llmActive:()=>false,fetch:async()=>{throw Error('connection refused');}});
  ui.click('generate-new');await new Promise(r=>setTimeout(r,5));
  assert.match(ui.node('#modal').innerHTML,/generator is not running/);
+});
+
+test('People is the first notebook tab and shows the victim; new evidence is boxed in the chat and added to the Evidence tab',()=>{
+ const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-bw-pair.json',import.meta.url),'utf8'));
+ const ui=adapter(null,{llmActive:()=>false});
+ ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
+ ui.run(`notebook='people';render()`);
+ const app=ui.node('#app').innerHTML,tabs=app.slice(app.indexOf('Notebook views'));
+ assert.ok(tabs.indexOf('People')>=0&&tabs.indexOf('People')<tabs.indexOf('Evidence'),`People comes first: ${tabs.slice(0,200)}`);
+ assert.match(ui.node('#app').innerHTML,/victim-person[\s\S]*?Edmund Vale[\s\S]*?Deceased/,'the victim, greyed out');
+ const surface=records.signs.find(s=>s.kind!=='testimony'&&!(s.requires||[]).length);
+ ui.run(`act({type:'move',to:${JSON.stringify(surface.at)}});act({type:'inspect',object:${JSON.stringify(surface.id)}})`);
+ assert.match(ui.run('visibleTranscript(playerView(session).transcript).slice(-5).map(journalEntry).join("")'),/clue-found/,'the discovery appears in the chat, as a boxed card');
+ assert.ok(ui.run('session.world.player.evidence.length')>0,'and in the Evidence tab');
 });

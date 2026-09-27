@@ -640,3 +640,19 @@ clue, and the plain answer.
 - **Debugging.** The browser logs actions, dialogue turns (with audit detail), toasts, generation events and errors to
   `logs/game.log` via the game server; the generator and proxy log to `logs/generator.log` and `logs/proxy.log`.
   Menu → Flag an issue saves a note with a snapshot of the game state.
+
+
+### Motive, means, opportunity and variety (September 2026)
+
+- `certify` reports `pillars` {opportunity, means, motive} with depths and requires means and motive to be reachable
+  (`certify(case, false)` skips that for intermediate generation steps). `pillarSignsFor(case, A, actor, held)` gives a
+  person's means and motive evidence among the held signs; the accusation uses it.
+- Motive evidence must connect the culprit and the victim (a relation with the victim on either side); a secret about
+  the culprit alone is not a motive. `enrich.add_motive_link` adds one true, deeper clue when a case lacks the link.
+- `server/case_oracle.py` is an independent Z3 check; `publish.gate` requires Python, JavaScript and Z3 to agree.
+- `tools/refine-c/premise.py` draws who, how, why and where; `seed_errors` rejects a seed that does not honour it.
+- Publishing (`publish.enrich_case`): questions, evening accounts (checked against the true history), the examination
+  (by crime kind), the answer, concessions (`concede[clue]`), loose ends, everyday knowledge (`knowledge[pid]`, free-text
+  topic `everyday`), moods, show lines and reactions, then `enrich.review_publish`.
+- Play: a completing clue delivers the account; proof draws a concession; people are where their behaviour is seen;
+  hints never endorse a lead that rests on a false account; the ending gives the full chain of motive.

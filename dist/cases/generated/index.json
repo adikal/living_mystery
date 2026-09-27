@@ -11,7 +11,7 @@
   "id": "mk-bw-ledger",
   "file": "mk-bw-ledger.json",
   "title": "The Study Door",
-  "blurb": "Edmund Vale is found dead in his study at Vale Manor. Depth 4, 24 clues, 4 suspects.",
+  "blurb": "Edmund Vale is found dead in his study at Vale Manor. Depth 4, 27 clues, 4 suspects.",
   "solveDepth": 4,
   "source": "tools/refine-c/runs/20260926-002910/bw-ledger/final-case.json"
  },
@@ -19,7 +19,7 @@
   "id": "mk-bw-letter",
   "file": "mk-bw-letter.json",
   "title": "The Half-Burned Letter",
-  "blurb": "Edmund Vale was found dead in his study at Vale Manor. Depth 6, 23 clues, 4 suspects.",
+  "blurb": "Edmund Vale was found dead in his study at Vale Manor. Depth 6, 25 clues, 4 suspects.",
   "solveDepth": 6,
   "source": "tools/refine-c/runs/20260926-004007/bw-letter/final-case.json"
  },
@@ -27,7 +27,7 @@
   "id": "mk-bw-pair",
   "file": "mk-bw-pair.json",
   "title": "The Greenhouse Steps",
-  "blurb": "Edmund Vale was found at the foot of the greenhouse steps. Depth 6, 24 clues, 4 suspects.",
+  "blurb": "Edmund Vale was found at the foot of the greenhouse steps. Depth 6, 27 clues, 4 suspects.",
   "solveDepth": 6,
   "source": "tools/refine-c/runs/20260926-002910/bw-pair/final-case.json"
  },

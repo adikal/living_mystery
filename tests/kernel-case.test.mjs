@@ -30,6 +30,19 @@ for (const entry of index) {
       const wrong = autoplay(kc, {accuse: h.facts.actor});
       assert.equal(wrong.solved, false, `accusing ${h.facts.actor} must fail`);
     }
+    // every pillar is needed: without the motive (or means) evidence, or naming the wrong method or motive, Bell refuses
+    const pil = cert.pillarSigns;
+    const noMotive = autoplay(kc, {accuse: truth, drop: pil.motive});
+    assert.equal(noMotive.solved, false, 'no motive evidence, no case');
+    assert.ok(['no_motive', 'ambiguous'].includes(noMotive.verdict.status), noMotive.verdict.status);
+    const noMeans = autoplay(kc, {accuse: truth, drop: pil.means});
+    assert.equal(noMeans.solved, false, 'no means evidence, no case');
+    const otherMethod = rt.CASE.methodOptions.map(([id]) => id).find(id => id !== kc.answer.method);
+    const wrongHow = autoplay(kc, {accuse: truth, method: otherMethod});
+    assert.equal(wrongHow.verdict.status, 'wrong_method');
+    const otherMotive = rt.CASE.motiveOptions.map(([id]) => id).find(id => id !== kc.answer.motive);
+    assert.equal(autoplay(kc, {accuse: truth, motive: otherMotive}).verdict.status, 'wrong_motive');
+    assert.match(run.reply, /how it was done and why/);
     // saves carry the full case records, so a reload plays the same case
     const restored = importSession(exportSession(run.session));
     assert.equal(restored.world.caseId, kc.id);
@@ -80,4 +93,51 @@ test('showing evidence: generated lines first, kind templates as fallback; react
   const said = pid => s.events.findLast(e => e.kind === 'speech' && e.actor === pid)?.data.assertion;
   assert.equal(said('rowan'), 'Never seen it in my life.');
   assert.match(said('ada'), /know|recognise|seen/i);
+});
+
+// The case from a real playtest (A Supper at Vale Manor): the fixes it prompted.
+test('playtest fixes: a completing clue delivers the account, proof draws a concession, the culprit reacts to a broken alibi', () => {
+  const kc = JSON.parse(readFileSync(new URL('./fixtures/mk-supper.json', import.meta.url), 'utf8'));
+  const give = (s, ...ids) => { for (const id of ids) dispatch(s, {type: 'inspect', object: id}); };
+  const run = autoplay(kc, {maxSteps: 0}), s = run.session;
+  const say = pid => s.events.findLast(e => e.kind === 'speech' && e.actor === pid)?.data?.assertion ?? '';
+  const has = id => s.world.player.evidence.some(e => e.clue === id);
+  // Bell shown the slate gives his account at once (no "Ask me.")
+  dispatch(s, {type: 'move', to: 'inn'}); give(s, 'b_ada_thumb', 'x_bare_nail', 's_slate');
+  dispatch(s, {type: 'move', to: 'square'});
+  dispatch(s, {type: 'present', person: 'bell', clue: 's_slate', tone: 'private'});
+  assert.ok(has('s_bell_ada'), 'Bell’s account is delivered by showing the slate');
+  assert.doesNotMatch(say('bell'), /Ask me/);
+  // Ada, having held back the name, concedes it when shown the glove
+  dispatch(s, {type: 'move', to: 'inn'}); give(s, 's_parlour_glove');
+  dispatch(s, {type: 'ask', person: 'ada', topic: 's_ada_clara'});
+  dispatch(s, {type: 'present', person: 'ada', clue: 's_parlour_glove', tone: 'private'});
+  assert.match(say('ada'), /Clara|Miss Vale/, 'the concession names the person she protected');
+  dispatch(s, {type: 'ask', person: 'ada', topic: 's_ada_clara'});
+  assert.match(say('ada'), /Clara|Miss Vale/, 'and she keeps to it afterwards');
+  // the culprit, shown the account that breaks his alibi, answers with a written reaction, not a stock line
+  dispatch(s, {type: 'move', to: 'vestry'});
+  dispatch(s, {type: 'present', person: 'silas', clue: 's_bell_ada', tone: 'private'});
+  assert.doesNotMatch(say('silas'), /I can only tell you what I saw myself/);
+  // the doctor gives the time of death and places the poison hours earlier
+  const med = kc.signs.find(x => x.id === 's_medical_iris').text;
+  assert.match(med, /twenty to one/); assert.match(med, /hours/);
+  // the spare key on the cupboard card is explained by the constable
+  assert.ok(kc.signs.some(x => x.loose_end && x.speaker === 'bell' && x.requires.includes('s_vestry_cupboard')));
+});
+
+test('playtest fixes (Bitter Cordial): hints never endorse a misled lead; people are where their behaviour is seen; the ending explains the motive', () => {
+  const kc = JSON.parse(readFileSync(new URL('./fixtures/mk-cordial.json', import.meta.url), 'utf8'));
+  const run = autoplay(kc, {maxSteps: 0}), s = run.session, B = run.runtime.behavior;
+  assert.equal(s.world.npcs.hugo.location, 'boathouse', 'Hugo is at the boathouse, where he is seen patting his pocket');
+  let saw = false;
+  for (let i = 0; i < 150 && !saw; i++) {
+    const st = B.caseStatus(s), h = B.hints(s);
+    if (st.lead === 'clara') { saw = true; assert.match(h.levels[0], /may not be true/); assert.doesNotMatch(h.levels[0], /Only Clara/); }
+    const x = kc.signs.find(q => q.id === h.id); if (!x) break;
+    if (x.kind === 'testimony') { dispatch(s, {type: 'move', to: s.world.npcs[x.speaker].location}); dispatch(s, {type: 'ask', person: x.speaker, topic: x.id}); }
+    else { dispatch(s, {type: 'move', to: x.at}); dispatch(s, {type: 'inspect', object: x.id}); }
+  }
+  assert.ok(saw, 'the misdirection was reached');
+  assert.match(run.runtime.CASE.truth, /living husband/, 'the ending says what the blackmail was about');
 });

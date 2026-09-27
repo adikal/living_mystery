@@ -66,7 +66,7 @@ test('Critic rejection gets one repair attempt, then falls back without applying
  const s=here('manor'),t=ticket(s,'clara','Where were you?',{type:'ask',person:'clara',topic:'alibi'}),p=proposal(t,'ask:alibi');
  p.utterance='I did it. I confess to everything.';let calls=0;
  const r=await proposeCharacterTurn(t,{store:active(),fetchImpl:async(_url,init)=>{calls++;return {ok:true,json:async()=>({text:JSON.parse(init.body).system===CHARACTER_CRITIC?'{"verdict":"reject","violations":["private disclosure and invented admission"]}':JSON.stringify(p)})};}});
- assert.equal(calls,5,"two attempts with review, then one guarded attempt");assert.equal(r.proposal,null);applyCharacterTurn(s,t,r);
+ assert.equal(calls,6,"a menu question gets three reviewed attempts (it must use its own account, so no guarded attempt)");assert.equal(r.proposal,null);applyCharacterTurn(s,t,r);
  assert.doesNotMatch(s.events.filter(e=>e.playerText).map(e=>e.playerText).join(' '),/confess|I did it/i);
  assert.match(s.events.findLast(e=>e.actor==='clara'&&e.kind==='speech').data.assertion,/library/);
  assert.ok(!s.world.npcs.clara.disclosed);
@@ -144,7 +144,7 @@ test('Ambiguous critic verdicts exhaust the retry budget and cannot commit model
      ? 'Example: {"verdict":"pass","violations":[]} Actual verdict: reject.'
      : JSON.stringify(p)})};
  }});
- assert.equal(calls,5,"two attempts with review, then one guarded attempt");assert.equal(result.proposal,null);
+ assert.equal(calls,6,"a menu question gets three reviewed attempts (it must use its own account, so no guarded attempt)");assert.equal(result.proposal,null);
  applyCharacterTurn(s,t,result);
  assert.notEqual(s.events.findLast(e=>e.actor==='clara'&&e.kind==='speech').data.assertion,p.utterance);
  assert.deepEqual(diagnostics(s).errors,[]);
@@ -169,4 +169,45 @@ test('Presenting evidence passes its description and steers a null-account answe
  const ask=validateCharacterProposal(prepareCharacterTurn(s,{person:'silas',text:'Tell me about last night.'}),{...nullAnswer});
  assert.equal(ask.ok,false);
  assert.match(ask.reason,/cannot speak to that|no available account fits/i);
+});
+
+test('Name guard: a reply may not name someone outside the account, the question and the conversation', async () => {
+  const {validateCharacterProposal} = await import('../dist/character-turn.mjs');
+  const roster = [{name: 'Silas Voss', address: 'Mr Voss'}, {name: 'Clara Vale', address: 'Miss Vale'}];
+  const t = {action: null, context: {player: {utterance: 'What did you find?', presented: null},
+    accounts: [{id: 'ask:night', statement: 'I was called to the manor after Mr Vale was found.', deceptive: false, flexible: true, claims: [], sources: []}],
+    character: {name: 'Dr Iris Marsh', roster, plans: [], history: []}}};
+  const p = (u, intent = 'answer') => ({plan: null, intent, account: 'ask:night', utterance: u, claims: [], sources: [], trust: 'unchanged', belief: 'remember_only', engagement: 'continue', rationale: 'x'});
+  assert.match(validateCharacterProposal(t, p('I was called after Mr Voss was found.')).reason, /wrong_or_new_name/);
+  assert.ok(validateCharacterProposal(t, p('I was called after Mr Vale was found.')).ok);
+  assert.ok(validateCharacterProposal(t, p('I was called after Mr Vale was found.', 'deceive')).ok, 'a claimless account may be voiced either way');
+});
+
+test('Time guard: a spoken clock time must come from the chosen account', async () => {
+  const {validateCharacterProposal} = await import('../dist/character-turn.mjs');
+  const t = {action: null, context: {player: {utterance: 'When did you leave?', presented: null},
+    accounts: [{id: 'ask:t_silas', statement: 'I worked until late, and left at half past nine.', deceptive: false, claims: [], sources: []}],
+    character: {name: 'Silas Voss', roster: [], plans: [], history: []}}};
+  const p = u => ({plan: null, intent: 'answer', account: 'ask:t_silas', utterance: u, claims: [], sources: [], trust: 'unchanged', belief: 'remember_only', engagement: 'continue', rationale: 'x'});
+  assert.match(validateCharacterProposal(t, p('It must have been near midnight when I left.')).reason, /invented_time/);
+  assert.ok(validateCharacterProposal(t, p('I left at half past nine, strictly speaking.')).ok);
+});
+
+test('Name guard accepts a person the question names by first name or role', async () => {
+  const {validateCharacterProposal} = await import('../dist/character-turn.mjs');
+  const roster = [{name: 'Clara Vale', address: 'Miss Vale', role: 'Mistress of the household'}, {name: 'Silas Voss', address: 'Mr Voss', role: 'The solicitor'}];
+  const t = {action: null, context: {player: {utterance: 'did Clara come by yesterday? and the solicitor?', presented: null},
+    accounts: [{id: 'ask:night', statement: 'I was behind my bar all evening.', deceptive: false, flexible: true, claims: [], sources: []}],
+    character: {name: 'Ada Finch', roster, plans: [], history: []}}};
+  const p = u => ({plan: null, intent: 'answer', account: 'ask:night', utterance: u, claims: [], sources: [], trust: 'unchanged', belief: 'remember_only', engagement: 'continue', rationale: 'x'});
+  assert.ok(validateCharacterProposal(t, p('Miss Vale? I was behind my bar all evening, love. Mr Voss too, I dare say.')).ok);
+});
+
+test('Guards: a time the detective already said may be repeated; the constable may always be named', async () => {
+  const {validateCharacterProposal} = await import('../dist/character-turn.mjs');
+  const t = {action: null, context: {player: {utterance: 'The vicar says you stayed until a quarter past ten. Well?', presented: null},
+    accounts: [{id: 'ask:night', statement: 'I went to see Mr Voss about money.', deceptive: false, flexible: true, claims: [], sources: []}],
+    character: {name: 'Hugo Vale', roster: [{name: 'Arthur Bell', address: 'Constable Bell', role: 'The village constable'}], plans: [], history: []}}};
+  const p = u => ({plan: null, intent: 'answer', account: 'ask:night', utterance: u, claims: [], sources: [], trust: 'unchanged', belief: 'remember_only', engagement: 'continue', rationale: 'x'});
+  assert.ok(validateCharacterProposal(t, p('A quarter past ten? If the vicar says so. I went to see Mr Voss about money, and Constable Bell can think what he likes.')).ok);
 });

@@ -194,3 +194,26 @@ and do not enter certification; they are checked mechanically (no times or numbe
 limits, no second-person address in third-person lines).
 
 A generated case takes roughly 10 to 20 minutes, dominated by sequential model calls for the first draft and each layer.
+
+
+## 10.16 Motive, means and opportunity; the premise deck; the Z3 oracle
+
+**Pillars.** Both kernels compute, besides opportunity (the survivors), the culprit's **means** (a true possession or
+trait claim the culprit satisfies) and **motive** (a true relation claim connecting the culprit and the victim: a secret about the culprit alone is not a reason to kill
+this person), each with the depth at
+which it is first understood. Publishing requires both to be reachable; innocents may have motives of their own, so no
+single pillar names the culprit. The generator deepens a pillar found more than two levels before the answer.
+
+**Premise deck.** Code draws the victim (anyone but the constable and the doctor), the culprit and three other
+suspects, one of nine methods fitted to the scene, one of eight motives and one of six case shapes, preferring what was
+used least recently. The seed is rejected unless it honours the draw; the case's answer (method, motive) is known by
+construction. The first draft is deliberately simple: variety comes from the premise, depth from about sixteen layers.
+
+**Z3 oracle.** `server/case_oracle.py` encodes the true history (one place at a time, walking times, the crime inside
+its window) and, for any evidence set, each candidate's alibi and attribute constraints, independently of the kernels.
+Unsat cores name the evidence that rules each suspect out; a satisfying minute is an alternative story. Publishing
+requires Python, JavaScript and Z3 to agree.
+
+**Publish-time content.** Everyday knowledge, moods, loose-end accounts and concessions carry no claims and are checked
+not to mention hidden clues or lies; every written line is then reviewed against the true history and faulty lines are
+dropped. Independent steps run in parallel.

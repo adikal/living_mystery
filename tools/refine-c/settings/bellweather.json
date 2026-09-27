@@ -1,8 +1,8 @@
 {
  "id": "bellweather",
  "name": "Bellweather",
- "era": "An English village, 1920s",
- "summary": "A small village of a square, a manor, an inn, a greenhouse, a church vestry and a doctor’s surgery. Edmund Vale of Vale Manor is dead; the investigation begins the next morning.",
+ "era": "An English village, 1932",
+ "summary": "A small English village: a square, a manor with its greenhouse and boathouse on the river, an inn, the church vestry, a doctor’s surgery, a post office, a railway halt and a disused mill. Someone is dead; the investigation begins the next morning.",
  "places": [
   {
    "id": "square",
@@ -27,6 +27,22 @@
   {
    "id": "surgery",
    "name": "Dr Marsh’s surgery"
+  },
+  {
+   "id": "halt",
+   "name": "Bellweather Halt"
+  },
+  {
+   "id": "post",
+   "name": "The post office"
+  },
+  {
+   "id": "mill",
+   "name": "Alder Mill"
+  },
+  {
+   "id": "boathouse",
+   "name": "The boathouse"
   }
  ],
  "links": [
@@ -51,25 +67,70 @@
    "minutes": 3
   },
   {
+   "a": "square",
+   "b": "post",
+   "minutes": 2
+  },
+  {
+   "a": "square",
+   "b": "halt",
+   "minutes": 6
+  },
+  {
    "a": "manor",
    "b": "greenhouse",
    "minutes": 3
   },
   {
+   "a": "manor",
+   "b": "boathouse",
+   "minutes": 6
+  },
+  {
    "a": "inn",
    "b": "greenhouse",
    "minutes": 6
+  },
+  {
+   "a": "inn",
+   "b": "post",
+   "minutes": 3
+  },
+  {
+   "a": "greenhouse",
+   "b": "mill",
+   "minutes": 7
+  },
+  {
+   "a": "vestry",
+   "b": "halt",
+   "minutes": 5
+  },
+  {
+   "a": "surgery",
+   "b": "post",
+   "minutes": 3
+  },
+  {
+   "a": "halt",
+   "b": "mill",
+   "minutes": 5
+  },
+  {
+   "a": "mill",
+   "b": "boathouse",
+   "minutes": 4
   }
  ],
  "people": [
   {
    "id": "clara",
    "name": "Clara Vale",
-   "role": "The victim’s sister",
+   "role": "Mistress of the household",
    "pronoun": "she",
    "address": "Miss Vale",
-   "voice": "Composed and guarded; courteous but says little, quietly deflecting private matters. Speaks briefly.",
-   "public": "Edmund’s younger sister. She manages the manor and has asked that its private affairs remain private.",
+   "voice": "Composed, dry and exact; she chooses words like a woman choosing gloves. Polite to the point of chill with strangers, warmer once she respects you.",
+   "public": "Edmund’s younger sister. She has run Vale Manor’s household for years and guards its privacy.",
    "home": "manor"
   },
   {
@@ -78,18 +139,18 @@
    "role": "The groundskeeper",
    "pronoun": "he",
    "address": "Mr Pike",
-   "voice": "A plain-spoken working man; blunt and practical, short sentences, no flourishes.",
-   "public": "The manor’s groundskeeper. His bandaged hand and green coat have become subjects of village conversation.",
+   "voice": "A plain-spoken countryman: short, blunt, practical, with a gardener’s patience and the odd dour joke.",
+   "public": "The manor’s groundskeeper. He lives among his glasshouses and says little to anyone.",
    "home": "greenhouse"
   },
   {
    "id": "silas",
    "name": "Silas Voss",
-   "role": "The estate solicitor",
+   "role": "The solicitor",
    "pronoun": "he",
    "address": "Mr Voss",
-   "voice": "A precise, careful solicitor; measured and a touch formal, but concise — never rambling.",
-   "public": "A precise, courteous solicitor who keeps an office in the vestry. He handled Edmund’s estate accounts.",
+   "voice": "Measured, formal and faintly amused; speaks in tidy clauses and likes a Latin tag. Never rambles.",
+   "public": "A precise, courteous solicitor who keeps an office in the vestry and handles the affairs of half the parish.",
    "home": "vestry"
   },
   {
@@ -98,8 +159,8 @@
    "role": "The innkeeper",
    "pronoun": "she",
    "address": "Mrs Finch",
-   "voice": "A warm, chatty innkeeper; colloquial and quick to share impressions, though she runs on a little.",
-   "public": "The Rook & Lantern’s proprietor. She knows everyone’s habits and is certain she saw something useful last night.",
+   "voice": "Warm, chatty and colloquial; calls people \"love\", runs on a little, and enjoys a bit of news more than she should.",
+   "public": "Proprietor of the Rook & Lantern. She knows everyone’s habits and most of their business.",
    "home": "inn"
   },
   {
@@ -108,8 +169,8 @@
    "role": "The village doctor",
    "pronoun": "she",
    "address": "Dr Marsh",
-   "voice": "Measured and clinical; direct and concise, stays to what she observed.",
-   "public": "Methodical and direct. She examined Edmund’s body and treated a patient at the greenhouse last night.",
+   "voice": "Clinical and direct, with brisk warmth underneath; says exactly what she observed and no more.",
+   "public": "The village doctor. Methodical and direct; she is called whenever anyone in Bellweather is hurt or ill.",
    "home": "surgery"
   },
   {
@@ -118,20 +179,69 @@
    "role": "The village constable",
    "pronoun": "he",
    "address": "Constable Bell",
-   "voice": "A plain, gruff country constable; terse and matter-of-fact, everyday speech — never bureaucratic or long-winded.",
-   "public": "Bell has secured the manor and asked you to investigate. He will hear an accusation when you can explain it with evidence.",
+   "voice": "A gruff country constable: terse, dry and matter-of-fact, with a soft spot he hides badly.",
+   "public": "The village constable. He has secured the scene and asked you to investigate; he will hear an accusation when you can back it with evidence.",
    "home": "square"
   },
   {
    "id": "edmund",
    "name": "Edmund Vale",
-   "role": "The victim",
+   "role": "Master of Vale Manor",
    "pronoun": "he",
    "address": "Mr Vale",
-   "public": "Master of Vale Manor, found dead the morning the investigation begins.",
+   "voice": "Loud, confident and used to being obeyed; bluff good humour that turns cold when crossed.",
+   "public": "Master of Vale Manor: a man of fixed habits, generous in public and hard in private.",
+   "home": "manor"
+  },
+  {
+   "id": "vicar",
+   "name": "The Reverend Thomas Hale",
+   "role": "The vicar",
+   "pronoun": "he",
+   "address": "Mr Hale",
+   "voice": "Gentle and rambling, with a scholar’s digressions and a surprising steel when conscience is touched.",
+   "public": "Vicar of St. Alden’s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
+   "home": "vestry"
+  },
+  {
+   "id": "dora",
+   "name": "Dorothy Pruett",
+   "role": "The postmistress",
+   "pronoun": "she",
+   "address": "Miss Pruett",
+   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people’s business.",
+   "public": "The postmistress. Every letter, parcel and telegram in Bellweather passes over her counter, and she forgets nothing.",
+   "home": "post"
+  },
+  {
+   "id": "jonah",
+   "name": "Jonah Reed",
+   "role": "The boathouse keeper",
+   "pronoun": "he",
+   "address": "Mr Reed",
+   "voice": "Slow, weathered and wry; a river man who speaks in the present tense and weighs every word like a stone.",
+   "public": "Keeper of the manor’s boathouse and ferryman when the river is up. He knows the water and keeps his own counsel.",
+   "home": "boathouse"
+  },
+  {
+   "id": "hugo",
+   "name": "Hugo Vale",
+   "role": "The nephew from London",
+   "pronoun": "he",
+   "address": "Mr Hugo",
+   "voice": "Quick, flippant and charming, full of London slang; hides nerves behind jokes and talks a little too fast.",
+   "public": "Edmund’s nephew, down from London by train. Charming, restless and plainly bored by the country.",
    "home": "manor"
   }
  ],
  "victim": "edmund",
- "investigator": "Constable Bell assists the detective"
+ "investigator": "Constable Bell assists the detective",
+ "not_victim": [
+  "bell",
+  "iris"
+ ],
+ "not_culprit": [
+  "bell",
+  "iris"
+ ]
 }

@@ -2,7 +2,7 @@
 // accuse. Used by tests and smoke checks; it plays through the real engine (dispatch), never around it.
 import {registerKernelCase, createSession, dispatch, caseTables, followupOptions} from '../dist/engine.mjs';
 
-export function autoplay(records, {accuse = null, maxSteps = 400} = {}) {
+export function autoplay(records, {accuse = null, maxSteps = 400, method = records.answer?.method, motive = records.answer?.motive, drop = []} = {}) {
   const id = registerKernelCase(records), s = createSession(17, id), rt = caseTables(s);
   const held = () => new Set(s.world.player.evidence.map(e => e.clue));
   const log = [];
@@ -37,7 +37,8 @@ export function autoplay(records, {accuse = null, maxSteps = 400} = {}) {
   if (accuse) {
     if (s.world.player.location !== 'square') dispatch(s, {type: 'move', to: 'square'});
     for (let i = 0; i < 12 && s.world.npcs.bell.location !== 'square'; i++) dispatch(s, {type: 'wait', minutes: 10});
-    dispatch(s, {type: 'accuse', suspect: accuse, evidence: [...held()]});
+    dispatch(s, {type: 'accuse', suspect: accuse, method, motive, evidence: [...held()].filter(c => !drop.includes(c))});
+    result.verdict = rt.behavior.checkCase(s, {suspect: accuse, method, motive, evidence: [...held()].filter(c => !drop.includes(c))});
     result.solved = s.world.status === 'solved';
     result.reply = s.events.findLast(e => e.playerText && ['resolution', 'rejected'].includes(e.kind))?.playerText;
   }

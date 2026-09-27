@@ -100,3 +100,16 @@ def test_failure_is_reported(server):
     gate.set()
     st = wait_for(lambda: (lambda r: r if r[1]['status'] != 'running' else None)(call(port, 'GET', f"/jobs/{job['id']}")))[1]
     assert st['status'] == 'failed' and 'boom' in st['error']
+
+
+def test_reserve_case_is_handed_over_at_once(server):
+    gs, port, gate = server
+    gate.set()                                            # stub jobs finish immediately
+    code, first = call(port, 'POST', '/jobs')
+    assert code == 201
+    wait_for(lambda: gs.STATE['job'].status == 'done')
+    res = wait_for(lambda: gs.STATE.get('reserve') and gs.STATE['reserve'].status == 'done' and gs.STATE['reserve'])
+    assert res and res.id != first['id'], 'a reserve case is built after the first one'
+    code, second = call(port, 'POST', '/jobs')
+    assert code == 201 and second['id'] == res.id and second['status'] == 'done', 'the reserve is handed over, already finished'
+    assert wait_for(lambda: gs.STATE.get('reserve') and gs.STATE['reserve'].id != res.id), 'and the next one starts'

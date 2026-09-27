@@ -1030,23 +1030,25 @@
    "id": "s_medical",
    "kind": "record",
    "medical": true,
+   "medical_v": 2,
    "at": "surgery",
    "title": "The doctor\u2019s examination notes",
-   "text": "Examination of Edmund Vale reveals death resulted from a poison taken by mouth, consistent with ingestion shortly before death. Based on the state of the body and stomach contents, I place the time of death between 21:10 and 21:20 last evening. No other significant injuries were noted.",
+   "text": "Examination of the deceased, Edmund Vale, reveals no external wounds or signs of violence. Internal congestion and irritation of the stomach lining are consistent with a poison taken by mouth. I estimate he died around one o'clock, though the poison itself was taken some hours earlier, between ten past nine and twenty past nine.",
    "claim": {
     "kind": "time",
     "start": 1270,
     "end": 1280
    },
-   "show": "The doctor's notes say Mr Vale died from poison taken by mouth shortly before death, with time of death between 21:10 and 21:20. Does that fit with what you saw that evening?",
    "reactions": {
     "silas": "A grim business, Doctor's notes or not. I was at my vestry desk by nine, as my day-book will show \u2014 you may check it against the sexton's own comings and goings if you doubt me. I can hardly account for what happened at the manor after I left."
-   }
+   },
+   "show": "The doctor's notes say Edmund Vale had no wounds, but stomach irritation consistent with poison taken by mouth some hours before he died, between ten past and twenty past nine. Does that time mean anything to you?"
   },
   {
    "id": "s_medical_iris",
    "kind": "testimony",
    "medical": true,
+   "medical_v": 2,
    "speaker": "iris",
    "claim": {
     "kind": "time",
@@ -1054,8 +1056,8 @@
     "end": 1280
    },
    "title": "Dr Marsh on the body",
-   "text": "Poor Mr. Vale died from a poison taken by mouth, and by my reckoning it happened sometime between ten past nine and twenty past nine last night.",
-   "ask": "Doctor, what did you find when you examined Mr Vale?",
+   "text": "Mr Vale died around one o'clock, but whatever he swallowed was taken well before that, between ten past nine and twenty past nine \u2014 there's not a mark on him, only the signs of a poison taken by mouth.",
+   "ask": "Doctor, what did you find when you examined Edmund?",
    "show": "Dr Marsh says Mr Vale died from poison taken by mouth, sometime between ten past and twenty past nine last night. Does that match what you know?",
    "confront": "You told me Mr Vale died from poison taken by mouth, between ten past and twenty past nine last night. Is that the whole of what you can tell me?"
   },
@@ -1064,12 +1066,13 @@
    "kind": "testimony",
    "speaker": "bell",
    "surface": true,
-   "deceptive": false,
+   "deceptive": true,
    "title": "Arthur Bell on the evening",
    "text": "I was about the village on my rounds, same as any night, and I stopped in at the Rook for a pint before I finished up. Nothing out of the ordinary that I noticed.",
    "ask": "Where were you last night?",
    "confront": "You told me you were on your rounds and stopped at the Rook for a pint, with nothing out of the ordinary. Is that the whole of it?",
-   "show": "Constable Bell says he did his rounds as usual and stopped at the Rook for a pint, noticing nothing unusual that night. Does that match what you saw?"
+   "show": "Constable Bell says he did his rounds as usual and stopped at the Rook for a pint, noticing nothing unusual that night. Does that match what you saw?",
+   "surface_checked": "cover"
   },
   {
    "id": "s_surface_iris",
@@ -1081,7 +1084,8 @@
    "text": "I was called out to a cut hand that wanted stitching, and after that I was back at my surgery seeing to my notes and whatever patients came to the door. I can't say more than that without going into who came and why, and I won't do that without the constable's say-so.",
    "ask": "Where were you last night?",
    "confront": "You told me you tended a cut hand, then were at your surgery with notes and patients, but wouldn't say more. Is that the whole of it?",
-   "show": "Dr Marsh says she was called out to stitch a cut hand, then returned to her surgery for notes and patients, but won't say more without the constable's leave. Do you know anything about that evening?"
+   "show": "Dr Marsh says she was called out to stitch a cut hand, then returned to her surgery for notes and patients, but won't say more without the constable's leave. Do you know anything about that evening?",
+   "surface_checked": "honest"
   },
   {
    "id": "s_surface_ada",
@@ -1091,9 +1095,10 @@
    "title": "Ada Finch on the evening",
    "text": "Oh, quiet as anything it was - just my regulars in for a pint, nothing to speak of. Miss Vale? No, didn't see her at all, you can check the slate on the nail there.",
    "ask": "Where were you last night?",
-   "deceptive": false,
+   "deceptive": true,
    "confront": "You told me it was a quiet night with just your regulars, and that you never saw Miss Vale. Is that the whole of it?",
-   "show": "Mrs Finch says it was a quiet night at the Rook with just her regulars, and that she never saw Miss Vale at all. Does that tally with what you know?"
+   "show": "Mrs Finch says it was a quiet night at the Rook with just her regulars, and that she never saw Miss Vale at all. Does that tally with what you know?",
+   "surface_checked": "cover"
   },
   {
    "id": "s_surface_silas",
@@ -1105,7 +1110,8 @@
    "ask": "Where were you last night?",
    "deceptive": true,
    "confront": "You told me you were at the vestry office all evening working on the day-books. Is that the whole of it?",
-   "show": "Mr Voss says he spent the whole evening at the vestry office catching up on the day-books after supper at the manor. Do you know if that's true?"
+   "show": "Mr Voss says he spent the whole evening at the vestry office catching up on the day-books after supper at the manor. Do you know if that's true?",
+   "surface_checked": "cover"
   },
   {
    "id": "s_surface_rowan",
@@ -1117,7 +1123,8 @@
    "ask": "Where were you last night?",
    "deceptive": false,
    "confront": "You told me you were in the greenhouse potting seedlings, cut your hand, had it tended, then went home. Is that the whole of it?",
-   "show": "Mr Pike says he was potting seedlings in the greenhouse, cut his hand on a pane, had it seen to, then went home. Does that match what you know?"
+   "show": "Mr Pike says he was potting seedlings in the greenhouse, cut his hand on a pane, had it seen to, then went home. Does that match what you know?",
+   "surface_checked": "honest"
   },
   {
    "id": "s_surface_clara",
@@ -1127,9 +1134,10 @@
    "title": "Clara Vale on the evening",
    "text": "I supped at the manor with my brother and Mr Voss, then walked a little and turned in early. I've nothing more to tell you, I'm afraid.",
    "ask": "Where were you last night?",
-   "deceptive": false,
+   "deceptive": true,
    "confront": "You told me you supped at the manor, walked a little, and turned in early. Is that the whole of it?",
-   "show": "Miss Vale says she supped at the manor with her brother and Mr Voss, then walked a little before turning in early. Do you know if that's so?"
+   "show": "Miss Vale says she supped at the manor with her brother and Mr Voss, then walked a little before turning in early. Do you know if that's so?",
+   "surface_checked": "cover"
   },
   {
    "id": "s_iris_rowan",
@@ -1152,7 +1160,13 @@
    "reading": "The card fixes her departure at 20:40, and the walk from the surgery to the greenhouse takes about twelve minutes, so her hour at the stool ran from about nine until ten.",
    "ask": "Dr Marsh, what happened in the greenhouse that night?",
    "show": "Dr Marsh says she was fetched to the greenhouse and spent about an hour stitching Mr Pike's hand there, with him seated the whole time, arriving home a little after ten. Does that match what you saw?",
-   "confront": "You told me you went straight to the greenhouse, left your watch behind, and stitched Mr Pike's hand there for about an hour while he sat still. Is that the whole of it?"
+   "confront": "You told me you went straight to the greenhouse, left your watch behind, and stitched Mr Pike's hand there for about an hour while he sat still. Is that the whole of it?",
+   "concede": {
+    "s_door_card": "Very well - the card shows half past ten, not a little after, so I'll set it down plainly: I was with Mr Pike at the greenhouse from nine until ten. I said 'a little after' only because I hadn't looked closely at my own note, not to hide anything."
+   },
+   "reactions": {
+    "rowan": "Aye, that's right. I sat still the whole time, hand throbbing something awful. Doctor'll tell you the same - I never moved off that stool."
+   }
   },
   {
    "id": "s_ada_clara",
@@ -1178,7 +1192,11 @@
    ],
    "ask": "Mrs Finch, what can you tell me about Miss Vale?",
    "show": "Mrs Finch says Miss Vale came in just after nine for a letter she keeps by for her, and sat reading it by the fire until the church struck ten without saying a word. Do you know anything about that?",
-   "confront": "You told me you were at the manor all evening, but Mrs Finch says you came in just after nine for a letter and sat reading it by the fire until ten. Is that the whole of it?"
+   "confront": "You told me you were at the manor all evening, but Mrs Finch says you came in just after nine for a letter and sat reading it by the fire until ten. Is that the whole of it?",
+   "reactions": {
+    "clara": "Yes. I went for a letter of my own, and I'd rather it stayed my own affair. It has nothing to do with my brother.",
+    "silas": "Miss Vale's evening is her own business, not mine. I was at my desk in the vestry the whole time, as my day-book shows."
+   }
   },
   {
    "id": "s_bell_ada",
@@ -1202,7 +1220,10 @@
    "because": [],
    "ask": "Constable Bell, what happened in the taproom that night?",
    "show": "Constable Bell says he had his pint at the Rook from half eight until ten past ten, with Mrs Finch behind the bar the whole time and never leaving it. Does that match what you saw?",
-   "confront": "You told me it was quiet with just your regulars, but Constable Bell says he was there from half eight to ten past ten and you never left the bar. Is that the whole of it?"
+   "confront": "You told me it was quiet with just your regulars, but Constable Bell says he was there from half eight to ten past ten and you never left the bar. Is that the whole of it?",
+   "reactions": {
+    "ada": "That's right, love, never left the bar all night. Steady as you like, weren't it, Constable - nothing out of the ordinary happened here."
+   }
   },
   {
    "id": "s_slate",
@@ -1238,10 +1259,10 @@
     "start": 1260,
     "end": 1300
    },
+   "show": "This is Mr Voss's day-book, open to last night, with times for the Harcourt conveyance and the Michaelmas rents written in one steady hand with no blots. Does that match what you know of his evening?",
    "reactions": {
     "silas": "That is precisely how I keep my day-book, entered as I go, without blot or delay. I worked at that desk through the whole evening on estate business, as the entries plainly show. I've nothing further to add."
-   },
-   "show": "This is Mr Voss's day-book, open to last night, with times for the Harcourt conveyance and the Michaelmas rents written in one steady hand with no blots. Does that match what you know of his evening?"
+   }
   },
   {
    "id": "s_rowan_window",
@@ -1273,7 +1294,14 @@
     "s_daybook"
    ],
    "ask": "Mr Pike, what did you notice about the study window?",
-   "confront": "You told me you watched that study window from your stool from just after nine to half past, and saw the solicitor there the whole while, with Mr Vale coming and going. Is that the whole of it?"
+   "confront": "You told me you sat facing the lawn while the doctor stitched you and saw the solicitor in that window from after nine till half past. Is that everything you saw?",
+   "concede": {
+    "s_iris_rowan": "Right, since the doctor's own account bears it out - Vale was at his window from five past nine to half past nine. I didn't want to name him outright, seeing as it's his house now and not mine to be talking about his comings and goings."
+   },
+   "show": "Mr Pike says he sat facing the lawn while the doctor stitched him, with the study lamp lit, and saw the solicitor in that window from after nine till half past. Does that match what you know?",
+   "reactions": {
+    "silas": "Mr Pike is mistaken, or the light played tricks on him. My day-book shows plainly where I was that evening, and I stand by it."
+   }
   },
   {
    "id": "s_audit_notes",
@@ -1294,9 +1322,10 @@
     "b": "edmund"
    },
    "reactions": {
-    "silas": "Edmund's arithmetic, not mine. He meant to put questions to me after supper, certainly, but a note of intention is not proof of wrongdoing, nor of what became of him afterward.",
-    "clara": "Yes \u2014 I took those from his desk after I found him. They were his private business with Mr Voss, and I saw no reason the whole village should paw through our affairs before you'd even asked."
-   }
+    "clara": "Yes \u2014 I took those from his desk after I found him. They were his private business with Mr Voss, and I saw no reason the whole village should paw through our affairs before you'd even asked.",
+    "silas": "Edmund's arithmetic, not mine. I have managed those ledgers scrupulously for years, and I resent the implication otherwise. If discrepancies exist, they are clerical, and I should have welcomed the chance to reconcile them with him myself, in good time."
+   },
+   "show": "These pencilled sheets in Edmund's hand set his ledger against the bank book and total a gap of \u00a31,140 over two years, with a note to put it to 'V.' after supper that night. Do you know what this concerns?"
   },
   {
    "id": "s_phial",
@@ -1366,7 +1395,8 @@
    "reading": "The rain has blurred the last figure of the time. Once the case-book's 8.50 is corrected for the fast surgery clock, it records the call at 8.40, which fills the gap.",
    "reactions": {
     "iris": "I wrote that card myself before I went out to Pike \u2014 the rain has spoiled the last figure, but I was back within the hour, as my case-book will show. I left the watch behind by mistake, nothing more."
-   }
+   },
+   "show": "There's a visiting card wedged in the surgery door, rain-stained, noting a call to the greenhouse and a return by half past ten, though the last figure's smeared. Do you know anything about that?"
   },
   {
    "id": "s_slate_gap",
@@ -1486,7 +1516,11 @@
     "end": 1320
    },
    "ask": "Mrs Finch, how would you describe that night?",
-   "confront": "Mrs Finch says it was a quiet night at the inn and that you never set foot in there, and that you'd have been up at the manor with your brother all evening. Is that where you truly were?"
+   "confront": "You told me it was a quiet night with just the farmers' table and the darts lot, and that Miss Vale was up at the manor with her brother all evening. Is that the whole of it?",
+   "reactions": {
+    "clara": "Mrs Finch is mistaken, or kind enough to shield me. I did go into the village that evening, though I'd rather not say why."
+   },
+   "show": "Mrs Finch says the inn was quiet that night, just the farmers' table and the darts lot, and reckons Miss Vale was up at the manor with her brother all evening. Does that match what you remember?"
   },
   {
    "id": "s_iris_refuse",
@@ -1517,9 +1551,137 @@
    "reactions": {
     "bell": "Aye, that's mine right enough \u2014 my own hand and my thumb's mark an' all. Wrote it out in the square so the doctor'd know who sent the bearer, plain and simple. Nowt strange in it, just me doing my duty by Mr Vale."
    }
+  },
+  {
+   "id": "s_secret",
+   "kind": "document",
+   "title": "Edmund's earlier note to Voss",
+   "text": "Tucked beneath the pencilled sheets, a torn note in Edmund's hand: 'Voss - the rents you entered do not match what the bank shows paid in. Two years of gaps, all in your column, not the tenants'. I mean to have it out with you tonight.'",
+   "secret": true,
+   "requires": [
+    "s_audit_notes"
+   ],
+   "unlock": "once you have edmund's pencilled sheets, you know what to ask",
+   "at": "manor",
+   "show": "I've found a torn note from Edmund to Voss, accusing him of years of gaps in the rent entries and saying he meant to have it out with him that very night. Do you know anything about this dispute?"
   }
  ],
  "id": "mk-bw-poison",
  "title": "A Supper at Vale Manor",
- "synopsis": "Edmund Vale died in the night, after supper at Vale Manor."
+ "synopsis": "Edmund Vale died in the night, after supper at Vale Manor.",
+ "answer": {
+  "method": "poison",
+  "motive": "money"
+ },
+ "reviewed": [
+  "s_ada_clara|confront",
+  "s_ada_clara|reactions|clara",
+  "s_ada_clara|reactions|silas",
+  "s_ada_clara|show",
+  "s_ada_quiet|confront",
+  "s_ada_quiet|reactions|clara",
+  "s_audit_notes|reactions|clara",
+  "s_audit_notes|reactions|silas",
+  "s_audit_notes|show",
+  "s_bell_ada|confront",
+  "s_bell_ada|reactions|ada",
+  "s_bell_ada|show",
+  "s_bell_note|reactions|bell",
+  "s_bell_note|show",
+  "s_chute|reactions|ada",
+  "s_chute|show",
+  "s_clara_grate|confront",
+  "s_clara_grate|reactions|clara",
+  "s_clara_grate|show",
+  "s_clara_letter|reactions|ada",
+  "s_clara_letter|reactions|clara",
+  "s_clara_letter|show",
+  "s_daybook|reactions|silas",
+  "s_daybook|show",
+  "s_door_card|reactions|iris",
+  "s_door_card|show",
+  "s_iris_casebook|reactions|iris",
+  "s_iris_casebook|show",
+  "s_iris_glance|confront",
+  "s_iris_glance|reactions|iris",
+  "s_iris_glance|show",
+  "s_iris_refuse|confront",
+  "s_iris_refuse|reactions|iris",
+  "s_iris_refuse|show",
+  "s_iris_rowan|concede|s_door_card",
+  "s_iris_rowan|confront",
+  "s_iris_rowan|reactions|rowan",
+  "s_iris_rowan|show",
+  "s_medical_iris|confront",
+  "s_medical_iris|show",
+  "s_medical_iris|text",
+  "s_medical|reactions|silas",
+  "s_medical|show",
+  "s_medical|text",
+  "s_phial|reactions|silas",
+  "s_phial|show",
+  "s_rowan_window|concede|s_iris_rowan",
+  "s_rowan_window|confront",
+  "s_rowan_window|reactions|silas",
+  "s_rowan_window|show",
+  "s_secret|text",
+  "s_slate_gap|reactions|ada",
+  "s_slate_gap|show",
+  "s_slate|reactions|ada",
+  "s_slate|show",
+  "s_spare_slate|reactions|ada",
+  "s_spare_slate|show",
+  "s_surface_ada|confront",
+  "s_surface_ada|show",
+  "s_surface_ada|text",
+  "s_surface_bell|confront",
+  "s_surface_bell|show",
+  "s_surface_bell|text",
+  "s_surface_clara|confront",
+  "s_surface_clara|show",
+  "s_surface_clara|text",
+  "s_surface_iris|confront",
+  "s_surface_iris|show",
+  "s_surface_iris|text",
+  "s_surface_rowan|confront",
+  "s_surface_rowan|show",
+  "s_surface_rowan|text",
+  "s_surface_silas|confront",
+  "s_surface_silas|show",
+  "s_surface_silas|text",
+  "s_surgery_clock|reactions|iris",
+  "s_surgery_clock|show"
+ ],
+ "loose_ends_checked": true,
+ "knowledge": {
+  "clara": [
+   "I live at the manor, where I keep my own bureau in the morning room for my personal papers, which I keep locked.",
+   "I found my brother dead in his bed this morning and raised the alarm, which is how the village came to know of it.",
+   "I hold the keys to my own bureau and to some of the manor's private rooms, as is proper for the lady of the house."
+  ],
+  "rowan": [
+   "I'm the groundskeeper at Vale Manor and I look after the gardens and the greenhouse.",
+   "I live at the greenhouse, where I keep my tools and gardening supplies.",
+   "I keep the greenhouse key myself since I'm the one who tends it daily.",
+   "My hand's been bandaged of late, which folk have noticed and remarked on."
+  ],
+  "silas": [
+   "I live and work at the vestry, where I keep my ledgers and day-book on my desk.",
+   "I keep my own vestry office key, since I'm often there working late into the evening on estate business."
+  ],
+  "bell": [
+   "I'm the village constable and I keep my rounds through the square, manor, inn and other places as needed.",
+   "I live near the square, where I keep my pocket-book and notes on village matters.",
+   "I know everyone in the village in my official capacity, including Clara, Silas, Ada, Rowan and Iris.",
+   "I carry my pocket-book with me on my rounds to note anything of importance."
+  ]
+ },
+ "moods": {
+  "clara": "Pale and jumpy over her coffee; desperate to slip away and quietly retrieve something before anyone stirs.",
+  "rowan": "Sullen and eager to be gone; keeping his head down and his hands busy in the dirt.",
+  "silas": "Composed and businesslike, going through his morning papers as usual.",
+  "iris": "Brisk and tight-lipped, hurrying between patients and deflecting questions about her night calls.",
+  "bell": "Gruff and evasive, keen to look busy securing the scene rather than talk about his own evening."
+ },
+ "secret_checked": true
 }

@@ -10,7 +10,7 @@ const base = () => ({
     links: [{a: 'gallery', b: 'cottage', minutes: 10}, {a: 'cottage', b: 'inn', minutes: 15}]},
   rules: [{id: 'r_trim', text: 'wicks are trimmed hourly', knowledge: 'acquirable'}],
   people: [{id: 'tom', traits: {handed: 'left'}}, {id: 'wife', traits: {handed: 'right'}}, {id: 'cox', traits: {handed: 'right'}}, {id: 'keeper', traits: {}}],
-  objects: [], relations: [], possession: [],
+  objects: [], relations: [{a: 'tom', rel: 'owes', b: 'keeper'}], possession: [{person: 'tom', item: 'gallery_key'}],
   question: {text: 'who pushed the keeper?', truth: 'h_tom',
     candidates: [{id: 'h_tom', facts: {actor: 'tom'}}, {id: 'h_wife', facts: {actor: 'wife'}}, {id: 'h_cox', facts: {actor: 'cox'}}],
     crime: {event: 'e_push', place: 'gallery', window: [1320, 1440]}},
@@ -21,7 +21,9 @@ const base = () => ({
     {id: 'e_cox', type: 'drink', agent: 'cox', place: 'inn', start: 1300, end: 1500, causedBy: 'a_cox'}],
   signs: [
     {id: 's_wife', kind: 'testimony', speaker: 'cox', text: 'She never left the cottage.', claim: {kind: 'place', person: 'wife', place: 'cottage', start: 1310, end: 1450}},
-    {id: 's_cox', kind: 'record', text: 'The inn ledger.', claim: {kind: 'place', person: 'cox', place: 'inn', start: 1310, end: 1450}}]
+    {id: 's_cox', kind: 'record', text: 'The inn ledger.', claim: {kind: 'place', person: 'cox', place: 'inn', start: 1310, end: 1450}},
+    {id: 's_debt', kind: 'document', text: 'An IOU from Tom to the keeper.', claim: {kind: 'relation', a: 'tom', rel: 'owes', b: 'keeper'}},
+    {id: 's_holds', kind: 'record', text: 'Tom holds the gallery key.', claim: {kind: 'possession', person: 'tom', item: 'gallery_key'}}]
 });
 
 // A false alibi from the wife (twist), defeated by the lamp log behind a key and a rule.
@@ -74,32 +76,31 @@ test('a false alibi is a certified twist, overturned deeper; reading costs a ste
 });
 
 test('a lie needs the speaker’s reason and a deeper defeater', () => {
-  let c = twist(); delete c.signs[2].because;
+  let c = twist(); delete c.signs.find(x => x.id === 's_alibi').because;
   assert.ok(certify(c).errors.some(e => e.includes('cites no attitude')));
-  c = twist(); delete c.signs[4].defeats;
+  c = twist(); delete c.signs.find(x => x.id === 's_log').defeats;
   assert.ok(certify(c).errors.some(e => e.includes('no reachable, true defeater')));
 });
 
 test('access and reading edges need in-world reasons', () => {
-  const c = twist(); delete c.signs[4].unlock;
+  const c = twist(); delete c.signs.find(x => x.id === 's_log').unlock;
   assert.ok(certify(c).errors.some(e => e.includes("no 'unlock'")));
 });
 
 test('trait claims are evaluated by code against people', () => {
-  const c = base(); c.signs = [{id: 's_glove', kind: 'trace', text: 'A left-hand glove.', claim: {kind: 'trait', trait: 'handed', value: 'left'}}];
+  const c = base(); c.signs = [...c.signs.filter(x => ['s_debt', 's_holds'].includes(x.id)), {id: 's_glove', kind: 'trace', text: 'A left-hand glove.', claim: {kind: 'trait', trait: 'handed', value: 'left'}}];
   const r = certify(c); assert.ok(r.ok, JSON.stringify(r.errors)); assert.deepEqual(r.surface, ['h_tom']);
 });
 
 test('motive and means are detected; a world-fact relation rules nobody out', () => {
   const c = twist();
-  c.relations = [{a: 'tom', rel: 'paid_by', b: 'smugglers'}];
-  c.possession = [{person: 'tom', item: 'gallery_key'}];
+  c.relations.push({a: 'tom', rel: 'paid_by', b: 'smugglers'});
   c.signs.push({id: 's_pay', kind: 'document', text: 'A payment note.', requires: ['s_key'], unlock: 'the key opens his chest',
     claim: {kind: 'relation', a: 'tom', rel: 'paid_by', b: 'smugglers'}});
   c.signs.push({id: 's_keyring', kind: 'trace', text: 'Only one gallery key was issued.', claim: {kind: 'possession', item: 'gallery_key'}});
   const r = certify(c);
   assert.ok(r.ok, JSON.stringify(r.errors));
-  assert.deepEqual(r.motive, ['s_pay']); assert.deepEqual(r.means, ['s_keyring']);
+  assert.deepEqual(r.motive, ['s_debt', 's_pay']); assert.deepEqual(r.means, ['s_keyring']);
   assert.equal(r.threads.h_wife, 0);
 });
 
@@ -125,4 +126,16 @@ test('removing a sign removes everything that depends on it', () => {
   assert.equal(threadDepths(c, A, closureDependent(c, 's_key')).truth, null);
   // on the surface the lie clears the culprit and the alibis clear the others: nobody survives yet
   assert.deepEqual(survivors(c, A, 0), []);
+});
+
+test('motive, means and opportunity pillars are reported, and a missing motive fails', () => {
+  const r = certify(base());
+  assert.ok(r.ok, JSON.stringify(r.errors));
+  assert.deepEqual(r.pillarSigns, {motive: ['s_debt'], means: ['s_holds']});
+  assert.deepEqual(r.pillars, {opportunity: 0, means: 0, motive: 0});
+  const c = base(); c.signs = c.signs.filter(x => x.id !== 's_debt');
+  const bad = certify(c); assert.equal(bad.ok, false); assert.ok(bad.errors.some(e => e.includes('MOTIVE')));
+  const d = base(); d.signs = d.signs.filter(x => x.id !== 's_debt');
+  d.signs.push({id: 's_hate', kind: 'testimony', speaker: 'cox', text: 'She hated him.', claim: {kind: 'relation', a: 'wife', rel: 'hates', b: 'keeper'}});
+  assert.equal(certify(d).ok, false, "an innocent's motive does not count as the culprit's");
 });

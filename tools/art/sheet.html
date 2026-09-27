@@ -1,0 +1,8 @@
+<html><body style="margin:0;background:#222;font:14px sans-serif;color:#eee">
+<div id=g style="display:grid;grid-template-columns:repeat(4,256px);gap:6px;padding:6px"></div>
+<script>
+const q=new URLSearchParams(location.search), ids=q.get('ids').split(','), ref=q.get('ref'), sz=+q.get('sz');
+const g=document.getElementById('g'); g.style.gridTemplateColumns=`repeat(4,${sz}px)`;
+for(const id of ids){ const r=document.createElement('div'); r.innerHTML=`<img src="../../dist/assets/last-bell/${ref}.jpg" style="width:${sz}px"><br>ref`; g.appendChild(r);
+ for(let i=1;i<=3;i++){const d=document.createElement('div');d.innerHTML=`<img src="out/${id}-${i}.jpg" style="width:${sz}px"><br>${id}-${i}`;g.appendChild(d);} }
+</script></body></html>

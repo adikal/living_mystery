@@ -9,7 +9,8 @@ files = sorted(glob.glob(f'{HERE}/runs/*/*/*.json'))
 files = [f for f in files if not f.endswith('result.json')]
 FIELDS = [('solve_depth', 'solveDepth'), ('max_depth', 'maxDepth'), ('surface', 'surface'), ('threads', 'threads'),
           ('twist', 'twist'), ('key', 'key'), ('herrings', 'herrings'), ('false_signs', 'falseSigns'),
-          ('motive', 'motive'), ('means', 'means')]
+          ('motive', 'motive'), ('means', 'means'), ('pillars', 'pillars'), ('pillar_signs', 'pillarSigns'),
+          ('mmo_depth', 'mmoDepth')]
 js = []
 for i in range(0, len(files), 40):
     out = subprocess.run(['node', f'{ROOT}/tools/mk-certify.mjs', *files[i:i + 40]], capture_output=True, text=True, check=True)

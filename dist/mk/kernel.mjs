@@ -226,7 +226,29 @@ export function criticalSigns(c, A, thread, depth) {
 const TIME_RE = /\b([01]?\d|2[0-3])[:.]([0-5]\d)\s*(am|pm|a\.m\.|p\.m\.)?/gi;
 const sameArr = (x, y) => x.length === y.length && x.every((v, i) => v === y[i]);
 
-export function certify(c) {
+/** Motive and means evidence for an actor: understood, true signs that establish rather than eliminate.
+ *  motive: a relation claim whose subject is the actor (or a fact keyed 'motive');
+ *  means: a possession or trait claim the actor satisfies. held (optional Set) limits to the player's evidence. */
+export function pillarSignsFor(c, A, actor, held = null) {
+  const ppl = peopleOf(c), means = [];
+  let motive = [];
+  const victim = c.victim || c.events.find(e => e.type === 'death' && e.agent)?.agent || null;
+  for (const [sid, s] of Object.entries(A.signs)) {
+    if (!A.understood.has(sid) || !A.truthval[sid] || (held && !held.has(sid))) continue;
+    const x = claimOf(s);
+    if (!x) continue;
+    if ((x.kind === 'relation' && x.a === actor) || (x.kind === 'relation' && victim && x.a === victim && x.b === actor)
+      || (x.kind === 'fact' && x.key === 'motive' && (x.person ?? actor) === actor)) motive.push(sid);
+    else if (x.kind === 'possession' && (x.person === actor || (!x.person && arr(c.possession).some(p => p.person === actor && p.item === x.item)))) means.push(sid);
+    else if (x.kind === 'trait' && ppl[actor] && String(ppl[actor].traits?.[x.trait]) === String(x.value)) means.push(sid);
+  }
+  // a motive is a reason to kill THIS victim: at least one motive sign must connect the culprit and the victim
+  if (victim) motive = motive.filter(x => claimOf(A.signs[x])?.kind !== 'relation' || [claimOf(A.signs[x]).a, claimOf(A.signs[x]).b].includes(victim));
+  return { motive: motive.sort(), means: means.sort() };
+}
+export function pillarSigns(c, A) { return pillarSignsFor(c, A, actorOf(hypMap(c)[c.question.truth])); }
+
+export function certify(c, requirePillars = true) {
   const errs = [];
   const ids = ['people', 'objects', 'attitudes', 'events', 'signs', 'rules'].flatMap(k => arr(c[k]).map(x => x.id));
   const dup = [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))].sort();
@@ -335,7 +357,14 @@ export function certify(c) {
     return okSign(sid) && x && ['trait', 'possession', 'relation'].includes(x.kind) && !x.a && !x.person
       && innocents.some(h => eliminates(c, x, h));
   }).sort();
-  return { ok: true, A, solveDepth: solve, maxDepth: maxd, surface, threads, motive, means,
+  const pil = pillarSigns(c, A);
+  const pd = k => pil[k].length ? Math.min(...pil[k].map(x => A.eff[x])) : null;
+  if (requirePillars && !pil.motive.length) errs.push("no reachable, true evidence of the culprit's MOTIVE (a relation claim with a = the culprit)");
+  if (requirePillars && !pil.means.length) errs.push("no reachable, true evidence of the culprit's MEANS (a possession or trait claim the culprit satisfies)");
+  if (errs.length) return { ok: false, errors: errs, A };
+  const pillars = { opportunity: solve, means: pd('means'), motive: pd('motive') };
+  return { ok: true, A, solveDepth: solve, maxDepth: maxd, surface, threads, motive, means, pillars, pillarSigns: pil,
+           mmoDepth: Math.max(...Object.values(pillars).filter(v => v != null)),
            twist: !surface.includes(q.truth), key, herrings,
            falseSigns: Object.entries(A.truthval).filter(([, v]) => !v).map(([k]) => k).sort() };
 }

@@ -829,23 +829,25 @@
    "id": "s_medical",
    "kind": "record",
    "medical": true,
+   "medical_v": 2,
    "at": "surgery",
    "title": "The doctor\u2019s examination notes",
-   "text": "Examination of the deceased, Mr. Edmund Vale, reveals a heavy blow to the back of the head, consistent with a fall against a hard surface. There is no evidence of any other wound or foul substance involved. Death occurred within the window of 21:50 to 22:30 last night, based on the state of the body.",
+   "text": "Examination of Edmund Vale shows a fatal head injury consistent with a fall, the skull bearing a single heavy impact point most likely struck against the stone steps. There is bruising about the shoulders and arms suggesting he was pushed before he fell. Death occurred between ten to ten and half past ten, and I judge it to have been sudden, with no evidence of prolonged struggle afterward.",
    "claim": {
     "kind": "time",
     "start": 1310,
     "end": 1350
    },
-   "show": "The examination notes say Mr. Vale died from a heavy blow to the back of the head, consistent with a fall, sometime between 21:50 and 22:30 last night. Does that match what you know?",
+   "show": "The doctor's notes say Edmund Vale died from a single heavy blow to the head, struck on the stone steps, sometime between ten to ten and half past ten. Does that match what you saw?",
    "reactions": {
-    "clara": "That is... consistent with what I understood, Doctor. A fall is a terrible, ordinary thing. I have nothing more to add to it."
+    "clara": "That is simply what a fall does, Inspector. I have nothing more to say on it."
    }
   },
   {
    "id": "s_medical_iris",
    "kind": "testimony",
    "medical": true,
+   "medical_v": 2,
    "speaker": "iris",
    "claim": {
     "kind": "time",
@@ -853,9 +855,10 @@
     "end": 1350
    },
    "title": "Dr Marsh on the body",
-   "text": "Poor Mr. Vale suffered a heavy blow to the back of his head, as one might get from a fall down the steps. By the state of him, I'd say he died sometime between ten to ten and half past ten last night.",
-   "ask": "Doctor, what did you find when you examined Mr Vale?",
-   "confront": "You examined the body and told me Mr Vale suffered a heavy blow to the back of the head, like from a fall, and put his death between ten to ten and half past ten. Is that your full assessment?"
+   "text": "He died between ten to ten and half past ten, from a heavy blow to the head consistent with a fall down the steps. The bruising on his arms tells me he did not go down on his own accord, but the fall itself is what killed him.",
+   "ask": "Doctor, what did you find when you examined Edmund?",
+   "show": "Dr Marsh says Edmund Vale died between ten to ten and half past ten from a fall down the steps, though bruising on his arms shows he was pushed first. Does that match what you know?",
+   "confront": "You told me he died between ten to ten and half past ten from the fall itself, though bruising showed he'd been pushed. Is that the whole of it?"
   },
   {
    "id": "s_surface_bell",
@@ -867,19 +870,21 @@
    "text": "Walked my rounds same as always, checked the vestry twice, nothing out of place. Finished up in the square and went home.",
    "ask": "Where were you last night?",
    "confront": "You told me you walked your rounds, checked the vestry twice, and went straight home from the square. Is that the whole of it?",
-   "show": "Constable Bell says he walked his rounds as usual, checking the vestry twice, then went home from the square. Do you know if that's true?"
+   "show": "Constable Bell says he walked his rounds as usual, checking the vestry twice, then went home from the square. Do you know if that's true?",
+   "surface_checked": "honest"
   },
   {
    "id": "s_surface_iris",
    "kind": "testimony",
    "speaker": "iris",
    "surface": true,
-   "deceptive": false,
+   "deceptive": true,
    "title": "Dr Iris Marsh on the evening",
    "text": "I was at my usual business \u2014 saw patients, then was called out to tend to a cut hand up at the greenhouse, stitched and bandaged it proper. After that I took a late bite of supper at the inn on my own before turning in.",
    "ask": "Where were you last night?",
    "confront": "You told me you saw patients, tended a cut hand at the greenhouse, then took a late supper alone at the inn before turning in. Is that the whole of it?",
-   "show": "Dr Marsh says she saw patients, was called to tend a cut hand at the greenhouse, then took a late supper alone at the inn before bed. Do you know if that's true?"
+   "show": "Dr Marsh says she saw patients, was called to tend a cut hand at the greenhouse, then took a late supper alone at the inn before bed. Do you know if that's true?",
+   "surface_checked": "cover"
   },
   {
    "id": "s_surface_ada",
@@ -889,9 +894,10 @@
    "title": "Ada Finch on the evening",
    "text": "Kept the bar going all evening same as always, rushed off my feet as usual, and after we closed up I saw to a bit of tidying before I got to my bed.",
    "ask": "Where were you last night?",
-   "deceptive": false,
+   "deceptive": true,
    "confront": "You told me you were rushed off your feet behind the bar all evening, then tidied up before bed. Is that the whole of it?",
-   "show": "Ada Finch says she kept the bar going all evening, busy as ever, then did some tidying before bed. Do you know if that's true?"
+   "show": "Ada Finch says she kept the bar going all evening, busy as ever, then did some tidying before bed. Do you know if that's true?",
+   "surface_checked": "cover"
   },
   {
    "id": "s_surface_silas",
@@ -903,7 +909,8 @@
    "ask": "Where were you last night?",
    "deceptive": false,
    "confront": "You told me you were shut in the vestry with the blind drawn, working the accounts alone, seeing no one. Is that the whole of it?",
-   "show": "Silas Voss says he was alone in the vestry office with the blind drawn, working through the estate accounts, seeing and speaking to no one. Do you know if that's true?"
+   "show": "Silas Voss says he was alone in the vestry office with the blind drawn, working through the estate accounts, seeing and speaking to no one. Do you know if that's true?",
+   "surface_checked": "honest"
   },
   {
    "id": "s_surface_rowan",
@@ -913,9 +920,10 @@
    "title": "Rowan Pike on the evening",
    "text": "Cut my hand fixing a pane, got it stitched, then went down the Rook & Lantern till they shut. Clara was there beside me the whole while.",
    "ask": "Where were you last night?",
-   "deceptive": false,
+   "deceptive": true,
    "confront": "You told me you cut your hand, got it stitched, then sat at the Rook with Clara beside you till closing. Is that the whole of it?",
-   "show": "Rowan Pike says he cut his hand fixing a pane, had it stitched, then spent the evening at the Rook and Lantern with Clara beside him until closing. Do you know if that's true?"
+   "show": "Rowan Pike says he cut his hand fixing a pane, had it stitched, then spent the evening at the Rook and Lantern with Clara beside him until closing. Do you know if that's true?",
+   "surface_checked": "cover"
   },
   {
    "id": "s_surface_clara",
@@ -927,7 +935,8 @@
    "ask": "Where were you last night?",
    "deceptive": true,
    "confront": "You told me you dined with Edmund and then went straight to your rooms for the night. Is that the whole of it?",
-   "show": "Clara Vale says she dined with Edmund and then retired to her rooms for the night. Do you know if that's true?"
+   "show": "Clara Vale says she dined with Edmund and then retired to her rooms for the night. Do you know if that's true?",
+   "surface_checked": "cover"
   },
   {
    "id": "s_ada_rowan",
@@ -948,8 +957,14 @@
    ],
    "reading": "Dr Marsh says she sat down to supper at the Rook & Lantern at about twenty past nine. She is the guest Mrs Finch won't name, so Rowan came in at about half past nine and stayed until a quarter to midnight.",
    "ask": "Mrs Finch, what can you tell me about Mr Pike?",
+   "show": "Mrs Finch says Rowan Pike came into the inn with his hand bandaged, not ten minutes after her late-supper guest sat down, and never left his stool until closing at a quarter to midnight. Does that match what you remember?",
    "confront": "You told me Rowan Pike sat on your bar stool the whole night, from shortly after your late-supper guest arrived until you called time at midnight. Is that the whole of it?",
-   "show": "Mrs Finch says Rowan Pike came into the inn with his hand bandaged, not ten minutes after her late-supper guest sat down, and never left his stool until closing at a quarter to midnight. Does that match what you remember?"
+   "reactions": {
+    "rowan": "Aye, that's right. I was on that stool the whole night, hand throbbing something awful. Ask her again if you must, but she's told you true."
+   },
+   "concede": {
+    "s_iris_ada": "Oh, all right, it was Dr Marsh having her supper, no use hiding it now you've got her own word for it. I only kept mum because she asked me to, but yes, Rowan was propped right there on that stool the whole time she was in, ten past nine to twenty to twelve, just as I said."
+   }
   },
   {
    "id": "s_iris_ada",
@@ -971,7 +986,10 @@
    "unlock": "Dr Marsh has avoided saying where she spent the evening because she fears gossip. When you hand back the bag she left at the inn, it is plain you already know she was there, so she stops dodging and tells you about her supper.",
    "ask": "Dr Marsh, what happened at the inn that night?",
    "show": "Dr Marsh says she took supper at the Rook and Lantern from about twenty past nine until eleven, and that Mrs Finch was behind the bar serving and talking to her the whole time. Do you know if that's true?",
-   "confront": "You told me you dined at the Rook from twenty past nine till eleven and that Mrs Finch was with you serving and talking throughout. Is that the whole of it?"
+   "confront": "You told me you dined at the Rook from twenty past nine till eleven and that Mrs Finch was with you serving and talking throughout. Is that the whole of it?",
+   "reactions": {
+    "ada": "Oh, well, if the doctor's told you herself, no harm done then. She had her supper quiet-like and I served her, just as she says. I never meant to gossip about a decent woman's business."
+   }
   },
   {
    "id": "s_bell_notebook",
@@ -992,7 +1010,7 @@
    "reading": "Bell only saw a shadow writing behind the blind. The ledger on that desk is filled with last night's figures, and the hand matches Mr Voss's signature on the inn licence. So the writer Bell saw at 21:40 and again at 23:00 was Mr Voss.",
    "show": "Constable Bell's notebook records a shadow writing at the vestry desk with the blind down and lamp lit, both at twenty to ten and again at eleven, with only 'quiet' noted between. Who was at that desk all that time?",
    "reactions": {
-    "clara": "That is Constable Bell's notebook, not mine. I dined with my brother and then kept to the house; whatever the vestry shows, it has nothing to do with me."
+    "clara": "I don't know what Constable Bell watched from the square. It has nothing to do with me."
    }
   },
   {
@@ -1031,7 +1049,10 @@
    },
    "ask": "Mr Pike, what can you tell me about Miss Vale?",
    "show": "Mr Pike says Miss Vale came to the Rook by the side door around twenty to ten and stood talking with him at the bar until half past eleven, never going near the greenhouse. Can you confirm that's what happened?",
-   "confront": "You told me Miss Vale came in the side door about twenty to ten and stayed talking with you until half eleven, never near the greenhouse. Is that the whole of it?"
+   "confront": "You told me Miss Vale came in the side door about twenty to ten and stayed talking with you until half eleven, never near the greenhouse. Is that the whole of it?",
+   "reactions": {
+    "clara": "Mr Pike is mistaken, or kind. I did not go to the Rook & Lantern that night."
+   }
   },
   {
    "id": "s_ada_alone",
@@ -1050,7 +1071,11 @@
    ],
    "ask": "Mrs Finch, what happened at the end of the bar?",
    "show": "Mrs Finch says Rowan Pike sat alone at the end of her bar all night, hood or no hood, and that the side door sticks and shrieks and nobody used it last night. Do you know if that's true?",
-   "confront": "Mrs Finch says you sat alone at the end of her bar all night, and that no one came through that sticking, shrieking side door. Is that so?"
+   "confront": "Mrs Finch says you sat alone at the end of her bar all night, and that no one came through that sticking, shrieking side door. Is that so?",
+   "reactions": {
+    "clara": "Mrs Finch is right. I was not at the inn.",
+    "rowan": "That's not how I told it. I said what I said to keep her out of it. Leave her be."
+   }
   },
   {
    "id": "s_sale_draft",
@@ -1117,7 +1142,7 @@
    "show": "I found a faceted jet bead with torn black thread knotted through it, hidden under seed in a tin on the potting bench, and there's grit from the steps on it. Do you know anything about this?",
    "reactions": {
     "rowan": "Never seen it before. Seed tins get all sorts knocked into them; I don't go poking through my own stores looking for trouble.",
-    "clara": "I could not tell you how a bead from my shawl came to be among the seed. I was not in the greenhouse to lose it there."
+    "clara": "I don't know how that came to be there. It could be from anyone's shawl, surely."
    }
   },
   {
@@ -1134,7 +1159,7 @@
    "show": "I saw Rowan Pike behind the greenhouse scrubbing pink-stained water out of his coat cuff and putting it back on wet when he noticed me. Do you know why he'd be washing his coat like that?",
    "confront": "I saw you behind the greenhouse scrubbing your coat cuff in water that had gone pink, and you put it on wet the moment you saw me. Can you explain that?",
    "reactions": {
-    "rowan": "Coat gets filthy in that greenhouse, glass and dirt and worse. I scrub it same as any working man would, nothing more to say."
+    "rowan": "Cut my hand on the glass, didn't I. Coat got dirty. Nothing more to it than that."
    }
   },
   {
@@ -1198,7 +1223,8 @@
    ],
    "reactions": {
     "iris": "Yes, that is my father's old bag, kept out of sentiment. My own went astray last evening; it is a small inconvenience, not a mystery, and I'd rather not dwell on it."
-   }
+   },
+   "show": "Dr Marsh keeps an empty, cracked bag marked H.M. hanging on the hook, though she now works from a dented tin box instead. Do you know why her own bag went missing last evening?"
   },
   {
    "id": "s_licence",
@@ -1228,9 +1254,136 @@
    "reactions": {
     "iris": "That is my bag, hanging where it belongs. I've patients waiting and little time for questions about last night."
    }
+  },
+  {
+   "id": "s_loose_iris_s_bag",
+   "kind": "testimony",
+   "speaker": "iris",
+   "loose_end": true,
+   "requires": [
+    "s_bag"
+   ],
+   "unlock": "once you have A bag in the snug cupboard, you can ask Dr Iris Marsh about it",
+   "title": "Dr Iris Marsh on a bag in the snug cupboard",
+   "text": "I took a late supper at the inn and simply forgot my bag under the window table when I left; I keep spare instruments in an old bag of my father's on my surgery hook until I get it back.",
+   "ask": "Doctor, Ada mentions leaving your bag for you at the window table that night - can you tell me about that?",
+   "deceptive": false,
+   "show": "Dr Marsh says she left her medical bag under the window table at the inn after a late supper, and keeps her father's old bag on her surgery hook meanwhile. Does that match what you saw?",
+   "confront": "You told me you simply forgot your bag under the window table when you left after supper, and that you're using your father's old bag until it's returned. Is that the whole of it?"
+  },
+  {
+   "id": "s_secret",
+   "kind": "testimony",
+   "title": "Silas Voss on the sale",
+   "text": "Edmund meant to have vacant possession by Lady Day and give the staff notice, Miss Vale included; he'd have her take rooms in Bath on an allowance instead of the manor she's run since their parents died. She only learned the whole of it that last evening, when he told her plainly over dinner.",
+   "secret": true,
+   "requires": [
+    "s_sale_draft"
+   ],
+   "unlock": "once you have draft in edmund's study, you know what to ask",
+   "speaker": "silas",
+   "ask": "What exactly did Edmund plan for Clara and the staff when he sold the manor?"
   }
  ],
  "id": "mk-bw-pair",
  "title": "The Greenhouse Steps",
- "synopsis": "Edmund Vale was found at the foot of the greenhouse steps."
+ "synopsis": "Edmund Vale was found at the foot of the greenhouse steps.",
+ "answer": {
+  "method": "fall",
+  "motive": "quarrel"
+ },
+ "reviewed": [
+  "s_ada_alone|confront",
+  "s_ada_alone|reactions|clara",
+  "s_ada_alone|reactions|rowan",
+  "s_ada_alone|show",
+  "s_ada_rowan|concede|s_iris_ada",
+  "s_ada_rowan|confront",
+  "s_ada_rowan|reactions|rowan",
+  "s_ada_rowan|show",
+  "s_bag|reactions|ada",
+  "s_bag|show",
+  "s_bead|reactions|clara",
+  "s_bead|reactions|rowan",
+  "s_bead|show",
+  "s_bell_notebook|reactions|clara",
+  "s_bell_notebook|show",
+  "s_iris_ada|confront",
+  "s_iris_ada|reactions|ada",
+  "s_iris_ada|show",
+  "s_iris_daybook|reactions|iris",
+  "s_iris_daybook|reactions|rowan",
+  "s_iris_daybook|show",
+  "s_iris_nobag|reactions|iris",
+  "s_iris_nobag|show",
+  "s_licence|reactions|ada",
+  "s_licence|reactions|silas",
+  "s_licence|show",
+  "s_locked|reactions|clara",
+  "s_locked|show",
+  "s_loose_iris_s_bag|text",
+  "s_medical_iris|confront",
+  "s_medical_iris|show",
+  "s_medical_iris|text",
+  "s_medical|reactions|clara",
+  "s_medical|show",
+  "s_medical|text",
+  "s_rowan_clara|confront",
+  "s_rowan_clara|reactions|clara",
+  "s_rowan_clara|show",
+  "s_rowan_wash|confront",
+  "s_rowan_wash|reactions|rowan",
+  "s_rowan_wash|show",
+  "s_sale_draft|reactions|clara",
+  "s_sale_draft|show",
+  "s_secret|text",
+  "s_shawl|reactions|clara",
+  "s_shawl|show",
+  "s_spare_bag|reactions|iris",
+  "s_spare_bag|show",
+  "s_surface_ada|confront",
+  "s_surface_ada|show",
+  "s_surface_ada|text",
+  "s_surface_bell|confront",
+  "s_surface_bell|show",
+  "s_surface_bell|text",
+  "s_surface_clara|confront",
+  "s_surface_clara|show",
+  "s_surface_clara|text",
+  "s_surface_iris|confront",
+  "s_surface_iris|show",
+  "s_surface_iris|text",
+  "s_surface_rowan|confront",
+  "s_surface_rowan|show",
+  "s_surface_rowan|text",
+  "s_surface_silas|confront",
+  "s_surface_silas|show",
+  "s_surface_silas|text",
+  "s_vestry_ledger|reactions|silas",
+  "s_vestry_ledger|show"
+ ],
+ "loose_ends_checked": true,
+ "knowledge": {
+  "clara": [
+   "I manage the day-to-day running of Vale Manor and have done for years, seeing to the household accounts and the staff.",
+   "I've asked that the family's private rooms be left alone out of respect for my brother."
+  ],
+  "rowan": [
+   "I'm the groundskeeper at Vale Manor, tending the gardens and the greenhouse most days.",
+   "I sleep in the small room off the greenhouse, where I keep my tools and gardening things."
+  ],
+  "ada": [
+   "I run the Rook & Lantern, the village inn, and keep the bar most evenings.",
+   "I live above the inn, where I keep my own things and the inn's takings."
+  ],
+  "bell": [
+   "I know everyone in the village through my rounds and my duties.",
+   "I secured the manor this morning after the body was found, and Clara gave me the house keys so I could do so."
+  ]
+ },
+ "moods": {
+  "clara": "Quiet and drawn, moving through the day as if the smallest task takes all her effort.",
+  "rowan": "Restless and guarded, nursing a bandaged hand and steering every conversation away from Clara.",
+  "bell": "Alert and methodical, walking his usual patch with an unspoken sense that something needs looking into."
+ }
 }

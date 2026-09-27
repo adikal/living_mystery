@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.15 · 27 September 2026**
+**Living technical report · Edition 0.16 · 27 September 2026**
 
 ### Abstract
 
@@ -150,6 +150,20 @@ Bellweather setting with the original cast, map and art, the generator produced 
 4–7 (14–24 clues, 27–35 history events, a certified twist, lies and red herrings), which play in the existing game
 through a bridge (`dist/cases/kernel-case.mjs`) including free-text character dialogue grounded in each character's
 memories and beliefs. See `docs/mystery-kernel.md`.
+
+### Edition 0.16: fair, varied cases and characters that talk like people
+
+Certification now requires **motive, means and opportunity**: a case publishes only if the player can reach evidence of
+the culprit's motive and means as well as rule out every other suspect. The accusation asks who, how and why; Bell names
+the missing pillar. A **Z3 case oracle** re-derives feasibility and uniqueness independently of both kernels, and a case
+is published only when all three agree; for an unproven accusation it supplies a concrete alternative story.
+
+A **premise deck** chosen by code (victim, culprit, suspects, method, motive, scene and shape, rotated against recent
+cases) replaces the fixed briefs, so the model writes the story but cannot fall back on its favourite one. The village
+grew to ten places and eleven people with character sheets and new art. Publishing adds everyday knowledge, per-case
+moods, loose-end explanations and concessions, then reviews every written line against the true history. Characters
+use their everyday facts, hold back openly instead of playing dumb, and are guarded against wrong names and invented
+times. One finished case is kept in reserve so a new case can be started at once.
 
 ### Edition 0.15: generation in the game, and a playable generated case
 

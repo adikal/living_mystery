@@ -2,6 +2,9 @@
 certifies (across every run), give it a stable id and title, and write dist/cases/generated/{id}.json + index.json."""
 import glob, json, os, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import enrich
+import threading
+SIGNS = threading.Lock()   # publish steps run in parallel; sign-list changes are serialised
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 OUT = f'{ROOT}/dist/cases/generated'
@@ -15,6 +18,29 @@ TITLES = {
     'bw-inn': ('The Back Parlour', 'Edmund Vale collapsed and died in the back parlour of the Rook & Lantern.'),
     'bw-letter': ('The Half-Burned Letter', 'Edmund Vale was found dead in his study at Vale Manor.'),
 }
+
+
+sys.path.insert(0, os.path.join(ROOT, 'server'))
+
+
+def gate(case):
+    """A case publishes only when the Python kernel, the JS kernel and the Z3 oracle all certify it and agree:
+    motive, means and opportunity reachable; the true history possible; only the truth survives."""
+    import tempfile
+    import case_oracle
+    from refine import certify
+    py = certify(case)
+    with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as f:
+        json.dump(case, f)
+    try:
+        js = js_certify([f.name])[0]
+    finally:
+        os.remove(f.name)
+    z = case_oracle.check_case(case)
+    errors = [f'python: {e}' for e in py.get('errors', [])] + [f'js: {e}' for e in js.get('errors', [])] + z['errors']
+    if py['ok'] and js['ok'] and (py['solve_depth'], py['pillars']) != (js['solveDepth'], js['pillars']):
+        errors.append(f"python and js disagree: {py['solve_depth']}/{py['pillars']} vs {js['solveDepth']}/{js['pillars']}")
+    return {'ok': not errors, 'errors': errors, 'js': js, 'z3': z}
 
 
 def js_certify(paths):
@@ -70,7 +96,7 @@ def add_surface_accounts(case):
     q = case['question']
     truth = next(h for h in q['candidates'] if h['id'] == q['truth'])['facts']['actor']
     people = {p['id']: p for p in case['people']}
-    victim = (FIXED_VICTIM := 'edmund')
+    victim = enrich.victim_of(case)
     todo = [p['id'] for p in case['people'] if p['id'] != victim and p['id'] not in have]
     if not todo:
         return 0
@@ -82,7 +108,7 @@ def add_surface_accounts(case):
     for pid in todo:
         text = str(out.get(pid, '')).strip()
         if text and not re.search(r'\d', text) and len(text.split()) <= 70:
-            case['signs'].insert(0, {'id': f's_surface_{pid}', 'kind': 'testimony', 'speaker': pid, 'surface': True, 'deceptive': pid == truth,
+            with SIGNS: case['signs'].insert(0, {'id': f's_surface_{pid}', 'kind': 'testimony', 'speaker': pid, 'surface': True, 'deceptive': pid == truth,
                                      'title': f"{people[pid]['name']} on the evening", 'text': text, 'ask': 'Where were you last night?'})
             n += 1
     return n
@@ -162,6 +188,76 @@ def add_show_lines(case, _retry=True):
     return n
 
 
+SURFACE_TRUTH = """For each person in a 1920s village mystery you get their evening account (what they tell the detective) and what
+they really did that evening. Decide whether the account is HONEST (true, even if vague or incomplete: leaving things out
+is honest) or a COVER story (it states or clearly implies something false about where they were or what they did).
+Return {"verdicts": {"<id>": "honest" | "cover"}}."""
+
+
+def mark_surface_truth(case):
+    """An evening account is deceptive when the speaker's true history contradicts it (not only the culprit's)."""
+    from refine import llm_json, CRITIC_MODEL
+    import enrich
+    ta = enrich.truth_actor(case)
+    todo = [x for x in case['signs'] if x.get('surface') and 'surface_checked' not in x]
+    if not todo:
+        return 0
+    items = [{'id': x['speaker'], 'account': x['text'],
+              'really': [e.get('summary') for e in case['events'] if x['speaker'] == e.get('agent') or x['speaker'] in e.get('others', [])]}
+             for x in todo]
+    out = _as_map(llm_json(SURFACE_TRUTH, json.dumps(items), 1500, model=CRITIC_MODEL).get('verdicts', {}))
+    n = 0
+    for x in todo:
+        v = str(out.get(x['speaker'], '')).lower()
+        if v not in ('honest', 'cover'):
+            continue
+        x['deceptive'] = x['speaker'] == ta or v == 'cover'
+        x['surface_checked'] = v
+        n += 1
+    return n
+
+
+CONCEDE = """In a 1920s English village mystery, a character gave the detective an account that held something back (a name,
+or what their words really meant). The detective now shows them a piece of evidence that settles it. Write what the
+character says (1-2 sentences, in their voice): they concede plainly what the evidence shows, as the 'meaning' states,
+perhaps with a word about why they held back. Add no fact beyond 'meaning' and the evidence; no clock times or numbers
+unless they are in the account. Return {"lines": {"<key>": "..."}}."""
+
+
+def add_concessions(case):
+    """x.concede[clue] for every true account with 'needs': what its speaker says when shown the clue that completes it.
+    The same sign, so certification is unchanged; it lets the speaker name what they withheld once it is proven."""
+    from refine import llm_json, CRITIC_MODEL, claim_true, travel_table, claim_of
+    names = {p['id']: p for p in case['people']}
+    places = {p['id']: p['name'] for p in case['setting']['places']}
+    signs = {x['id']: x for x in case['signs']}
+    tt = travel_table(case)
+    def meaning(c):
+        if c['kind'] == 'place':
+            return f"{names[c['person']]['name']} was at {places.get(c['place'], c['place'])} from {clock_words(c['start'])} to {clock_words(c['end'])}"
+        return json.dumps(c)
+    items, keys = [], []
+    for x in case['signs']:
+        c = claim_of(x)
+        if x['kind'] != 'testimony' or not c or not claim_true(case, c, tt):
+            continue
+        for n in x.get('needs', []):
+            if n in signs and not (x.get('concede') or {}).get(n):
+                k = f"{x['id']}|{n}"
+                keys.append((x, n, k))
+                items.append({'key': k, 'character': names[x['speaker']]['name'], 'voice': names[x['speaker']].get('voice'),
+                              'account': x['text'], 'meaning': meaning(c), 'evidence': {'title': signs[n].get('title'), 'text': signs[n].get('text')}})
+    if not items:
+        return 0
+    out = _as_map(llm_json(CONCEDE, json.dumps(items), 4000, model=CRITIC_MODEL).get('lines', {}))
+    k_ = 0
+    for x, n, k in keys:
+        line = str(out.get(k) or '').strip()
+        if line and len(line.split()) <= 60 and _digits_ok(line, x.get('text', '')):
+            x.setdefault('concede', {})[n] = line; k_ += 1
+    return k_
+
+
 def involved_pairs(case):
     """(clue, person) pairs worth a written reaction: people who took part in the clue's source event, the subject of a
     behaviour clue, the teller of a contradicted account, and the culprit for any clue carrying a claim."""
@@ -169,9 +265,23 @@ def involved_pairs(case):
     truth = next(h for h in case['question']['candidates'] if h['id'] == case['question']['truth'])['facts']['actor']
     pairs = []
     for x in case['signs']:
-        if x['kind'] == 'testimony':
-            continue
         who = set()
+        if x['kind'] == 'testimony':
+            # an account shown to others: the person it places, the culprit if it bears on them, anyone it contradicts
+            c = x.get('claim') or {}
+            if c.get('person') and c['person'] != x.get('speaker'):
+                who.add(c['person'])
+            if x.get('defeats'):
+                who.add(truth)
+            for d in x.get('defeats', []):
+                t = next((y for y in case['signs'] if y['id'] == d and y['kind'] == 'testimony'), None)
+                if t:
+                    who.add(t['speaker'])
+            who.discard(x.get('speaker'))
+            for pid in who:
+                if pid and pid != enrich.victim_of(case) and not (x.get('reactions') or {}).get(pid):
+                    pairs.append((x, pid))
+            continue
         src = evs.get(x.get('source'))
         if src:
             who |= {src.get('agent'), *src.get('others', [])}
@@ -184,7 +294,7 @@ def involved_pairs(case):
         if x.get('claim'):
             who.add(truth)
         for pid in who:
-            if pid and pid != 'edmund' and not (x.get('reactions') or {}).get(pid):
+            if pid and pid != enrich.victim_of(case) and not (x.get('reactions') or {}).get(pid):
                 pairs.append((x, pid))
     return pairs
 
@@ -210,6 +320,11 @@ def add_reactions(case):
             t = next((y for y in case['signs'] if y['id'] == d and y.get('speaker') == pid), None)
             if t:
                 r.append(f"it contradicts what they told the detective: {t.get('text')}")
+            u = next((y for y in case['signs'] if y['id'] == d), None)
+            if u and (u.get('claim') or {}).get('person') == pid and pid == truth:
+                r.append(f"it breaks the account that placed them elsewhere: {u.get('text')}")
+        if x['kind'] == 'testimony':
+            r.append(f"it is what {people[x['speaker']]['name']} told the detective")
         if pid == truth:
             r.append('they are the culprit')
         return r
@@ -232,14 +347,20 @@ def add_reactions(case):
 
 
 MEDICAL = """You write the village doctor's findings after examining the body in a 1920s English village mystery. You get
-what really happened (the fatal event) and the certified time window. Write two short texts:
-- 'notes': the doctor's written examination notes (2-3 sentences): the general cause of death and the time window.
-- 'says': what the doctor says aloud when asked about the body (1-2 sentences, in her voice). Write the placeholder
-  {window} exactly where the time of death goes (for example '...sometime {window} last night'); do not write times.
-Rules for both: state the cause only in general terms (e.g. 'a heavy blow to the back of the head', 'a poison taken by mouth');
-never name or describe a specific weapon, substance or owner, and never name a suspect. Give the window using exactly the
-two clock times provided, in words or figures. Return {"notes": "...", "says": "..."}."""
+what really happened (the fatal event), whether death came at once or hours later (delayed), and the method type.
+Write two short texts:
+- 'notes': the doctor's written examination notes (2-3 sentences).
+- 'says': what the doctor says aloud when asked about the body (1-2 sentences, in her voice).
+Use these placeholders exactly and write no clock times or numbers yourself:
+  {death}  - when death occurred (only if delayed is true)
+  {window} - when the fatal act happened: the blow, the fall, or (if delayed) when the poison was taken
+If delayed is true, say he died around {death} and that the poison (or cause) was taken some hours earlier, {window}.
+If delayed is false, say death occurred {window}. Never say "shortly before death" for a delayed death.
+State the cause only in general terms (e.g. 'a heavy blow to the back of the head', 'a poison taken by mouth'); never
+name or describe a specific weapon, substance, container or owner, and never name anyone but the deceased.
+Return {"notes": "...", "says": "..."}."""
 
+MEDICAL_V = 2
 
 NUM = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen',
        'fourteen', 'quarter', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty', 'twenty-one', 'twenty-two',
@@ -257,33 +378,66 @@ def clock_words(minute):
 
 
 def add_medical(case):
-    """The body's examination: cause (in general terms) and the time window the kernel already assumes. The window
-    claim equals the question's window, so it rules nobody out beyond what certification already assumed; it makes
-    that window known to the player, which alibis need."""
-    if any(x.get('medical') for x in case['signs']):
-        return 0
-    from refine import llm_json, CRITIC_MODEL
-    q = case['question']
-    crime = next(e for e in case['events'] if e['id'] == q['crime']['event'])
-    w0, w1 = q['crime']['window']
-    hm = lambda m: f"{(int(m) // 60) % 24:02d}:{int(m) % 60:02d}"
-    out = llm_json(MEDICAL, json.dumps({'fatal_event': crime.get('summary'), 'window': [hm(w0), hm(w1)],
-                                        'victim': 'Edmund Vale'}), 800, model=CRITIC_MODEL)
-    notes, says = str(out.get('notes') or '').strip(), str(out.get('says') or '').strip()
+    """The body's examination: cause (in general terms), when death came and when the fatal act happened. The
+    time claim equals the question's crime window, so it rules nobody out beyond what certification already
+    assumed; it makes that window known to the player, which alibis need. For a delayed death (poison) the doctor
+    gives the time of death and places the fatal dose hours earlier, in the window."""
     import re
-    spoken = f"between {clock_words(w0)} and {clock_words(w1)}"
-    says = re.sub(r'\d', '', says) if '{window}' in says else says
-    says = says.replace('{window}', spoken) if '{window}' in says else f"{says.rstrip('.')} — sometime {spoken} last night." 
-    names = [p['name'].split()[0] for p in case['people'] if p['id'] != 'edmund']
-    if not notes or not says or any(n in notes + says for n in names):
+    from refine import llm_json, CRITIC_MODEL
+    import enrich
+    old = [x for x in case['signs'] if x.get('medical')]
+    if old and all(x.get('medical_v') == MEDICAL_V for x in old):
         return 0
+    q = case['question']
+    crime = enrich.crime_event(case)
+    victim = enrich.victim_of(case)
+    vname = next((p['name'] for p in case['people'] if p['id'] == victim), 'the deceased')
+    vaddr = next((p.get('address') or p['name'] for p in case['people'] if p['id'] == victim), 'the body')
+    w0, w1 = q['crime']['window']
+    death = next((e for e in case['events'] if (e.get('type') == 'death' or e.get('kind') == 'death') and e.get('agent') == victim), None)
+    delayed = bool(death and death['start'] - crime['end'] > 45)
+    method = (case.get('answer') or {}).get('method')
+    for _ in range(3):
+        out = llm_json(MEDICAL, json.dumps({'fatal_event': crime.get('summary'), 'delayed': delayed, 'method': method,
+                                            'victim': vname}), 800, model=CRITIC_MODEL)
+        notes, says = str(out.get('notes') or '').strip(), str(out.get('says') or '').strip()
+        if not notes or not says or '{window}' not in says or (delayed and '{death}' not in says) or re.search(r'\d', notes + says):
+            continue
+        if not delayed and '{death}' in notes + says:
+            continue
+        if delayed and re.search(r'shortly before (his |her )?death', notes + says, re.I):
+            continue
+        fill = lambda t: t.replace('{window}', f"between {clock_words(w0)} and {clock_words(w1)}").replace(
+            '{death}', clock_words(death['start']) if death else '')
+        notes, says = fill(notes), fill(says)
+        mine = set(vname.split())
+        others = [w for p in case['people'] if p['id'] != victim for w in p['name'].replace('Dr ', '').split() if w not in mine]
+        if any(re.search(rf'\b{re.escape(w)}\b', notes + says) for w in others):
+            continue
+        break
+    else:   # the model's text failed the checks three times: the doctor's findings are written by code
+        cause = {'poison': 'a poison taken by mouth', 'blow': 'a heavy blow to the head', 'fall': 'injuries from a fall',
+                 'smother': 'suffocation', 'drown': 'drowning', 'blade': 'a stab wound', 'gun': 'a gunshot wound',
+                 'gas': 'breathing gas or fumes', 'staged': 'injuries made to look like an accident'}.get(method, 'unnatural causes')
+        span = f"between {clock_words(w0)} and {clock_words(w1)}"
+        if delayed:
+            says = f"Death came at about {clock_words(death['start'])}, from {cause}, but it was taken some hours before that, {span}."
+        else:
+            says = f"Death was from {cause}, and it occurred {span}."
+        notes = f"Examination of the deceased shows {cause}. " + says
+    with SIGNS:
+        case['signs'][:] = [x for x in case['signs'] if not x.get('medical')]
     claim = {'kind': 'time', 'start': w0, 'end': w1}
-    doctor = 'iris' if any(p['id'] == 'iris' for p in case['people']) else None
-    case['signs'].insert(0, {'id': 's_medical', 'kind': 'record', 'medical': True, 'at': 'surgery' if doctor else q['crime']['place'],
+    doctor = 'iris' if any(p['id'] == 'iris' for p in case['people']) and victim != 'iris' else None
+    SIGNS.acquire()
+    case['signs'].insert(0, {'id': 's_medical', 'kind': 'record', 'medical': True, 'medical_v': MEDICAL_V,
+                             'at': 'surgery' if doctor else q['crime']['place'],
                              'title': 'The doctor\u2019s examination notes', 'text': notes, 'claim': claim})
     if doctor:
-        case['signs'].insert(1, {'id': 's_medical_iris', 'kind': 'testimony', 'medical': True, 'speaker': doctor, 'claim': claim,
-                                 'title': 'Dr Marsh on the body', 'text': says, 'ask': 'Doctor, what did you find when you examined Mr Vale?'})
+        case['signs'].insert(1, {'id': 's_medical_iris', 'kind': 'testimony', 'medical': True, 'medical_v': MEDICAL_V,
+                                 'speaker': doctor, 'claim': claim, 'title': 'Dr Marsh on the body', 'text': says,
+                                 'ask': f"Doctor, what did you find when you examined {vaddr}?"})
+    SIGNS.release()
     return 1
 
 
@@ -307,26 +461,61 @@ LIVE_BRIEFS = [
 ]
 
 
+def enrich_case(case, log=print):
+    """Every publish-time step, in order; each only fills what is missing. Then review what was written against the
+    true history, repair once, and drop anything still faulty (the game falls back to templates)."""
+    import concurrent.futures as cf
+    enrich.add_answer(case)                            # the examination wording depends on the method
+    enrich.add_motive_link(case)                       # the motive must connect the culprit to THIS victim
+    enrich.add_secret_clue(case)                       # and what the secret is must be discoverable in play
+    # independent steps, in parallel: each writes to its own part of the case
+    with cf.ThreadPoolExecutor(8) as ex:
+        for f in [ex.submit(fn, case) for fn in (add_surface_accounts, add_medical, add_concessions, enrich.add_knowledge,
+                                                  enrich.add_moods, enrich.add_loose_ends, add_show_lines)]:
+            f.result()
+    with cf.ThreadPoolExecutor(3) as ex:               # these need the accounts written above
+        for f in [ex.submit(mark_surface_truth, case), ex.submit(add_questions, case, case.get('synopsis', '')), ex.submit(add_reactions, case)]:
+            f.result()
+    add_show_lines(case)                               # lines for accounts added above
+    for round_ in range(2):
+        problems = enrich.review_publish(case)
+        if problems:
+            log(f'  review round {round_ + 1}: {len(problems)} lines dropped: ' + '; '.join(f'{k}: {v}' for k, v in list(problems.items())[:4]))
+        if not problems:
+            break
+        add_medical(case); add_concessions(case); add_show_lines(case); add_reactions(case)
+    return case
+
+
 def publish_live(case, brief_entry, stamp):
     """Publish one freshly generated case for play: premise, questions, evening accounts, JS certification."""
     title, blurb, place, _ = brief_entry
     case = json.loads(json.dumps(case))
     case['id'] = f'mk-live-{stamp}'
+    pr = case.get('premise')
+    if pr:   # the premise deck fixed who, how and why: the answer is known, the title comes from the story
+        case['answer'] = {'method': pr['method'], 'motive': pr['motive']}
+        case['victim'] = pr['victim']
+        title = str(case.get('title') or '').strip()[:60] or title
+        if any(n in title for n in {w for p in case['people'] for w in p['name'].split()}):
+            import premise as P
+            where = P.at(place)
+            title = 'Death at ' + (' '.join(w[:1].upper() + w[1:] if i else w for i, w in enumerate(where.split())) if where.startswith('the ') else where)
     case['title'] = title
     # the premise may only state what the case records: fall back to a neutral line if the crime moved elsewhere
-    case['synopsis'] = blurb if case['question']['crime'].get('place') == place else 'Edmund Vale is dead.'
-    add_questions(case, case['synopsis'])
-    add_surface_accounts(case)
-    add_medical(case)
-    add_show_lines(case)
-    add_reactions(case)
+    vname = next((p['name'] for p in case['people'] if p['id'] == enrich.victim_of(case)), 'Edmund Vale')
+    case['synopsis'] = blurb if case['question']['crime'].get('place') == place else f'{vname} is dead.'
+    enrich_case(case)
     os.makedirs(LIVE, exist_ok=True)
     path = f"{LIVE}/{case['id']}.json"
+    g = gate(case)
+    if not g['ok']:
+        raise ValueError('the published case failed certification: ' + '; '.join(g['errors'][:3]))
+    r = g['js']
     json.dump(case, open(path, 'w'), indent=1)
-    r = js_certify([path])[0]
-    if not r['ok']:
-        os.remove(path)
-        raise ValueError('the published case failed certification: ' + '; '.join(r.get('errors', [])[:3]))
+    if pr:
+        import premise as P
+        P.remember(pr)
     idx_path = f'{LIVE}/index.json'
     index = json.load(open(idx_path)) if os.path.exists(idx_path) else []
     entry = {'id': case['id'], 'file': f"live/{case['id']}.json", 'title': title, 'solveDepth': r['solveDepth'],
@@ -341,12 +530,13 @@ def enrich_live():
     """Add show lines and reactions to cases already generated on this machine."""
     for path in sorted(glob.glob(f'{LIVE}/mk-live-*.json')):
         case = json.load(open(path))
-        add_questions(case, case.get('synopsis', ''))
-        add_surface_accounts(case)
-        add_medical(case)
-        a, b = add_show_lines(case), add_reactions(case)
-        if js_certify_obj(case):
+        enrich_case(case)
+        a = sum(1 for x in case['signs'] if x.get('show')); b = sum(len(x.get('reactions') or {}) for x in case['signs'])
+        g = gate(case)
+        if g['ok']:
             json.dump(case, open(path, 'w'), indent=1)
+        else:
+            print('  NOT saved:', g['errors'][:3])
         print(f'enriched {os.path.basename(path)}: {a} show lines, {b} reactions')
 
 
@@ -358,6 +548,35 @@ def js_certify_obj(case):
         return js_certify([f.name])[0]['ok']
     finally:
         os.remove(f.name)
+
+
+CARRY_SIGN_KEYS = ('ask', 'show', 'confront', 'reactions', 'concede', 'surface_checked')
+CARRY_CASE_KEYS = ('answer', 'reviewed', 'loose_ends_checked', 'secret_checked', 'knowledge', 'moods', 'victim', 'premise')
+
+
+def carry_over(case, prev):
+    """Keep what publishing already wrote for this exact case: added signs and per-sign lines."""
+    added = [x for x in prev['signs'] if (x.get('surface') or x.get('medical') or x.get('loose_end') or x.get('motive_link') or x.get('secret'))
+             and not any(y['id'] == x['id'] for y in case['signs'])]
+    case['signs'] = added + case['signs']
+    for x in added:   # a linking clue's relation is part of the case's world facts
+        c = x.get('claim') or {}
+        if x.get('motive_link') and c.get('kind') == 'relation':
+            rel = {'a': c['a'], 'rel': c['rel'], 'b': c['b']}
+            if rel not in case.get('relations', []):
+                case.setdefault('relations', []).append(rel)
+    old = {x['id']: x for x in prev['signs']}
+    for x in case['signs']:
+        o = old.get(x['id'], {})
+        for k in CARRY_SIGN_KEYS:
+            if o.get(k) and not x.get(k):
+                x[k] = o[k]
+        if o.get('surface_checked'):
+            x['deceptive'] = o.get('deceptive')
+    for k in CARRY_CASE_KEYS:
+        if prev.get(k) is not None and case.get(k) is None:
+            case[k] = prev[k]
+    return case
 
 
 def main():
@@ -376,39 +595,22 @@ def main():
         title, blurb = TITLES[brief]
         case['id'], case['title'], case['synopsis'] = f'mk-{brief}', title, blurb
         prev = f'{OUT}/mk-{brief}.json'
-        if os.path.exists(prev) and not os.environ.get('REASK'):   # keep questions already written for this case
-            old = {x['id']: x.get('ask') for x in json.load(open(prev))['signs']}
-            for x in case['signs']:
-                if old.get(x['id']) and not x.get('ask'):
-                    x['ask'] = old[x['id']]
-        added = add_questions(case, blurb)
-        if os.path.exists(prev) and not os.environ.get('RESURFACE'):   # keep surface accounts already written
-            kept = [x for x in json.load(open(prev))['signs'] if x.get('surface')]
-            truth_actor = next(h for h in case['question']['candidates'] if h['id'] == case['question']['truth'])['facts']['actor']
-            for x in kept:
-                x['deceptive'] = x['speaker'] == truth_actor   # the culprit's evening account hides the crime
-            case['signs'] = kept + [x for x in case['signs'] if not x.get('surface')]
-        surfaced = add_surface_accounts(case)
         if os.path.exists(prev):
-            med = [x for x in json.load(open(prev))['signs'] if x.get('medical')]
-            if med and not any(x.get('medical') for x in case['signs']):
-                case['signs'] = med + case['signs']
-        add_medical(case)
-        if os.path.exists(prev):   # keep lines and reactions already written for this exact case
-            old_signs = {x['id']: x for x in json.load(open(prev))['signs']}
-            for x in case['signs']:
-                o = old_signs.get(x['id'], {})
-                for k in ('show', 'confront', 'reactions'):
-                    if o.get(k) and not x.get(k):
-                        x[k] = o[k]
-        shown, reacted = add_show_lines(case), add_reactions(case)
-        print(f"  {brief}: {shown} show lines, {reacted} reactions written")
-        json.dump(case, open(f'{OUT}/mk-{brief}.json', 'w'), indent=1)
+            carry_over(case, json.load(open(prev)))
+        enrich_case(case)
+        g = gate(case)
+        if not g['ok']:
+            print(f'  mk-{brief} NOT published: {g["errors"][:3]}')
+            if os.path.exists(prev):
+                index.append(next((e for e in json.load(open(f'{OUT}/index.json')) if e['id'] == case['id']), None))
+            continue
+        r = g['js']
+        json.dump(case, open(prev, 'w'), indent=1)
         index.append({'id': case['id'], 'file': f'mk-{brief}.json', 'title': title,
                       'blurb': f"{blurb} Depth {r['solveDepth']}, {len(case['signs'])} clues, {len(case['question']['candidates'])} suspects.",
                       'solveDepth': r['solveDepth'], 'source': os.path.relpath(f, ROOT)})
-        print(f"published mk-{brief}: depth {r['solveDepth']}, {len(case['signs'])} clues, {added} questions, {surfaced} surface accounts written <- {os.path.relpath(f, ROOT)}")
-    json.dump(index, open(f'{OUT}/index.json', 'w'), indent=1)
+        print(f"published mk-{brief}: depth {r['solveDepth']}, pillars {r['pillars']}, {len(case['signs'])} clues <- {os.path.relpath(f, ROOT)}")
+    json.dump([e for e in index if e], open(f'{OUT}/index.json', 'w'), indent=1)
     print(f'{len(index)} cases in {os.path.relpath(OUT, ROOT)}/index.json')
 
 

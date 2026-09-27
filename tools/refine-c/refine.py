@@ -268,11 +268,46 @@ def critical_signs(case, A, thread, depth):
             out.append(sid)
     return out
 
+def pillar_signs(case, A):
+    """Motive and means evidence for the true culprit: understood, true signs that establish (not eliminate).
+    motive: a relation claim whose subject is the culprit (or a fact keyed 'motive');
+    means:  a possession or trait claim the culprit satisfies (named, or anonymous and true of the culprit)."""
+    q = case['question']
+    ta = actor_of(hyp_map(case)[q['truth']])
+    return pillar_signs_for(case, A, ta)
+
+
+def pillar_signs_for(case, A, actor, held=None):
+    ppl = people(case)
+    motive, means = [], []
+    victim = case.get('victim') or next((e.get('agent') for e in case['events'] if e.get('type') == 'death' and e.get('agent')), None)
+    for sid, s_ in A['signs'].items():
+        if sid not in A['understood'] or not A['truthval'].get(sid) or (held is not None and sid not in held):
+            continue
+        c = claim_of(s_)
+        if not c:
+            continue
+        if (c['kind'] == 'relation' and c.get('a') == actor) or (c['kind'] == 'relation' and victim and c.get('a') == victim and c.get('b') == actor) \
+                or (c['kind'] == 'fact' and c.get('key') == 'motive' and c.get('person', actor) == actor):
+            motive.append(sid)
+        elif c['kind'] == 'possession' and (c.get('person') == actor or (not c.get('person') and
+                any(p['person'] == actor and p['item'] == c['item'] for p in case.get('possession', [])))):
+            means.append(sid)
+        elif c['kind'] == 'trait' and actor in ppl and str(ppl[actor].get('traits', {}).get(c['trait'])) == str(c['value']):
+            means.append(sid)
+    # a motive is a reason to kill THIS victim: at least one motive sign must connect the culprit and the victim
+    # (older cases with no recorded victim count any relation about the culprit)
+    if victim:
+        linked = lambda x: (claim_of(A['signs'][x]) or {}).get('kind') != 'relation' or victim in ((claim_of(A['signs'][x]) or {}).get('a'), (claim_of(A['signs'][x]) or {}).get('b'))
+        motive = [x for x in motive if linked(x)]
+    return {'motive': sorted(motive), 'means': sorted(means)}
+
+
 # ----------------------------------------------------------------------------------------------------
 # Certification: every check is code
 # ----------------------------------------------------------------------------------------------------
 
-def certify(case):
+def certify(case, require_pillars=True):
     errs, A = [], None
     ids = [x['id'] for k in ('people', 'objects', 'attitudes', 'events', 'signs', 'rules') for x in case.get(k, [])]
     dup = {i for i in ids if ids.count(i) > 1}
@@ -413,8 +448,18 @@ def certify(case):
     means = sorted(sid for sid, s_ in A['signs'].items() if ok_sign(sid) and claim_of(s_) and
                    claim_of(s_)['kind'] in ('trait', 'possession', 'relation') and not claim_of(s_).get('a') and not claim_of(s_).get('person')
                    and any(eliminates(case, claim_of(s_), h, tuple(q['crime']['window'])) for h in innocents))
+    pil = pillar_signs(case, A)
+    pd = {k: (min(A['eff'][x] for x in v) if v else None) for k, v in pil.items()}
+    if require_pillars and not pil['motive']:
+        errs.append("no reachable, true evidence of the culprit's MOTIVE (a relation claim with a = the culprit)")
+    if require_pillars and not pil['means']:
+        errs.append("no reachable, true evidence of the culprit's MEANS (a possession or trait claim the culprit satisfies)")
+    if errs:
+        return {'ok': False, 'errors': errs, 'A': A}
+    pillars = {'opportunity': solve, 'means': pd['means'], 'motive': pd['motive']}
     return {'ok': True, 'A': A, 'solve_depth': solve, 'max_depth': maxd, 'surface': surface, 'threads': threads,
-            'motive': motive, 'means': means,
+            'motive': motive, 'means': means, 'pillars': pillars, 'pillar_signs': pil,
+            'mmo_depth': max(v for v in pillars.values() if v is not None),
             'twist': q['truth'] not in surface, 'key': sorted(key), 'herrings': herrings,
             'false_signs': sorted(k for k, v in A['truthval'].items() if not v)}
 
@@ -440,14 +485,14 @@ def llm(system, user, max_tokens=9000, model=None):
 FORCED_OK = {}
 
 
-def llm_json(system, user, max_tokens=9000, model=None):
+def llm_json(system, user, max_tokens=9000, model=None, schema=None):
     """Structured output: force a 'submit' tool call so the reply is a parsed object, never free-form JSON text."""
     global _client
     if _client is None:
         _client = boto3.client('bedrock-runtime', region_name='us-west-2',
                                config=Config(read_timeout=300, retries={'max_attempts': 2}, max_pool_connections=64))
     tool = {'toolSpec': {'name': 'submit', 'description': 'Submit the requested JSON object.',
-                         'inputSchema': {'json': {'type': 'object', 'additionalProperties': True}}}}
+                         'inputSchema': {'json': schema or {'type': 'object', 'additionalProperties': True}}}}
     m = model or MODEL
     forced = FORCED_OK.get(m, True)
     kw = dict(modelId=m, system=[{'text': system + ('' if forced else '\n\nAlways answer by calling the submit tool.')},
@@ -459,7 +504,7 @@ def llm_json(system, user, max_tokens=9000, model=None):
     except Exception as e:
         if forced and 'tool_choice' in str(e):
             FORCED_OK[m] = False
-            return llm_json(system, user, max_tokens, model)
+            return llm_json(system, user, max_tokens, model, schema)
         raise
     USAGE['in'] += r['usage']['inputTokens']; USAGE['out'] += r['usage']['outputTokens']; USAGE['calls'] += 1
     text = ''
@@ -536,7 +581,10 @@ you decide how and why, as a novelist would. Rules you must follow:
 - Every complication has a cause: someone did something for a reason (an event caused by an attitude), or nature did.
 - Signs are neutral: their text never names the culprit or announces what they prove.
 - Never declare what a sign eliminates; write a claim in the fixed kinds and let the code compute its consequences.
-- Keep the cast economical: reuse existing motives, secrets and relationships before inventing new ones.
+- Every person a sign names or implicates (holds a key, was seen, owns an item) must be explained somewhere in the case
+  (an attitude, event, possession or another sign); never leave an innocent looking guilty for a reason the case never resolves.
+- An 'unlock' must be a real in-world reason the detective would go and look: the prerequisite must point to the new
+  sign's place or person (a name, a key, a mention), not merely precede it.
 - Keep times, places and travel physically consistent. People are at events you add; add events for new whereabouts.
 - Respond with ONE JSON object only."""
 
@@ -563,28 +611,29 @@ SEED_RICH = """- A FIRST-LAYER CASE (later steps will deepen it; keep each part 
      the true culprit out on the surface (e.g. a false alibi: a place claim putting them elsewhere for the whole window).
   2. ITS DEFEATER one step deeper: a TRUE sign with 'requires' one item or sign the player can get, listing the
      deception in 'defeats'.
-  3. A MOTIVE sign (claim {"kind":"relation","a":<culprit>,"rel":...,"b":...} with the matching 'relations' entry) and a
+  3. A MOTIVE sign (claim {"kind":"relation","a":<culprit>,"rel":...,"b":<the victim>} with the matching 'relations' entry) and a
      MEANS sign (a culprit-centric possession or trait claim that only the culprit satisfies among the candidates, with
      the matching 'possession' entry or trait), each on the surface or one step deep.
   4. A RED HERRING: a surface 'behavior' sign about an innocent candidate (no claim), caused by an innocent secret, with
      a deeper sign that explains it in 'explainedBy'.
   5. Alibi signs (place claims) that, together with the above, leave exactly the truth once everything is found.
 - A few domain rules for the setting (common or acquirable)."""
-SEED_SURFACE_TEXT = SEED_TRIVIAL
+SEED_SURFACE_TEXT = SEED_TRIVIAL   # simple and quick; variety comes from the premise deck, depth from the steps
 
 
-def seed_prompt(brief):
+def seed_prompt(brief, premise=None):
     SEED_SURFACE = SEED_SURFACE_TEXT
+    import premise as P
     fixed = '' if not FIXED else f"""
 FIXED SETTING - use it exactly. Use these place ids and links unchanged. Use these people (same ids, names, roles,
 pronouns and voices); you may give them 'traits', secrets, relationships and motives of your own invention, but do NOT
-add people or places. You MAY invent any new objects and documents. The victim is '{FIXED['victim']}'. Candidates are
-4 or 5 of the living cast. Testimony must sound like each person's voice. All true-history events fall between 1080
+add people or places. You MAY invent any new objects and documents. The victim is '{(premise or {}).get('victim', FIXED['victim'])}'. Candidates are
+{'exactly the suspects named in the premise' if premise else '4 or 5 of the living cast'}. Not everyone need take part: bystanders may simply have been at home. Testimony must sound like each person's voice. All true-history events fall between 1080
 (18:00) and 1860 (07:00 next morning); the investigation begins the next morning.
 {json.dumps({k: FIXED[k] for k in ('name', 'era', 'summary', 'places', 'links', 'people')})}
 """
     return f"""Create the SEED of a mystery for this brief: {brief}
-{fixed}
+{fixed}{P.seed_rules(premise) if premise else ''}
 
 Requirements:
 - 4 to 7 places with travel links; 4 to 6 people; 3 to 5 candidates (each a hypothesis with facts.actor, plus other facts
@@ -618,7 +667,7 @@ def step_prompt(case, report, target, mode, preferred, feedback=None):
     elif mode == 'implicate':
         need = [n for n, v in (('MOTIVE', report.get('motive')), ('MEANS', report.get('means'))) if not v]
         task = (f"IMPLICATE STEP. The culprit '{target}' is currently identified only by elimination. Add positive evidence: "
-                f"{' and '.join(need)}. MOTIVE = a TRUE sign whose claim is a relation fact about the culprit "
+                f"{' and '.join(need)}. MOTIVE = a TRUE sign whose claim is a relation fact connecting the culprit and the VICTIM "
                 f"{{\"kind\":\"relation\",\"a\":\"{target}\",\"rel\":\"...\",\"b\":\"...\"}} (add the matching entry to 'relations'). "
                 "MEANS = a TRUE culprit-centric claim that only the culprit satisfies among the candidates: {\"kind\":\"possession\",\"item\"} "
                 "(add the 'possession' entry) or {\"kind\":\"trait\",\"trait\",\"value\"}. Other candidates may have motives too, but not the means. "
@@ -627,6 +676,13 @@ def step_prompt(case, report, target, mode, preferred, feedback=None):
         task = (f"RED HERRING STEP. Give innocent candidate '{target}' a suspicious visible behaviour (kind 'behavior', about "
                 f"'{target}', on the surface) caused by an innocent secret (an attitude and, if needed, an event), and a deeper "
                 "sign that explains it innocently (list it in 'explainedBy'). The behaviour sign carries no claim.")
+    elif mode == 'pillar':
+        pil = report.get('pillar_signs') or {}
+        key = 'means' if target in (pil.get('means') or []) else 'motive'
+        task = (f"DEEPEN THE {key.upper()} STEP. The culprit's {key} is shown too early (at depth {(report.get('pillars') or {}).get(key)}, "
+                f"while the answer is only settled at depth {report['solve_depth']}) by these signs: {pil.get(key)}. Make ALL of them "
+                "harder to reach: CONCEAL them behind something the player must first obtain, with a real in-world reason, "
+                "or FRAGMENT them so they need another clue to be understood. Keep them TRUE and reachable.")
     else:
         settle = settling_signs(case, report, target)
         task = (f"REFINE sign '{target}' (the player currently gets it too easily). The thread it belongs to is currently settled "
@@ -660,29 +716,52 @@ determined by all evidence; do not make it solvable at a shallower depth than no
 
 
 CRITIC = """You are an independent reviewer of one step in a generated mystery. Logic, timing and uniqueness have ALREADY been
-checked by code; do not re-check them. Judge only what code cannot: COMMON-SENSE PLAUSIBILITY and CRAFT.
+checked by code; do not re-check them. Judge only what code cannot: COMMON-SENSE PLAUSIBILITY, FAIRNESS and CRAFT.
+You see the whole case; judge the step's new or changed signs (signs_touched) in that context.
 Fail the step if any of these hold:
-- an 'unlock' reason is arbitrary (moon logic): obtaining the prerequisite would not, in this world, lead to the new sign
-- a 'reading' reason does not actually make sense of the clue
-- a character acts against their established attitudes or knowledge, or with no believable reason
-- a sign's text names the culprit or announces what it proves, instead of being a neutral observation
-- the step contradicts something already established in the case
-Be strict but fair; small stylistic issues are not failures. Reply with ONE JSON object:
-{"verdict":"pass"|"fail","issues":["specific, actionable problem", ...]}"""
+- LOCK: an 'unlock' reason is arbitrary (moon logic): obtaining the prerequisite would not, in this world, lead the
+  detective to the new sign (e.g. an account at the inn opening a letter at the manor with no reason to go and look)
+- READING: a 'reading' reason does not actually make sense of the clue
+- CHARACTER: a character acts against their established attitudes or knowledge, or with no believable reason
+- LOOSE END: a sign names or implicates a person (holds a key, was seen, owns an item) and nothing in the case explains
+  it, so an innocent looks guilty for a reason the case never resolves
+- GIVEAWAY: a sign's text names the culprit or announces what it proves, instead of being a neutral observation
+- CONTRADICTION: the step contradicts something already established in the case
+Be strict but fair; small stylistic issues are not failures. Every "fail" MUST list at least one issue that names the
+sign id, the check (LOCK, READING, CHARACTER, LOOSE END, GIVEAWAY, CONTRADICTION) and what to change.
+Reply with ONE JSON object: {"verdict":"pass"|"fail","issues":["<sign id>: <CHECK>: specific, actionable problem", ...]}"""
+
+CRITIC_SCHEMA = {'type': 'object', 'properties': {'verdict': {'type': 'string', 'enum': ['pass', 'fail']},
+                                                  'issues': {'type': 'array', 'items': {'type': 'string'}}},
+                 'required': ['verdict', 'issues']}
+
+
+def compact_sign(x):
+    keep = ('id', 'kind', 'title', 'at', 'speaker', 'about', 'text', 'requires', 'unlock', 'needs', 'reading', 'claim', 'defeats', 'explainedBy', 'source')
+    return {k: x[k] for k in keep if x.get(k) not in (None, [], '')}
 
 
 def critic(case, patch):
     ids = {x['id'] for x in (patch.get('add') or {}).get('signs', [])} | set(((patch.get('modify') or {}).get('signs') or {}).keys())
-    ctx = {'setting': case['setting'].get('summary'), 'people': case['people'], 'attitudes': case['attitudes'],
-           'events': case['events'], 'signs_touched': [x for x in case['signs'] if x['id'] in ids],
-           'signs_they_depend_on': [x for x in case['signs'] if any(x['id'] in (y.get('requires', []) + y.get('needs', []))
-                                                                   for y in case['signs'] if y['id'] in ids)]}
+    ctx = {'setting': case['setting'].get('summary'), 'question': case['question'].get('text'),
+           'truth': hyp_map(case)[case['question']['truth']].get('label'),
+           'people': [{k: p.get(k) for k in ('id', 'name', 'role', 'traits')} for p in case['people']],
+           'relations': case.get('relations', []), 'possession': case.get('possession', []),
+           'attitudes': case['attitudes'], 'events': case['events'],
+           'signs_touched': [compact_sign(x) for x in case['signs'] if x['id'] in ids],
+           'other_signs': [compact_sign(x) for x in case['signs'] if x['id'] not in ids]}
+    prompt = f"STORY OF THIS STEP: {patch.get('story')}\n\nCASE:\n{json.dumps(ctx, separators=(',', ':'))}"
     try:
-        out = parse_json(llm_json(CRITIC, f"STORY OF THIS STEP: {patch.get('story')}\n\nCASE CONTEXT:\n{json.dumps(ctx, separators=(',', ':'))}",
-                             2000, model=CRITIC_MODEL))
-        return out.get('verdict') == 'pass', [str(i) for i in out.get('issues', [])][:6]
+        for _ in range(2):
+            out = llm_json(CRITIC, prompt, 2500, model=CRITIC_MODEL, schema=CRITIC_SCHEMA)
+            issues = [str(i) for i in out.get('issues', []) if str(i).strip()][:6]
+            if out.get('verdict') == 'pass':
+                return True, [], out
+            if issues:          # a failure without reasons gives the redraft nothing to act on: ask again
+                return False, issues, out
+        return True, ['reviewer failed without giving a reason twice; accepted'], out
     except Exception as e:
-        return True, [f'critic unavailable: {e}']
+        return True, [f'critic unavailable: {e}'], {'error': str(e)}
 
 
 def lock_setting(case):
@@ -697,6 +776,26 @@ def lock_setting(case):
     have = {p['id'] for p in case.get('people', [])}
     case['people'] += [dict(p, traits={}) for p in FIXED['people'] if p['id'] not in have]
     return case
+
+
+def unwrap_case(x):
+    """Models sometimes wrap the case ({"case": {...}}) or return it as a JSON string inside a field."""
+    for _ in range(3):
+        if isinstance(x, str):
+            x = parse_json(x)
+        if isinstance(x, dict) and 'events' not in x and len(x) <= 3:
+            inner = [v for v in x.values() if isinstance(v, (dict, str))]
+            if inner:
+                x = inner[0]; continue
+        break
+    return x
+
+
+def premise_errors(case, premise):
+    if not premise:
+        return []
+    import premise as P
+    return P.seed_errors(case, premise)
 
 
 def setting_errors(case):
@@ -756,6 +855,18 @@ def schedule(case, report, step, hist, D):
         pick = next((actor_of(h) for h in innocents if actor_of(h) not in used), actor_of(innocents[0]) if innocents else None)
         if pick and [h['mode'] for h in hist if h.get('accepted')].count('herring') < 2:
             return 'herring', pick, 'Mislead', None, None
+    # The means or motive evidence must not be obvious long before the answer: deepen a pillar more than two levels
+    # shallower than the solve depth (at most twice in a row).
+    pil = report.get('pillars') or {}
+    solve = report.get('solve_depth') or 0
+    recent_modes = [h['mode'] for h in hist[-2:]]
+    for key in ('means', 'motive'):
+        pd = pil.get(key)
+        if pd is not None and solve - pd > 2 and recent_modes.count('pillar') < 2:
+            signs_ = (report.get('pillar_signs') or {}).get(key) or []
+            shallow = [x for x in signs_ if A['eff'].get(x) == pd]
+            if shallow:
+                return 'pillar', shallow[0], 'Conceal', key, pd
     # Thread targeting: the case is solved when every innocent is ruled out and the truth survives. Deepen the
     # SHALLOWEST thread by refining its critical signs (removing them would make that thread harder), shallowest first.
     targeted = [h['target'] for h in hist if h.get('accepted')]
@@ -816,6 +927,12 @@ def step_laws(case, report, new, rep, patch, mode, target, thread, tdepth):
                    '(culprit-centric possession/trait that rules out another candidate) sign that is reachable and readable')
     if mode == 'herring' and not rep['herrings']:
         law.append(f"no surface behaviour sign about '{target}' with a deeper explainedBy sign was found")
+    if mode == 'pillar':
+        before, after = (report.get('pillars') or {}).get(thread), (rep.get('pillars') or {}).get(thread)
+        if after is None:
+            law.append(f"the {thread} evidence is no longer reachable; it must stay reachable, only deeper")
+        elif before is not None and after <= before:
+            law.append(f"no progress: the {thread} is still shown at depth {after} (was {before}); hide or fragment every sign that shows it")
     if mode == 'refine':
         A2, nd = rep['A'], (rep.get('threads') or {}).get(thread)
         if target in {x['id'] for x in new['signs']} and target not in A2['understood']:
@@ -831,7 +948,7 @@ class Cancelled(Exception):
 
 
 def metrics_of(rep):
-    keys = ('solve_depth', 'max_depth', 'surface', 'twist', 'herrings', 'false_signs', 'threads', 'motive', 'means')
+    keys = ('solve_depth', 'max_depth', 'surface', 'twist', 'herrings', 'false_signs', 'threads', 'motive', 'means', 'pillars', 'mmo_depth')
     return {k: rep.get(k) for k in keys} if rep.get('ok') else {'ok': False}
 
 
@@ -846,7 +963,7 @@ def case_added(before, after):
     return out
 
 
-def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None):
+def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, premise=None):
     """emit(event: dict) receives progress events; should_stop() is polled between model calls to cancel."""
     os.makedirs(outdir, exist_ok=True)
     t0 = time.time()
@@ -865,16 +982,23 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None):
     for rnd in range(3):
         check_stop()
         extra = ('\n\nPREVIOUS SEED REJECTED BY THE CHECKER:\n- ' + '\n- '.join(fb)) if fb else ''
-        futs = [pool.submit(llm_json, SYSTEM_GEN, seed_prompt(brief) + extra, 12000) for _ in range(CANDIDATES)]
+        futs = [pool.submit(llm_json, SYSTEM_GEN, seed_prompt(brief, premise) + extra, 20000) for _ in range(CANDIDATES)]
         send('drafting', round=rnd + 1, drafts=CANDIDATES)
         best = None
         for f in cf.as_completed(futs):
+            raw = None
             try:
-                cand = lock_setting(parse_json(f.result())); rep = certify(cand)
-                if rep['ok'] and setting_errors(cand):
-                    rep = {'ok': False, 'errors': setting_errors(cand)}
+                raw = f.result()
+                cand = lock_setting(unwrap_case(parse_json(raw))); rep = certify(cand, False)
+                pe = premise_errors(cand, premise)
+                if pe or (rep['ok'] and setting_errors(cand)):
+                    rep = {'ok': False, 'errors': pe + setting_errors(cand) + (rep.get('errors') or [])}
             except Exception as e:
-                cand, rep = None, {'ok': False, 'errors': [f'unparseable or malformed: {e}']}
+                try:
+                    json.dump(raw, open(f'{outdir}/seed-draft-{rnd + 1}-failed.json', 'w'), indent=1, default=str)
+                except Exception:
+                    pass
+                cand, rep = None, {'ok': False, 'errors': [f'the case JSON was incomplete or malformed ({type(e).__name__}: {e}); return ONE complete case with every top-level list (people, attitudes, events, signs, question) and keep texts short']}
             send('draft_checked', ok=rep['ok'], errors=(rep.get('errors') or [])[:2])
             if rep['ok']:
                 case = cand; break
@@ -888,7 +1012,9 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None):
         pool.shutdown(wait=False, cancel_futures=True)
         send('failed', message='The first draft of the case never passed the checks', errors=fb)
         return {'name': name, 'ok': False, 'reason': 'seed never certified', 'last_errors': fb, 'seconds': round(time.time() - t0)}
-    report = certify(case)
+    if premise:
+        case['premise'] = premise
+    report = certify(case, False)
     json.dump(case, open(f'{outdir}/00-seed.json', 'w'), indent=1)
     send('seed', case=case, metrics=metrics_of(report))
     log(f"[{name}] seed ok at {time.time()-t0:.0f}s: surface {report['surface']} solve {report['solve_depth']} threads {report['threads']} "
@@ -896,10 +1022,10 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None):
 
     def evaluate(patch_text, mode, target, thread, tdepth):
         try:
-            patch = parse_json(patch_text); new = apply_patch(case, patch, target); rep = certify(new)
+            patch = parse_json(patch_text); new = apply_patch(case, patch, target); rep = certify(new, False)
         except Exception as e:
             return None, None, None, [f'patch could not be applied: {e}']
-        errs = setting_errors(new) + (rep.get('errors') or []) + (step_laws(case, report, new, rep, patch, mode, target, thread, tdepth) if rep['ok'] else [])
+        errs = setting_errors(new) + premise_errors(new, premise) + (rep.get('errors') or []) + (step_laws(case, report, new, rep, patch, mode, target, thread, tdepth) if rep['ok'] else [])
         return patch, new, rep, errs
 
     for step in range(1, steps + 1):
@@ -907,7 +1033,7 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None):
         truth_d = (report.get('threads') or {}).get('truth') or 0
         check_stop()
         if (report['solve_depth'] or 0) >= D and min(th or [0]) >= 2 and truth_d >= 3 and report['twist'] and report['herrings'] \
-                and report.get('motive') and report.get('means'):
+                and (report.get('pillar_signs') or {}).get('motive') and (report.get('pillar_signs') or {}).get('means'):
             send('phase', phase='targets', message='Every target met')
             log(f'[{name}] targets met at {time.time()-t0:.0f}s (solve depth {report["solve_depth"]}): stopping'); break
         mode, target, preferred, thread, tdepth = schedule(case, report, step, hist, D)
@@ -921,32 +1047,34 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None):
         for rnd in range(2):
             check_stop()
             prompt = step_prompt(case, report, target, mode, preferred, fb)
-            gens = [pool.submit(llm_json, SYSTEM_GEN, prompt) for _ in range(CANDIDATES)]
+            # drafts from two models in parallel; the first one that passes the code checks AND the review wins,
+            # so a step waits only for the fastest good draft (the slower one is cancelled)
+            models = ([MODEL, CRITIC_MODEL] * CANDIDATES)[:CANDIDATES]
+            gens = {pool.submit(llm_json, SYSTEM_GEN, prompt, 9000, m): m for m in models}
             send('drafting', step=step, round=rnd + 1, drafts=CANDIDATES)
-            results = []
-            for g in gens:
+            results, winner = [], None
+            for g in cf.as_completed(gens):
                 try:
-                    results.append(evaluate(g.result(), mode, target, thread, tdepth))
+                    r = evaluate(g.result(), mode, target, thread, tdepth)
                 except Exception as e:
-                    results.append((None, None, None, [f'model call failed: {e}']))
-                send('draft_checked', step=step, ok=not results[-1][3], errors=results[-1][3][:2])
-            for r in results:
+                    r = (None, None, None, [f'model call failed: {e}'])
+                results.append(r)
                 entry['attempts'].append(r[3])
-            passing = [r for r in results if not r[3]]
-            # plausibility review of every code-valid candidate, in parallel; best progress wins
-            reviews = [(r, pool.submit(critic, r[1], r[0])) for r in passing]
-            if reviews:
-                send('reviewing', step=step, drafts=len(reviews))
-            winners = []
-            for r, fut in reviews:
-                ok, issues = fut.result()
-                entry.setdefault('critic', []).append({'pass': ok, 'issues': issues})
+                send('draft_checked', step=step, ok=not r[3], errors=r[3][:2])
+                if r[3]:
+                    continue
+                send('reviewing', step=step, drafts=1)
+                ok, issues, raw = critic(r[1], r[0])
+                entry.setdefault('critic', []).append({'pass': ok, 'issues': issues, 'raw': raw, 'model': gens[g]})
+                log(f"[{name}] step {step} review ({gens[g]}): {'pass' if ok else 'FAIL'} {issues[:3]}")
                 if ok:
-                    winners.append(r)
-                else:
-                    r[3].extend('plausibility review: ' + i for i in (issues or ['failed']))
-            if winners:
-                patch, new, rep, _ = max(winners, key=lambda r: ((r[2].get('threads') or {}).get(thread) or 0, r[2]['solve_depth'] or 0))
+                    winner = r
+                    break
+                r[3].extend('plausibility review: ' + i for i in (issues or ['failed']))
+            for g in gens:
+                g.cancel()
+            if winner:
+                patch, new, rep, _ = winner
                 case, report = new, rep
                 entry.update(accepted=True, operator=patch.get('operator'), blocks=patch.get('blocks'), story=patch.get('story'),
                              solve_depth=rep['solve_depth'], surface=rep['surface'], threads=rep.get('threads'))
@@ -963,9 +1091,9 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None):
         log(f"[{name}] step {step} {mode}:{target} -> {'OK ' + str(entry.get('operator')) if entry['accepted'] else 'REJECTED'}"
             f" ({len(entry['attempts'])} candidates, {entry['seconds']}s, solve {report['solve_depth']})")
     pool.shutdown(wait=False, cancel_futures=True)
-    final = certify(case)
+    final = certify(case, False)
     result = {'name': name, 'brief': brief, 'ok': final['ok'], 'history': hist, 'seconds': round(time.time() - t0),
-              'metrics': {k: final.get(k) for k in ('solve_depth', 'max_depth', 'surface', 'twist', 'key', 'herrings', 'false_signs', 'threads', 'motive', 'means')},
+              'metrics': {k: final.get(k) for k in ('solve_depth', 'max_depth', 'surface', 'twist', 'key', 'herrings', 'false_signs', 'threads', 'motive', 'means', 'pillars', 'mmo_depth')},
               'signs': len(case['signs']), 'events': len(case['events']), 'people': len(case['people'])}
     json.dump(case, open(f'{outdir}/final-case.json', 'w'), indent=1)
     json.dump(result, open(f'{outdir}/result.json', 'w'), indent=1)

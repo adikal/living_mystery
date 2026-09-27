@@ -166,7 +166,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
     <rect x="725" y="392" width="265" height="64" rx="12" fill="#fff" stroke="#059669" stroke-width="2"/><text x="857" y="419" text-anchor="middle" font-size="14.5" font-weight="700">Mystery kernel</text><text x="857" y="440" text-anchor="middle" font-size="12" fill="#5a5556">dist/mk · grading at play time</text>
     <!-- servers -->
     <rect x="1080" y="95" width="290" height="110" rx="14" fill="#fff" stroke="#7c3aed" stroke-width="2"/><text x="1225" y="128" text-anchor="middle" font-size="16" font-weight="700">LLM proxy :8787</text><text x="1225" y="152" text-anchor="middle" font-size="12.5" fill="#5a5556">loopback · origin + header checks</text><text x="1225" y="172" text-anchor="middle" font-size="12.5" fill="#5a5556">Bedrock: Haiku / Sonnet</text><text x="1225" y="191" text-anchor="middle" font-size="12.5" fill="#5a5556">self-heals stale credentials</text>
-    <rect x="1080" y="240" width="290" height="92" rx="14" fill="#fff" stroke="#dc2626" stroke-width="2"/><text x="1225" y="273" text-anchor="middle" font-size="16" font-weight="700">Z3 solver :8788</text><text x="1225" y="297" text-anchor="middle" font-size="12.5" fill="#5a5556">optional independent checks</text><text x="1225" y="316" text-anchor="middle" font-size="12.5" fill="#5a5556">of plans and crime history</text>
+    <rect x="1080" y="240" width="290" height="92" rx="14" fill="#fff" stroke="#dc2626" stroke-width="2"/><text x="1225" y="273" text-anchor="middle" font-size="16" font-weight="700">Z3 case oracle :8788</text><text x="1225" y="297" text-anchor="middle" font-size="12.5" fill="#5a5556">independent certification (publish gate)</text><text x="1225" y="316" text-anchor="middle" font-size="12.5" fill="#5a5556">alternative stories for accusations</text>
     <rect x="1080" y="365" width="290" height="92" rx="14" fill="#fff" stroke="#2563eb" stroke-width="2"/><text x="1225" y="398" text-anchor="middle" font-size="16" font-weight="700">Game server :8000</text><text x="1225" y="422" text-anchor="middle" font-size="12.5" fill="#5a5556">dist/ · cases · no-cache</text><text x="1225" y="441" text-anchor="middle" font-size="12.5" fill="#5a5556">browser logs → logs/game.log</text>
     <path d="M360 420 L445 420" stroke="#d97706" stroke-width="2.5" fill="none" marker-end="url(#aO)"/>
     <path d="M582 170 L582 160 L1000 160 L1000 150 L1075 150" stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#aP)"/>
@@ -351,7 +351,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
 
 <!-- 12. GENERATION LOOP -->
 <div class="slide">
-  <div class="fade-in delay-1"><span class="tag tag-gold">STORY GENERATION</span><h2>Code decides where; the model decides how and why</h2>
+  <div class="fade-in delay-1"><span class="tag tag-gold">STORY GENERATION</span><h2>Code decides the premise and the depth; the model writes the story</h2>
   <p class="sub">Generation starts from a trivial, certified case and deepens it one justified beat at a time. Every step is checked by code and reviewed by a second model before it is kept.</p></div>
   <svg class="dia fade-in delay-2" viewBox="0 0 1400 480">
     <rect x="30" y="170" width="170" height="100" rx="14" fill="#fff" stroke="#d97706" stroke-width="2"/><text x="115" y="205" text-anchor="middle" font-size="16" font-weight="700">Seed</text><text x="115" y="228" text-anchor="middle" font-size="12.5" fill="#5a5556">setting · cast · truth</text><text x="115" y="246" text-anchor="middle" font-size="12.5" fill="#5a5556">trivial surface</text>
@@ -368,10 +368,10 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
     <rect x="1130" y="140" width="240" height="160" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/><text x="1250" y="172" text-anchor="middle" font-size="15" font-weight="700" fill="#dc2626">4 · REVIEW (Sonnet)</text>
     <g font-size="12.5" fill="#1a1718"><text x="1250" y="200" text-anchor="middle">plausible unlocks? in</text><text x="1250" y="220" text-anchor="middle">character? neutral clues?</text><text x="1250" y="240" text-anchor="middle">contradictions? best</text><text x="1250" y="260" text-anchor="middle">passing candidate wins</text></g>
     <path d="M1250 300 L1250 380 L375 380 L375 305" stroke="#059669" stroke-width="2.5" fill="none" marker-end="url(#aG)"/>
-    <text x="810" y="400" text-anchor="middle" font-size="14" fill="#059669" font-weight="600">commit and repeat until depth, twist, herring, motive and means are met</text>
+    <text x="810" y="400" text-anchor="middle" font-size="14" fill="#059669" font-weight="600">commit and repeat until depth, twist, herring, motive and means are met (and not found too early)</text>
     <path d="M955 140 L955 95 L665 95 L665 135" stroke="#dc2626" stroke-width="2" fill="none" marker-end="url(#aR)" stroke-dasharray="6 4"/>
     <text x="810" y="85" text-anchor="middle" font-size="13" fill="#dc2626">rejected → feedback in story terms (“the false alibi has no defeater”), one retry round</text>
-    <text x="700" y="455" text-anchor="middle" font-size="14" fill="#9a9596">Cached prompts · structured output via tool calls · two candidates per step in parallel · about 10–20 minutes per case</text>
+    <text x="700" y="455" text-anchor="middle" font-size="14" fill="#9a9596">Premise deck picks who, how, why and where · about 16 layers · about 15 minutes per case · one finished case kept ready</text>
   </svg>
   <div class="slide-number"></div>
 </div>
@@ -402,7 +402,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
 <!-- 13b. THE CASE: SETTING AND CAST -->
 <div class="slide">
   <div class="fade-in delay-1"><span class="tag tag-gold">A GENERATED CASE · THE SETTING</span><h2>A Supper at Vale Manor</h2>
-  <p class="sub">Bellweather, an English village in the 1920s: a square, Vale Manor, the Rook &amp; Lantern inn, a greenhouse, St Alden's vestry and Dr Marsh's surgery. The cast and places are fixed; the generator invented everyone's secrets, the night's events and every clue. Edmund Vale is found dead in his bed at dawn. <b style="color:var(--text-primary)">Who poisoned him?</b></p></div>
+  <p class="sub">Bellweather, an English village in the 1920s: a square, Vale Manor, the Rook &amp; Lantern inn, a greenhouse, St Alden's vestry and Dr Marsh's surgery. The village is fixed (now ten places and eleven people); the generator invented everyone's secrets, the night's events and every clue. Edmund Vale is found dead in his bed at dawn. <b style="color:var(--text-primary)">Who poisoned him?</b></p></div>
   <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:14px;">
     <div class="card fade-in delay-2" style="padding:16px 18px;border-left:4px solid var(--red);"><div class="num" style="color:var(--red)">SUSPECT · THE CULPRIT</div><div class="ct" style="font-size:17px;margin-bottom:4px;">Silas Voss, estate solicitor</div><p style="font-size:13.5px;">Left-handed; keeps the estate ledgers. Has quietly drawn on estate funds for two years and fears Edmund's audit will ruin him.</p></div>
     <div class="card fade-in delay-2" style="padding:16px 18px;"><div class="num">SUSPECT</div><div class="ct" style="font-size:17px;margin-bottom:4px;">Clara Vale, the victim's sister</div><p style="font-size:13.5px;">Edmund's heir. Secretly slipped out to collect a private letter from the inn, and hides it the next morning — the red herring.</p></div>
@@ -484,6 +484,19 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
   <div class="slide-number"></div>
 </div>
 
+<!-- 14c. FAIR AND VARIED -->
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-green">FAIR AND VARIED</span><h2>Who, how and why — and a different story every time</h2>
+  <p class="sub">Code decides the premise and proves the case fair three ways; the model writes the story and plays the people.</p></div>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="card fade-in delay-2" style="padding:22px;"><div class="num" style="color:var(--gold)">PREMISE DECK</div><div class="ct">No favourite story</div><p>Code draws the victim, culprit, suspects, method, motive, scene and shape, rotating away from recent cases. A first draft that does not honour the draw is rejected.</p></div>
+    <div class="card fade-in delay-3" style="padding:22px;"><div class="num" style="color:var(--green)">MOTIVE · MEANS · OPPORTUNITY</div><div class="ct">All three, from evidence</div><p>Certification needs each pillar reachable. Accusing asks who, how and why; Bell names the missing pillar, and hints steer to it.</p></div>
+    <div class="card fade-in delay-4" style="padding:22px;"><div class="num" style="color:var(--red)">Z3 ORACLE</div><div class="ct">A second opinion</div><p>An independent solver rebuilds the night from times and walking distances. It gates publishing and tells Bell who else could still have done it, and when.</p></div>
+    <div class="card fade-in delay-5" style="padding:22px;"><div class="num" style="color:var(--blue)">CHARACTERS</div><div class="ct">Talk like people</div><p>Character sheets and a mood per case; everyday facts they will share; secrets held openly; guards against wrong names and invented times.</p></div>
+  </div>
+  <div class="slide-number"></div>
+</div>
+
 <!-- 15. BRIDGE -->
 <div class="slide" style="background:var(--bg-warm);">
   <div class="fade-in delay-1"><span class="tag tag-blue">INTO THE GAME</span><h2>Certified records become a playable case</h2>
@@ -500,7 +513,9 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
     <tr><td><b>showing evidence</b></td><td>spoken lines and per-character reactions written at generation time; a defeater forces a concession (a mistake or a lie); a herring's explanation draws out the secret</td></tr>
     <tr><td><b>examination</b></td><td>the doctor's notes and account: cause of death and the certified time window, which alibis need</td></tr>
     <tr><td><b>traits</b></td><td>the physical traits clues test (shoe size, handedness) are visible in each person's description</td></tr>
-    <tr><td><b>accusation</b></td><td>the kernel filters suspects using only the evidence the player holds; Bell explains what is missing</td></tr>
+    <tr><td><b>everyday knowledge</b></td><td>each person's work, keys and who they know, checked not to touch clues or lies, so ordinary questions get plain answers</td></tr>
+    <tr><td><b>loose ends</b></td><td>anyone a clue names without explanation gets a plain answer (why the constable holds a spare key)</td></tr>
+    <tr><td><b>accusation</b></td><td>who, how and why: motive, means and opportunity must each be shown by held evidence; Bell names the gap, with Z3's alternative story</td></tr>
   </table></div>
   <div class="slide-number"></div>
 </div>
@@ -509,12 +524,12 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
 <div class="slide">
   <div class="fade-in delay-1"><span class="tag tag-green">WHAT IS VERIFIED</span><h2>Guarantees, and how we know</h2></div>
   <div class="grid" style="grid-template-columns:repeat(4,1fr);">
-    <div class="card fade-in delay-2" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--accent);">178</div><div class="ct">JS tests</div><p>engine, characters, Director, kernel, generated-case play, UI — plus 14 Python</p></div>
-    <div class="card fade-in delay-3" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--green);">443</div><div class="ct">cases in parity</div><p>Python and JS checkers agree on every generated case, 0 mismatches</p></div>
-    <div class="card fade-in delay-4" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--gold);">7</div><div class="ct">playable deep cases</div><p>depth 4–7, two generated in the game; each auto-played: gated start, solved only by the truth, wrong suspects rejected</p></div>
-    <div class="card fade-in delay-5" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--blue);">~40%</div><div class="ct">bad steps caught</div><p>code-valid steps the plausibility review rejected for real common-sense faults</p></div>
+    <div class="card fade-in delay-2" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--accent);">185</div><div class="ct">JS tests</div><p>engine, characters, kernel, generated-case play, UI — plus 22 Python (Z3 oracle, servers)</p></div>
+    <div class="card fade-in delay-3" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--green);">443</div><div class="ct">cases in parity</div><p>Python and JS checkers agree on every generated case; Z3 agrees on 1,110 depth checks</p></div>
+    <div class="card fade-in delay-4" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--gold);">13</div><div class="ct">playable deep cases</div><p>depth 3–7; the newest five each with a different victim, culprit, method and motive; solved only by the truth</p></div>
+    <div class="card fade-in delay-5" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--blue);">3</div><div class="ct">independent certifiers</div><p>a case is published only when the Python kernel, the JS kernel and Z3 all certify it and agree</p></div>
   </div>
-  <div class="card fade-in delay-6" style="padding:18px 24px;margin-top:6px;"><p style="font-size:15px;"><b style="color:var(--text-primary)">Honest limits.</b> The kernel certifies fair, solvable, deep and misleading — not fun. Characters know only what the case records, so reactions to unrelated evidence are thin. No take/use/combine yet, no art for new objects, questions are “who” only, and generating a case takes 10–20 minutes.</p></div>
+  <div class="card fade-in delay-6" style="padding:18px 24px;margin-top:6px;"><p style="font-size:15px;"><b style="color:var(--text-primary)">Honest limits.</b> The kernel certifies fair, solvable, deep and misleading — not fun. A culprit's hidden secret is revealed at the end, not yet discoverable in play. No take/use/combine, no art for new objects, questions are “who” only, and a case takes about 15 minutes to build (one is kept ready).</p></div>
   <div class="slide-number"></div>
 </div>
 
@@ -523,11 +538,11 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
   <div class="fade-in delay-1"><span class="tag tag-purple">TOWARD THE NORTH STAR</span><h2>Next steps</h2>
   <p class="sub"><b style="color:var(--text-primary)">North star:</b> an endless supply of Christie-grade mysteries in any setting, with characters who live and talk believably, and an engine that guarantees every case stays fair and solvable however the player behaves.</p></div>
   <div class="grid" style="grid-template-columns:repeat(4,1fr);">
-    <div class="card fade-in delay-2" style="padding:20px;"><div class="num">01 · CONTENT</div><div class="ct">Richer cases</div><p>Who found the body, what the village knows, and more witness detail, all certified.</p></div>
+    <div class="card fade-in delay-2" style="padding:20px;"><div class="num">01 · CONTENT</div><div class="ct">Secrets in play</div><p>Every motive discoverable in play, not just at the end; more witness detail, all certified.</p></div>
     <div class="card fade-in delay-2" style="padding:20px;"><div class="num">02 · PLAY</div><div class="ct">Adventure verbs</div><p>Take, use, combine, give, tone; an inventory; a dead-end check in certification.</p></div>
-    <div class="card fade-in delay-3" style="padding:20px;"><div class="num">03 · SPEED</div><div class="ct">Faster, then instant</div><p>From 10–20 minutes to 5–7 per case; then a background pool so a fresh case is always ready.</p></div>
+    <div class="card fade-in delay-3" style="padding:20px;"><div class="num">03 · SPEED</div><div class="ct">Faster to build</div><p>A ready case already hides the wait; next, cut the ~15-minute build without losing depth.</p></div>
     <div class="card fade-in delay-3" style="padding:20px;"><div class="num">04 · LIBRARY</div><div class="ct">Blocks as code</div><p>The block library compiled and tested, with the five design examples as acceptance cases.</p></div>
-    <div class="card fade-in delay-4" style="padding:20px;"><div class="num">05 · QUESTIONS</div><div class="ct">Beyond “who”</div><p>How, why, when, identity and “what happened”, with matching accusation forms.</p></div>
+    <div class="card fade-in delay-4" style="padding:20px;"><div class="num">05 · QUESTIONS</div><div class="ct">Beyond “who”</div><p>Who, how and why are asked now; next, when, identity and “what happened”, with matching accusation forms.</p></div>
     <div class="card fade-in delay-4" style="padding:20px;"><div class="num">06 · LIVES</div><div class="ct">Culprits who act</div><p>Autonomous plans driven by the case's attitudes — a culprit who fears a witness acts — with the per-turn check back on.</p></div>
     <div class="card fade-in delay-5" style="padding:20px;"><div class="num">07 · WORLDS</div><div class="ct">New settings</div><p>Generated setting ontologies and art, from ocean liners to generation ships.</p></div>
     <div class="card fade-in delay-5" style="padding:20px;"><div class="num">08 · EVALUATION</div><div class="ct">Is it good?</div><p>Blind-solve agents and player studies: does the twist mislead, does the solution satisfy?</p></div>

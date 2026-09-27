@@ -11,7 +11,7 @@ def base():
         'rules': [{'id': 'r_trim', 'text': 'wicks are trimmed hourly', 'knowledge': 'acquirable'}],
         'people': [{'id': 'tom', 'name': 'Tom', 'traits': {'handed': 'left'}}, {'id': 'wife', 'name': 'Wife', 'traits': {'handed': 'right'}},
                    {'id': 'cox', 'name': 'Coxswain', 'traits': {'handed': 'right'}}, {'id': 'keeper', 'name': 'Keeper', 'traits': {}}],
-        'objects': [], 'relations': [], 'possession': [],
+        'objects': [], 'relations': [{'a': 'tom', 'rel': 'owes', 'b': 'keeper'}], 'possession': [{'person': 'tom', 'item': 'gallery_key'}],
         'question': {'text': 'who pushed the keeper?', 'truth': 'h_tom',
                      'candidates': [{'id': 'h_tom', 'label': 'Tom', 'facts': {'actor': 'tom'}}, {'id': 'h_wife', 'label': 'Wife', 'facts': {'actor': 'wife'}},
                                     {'id': 'h_cox', 'label': 'Cox', 'facts': {'actor': 'cox'}}],
@@ -26,6 +26,8 @@ def base():
         'signs': [
             {'id': 's_wife', 'kind': 'testimony', 'speaker': 'cox', 'text': 'She never left the cottage.', 'claim': {'kind': 'place', 'person': 'wife', 'place': 'cottage', 'start': 1310, 'end': 1450}},
             {'id': 's_cox', 'kind': 'record', 'text': 'The inn ledger.', 'claim': {'kind': 'place', 'person': 'cox', 'place': 'inn', 'start': 1310, 'end': 1450}},
+            {'id': 's_debt', 'kind': 'document', 'text': 'An IOU from Tom to the keeper.', 'claim': {'kind': 'relation', 'a': 'tom', 'rel': 'owes', 'b': 'keeper'}},
+            {'id': 's_holds', 'kind': 'record', 'text': 'Tom holds the gallery key.', 'claim': {'kind': 'possession', 'person': 'tom', 'item': 'gallery_key'}},
         ]}
 
 
@@ -80,15 +82,14 @@ class Checker(unittest.TestCase):
 
     def test_motive_and_means(self):
         c = self.twist()
-        c['relations'] = [{'a': 'tom', 'rel': 'paid_by', 'b': 'smugglers'}]
-        c['possession'] = [{'person': 'tom', 'item': 'gallery_key'}]
+        c['relations'].append({'a': 'tom', 'rel': 'paid_by', 'b': 'smugglers'})
         c['signs'].append({'id': 's_pay', 'kind': 'document', 'text': 'A payment note.', 'requires': ['s_key'], 'unlock': 'the key opens his chest',
                            'claim': {'kind': 'relation', 'a': 'tom', 'rel': 'paid_by', 'b': 'smugglers'}})
         c['signs'].append({'id': 's_keyring', 'kind': 'trace', 'text': 'Only one gallery key was issued.',
                            'claim': {'kind': 'possession', 'item': 'gallery_key'}})
         r = certify(c)
         self.assertTrue(r['ok'], r.get('errors'))
-        self.assertEqual(r['motive'], ['s_pay']); self.assertEqual(r['means'], ['s_keyring'])
+        self.assertEqual(r['motive'], ['s_debt', 's_pay']); self.assertEqual(r['means'], ['s_keyring'])
         # a world-fact relation claim establishes a motive but rules nobody out
         self.assertEqual(r['threads']['h_wife'], 0)
 
@@ -98,7 +99,7 @@ class Checker(unittest.TestCase):
         r = certify(c); self.assertFalse(r['ok']); self.assertTrue(any('s_bad' in e for e in r['errors']))
 
     def test_edges_need_in_world_reasons(self):
-        c = self.twist(); c['signs'][4].pop('unlock')
+        c = self.twist(); next(x for x in c['signs'] if x['id'] == 's_log').pop('unlock')
         r = certify(c); self.assertFalse(r['ok']); self.assertTrue(any("no 'unlock'" in e for e in r['errors']))
 
     def test_spoken_times_must_match_timeline(self):
@@ -112,18 +113,44 @@ class Checker(unittest.TestCase):
         r = certify(c); self.assertFalse(r['ok']); self.assertTrue(any('lies where it was made' in e for e in r['errors']))
 
     def test_lie_needs_reason_and_defeater(self):
-        c = self.twist(); c['signs'][2].pop('because')
+        c = self.twist(); next(x for x in c['signs'] if x['id'] == 's_alibi').pop('because')
         r = certify(c); self.assertFalse(r['ok']); self.assertTrue(any('cites no attitude' in e for e in r['errors']))
-        c = self.twist(); c['signs'][4].pop('defeats')
+        c = self.twist(); next(x for x in c['signs'] if x['id'] == 's_log').pop('defeats')
         r = certify(c); self.assertFalse(r['ok']); self.assertTrue(any('no reachable, true defeater' in e for e in r['errors']))
 
     def test_trait_claim_computed(self):
-        c = base(); c['signs'] = [{'id': 's_glove', 'kind': 'trace', 'text': 'A left-hand glove.', 'claim': {'kind': 'trait', 'trait': 'handed', 'value': 'left'}}]
+        c = base(); c['signs'] = [x for x in c['signs'] if x['id'] in ('s_debt', 's_holds')] + [{'id': 's_glove', 'kind': 'trace', 'text': 'A left-hand glove.', 'claim': {'kind': 'trait', 'trait': 'handed', 'value': 'left'}}]
         r = certify(c); self.assertTrue(r['ok'], r.get('errors')); self.assertEqual(r['surface'], ['h_tom'])
 
     def test_patch_remove_only_target(self):
         with self.assertRaises(ValueError):
             apply_patch(base(), {'remove': ['s_cox']}, 's_wife')
+
+
+class Pillars(unittest.TestCase):
+    def test_pillars_reported(self):
+        r = certify(base())
+        self.assertTrue(r['ok'], r.get('errors'))
+        self.assertEqual(r['pillar_signs'], {'motive': ['s_debt'], 'means': ['s_holds']})
+        self.assertEqual(r['pillars'], {'opportunity': 0, 'means': 0, 'motive': 0})
+
+    def test_missing_motive_fails(self):
+        c = base(); c['signs'] = [x for x in c['signs'] if x['id'] != 's_debt']
+        r = certify(c)
+        self.assertFalse(r['ok']); self.assertTrue(any('MOTIVE' in e for e in r['errors']))
+
+    def test_innocent_motive_is_not_the_culprits(self):
+        c = base(); c['signs'] = [x for x in c['signs'] if x['id'] != 's_debt']
+        c['relations'].append({'a': 'wife', 'rel': 'hates', 'b': 'keeper'})
+        c['signs'].append({'id': 's_hate', 'kind': 'testimony', 'speaker': 'cox', 'text': 'She hated him.', 'claim': {'kind': 'relation', 'a': 'wife', 'rel': 'hates', 'b': 'keeper'}})
+        self.assertFalse(certify(c)['ok'])
+
+    def test_deep_motive_sets_mmo_depth(self):
+        c = base(); d = next(x for x in c['signs'] if x['id'] == 's_debt')
+        c['signs'].append({'id': 's_drawer', 'kind': 'item', 'text': 'A drawer.'})
+        d.update(requires=['s_drawer'], unlock='the IOU is in the drawer')
+        r = certify(c)
+        self.assertTrue(r['ok'], r.get('errors')); self.assertEqual(r['pillars']['motive'], 1); self.assertEqual(r['mmo_depth'], 1)
 
 
 if __name__ == '__main__':

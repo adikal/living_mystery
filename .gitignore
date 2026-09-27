@@ -10,3 +10,4 @@ __pycache__/
 tools/refine-c/runs/
 dist/cases/generated/live/
 logs/
+tools/art/out/

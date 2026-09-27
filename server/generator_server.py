@@ -26,7 +26,7 @@ PORT = int(os.environ.get('LM_GENERATOR_PORT', '8789'))
 ALLOWED_ORIGINS = frozenset(os.environ.get('LM_ALLOWED_ORIGINS', 'http://127.0.0.1:8000,http://localhost:8000').split(','))
 ALLOWED_HOSTS = {f'127.0.0.1:{PORT}', f'localhost:{PORT}'}
 TIME_LIMIT = int(os.environ.get('LM_GENERATOR_TIME_LIMIT', str(25 * 60)))
-STEPS, DEPTH = int(os.environ.get('LM_GENERATOR_STEPS', '10')), int(os.environ.get('LM_GENERATOR_DEPTH', '5'))
+STEPS, DEPTH = int(os.environ.get('LM_GENERATOR_STEPS', '16')), int(os.environ.get('LM_GENERATOR_DEPTH', '5'))
 if HOST not in ('127.0.0.1', 'localhost'):
     raise ValueError('The generator server must bind to loopback')
 os.makedirs(os.path.join(ROOT, 'logs'), exist_ok=True)
@@ -51,9 +51,13 @@ if '*' in ALLOWED_ORIGINS or 'null' in ALLOWED_ORIGINS:
 
 
 class Job:
-    def __init__(self, brief):
-        self.id = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+    def __init__(self, brief, premise=None):
+        stamp = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+        Job.seq = getattr(Job, 'seq', 0) + 1
+        self.id = stamp if stamp != getattr(Job, 'last', None) else f'{stamp}-{Job.seq}'
+        Job.last = stamp
         self.brief = brief                    # (title, premise, place, generator brief)
+        self.premise = premise                # drawn by code: victim, culprit, suspects, method, motive, place, shape
         self.events, self.lock = [], threading.Lock()
         self.status, self.result, self.error = 'running', None, None
         self.cancel = threading.Event()
@@ -84,7 +88,7 @@ def default_runner(job):
         if logf:
             logf.write(f"{datetime.datetime.now():%H:%M:%S} {line}\n"); logf.flush()
     stop = lambda: job.cancel.is_set() or time.time() - job.started > TIME_LIMIT
-    result = refine.run_case('live', job.brief[3], STEPS, DEPTH, outdir, log, emit=job.emit, should_stop=stop)
+    result = refine.run_case('live', job.brief[3], STEPS, DEPTH, outdir, log, emit=job.emit, should_stop=stop, premise=job.premise)
     if not result.get('ok') or 'case' not in result:
         raise RuntimeError(result.get('reason') or 'the generated case did not certify')
     job.emit({'kind': 'phase', 'phase': 'publish', 't': round(time.time() - job.started, 1),
@@ -97,15 +101,20 @@ def default_runner(job):
 RUNNER = default_runner
 
 
-def start_job():
-    with STATE_LOCK:
-        current = STATE['job']
-        if current and current.status == 'running':
-            return current, False
-        import publish
-        job = Job(random.choice(publish.LIVE_BRIEFS))
-        STATE['job'] = job
-        LOG.info('job %s started: %s', job.id, job.brief[0])
+# One finished case is kept in reserve so "Generate" can hand it over at once and build the next in the background.
+# The reserve starts only after the player has asked for a case (no spending until then); LM_GENERATOR_RESERVE=0 disables.
+RESERVE = os.environ.get('LM_GENERATOR_RESERVE', '1') != '0'
+STATE['reserve'] = None
+
+
+def new_job():
+    import premise as P
+    pr = P.draw(history=P._history() + ([STATE['reserve'].premise] if STATE.get('reserve') and STATE['reserve'].premise else [])
+                + ([STATE['job'].premise] if STATE.get('job') and STATE['job'].premise else []))
+    return Job(('A new case', P.blurb(pr), pr['place'], P.brief(pr)), pr)
+
+
+def launch(job):
     def work():
         try:
             job.result = RUNNER(job)
@@ -122,7 +131,44 @@ def start_job():
             LOG.error('job %s %s: %s', job.id, job.status, job.error)
             if not cancelled:
                 LOG.error(traceback.format_exc())
+        finally:
+            with STATE_LOCK:
+                if STATE.get('reserve') is job and job.status != 'done':
+                    STATE['reserve'] = None          # a failed reserve is simply dropped
+            ensure_reserve()
     threading.Thread(target=work, daemon=True).start()
+
+
+def ensure_reserve():
+    """Start building the next case in the background if there is no reserve and nothing is running."""
+    if not RESERVE:
+        return
+    with STATE_LOCK:
+        cur, res = STATE.get('job'), STATE.get('reserve')
+        if res or (cur and cur.status == 'running') or not cur:
+            return
+        res = STATE['reserve'] = new_job()
+        LOG.info('reserve %s started: %s', res.id, res.brief[1])
+    launch(res)
+
+
+def start_job():
+    with STATE_LOCK:
+        current, res = STATE['job'], STATE.get('reserve')
+        if current and current.status == 'running':
+            return current, False
+        if res:                                  # hand over the reserve: finished already, or partly built
+            STATE['job'], STATE['reserve'] = res, None
+            LOG.info('job %s taken from reserve (%s)', res.id, res.status)
+            job, fresh = res, False
+        else:
+            job = STATE['job'] = new_job()
+            LOG.info('job %s started: %s', job.id, job.brief[0])
+            fresh = True
+    if fresh:
+        launch(job)
+    else:
+        ensure_reserve()
     return job, True
 
 
