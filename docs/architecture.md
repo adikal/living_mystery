@@ -27,6 +27,15 @@ prehistory, attitudes become beliefs, signs become gated objects and earned test
 (`world.caseRecords`), so they survive reload. The runtime calls an optional `afterAction` hook after inspect, ask,
 present and arrival, which opens earned leads at their own location and reveals completed readings.
 
+## Local servers and logs
+
+| Port | Server | Role |
+|---|---|---|
+| 8000 | `server/static_server.py` | serves `dist/` with no-cache headers; `POST /__log` appends browser events to `logs/game.log` |
+| 8787 | `server/llm_proxy.py` | loopback proxy to Bedrock for dialogue and character turns; logs each call to `logs/proxy.log` |
+| 8788 | `server/director_server.py` | optional Z3 checks for the World Director |
+| 8789 | `server/generator_server.py` | case generation jobs with progress events; logs to `logs/generator.log` |
+
 ## Wording-only dialogue, critic, and audit
 
 This section describes the retired delivery mode for compatibility with saved audits. The UI now has one character-reasoning toggle; when off, all new responses are scripted without model calls. Character reasoning is a separate opt-in path: its accepted speech, decisions, attributed player memories, belief stance and dialogue state are engine events, with the full audit attached to the decision. It uses a 30-second combined budget and atomic trial execution. Neither mode is a symbolic proof of coherence.

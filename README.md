@@ -7,7 +7,7 @@ The prototype includes the original **The Last Bell**, three authored Bellweathe
 ## Play
 
 ```sh
-python3 -m http.server 8000 --bind 127.0.0.1 --directory dist
+python3 server/static_server.py      # serves dist/ with no-cache headers
 # Keep the server running; open http://127.0.0.1:8000
 ```
 
@@ -59,6 +59,28 @@ In configured/generated cases, the same toggle also enables at most one addition
 Disabling AI gives immediate scripted dialogue and deterministic life choices. Inspector decision audits preserve proposals, checks and fallbacks. See [the character contract](docs/character-turns.md) for details.
 
 The proxy is loopback-only with explicit Origin, Host and request-header checks. Set `LM_ALLOWED_ORIGINS` for another local game origin. These development restrictions are not authentication against local programs; do not treat the proxy as a public service.
+
+## Generate new cases
+
+The case chooser has one generator: **✨ Generate a new deep case**. It needs the local generator server and AWS
+credentials that can call Bedrock (Opus writes the story, Sonnet reviews each step):
+
+```
+.venv/bin/python server/generator_server.py        # http://127.0.0.1:8789
+```
+
+A case takes several minutes. The progress window shows the high-level state; a collapsed **Spoiler** section shows
+the cast with their secrets, the hidden history, and every layer the generator added, for testing. Finished cases are
+saved in `dist/cases/generated/live/` (not committed) and appear in the chooser alongside the shipped examples.
+
+In play, the notebook's **Hints** tab gives one nudge at a time for the next useful step, becoming more specific only
+when you ask for more.
+
+## Debug logs
+
+The game, generator and proxy write to `logs/` (not committed): `game.log` (browser events, dialogue audits, errors),
+`generator.log` and `proxy.log`. In the game, **Menu → 🐞 Flag an issue** saves a note with a snapshot of the current
+state to `game.log`.
 
 ## Optional World Director / Z3
 

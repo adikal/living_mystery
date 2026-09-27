@@ -144,17 +144,17 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
 <!-- 4. SYSTEM ARCHITECTURE -->
 <div class="slide">
   <div class="fade-in delay-1"><span class="tag tag-blue">ARCHITECTURE</span><h2>The system at a glance</h2>
-  <p class="sub">A zero-build browser game over a DOM-free engine. Two small local servers carry model calls and solver checks. Case generation runs offline and ships certified case records.</p></div>
+  <p class="sub">A zero-build browser game over a DOM-free engine. Small local servers carry model calls, solver checks and case generation; every one of them writes debug logs to <code>logs/</code>.</p></div>
   <svg class="dia fade-in delay-2" viewBox="0 0 1400 520">
     <!-- offline generation -->
     <rect x="30" y="40" width="330" height="440" rx="16" fill="#fffbeb" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6 5"/>
-    <text x="195" y="75" text-anchor="middle" font-size="14" font-weight="700" fill="#d97706" letter-spacing="2">OFFLINE GENERATION</text>
+    <text x="195" y="75" text-anchor="middle" font-size="14" font-weight="700" fill="#d97706" letter-spacing="2">GENERATION SERVER :8789</text>
     <rect x="60" y="95" width="270" height="70" rx="12" fill="#fff" stroke="#d97706" stroke-width="2"/><text x="195" y="125" text-anchor="middle" font-size="16" font-weight="700">Refinement harness</text><text x="195" y="148" text-anchor="middle" font-size="13" fill="#5a5556">tools/refine-c (Python)</text>
     <rect x="60" y="185" width="125" height="58" rx="12" fill="#fff" stroke="#a78bfa" stroke-width="2"/><text x="122" y="211" text-anchor="middle" font-size="14" font-weight="600">Opus</text><text x="122" y="230" text-anchor="middle" font-size="12" fill="#5a5556">story steps</text>
     <rect x="205" y="185" width="125" height="58" rx="12" fill="#fff" stroke="#a78bfa" stroke-width="2"/><text x="267" y="211" text-anchor="middle" font-size="14" font-weight="600">Sonnet</text><text x="267" y="230" text-anchor="middle" font-size="12" fill="#5a5556">plausibility critic</text>
     <rect x="60" y="263" width="270" height="62" rx="12" fill="#fff" stroke="#059669" stroke-width="2"/><text x="195" y="290" text-anchor="middle" font-size="15" font-weight="700">Kernel checker</text><text x="195" y="311" text-anchor="middle" font-size="12.5" fill="#5a5556">certify every step (parity with JS)</text>
     <rect x="60" y="345" width="270" height="62" rx="12" fill="#fff" stroke="#d97706" stroke-width="2"/><text x="195" y="372" text-anchor="middle" font-size="15" font-weight="700">Publish</text><text x="195" y="393" text-anchor="middle" font-size="12.5" fill="#5a5556">questions, evening accounts</text>
-    <text x="195" y="452" text-anchor="middle" font-size="13" fill="#9a9596">→ dist/cases/generated/*.json</text>
+    <text x="195" y="452" text-anchor="middle" font-size="13" fill="#9a9596">started from the game · streams progress</text>
     <!-- browser -->
     <rect x="420" y="40" width="600" height="440" rx="16" fill="#fff" stroke="#e5e2dc" stroke-width="2"/>
     <text x="720" y="75" text-anchor="middle" font-size="14" font-weight="700" fill="#2563eb" letter-spacing="2">BROWSER (ZERO-BUILD ES MODULES)</text>
@@ -167,10 +167,10 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
     <!-- servers -->
     <rect x="1080" y="95" width="290" height="110" rx="14" fill="#fff" stroke="#7c3aed" stroke-width="2"/><text x="1225" y="128" text-anchor="middle" font-size="16" font-weight="700">LLM proxy :8787</text><text x="1225" y="152" text-anchor="middle" font-size="12.5" fill="#5a5556">loopback · origin + header checks</text><text x="1225" y="172" text-anchor="middle" font-size="12.5" fill="#5a5556">Bedrock: Haiku / Sonnet</text><text x="1225" y="191" text-anchor="middle" font-size="12.5" fill="#5a5556">self-heals stale credentials</text>
     <rect x="1080" y="240" width="290" height="92" rx="14" fill="#fff" stroke="#dc2626" stroke-width="2"/><text x="1225" y="273" text-anchor="middle" font-size="16" font-weight="700">Z3 solver :8788</text><text x="1225" y="297" text-anchor="middle" font-size="12.5" fill="#5a5556">optional independent checks</text><text x="1225" y="316" text-anchor="middle" font-size="12.5" fill="#5a5556">of plans and crime history</text>
-    <rect x="1080" y="365" width="290" height="92" rx="14" fill="#fff" stroke="#2563eb" stroke-width="2"/><text x="1225" y="398" text-anchor="middle" font-size="16" font-weight="700">Static server :8000</text><text x="1225" y="422" text-anchor="middle" font-size="12.5" fill="#5a5556">dist/ · art · generated cases</text><text x="1225" y="441" text-anchor="middle" font-size="12.5" fill="#5a5556">saves in IndexedDB</text>
+    <rect x="1080" y="365" width="290" height="92" rx="14" fill="#fff" stroke="#2563eb" stroke-width="2"/><text x="1225" y="398" text-anchor="middle" font-size="16" font-weight="700">Game server :8000</text><text x="1225" y="422" text-anchor="middle" font-size="12.5" fill="#5a5556">dist/ · cases · no-cache</text><text x="1225" y="441" text-anchor="middle" font-size="12.5" fill="#5a5556">browser logs → logs/game.log</text>
     <path d="M360 420 L445 420" stroke="#d97706" stroke-width="2.5" fill="none" marker-end="url(#aO)"/>
     <path d="M582 170 L582 160 L1000 160 L1000 150 L1075 150" stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#aP)"/>
-    <text x="1047" y="140" text-anchor="middle" font-size="11.5" fill="#7c3aed">model calls</text>
+    <text x="1030" y="140" text-anchor="middle" font-size="11.5" fill="#7c3aed">model calls</text>
     <path d="M990 286 L1075 286" stroke="#dc2626" stroke-width="2" fill="none" marker-end="url(#aR)"/>
     <text x="1033" y="278" text-anchor="middle" font-size="11.5" fill="#dc2626">proofs</text>
   </svg>
@@ -371,7 +371,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
     <text x="810" y="400" text-anchor="middle" font-size="14" fill="#059669" font-weight="600">commit and repeat until depth, twist, herring, motive and means are met</text>
     <path d="M955 140 L955 95 L665 95 L665 135" stroke="#dc2626" stroke-width="2" fill="none" marker-end="url(#aR)" stroke-dasharray="6 4"/>
     <text x="810" y="85" text-anchor="middle" font-size="13" fill="#dc2626">rejected → feedback in story terms (“the false alibi has no defeater”), one retry round</text>
-    <text x="700" y="455" text-anchor="middle" font-size="14" fill="#9a9596">Cached prompts · structured output via tool calls · two candidates per step in parallel · ~8–10 minutes per case</text>
+    <text x="700" y="455" text-anchor="middle" font-size="14" fill="#9a9596">Cached prompts · structured output via tool calls · two candidates per step in parallel · about 10–20 minutes per case</text>
   </svg>
   <div class="slide-number"></div>
 </div>
@@ -471,6 +471,19 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
   <div class="slide-number"></div>
 </div>
 
+<!-- 14b. IN THE GAME -->
+<div class="slide" style="background:var(--bg-warm);">
+  <div class="fade-in delay-1"><span class="tag tag-blue">IN THE GAME</span><h2>Generating a case, and getting unstuck</h2>
+  <p class="sub">One button starts a generation on the local server. The player sees high-level progress; a collapsed spoiler shows everything the generator is writing, for testing. While playing, hints and debug logs keep the player and the developer moving.</p></div>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="card fade-in delay-2" style="padding:22px;"><div class="num">PROGRESS</div><div class="ct">What is happening now</div><p>The current stage, elapsed time and live activity — “writing 2 drafts in parallel”, “1 passed the checks”, “a second model is reviewing them” — with solve depth, misdirection, red herring, motive and means filling in.</p></div>
+    <div class="card fade-in delay-3" style="padding:22px;"><div class="num" style="color:var(--red)">SPOILER</div><div class="ct">The story being built</div><p>Collapsed by default: the question and answer, the cast with their secrets, the hidden history, and every layer — its story beat, blocks, the records it added, and the drafts that were rejected.</p></div>
+    <div class="card fade-in delay-4" style="padding:22px;"><div class="num" style="color:var(--green)">HINTS</div><div class="ct">One nudge at a time</div><p>The next useful step, told three ways: a nudge, a clue, then the plain answer. Hints move on as the player does, and end by pointing to the accusation.</p></div>
+    <div class="card fade-in delay-5" style="padding:22px;"><div class="num" style="color:var(--gold)">LOGS</div><div class="ct">Debuggable by design</div><p><code>logs/game.log</code> records actions, every dialogue turn with its audit, and errors; the generator and proxy log too. <b>Flag an issue</b> saves a note with a snapshot of the game.</p></div>
+  </div>
+  <div class="slide-number"></div>
+</div>
+
 <!-- 15. BRIDGE -->
 <div class="slide" style="background:var(--bg-warm);">
   <div class="fade-in delay-1"><span class="tag tag-blue">INTO THE GAME</span><h2>Certified records become a playable case</h2>
@@ -484,7 +497,9 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
     <tr><td><b>signs with <code>needs</code></b></td><td>“You put it together” reveals the reading once its prerequisite is in the notebook</td></tr>
     <tr><td><b>testimony</b></td><td>accounts a character can give once earned; lies are flagged so the character lies in character</td></tr>
     <tr><td><b>evening accounts</b></td><td>every suspect answers “where were you?” — vague, claimless, the culprit's false</td></tr>
-    <tr><td><b>showing evidence</b></td><td>a defeater forces a remembered concession; a herring's explanation draws out the secret; otherwise a stance by relation</td></tr>
+    <tr><td><b>showing evidence</b></td><td>spoken lines and per-character reactions written at generation time; a defeater forces a concession (a mistake or a lie); a herring's explanation draws out the secret</td></tr>
+    <tr><td><b>examination</b></td><td>the doctor's notes and account: cause of death and the certified time window, which alibis need</td></tr>
+    <tr><td><b>traits</b></td><td>the physical traits clues test (shoe size, handedness) are visible in each person's description</td></tr>
     <tr><td><b>accusation</b></td><td>the kernel filters suspects using only the evidence the player holds; Bell explains what is missing</td></tr>
   </table></div>
   <div class="slide-number"></div>
@@ -494,12 +509,12 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
 <div class="slide">
   <div class="fade-in delay-1"><span class="tag tag-green">WHAT IS VERIFIED</span><h2>Guarantees, and how we know</h2></div>
   <div class="grid" style="grid-template-columns:repeat(4,1fr);">
-    <div class="card fade-in delay-2" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--accent);">277</div><div class="ct">JS tests</div><p>engine, claims, characters, Director, generation, kernel, UI — plus 10 Python</p></div>
+    <div class="card fade-in delay-2" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--accent);">178</div><div class="ct">JS tests</div><p>engine, characters, Director, kernel, generated-case play, UI — plus 14 Python</p></div>
     <div class="card fade-in delay-3" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--green);">443</div><div class="ct">cases in parity</div><p>Python and JS checkers agree on every generated case, 0 mismatches</p></div>
-    <div class="card fade-in delay-4" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--gold);">5</div><div class="ct">playable deep cases</div><p>depth 4–7; each auto-played: gated start, solved only by the truth, every wrong suspect rejected, save/reload</p></div>
+    <div class="card fade-in delay-4" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--gold);">7</div><div class="ct">playable deep cases</div><p>depth 4–7, two generated in the game; each auto-played: gated start, solved only by the truth, wrong suspects rejected</p></div>
     <div class="card fade-in delay-5" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--blue);">~40%</div><div class="ct">bad steps caught</div><p>code-valid steps the plausibility review rejected for real common-sense faults</p></div>
   </div>
-  <div class="card fade-in delay-6" style="padding:18px 24px;margin-top:6px;"><p style="font-size:15px;"><b style="color:var(--text-primary)">Honest limits.</b> The kernel certifies fair, solvable, deep and misleading — not fun. Characters know only what the case records, so reactions to unrelated evidence are thin. No take/use/combine yet, no art for new objects, questions are “who” only, and generation still takes 8–10 minutes per case.</p></div>
+  <div class="card fade-in delay-6" style="padding:18px 24px;margin-top:6px;"><p style="font-size:15px;"><b style="color:var(--text-primary)">Honest limits.</b> The kernel certifies fair, solvable, deep and misleading — not fun. Characters know only what the case records, so reactions to unrelated evidence are thin. No take/use/combine yet, no art for new objects, questions are “who” only, and generating a case takes 10–20 minutes.</p></div>
   <div class="slide-number"></div>
 </div>
 
@@ -508,9 +523,9 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
   <div class="fade-in delay-1"><span class="tag tag-purple">TOWARD THE NORTH STAR</span><h2>Next steps</h2>
   <p class="sub"><b style="color:var(--text-primary)">North star:</b> an endless supply of Christie-grade mysteries in any setting, with characters who live and talk believably, and an engine that guarantees every case stays fair and solvable however the player behaves.</p></div>
   <div class="grid" style="grid-template-columns:repeat(4,1fr);">
-    <div class="card fade-in delay-2" style="padding:20px;"><div class="num">01 · CONTENT</div><div class="ct">Richer cases</div><p>Public facts of the morning, per-character reactions to the clues that concern them, more witness detail — all certified.</p></div>
+    <div class="card fade-in delay-2" style="padding:20px;"><div class="num">01 · CONTENT</div><div class="ct">Richer cases</div><p>Who found the body, what the village knows, and more witness detail, all certified.</p></div>
     <div class="card fade-in delay-2" style="padding:20px;"><div class="num">02 · PLAY</div><div class="ct">Adventure verbs</div><p>Take, use, combine, give, tone; an inventory; a dead-end check in certification.</p></div>
-    <div class="card fade-in delay-3" style="padding:20px;"><div class="num">03 · SPEED</div><div class="ct">5–7 min, then instant</div><p>Parallel steps and smaller prompts; a background pool so a fresh case is always ready.</p></div>
+    <div class="card fade-in delay-3" style="padding:20px;"><div class="num">03 · SPEED</div><div class="ct">Faster, then instant</div><p>From 10–20 minutes to 5–7 per case; then a background pool so a fresh case is always ready.</p></div>
     <div class="card fade-in delay-3" style="padding:20px;"><div class="num">04 · LIBRARY</div><div class="ct">Blocks as code</div><p>The block library compiled and tested, with the five design examples as acceptance cases.</p></div>
     <div class="card fade-in delay-4" style="padding:20px;"><div class="num">05 · QUESTIONS</div><div class="ct">Beyond “who”</div><p>How, why, when, identity and “what happened”, with matching accusation forms.</p></div>
     <div class="card fade-in delay-4" style="padding:20px;"><div class="num">06 · LIVES</div><div class="ct">Culprits who act</div><p>Autonomous plans driven by the case's attitudes — a culprit who fears a witness acts — with the per-turn check back on.</p></div>

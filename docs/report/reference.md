@@ -39,7 +39,6 @@ These paths are relative to the repository root. The report build checks their e
 | `dist/cases/bellweather.mjs` | Configured tables, scripted dialogue and evidence rubric | [Generation](generation.md) |
 | `dist/investigation.mjs` | Bounded acquisition search and witness replay | [Director](director.md) |
 | `dist/admission.mjs` | Mandatory configured transition checks and capability previews | [Director](director.md) |
-| `tests/case-configurations.test.mjs` | Configuration, admission, provenance and real-Z3 regressions | [Evaluation](evaluation.md) |
 | `dist/case.mjs` | Authored people, places, evidence and case solution | [Worked examples](case-study.md) |
 | `dist/cases/last-bell.mjs` | Scripted policy, dialogue, case consequences and reconciliation | [Worked examples](case-study.md) |
 | `dist/schema.mjs` | JSDoc contracts and player-action catalog | [Architecture](architecture.md) |
@@ -62,10 +61,16 @@ These paths are relative to the repository root. The report build checks their e
 | `tools/refine-c/refine.py` | Refinement harness: code-scheduled, model-written, code-certified generation with a plausibility critic | Mystery kernel note (docs/mystery-kernel.md) |
 | `tools/refine-c/publish.py` | Selects certified cases, adds questions and evening accounts, publishes to `dist/cases/generated/` | Mystery kernel note (docs/mystery-kernel.md) |
 | `tools/mk-certify.mjs` | Command-line certification with the JS kernel (used by the harness and parity check) | Mystery kernel note (docs/mystery-kernel.md) |
+| `server/generator_server.py` | Loopback generation server: one job at a time, incremental progress events, publish on completion | Mystery kernel note (docs/mystery-kernel.md) |
+| `server/static_server.py` | Game server for `dist/` with no-cache headers; accepts the browser's debug log at `POST /__log` | Mystery kernel note (docs/mystery-kernel.md) |
+| `logs/` (not committed) | `game.log` (browser actions, dialogue audits, toasts, generation events, errors, flagged issues), `generator.log`, `proxy.log` | Mystery kernel note (docs/mystery-kernel.md) |
 | `dist/life.mjs` | Persistent daily goals, timed activities, social commitments and replanning | [Characters](characters.md) |
 | `dist/cases/bellweather-life.mjs` | Public work and personal interests independent of culprit assignment | [Characters](characters.md) |
 | `dist/autonomy-turn.mjs` | Bounded model goal selection, stale checks and scripted fallback | [Characters](characters.md) |
 | `tests/life.test.mjs` | Daily-life, social, model-boundary and solver regressions | [Evaluation](evaluation.md) |
+| `tests/kernel-case.test.mjs` | Every published generated case: certified, gated, solved only by the truth, save-safe; showing evidence | [Evaluation](evaluation.md) |
+| `tests/mk-kernel.test.mjs` | Mystery-kernel sign semantics, depth, threads and certification | [Evaluation](evaluation.md) |
+| `tests/test_generator_server.py` | Generator server: origin checks, jobs, incremental events, cancel, failure | [Evaluation](evaluation.md) |
 | `dist/actions.mjs` | Shared NPC action vocabulary | [Symbolic layer](symbolic.md) |
 | `dist/agent-plans.mjs` | Available capabilities, queue, execution and observations | [Character turns](characters.md) |
 | `dist/symbolic.mjs` | Finite query compiler and concrete witness evaluator | [Symbolic layer](symbolic.md) |
@@ -83,8 +88,6 @@ These paths are relative to the repository root. The report build checks their e
 | `tests/character-turn.test.mjs` | Mocked character generation and critic orchestration | [Evaluation](evaluation.md) |
 | `tests/ui.test.mjs` | UI adapter regression checks | [Evaluation](evaluation.md) |
 | `tests/test_symbolic_solver.py` | Solver translation and service boundaries | [Evaluation](evaluation.md) |
-| `tests/modules.test.mjs` | Brick composition, invariants, `peers` interweave and live correction delivery | [Evaluation](evaluation.md) |
-| `tests/casegen.test.mjs` | Validator obligations, seeded sampler and generated-case lifecycle | [Evaluation](evaluation.md) |
 | `tools/debug-session.mjs` | Reads an exported investigation and prints per-turn AI audits (debugging) | [Evaluation](evaluation.md) |
 
 ## Research context
@@ -134,6 +137,8 @@ For a research or external-review snapshot, associate a report edition with a re
 | 0.11 | 2026-09-20 | The primitive-algebra pipeline: a named/versioned primitive kernel (`primitives.mjs`), a declarative composition compiler (`composition.mjs`), three divergent types (staged-suicide, collusion, delayed poisoning), and a prep-time LLM composer (`llm-composer.mjs`, "Generate with AI") with a validateCase repair loop and deterministic fallback. An affordance grammar makes means an open object catalog (`objects.mjs` + `mechanism.mjs`; icicle/scarf/chandelier). A forced-insight obligation makes twists load-bearing; a manner×method guardrail rejects incoherent stagings. Dialogue naturalness: per-character pronoun/address/voice, warmer generation, no record-reciting, witnesses confirm objective records, and a relaxed number gate that allows natural time phrasing. 232 JS + 10 Python tests. |
 | 0.12 | 2026-09-21 | Depth (M0–M5): a deep-case artifact (neutral observations + discovery gates + declared inversion) compiled onto the existing engine; obligations for fair-play, discovery-depth and the inversion-anchor contract; a coherence-preserving operator library; a deterministic always-certified deep generator (a delayed poisoning whose toxicology anchor is gated behind a washed-decanter→dregs chain, the recorded death-time a misdirecting alibi) plus an LLM deep composer with deterministic fallback; reachability extended to traverse gates; wired as "Generate a deep case". 247 JS + 10 Python tests. |
 | 0.13 | 2026-09-21 | Breadth, depth and disclosure. Three deep shapes (time/motive/means), each gating a different forced anchor; the anchor is now buried behind a ~5-hop discovery ladder (was two); every deep case carries load-free red-herring fog (neutral, never forced, never a premise of a forced clue) within the solver's 30-clue bitset (~23–24 used). In-room disclosure: the inspect panel groups reachable objects into sections by evidence kind and hides gated objects until their prerequisites are found. The LLM can author a full deep artifact (`composeArtifactCase` + safe `expandArtifact`), certified/repaired/fallen-back. Local LLM proxy self-heals a stale cached credential. 253 JS + 10 Python tests. |
+| 0.14 | 2026-09-26 | The mystery kernel: four primitives, computed sign kinds, Conceal/Fragment/Mislead with two laws, misdirection as a defeated default; a refinement harness (code schedules and certifies, a model writes each beat, a second model reviews it); the kernel in JS with parity against the Python checker; five certified Bellweather cases (depth 4–7) playable through a bridge, with free-text dialogue grounded in each character's memories and beliefs. 277 JS + 10 Python tests. |
+| 0.15 | 2026-09-27 | Generation in the game: one generator button, a local generator server with streamed progress and a collapsed spoiler view; published cases gain the doctor's examination, evening accounts for everyone, observable traits, spoken lines and reactions for showing evidence; mistakes conceded apart from lies; free-text access to all earned accounts with a guarded third attempt; stationary people; progressive hints; debug logs in `logs/` and a Flag-an-issue button. 178 JS + 14 Python tests. |
 
 ### Forensic milestone source map
 
@@ -141,7 +146,5 @@ For a research or external-review snapshot, associate a report edition with a re
 - `dist/cases/investigative-structures.mjs`: cleanup and clock-dependent evidence structures.
 - `dist/casegen.mjs`: local generation obligations and optional Z3 certification.
 - `tools/validate-case.mjs`: reproducible offline certification command.
-- `tests/forensics.test.mjs`: source forgery, ambiguity, route replay, real-Z3 and unresolved-result regressions.
 
 Edition 0.6 adds these bounded forensic contracts; it does not claim general formal verification of narrative prose.
-| 0.14 | 2026-09-26 | The mystery kernel: four primitives, computed sign kinds, Conceal/Fragment/Mislead with two laws, misdirection as a defeated default; a refinement harness (code schedules and certifies, a model writes each beat, a second model reviews it); the kernel in JS with parity against the Python checker; five certified Bellweather cases (depth 4–7) playable through a bridge, with free-text dialogue grounded in each character's memories and beliefs. 277 JS + 10 Python tests. |

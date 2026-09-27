@@ -212,11 +212,11 @@ Every declared route is independently replayed. This milestone does not establis
 North star: an endless supply of mysteries as rich as Christie's, in any setting, whose characters live and talk
 believably, and where the engine guarantees every case stays fair and solvable however the player behaves.
 
-1. **Richer case content from the generator**: the public facts of the morning (who found the body, what the village
-   knows), per-character reactions to the clues that concern them, and more witness detail, all certified.
+1. **Richer case content from the generator**: the doctor's examination, evening accounts, observable traits and
+   per-character reactions are in place; still to do: who found the body, what the village knows, and more witness detail.
 2. **Adventure verbs**: take, use, combine, give, and tone, with an inventory and a dead-end check in certification.
-3. **Generation speed and scale**: 5–7 minutes per case (parallel steps, smaller prompts), and a pool of cases
-   generated in the background so the game can offer a fresh one instantly.
+3. **Generation speed and scale**: in-game generation works but takes 10–20 minutes; target 5–7 (parallel steps,
+   smaller prompts), then a pool of cases generated in the background so a fresh one is always ready.
 4. **Blocks as code**: the block library compiled and tested, with the five design-note examples as acceptance cases.
 5. **Beyond "who"**: how, why, when, identity and "what happened" questions in play, with matching accusation forms.
 6. **Living characters in generated cases**: daily lives and autonomous plans driven by the case's attitudes (a culprit

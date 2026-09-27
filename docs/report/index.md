@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.14 · 26 September 2026**
+**Living technical report · Edition 0.15 · 27 September 2026**
 
 ### Abstract
 
@@ -150,3 +150,19 @@ Bellweather setting with the original cast, map and art, the generator produced 
 4–7 (14–24 clues, 27–35 history events, a certified twist, lies and red herrings), which play in the existing game
 through a bridge (`dist/cases/kernel-case.mjs`) including free-text character dialogue grounded in each character's
 memories and beliefs. See `docs/mystery-kernel.md`.
+
+### Edition 0.15: generation in the game, and a playable generated case
+
+The case chooser now has a single generator. It starts a job on a local generator server, which runs the refinement
+harness in the Bellweather setting and streams progress: the first draft, then every layer with its story beat, the
+records it added, rejected candidates and the plausibility verdicts. The player sees a high-level progress view; a
+collapsed spoiler section shows the cast with their secrets, the hidden history and each layer, for testing. Finished
+cases are published for play.
+
+Playing generated cases exposed gaps that are now closed: every case includes the doctor's examination (cause of death
+and the time window, needed to judge alibis; certification unchanged), every character has an evening account, the
+physical traits clues test are visible, showing evidence uses spoken lines and per-character reactions written at
+generation time (with kind- and relation-aware templates as fallback), honest mistakes are conceded differently from
+lies, free-text questions can draw on every account a character can give, and a guarded third attempt keeps untold
+memories private in character. People keep to their places, a progressive hints tab replaces hypotheses, and every
+layer writes debug logs to `logs/` (see the reference chapter).

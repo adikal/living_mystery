@@ -806,6 +806,63 @@
  ],
  "signs": [
   {
+   "id": "s_medical",
+   "kind": "record",
+   "medical": true,
+   "at": "surgery",
+   "title": "The doctor\u2019s examination notes",
+   "text": "Examination of the deceased, Mr Edmund Vale, reveals death resulted from a heavy blow to the back of the head, delivered with considerable force by a hard, blunt object. There is no evidence of a prolonged struggle. Death is judged to have occurred between 21:30 and 22:00 last evening.",
+   "claim": {
+    "kind": "time",
+    "start": 1290,
+    "end": 1320
+   },
+   "show": "I've examined Mr Vale's body, and he died from a heavy blow to the back of the head between half past nine and ten o'clock last night. Did you see or hear anything in that time?",
+   "reactions": {
+    "silas": "A grim business, Inspector. I was at my desk in the vestry through that hour, lamp lit, as anyone passing would attest \u2014 I certainly cannot account for what befell poor Edmund at his home."
+   }
+  },
+  {
+   "id": "s_medical_iris",
+   "kind": "testimony",
+   "medical": true,
+   "speaker": "iris",
+   "claim": {
+    "kind": "time",
+    "start": 1290,
+    "end": 1320
+   },
+   "title": "Dr Marsh on the body",
+   "text": "He died of a heavy blow to the back of the head, dealt by some blunt object, poor soul. By the state of him, I'd say it happened between half past nine and ten o'clock last night.",
+   "ask": "Doctor, what did you find when you examined Mr Vale?",
+   "show": "Dr Marsh tells me Mr Vale died from a heavy blow to the back of the head with a blunt object, sometime between half past nine and ten last night. Does that match what you know?",
+   "confront": "You told me he died from a blow to the back of the head between half past nine and ten last night. Is that your full assessment?"
+  },
+  {
+   "id": "s_surface_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "surface": true,
+   "deceptive": false,
+   "title": "Arthur Bell on the evening",
+   "text": "Walking my round of the square, same as every night. Saw the vestry window lit up, Voss hunched over his work as usual, nothing amiss that I could see.",
+   "ask": "Where were you last night?",
+   "confront": "You told me you saw Mr Voss hunched over his work in the vestry window, nothing amiss. Is that the whole of it?",
+   "show": "Constable Bell says he saw Silas Voss hunched over his work in the lit vestry window on his round, nothing amiss. Does that match what you know?"
+  },
+  {
+   "id": "s_surface_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "surface": true,
+   "deceptive": false,
+   "title": "Dr Iris Marsh on the evening",
+   "text": "I was about my usual rounds \u2014 seeing patients at the surgery of an evening, then called out to tend a hand injury, and back to write up my notes after. Nothing out of the ordinary.",
+   "ask": "Where were you last night?",
+   "confront": "You told me you saw patients, were called out for a hand injury, then went back to write up your notes. Is that the whole of it?",
+   "show": "Dr Marsh says she was doing her usual evening rounds, was called out to tend a hand injury, then went back to write up her notes. Does that sound right to you?"
+  },
+  {
    "id": "s_surface_ada",
    "kind": "testimony",
    "speaker": "ada",
@@ -813,7 +870,9 @@
    "title": "Ada Finch on the evening",
    "text": "Oh, it was the usual busy evening here, love, bar and dining room both going full tilt. I had someone in for supper by the fire, but I don't like to natter about who eats what, do I?",
    "ask": "Where were you last night?",
-   "deceptive": false
+   "deceptive": false,
+   "confront": "You told me it was a busy night and someone was in for supper by the fire, but you wouldn't say who. Is that the whole of it?",
+   "show": "Mrs Finch says it was a busy night at the inn with someone in for supper by the fire, though she won't say who. Can you tell me anything more about that?"
   },
   {
    "id": "s_surface_clara",
@@ -823,7 +882,9 @@
    "title": "Clara Vale on the evening",
    "text": "I had words with Edmund over money, then went out for a while before retiring. I came straight home after and went to bed without disturbing the study.",
    "ask": "Where were you last night?",
-   "deceptive": false
+   "deceptive": false,
+   "confront": "You told me you argued with Edmund, went out, then came straight home and went to bed without disturbing the study. Is that the whole of it?",
+   "show": "Miss Vale says she argued with Edmund about money, went out for a while, then came straight home and went to bed without disturbing the study. Do you know if that's true?"
   },
   {
    "id": "s_surface_silas",
@@ -833,7 +894,9 @@
    "title": "Silas Voss on the evening",
    "text": "I was at my vestry office, working late by lamplight, as I often do. I saw to some papers and stayed at my desk most of the night.",
    "ask": "Where were you last night?",
-   "deceptive": true
+   "deceptive": true,
+   "confront": "You told me you were at your desk in the vestry working on papers most of the night. Is that the whole of it?",
+   "show": "Mr Voss says he was at his vestry office working late by lamplight, seeing to papers most of the night. Does that match what you know?"
   },
   {
    "id": "s_surface_rowan",
@@ -843,7 +906,9 @@
    "title": "Rowan Pike on the evening",
    "text": "Cut my hand on a cracked pane, working late in the greenhouse. Iris patched it up for me. Spent the rest of the night resting in the bothy, nowhere else.",
    "ask": "Where were you last night?",
-   "deceptive": false
+   "deceptive": false,
+   "confront": "You told me you cut your hand, were patched up by Dr Marsh, then stayed in the bothy the rest of the night. Is that the whole of it?",
+   "show": "Mr Pike says he cut his hand on a cracked pane in the greenhouse, was patched up by Dr Marsh, then rested in the bothy the rest of the night. Do you know if that's so?"
   },
   {
    "id": "s_iris_rowan",
@@ -867,7 +932,9 @@
     "s_swabs"
    ],
    "unlock": "Dr Marsh won't discuss a patient at first. Shown her own dressings and wrapper from the compost heap behind Rowan's greenhouse, she accepts that the visit is already known and gives the times.",
-   "ask": "Dr Marsh, what happened when you were called to the greenhouse?"
+   "ask": "Dr Marsh, what happened when you were called to the greenhouse?",
+   "show": "Dr Marsh says she treated Mr Pike's cut hand in the greenhouse from ten to nine until ten past ten, and that he sat before her the whole time. Does that match what you saw?",
+   "confront": "You told me you treated my cut hand from ten to nine until ten past ten, and that I sat in front of you the whole time. Is that the whole of it?"
   },
   {
    "id": "s_ada_clara",
@@ -889,7 +956,9 @@
     "s_bill"
    ],
    "unlock": "Clara asked Mrs Finch to keep quiet. Once you show her Miss Vale's settled bill from under her own cash box, she sees the visit is known already and has no reason left to stay quiet.",
-   "ask": "Mrs Finch, what can you tell me about last night's supper trade?"
+   "ask": "Mrs Finch, what can you tell me about last night's supper trade?",
+   "show": "Mrs Finch says Miss Vale sat by the fire from nine till half past ten, barely spoke, and never left her table. Does that match what you know?",
+   "confront": "You told me I sat by your fire from nine till half past ten and never left my table. Is that the whole of it?"
   },
   {
    "id": "s_clara_ada",
@@ -918,7 +987,9 @@
     "s_settle_view"
    ],
    "reading": "From the settle every way out of the Rook's room is in view. If Mrs Finch was never out of Miss Vale's sight for long, she never left the inn.",
-   "ask": "Miss Vale, what happened when you visited the inn last night?"
+   "ask": "Miss Vale, what happened when you visited the inn last night?",
+   "show": "Miss Vale says she sat on the settle by the fire at the Rook from nine until half past ten and kept the landlady in sight the whole time. Does that match what you saw?",
+   "confront": "You told me you sat by the fire from nine until half past ten and kept me in sight the whole time. Is that the whole of it?"
   },
   {
    "id": "s_bill",
@@ -930,7 +1001,11 @@
    "requires": [
     "s_ada_evasive"
    ],
-   "unlock": "Mrs Finch's nervous glance at the cash box under the bar tells you where to look when she turns away to serve."
+   "unlock": "Mrs Finch's nervous glance at the cash box under the bar tells you where to look when she turns away to serve.",
+   "show": "There's a supper slip tucked flat beneath the cash box, marked for Miss Vale's chop and cider, paid, though it's missing from the spike where the others are kept. Can you explain why it was hidden there?",
+   "reactions": {
+    "ada": "Oh! Well now, that's Miss Vale's, right enough \u2014 chop and cider, paid fair and square. I tucked it away 'cos she asked me kindly to keep her supper quiet, and I'm not one to break a promise to a lady, clue or no clue."
+   }
   },
   {
    "id": "s_swabs",
@@ -942,7 +1017,11 @@
    "requires": [
     "s_rowan_coat"
    ],
-   "unlock": "The bucket and carbolic show Mr Pike has been cleaning this morning, so you check what else he has cleaned. The rinsed bin sends you to the freshly turned compost heap."
+   "unlock": "The bucket and carbolic show Mr Pike has been cleaning this morning, so you check what else he has cleaned. The rinsed bin sends you to the freshly turned compost heap.",
+   "show": "The tin bin in the bothy's been rinsed clean, but I found blood-soaked lint, snipped suture silk, and a torn wrapper marked 'Dr I. Marsh' buried in the compost heap. Can you tell me who's been using that heap?",
+   "reactions": {
+    "rowan": "That's off my hand, not his. Cut it on a pane, doctor stitched it, and I put the mess where it belongs \u2014 on the heap. Nothing more to it."
+   }
   },
   {
    "id": "s_bell_figure",
@@ -962,7 +1041,9 @@
     "start": 1280,
     "end": 1320
    },
-   "ask": "Constable Bell, what did you notice about the vestry window?"
+   "ask": "Constable Bell, what did you notice about the vestry window?",
+   "show": "Constable Bell says he looked at the vestry window twice, at twenty past nine and again at ten, and both times saw Mr Voss at his desk with his head down, never moving. Does that match what you recall?",
+   "confront": "You told me you saw Mr Voss at his desk, unmoving, at twenty past nine and again at ten. Is that the whole of it?"
   },
   {
    "id": "s_stand_rings",
@@ -981,7 +1062,12 @@
    "source": "e_silas_stage",
    "defeats": [
     "s_bell_figure"
-   ]
+   ],
+   "show": "The hat-stand in the vestry office has moved\u2014there are clean rings in the dust by the desk chair that don't match where it stands now, and a grey thread's caught on its hook. Do you know why it was shifted?",
+   "reactions": {
+    "silas": "The hat-stand does move about the office from time to time \u2014 I shift it when I'm tidying papers by the window. I fail to see what dust rings prove.",
+    "bell": "Well now. If the hat-stand was stood by that window, then what I took for Mr Voss hunched over his papers might've been nowt but that stand and a coat on it. I called it as I saw it, mind \u2014 a still shape in a lit window, twice over. Didn't think to doubt me own eyes."
+   }
   },
   {
    "id": "s_keys_rule",
@@ -999,7 +1085,11 @@
    "requires": [
     "s_clara_ada"
    ],
-   "unlock": "Once she has told you all about her evening at the Rook, Clara stops guarding the family's affairs and answers your questions about the study."
+   "unlock": "Once she has told you all about her evening at the Rook, Clara stops guarding the family's affairs and answers your questions about the study.",
+   "show": "You've told me there were only ever two keys to the strongbox - Edmund's on his watch chain, and the other kept by Mr Voss for the estate papers. Is that correct?",
+   "reactions": {
+    "silas": "That is correct. I have always held the second key, for the estate papers \u2014 quite properly, as Edmund's solicitor."
+   }
   },
   {
    "id": "s_strongbox",
@@ -1015,6 +1105,10 @@
    "claim": {
     "kind": "possession",
     "item": "strongbox_key"
+   },
+   "show": "The study strongbox is locked with no scratches or forcing, but the folder marked 'Bank' inside is empty, and Edmund's key is still on his watch chain. Do you know what became of what was in that folder?",
+   "reactions": {
+    "silas": "The strongbox was locked when I left it, as it should be. I have no explanation for an empty folder beyond what the bank itself can tell you."
    }
   },
   {
@@ -1033,6 +1127,10 @@
     "a": "silas",
     "rel": "embezzled_from",
     "b": "edmund"
+   },
+   "show": "The pressed marks on the study blotter show sums drawn against your initials in March, June, and September, with no receipts, and a note to check the bank signature against yours. Can you explain these withdrawals?",
+   "reactions": {
+    "silas": "Pencil impressions prove nothing but that someone wrote figures near my initials. I manage estate accounts for many clients, Inspector; draw your own conclusions carefully."
    }
   },
   {
@@ -1049,7 +1147,12 @@
    "requires": [
     "s_peg_empty"
    ],
-   "unlock": "You follow the pink drips from the empty peg to the bothy door, and find Mr Pike standing over his bucket."
+   "unlock": "You follow the pink drips from the empty peg to the bothy door, and find Mr Pike standing over his bucket.",
+   "show": "Mr Pike is scrubbing his green work coat in a bucket of pink-tinged water with carbolic soap, and won't meet my eye about it. Can you tell me why he's washing it?",
+   "confront": "You're scrubbing your coat in pink water and won't meet my eye. Why are you washing it?",
+   "reactions": {
+    "rowan": "Told you. Mucky, that's all. Leave it be \u2014 it's my coat, my business."
+   }
   },
   {
    "id": "s_rowan_admits",
@@ -1064,7 +1167,9 @@
     "s_iris_rowan"
    ],
    "unlock": "Once you tell him Dr Marsh has already given the times of her visit, Rowan stops thinking his cut will be held against him and explains the coat.",
-   "ask": "Mr Pike, what happened at the greenhouse last night involving your coat?"
+   "ask": "Mr Pike, what happened at the greenhouse last night involving your coat?",
+   "show": "Mr Pike has told me the blood on his coat was his own, from a pane cutting his palm at eight o'clock, and that he scrubbed it clean once talk turned to Mr Vale. Does that match what you saw?",
+   "confront": "You've told me the blood was your own, from the pane cutting your hand at eight, and that you scrubbed the coat once people started talking about Mr Vale. Is that the whole of it?"
   },
   {
    "id": "s_exam_notes",
@@ -1085,7 +1190,12 @@
     "kind": "trait",
     "trait": "handed",
     "value": "left"
-   }
+   },
+   "reactions": {
+    "iris": "That's my own hand and my own findings, written for the coroner as they should be. I'll say no more than what's there until he calls for it.",
+    "silas": "A distressing account, but a medical matter, not a legal one. I can offer no insight into how Edmund met his end."
+   },
+   "show": "Dr Marsh's notes say Vale was struck once from the front at close range, with bruising on his forearms as if he'd raised them against someone facing him. Does that match what you saw?"
   },
   {
    "id": "s_ada_evasive",
@@ -1097,7 +1207,13 @@
    "about": "ada",
    "explainedBy": [
     "s_ada_clara"
-   ]
+   ],
+   "show": "Mrs Finch goes quiet and starts wiping a clean glass whenever Miss Vale is mentioned, her eyes flicking to the cash box under the bar. Do you know why she's so reluctant to speak on it?",
+   "confront": "You go quiet and start wiping a glass whenever Miss Vale comes up, glancing at the cash box. Why are you so reluctant to speak on it?",
+   "reactions": {
+    "ada": "Oh, you noticed that, did you \u2014 well, a lady asked for her privacy and I'm not one to gossip about her supper, that's all it is, dear.",
+    "clara": "Mrs Finch was only being kind. I asked her to keep my supper to herself, and I'd rather not say more than that \u2014 it's a private matter, nothing to do with Edmund."
+   }
   },
   {
    "id": "s_settle_view",
@@ -1108,7 +1224,8 @@
    "requires": [
     "s_ada_clara"
    ],
-   "unlock": "Once she's talking about Miss Vale's supper, Mrs Finch takes you over to the seat by the fire and shows you where Miss Vale sat."
+   "unlock": "Once she's talking about Miss Vale's supper, Mrs Finch takes you over to the seat by the fire and shows you where Miss Vale sat.",
+   "show": "From the settle by the fire you can see the whole bar, the street door, and the only passage to the kitchen and yard, with no other way out. Does that match what you recall of the room that night?"
   },
   {
    "id": "s_peg_empty",
@@ -1116,7 +1233,11 @@
    "title": "An empty peg",
    "text": "The peg by the greenhouse door, where Mr Pike's work coat usually hangs, is empty. Pinkish drips run from the tap across the brick path and stop at the bothy door.",
    "at": "greenhouse",
-   "source": "e_rowan_unpeg"
+   "source": "e_rowan_unpeg",
+   "show": "The peg by the greenhouse door where your coat usually hangs is empty, and there are pinkish drips running from the tap along the brick path to the bothy door. Can you tell me what happened there?",
+   "reactions": {
+    "rowan": "Coat's soaking, told you that. Tap's there for washing up, drips go where they go. Nothing sinister in it."
+   }
   }
  ],
  "id": "mk-bw-ledger",

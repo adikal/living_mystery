@@ -66,7 +66,7 @@ test('Critic rejection gets one repair attempt, then falls back without applying
  const s=here('manor'),t=ticket(s,'clara','Where were you?',{type:'ask',person:'clara',topic:'alibi'}),p=proposal(t,'ask:alibi');
  p.utterance='I did it. I confess to everything.';let calls=0;
  const r=await proposeCharacterTurn(t,{store:active(),fetchImpl:async(_url,init)=>{calls++;return {ok:true,json:async()=>({text:JSON.parse(init.body).system===CHARACTER_CRITIC?'{"verdict":"reject","violations":["private disclosure and invented admission"]}':JSON.stringify(p)})};}});
- assert.equal(calls,4);assert.equal(r.proposal,null);applyCharacterTurn(s,t,r);
+ assert.equal(calls,5,"two attempts with review, then one guarded attempt");assert.equal(r.proposal,null);applyCharacterTurn(s,t,r);
  assert.doesNotMatch(s.events.filter(e=>e.playerText).map(e=>e.playerText).join(' '),/confess|I did it/i);
  assert.match(s.events.findLast(e=>e.actor==='clara'&&e.kind==='speech').data.assertion,/library/);
  assert.ok(!s.world.npcs.clara.disclosed);
@@ -144,7 +144,7 @@ test('Ambiguous critic verdicts exhaust the retry budget and cannot commit model
      ? 'Example: {"verdict":"pass","violations":[]} Actual verdict: reject.'
      : JSON.stringify(p)})};
  }});
- assert.equal(calls,4);assert.equal(result.proposal,null);
+ assert.equal(calls,5,"two attempts with review, then one guarded attempt");assert.equal(result.proposal,null);
  applyCharacterTurn(s,t,result);
  assert.notEqual(s.events.findLast(e=>e.actor==='clara'&&e.kind==='speech').data.assertion,p.utterance);
  assert.deepEqual(diagnostics(s).errors,[]);

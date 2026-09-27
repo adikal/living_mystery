@@ -429,7 +429,7 @@ def llm(system, user, max_tokens=9000, model=None):
     global _client
     if _client is None:
         _client = boto3.client('bedrock-runtime', region_name='us-west-2',
-                               config=Config(read_timeout=900, retries={'max_attempts': 3}, max_pool_connections=64))
+                               config=Config(read_timeout=300, retries={'max_attempts': 2}, max_pool_connections=64))
     # the static system prompt (principles, schema, library, checklist) is cached across calls
     r = _client.converse(modelId=model or MODEL, system=[{'text': system}, {'cachePoint': {'type': 'default'}}],
                          messages=[{'role': 'user', 'content': [{'text': user}]}], inferenceConfig={'maxTokens': max_tokens})
@@ -445,7 +445,7 @@ def llm_json(system, user, max_tokens=9000, model=None):
     global _client
     if _client is None:
         _client = boto3.client('bedrock-runtime', region_name='us-west-2',
-                               config=Config(read_timeout=900, retries={'max_attempts': 3}, max_pool_connections=64))
+                               config=Config(read_timeout=300, retries={'max_attempts': 2}, max_pool_connections=64))
     tool = {'toolSpec': {'name': 'submit', 'description': 'Submit the requested JSON object.',
                          'inputSchema': {'json': {'type': 'object', 'additionalProperties': True}}}}
     m = model or MODEL
@@ -826,17 +826,47 @@ def step_laws(case, report, new, rep, patch, mode, target, thread, tdepth):
     return law
 
 
-def run_case(name, brief, steps, D, outdir, log):
+class Cancelled(Exception):
+    pass
+
+
+def metrics_of(rep):
+    keys = ('solve_depth', 'max_depth', 'surface', 'twist', 'herrings', 'false_signs', 'threads', 'motive', 'means')
+    return {k: rep.get(k) for k in keys} if rep.get('ok') else {'ok': False}
+
+
+def case_added(before, after):
+    """Records present in `after` but not in `before` (by id), per group: what one iteration added to the story."""
+    out = {}
+    for group in ('people', 'objects', 'attitudes', 'events', 'signs', 'rules', 'relations', 'possession'):
+        old = {json.dumps(x, sort_keys=True) if group in ('relations', 'possession') else x.get('id') for x in (before or {}).get(group, [])}
+        new = [x for x in after.get(group, []) if (json.dumps(x, sort_keys=True) if group in ('relations', 'possession') else x.get('id')) not in old]
+        if new:
+            out[group] = new
+    return out
+
+
+def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None):
+    """emit(event: dict) receives progress events; should_stop() is polled between model calls to cancel."""
     os.makedirs(outdir, exist_ok=True)
     t0 = time.time()
+    emit = emit or (lambda e: None)
+    def check_stop():
+        if should_stop and should_stop():
+            raise Cancelled()
+    def send(kind, **data):
+        emit({'kind': kind, 't': round(time.time() - t0, 1), **data})
     hist = []
     pool = cf.ThreadPoolExecutor(max_workers=CANDIDATES * 2)
 
     # SEED: CANDIDATES in parallel per round; first that certifies wins
     case, fb = None, None
+    send('phase', phase='seed', message='Writing the setting, cast, secrets and what really happened')
     for rnd in range(3):
+        check_stop()
         extra = ('\n\nPREVIOUS SEED REJECTED BY THE CHECKER:\n- ' + '\n- '.join(fb)) if fb else ''
         futs = [pool.submit(llm_json, SYSTEM_GEN, seed_prompt(brief) + extra, 12000) for _ in range(CANDIDATES)]
+        send('drafting', round=rnd + 1, drafts=CANDIDATES)
         best = None
         for f in cf.as_completed(futs):
             try:
@@ -845,6 +875,7 @@ def run_case(name, brief, steps, D, outdir, log):
                     rep = {'ok': False, 'errors': setting_errors(cand)}
             except Exception as e:
                 cand, rep = None, {'ok': False, 'errors': [f'unparseable or malformed: {e}']}
+            send('draft_checked', ok=rep['ok'], errors=(rep.get('errors') or [])[:2])
             if rep['ok']:
                 case = cand; break
             if best is None or len(rep['errors']) < len(best):
@@ -852,11 +883,14 @@ def run_case(name, brief, steps, D, outdir, log):
         if case:
             break
         fb = (best or [])[:12]; log(f'[{name}] seed round {rnd+1} rejected: {fb[:2]}')
+        send('seed_rejected', round=rnd + 1, errors=fb)
     if case is None:
         pool.shutdown(wait=False, cancel_futures=True)
+        send('failed', message='The first draft of the case never passed the checks', errors=fb)
         return {'name': name, 'ok': False, 'reason': 'seed never certified', 'last_errors': fb, 'seconds': round(time.time() - t0)}
     report = certify(case)
     json.dump(case, open(f'{outdir}/00-seed.json', 'w'), indent=1)
+    send('seed', case=case, metrics=metrics_of(report))
     log(f"[{name}] seed ok at {time.time()-t0:.0f}s: surface {report['surface']} solve {report['solve_depth']} threads {report['threads']} "
         f"twist {report['twist']} motive {bool(report['motive'])} means {bool(report['means'])} herring {bool(report['herrings'])}")
 
@@ -871,28 +905,38 @@ def run_case(name, brief, steps, D, outdir, log):
     for step in range(1, steps + 1):
         th = [d for d in (report.get('threads') or {}).values() if d is not None]
         truth_d = (report.get('threads') or {}).get('truth') or 0
+        check_stop()
         if (report['solve_depth'] or 0) >= D and min(th or [0]) >= 2 and truth_d >= 3 and report['twist'] and report['herrings'] \
                 and report.get('motive') and report.get('means'):
+            send('phase', phase='targets', message='Every target met')
             log(f'[{name}] targets met at {time.time()-t0:.0f}s (solve depth {report["solve_depth"]}): stopping'); break
         mode, target, preferred, thread, tdepth = schedule(case, report, step, hist, D)
         if not target:
             log(f'[{name}] step {step}: no qualifying target, stopping'); break
         fb, entry = None, {'step': step, 'mode': mode, 'target': target, 'thread': thread, 'preferred': preferred, 'attempts': []}
         ts = time.time()
+        before = case
+        send('step_start', step=step, mode=mode, target=target, thread=thread, operator=preferred,
+             target_title=next((x.get('title') for x in case['signs'] if x['id'] == target), target))
         for rnd in range(2):
+            check_stop()
             prompt = step_prompt(case, report, target, mode, preferred, fb)
             gens = [pool.submit(llm_json, SYSTEM_GEN, prompt) for _ in range(CANDIDATES)]
+            send('drafting', step=step, round=rnd + 1, drafts=CANDIDATES)
             results = []
             for g in gens:
                 try:
                     results.append(evaluate(g.result(), mode, target, thread, tdepth))
                 except Exception as e:
                     results.append((None, None, None, [f'model call failed: {e}']))
+                send('draft_checked', step=step, ok=not results[-1][3], errors=results[-1][3][:2])
             for r in results:
                 entry['attempts'].append(r[3])
             passing = [r for r in results if not r[3]]
             # plausibility review of every code-valid candidate, in parallel; best progress wins
             reviews = [(r, pool.submit(critic, r[1], r[0])) for r in passing]
+            if reviews:
+                send('reviewing', step=step, drafts=len(reviews))
             winners = []
             for r, fut in reviews:
                 ok, issues = fut.result()
@@ -911,6 +955,10 @@ def run_case(name, brief, steps, D, outdir, log):
         entry.setdefault('accepted', False)
         entry['seconds'] = round(time.time() - ts)
         hist.append(entry)
+        send('step', step=step, mode=mode, target=target, thread=thread, accepted=entry['accepted'],
+             operator=entry.get('operator'), blocks=entry.get('blocks'), story=entry.get('story'),
+             attempts=[a[:4] for a in entry['attempts']], critic=entry.get('critic', []), seconds=entry['seconds'],
+             added=case_added(before, case) if entry['accepted'] else {}, metrics=metrics_of(report))
         json.dump(case, open(f'{outdir}/{step:02d}-case.json', 'w'), indent=1)
         log(f"[{name}] step {step} {mode}:{target} -> {'OK ' + str(entry.get('operator')) if entry['accepted'] else 'REJECTED'}"
             f" ({len(entry['attempts'])} candidates, {entry['seconds']}s, solve {report['solve_depth']})")
@@ -923,6 +971,8 @@ def run_case(name, brief, steps, D, outdir, log):
     json.dump(result, open(f'{outdir}/result.json', 'w'), indent=1)
     open(f'{outdir}/report.md', 'w').write(render(case, final, result))
     log(f"[{name}] DONE in {result['seconds']}s: solve {final.get('solve_depth')} threads {final.get('threads')}")
+    result['case'] = case
+    send('generated', metrics=metrics_of(final), seconds=result['seconds'])
     return result
 
 # ----------------------------------------------------------------------------------------------------

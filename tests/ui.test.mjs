@@ -324,7 +324,7 @@ test('Scripted turns with no symbolic plans never display a checking indicator',
 });
 
 test('Case selection, restart and restore keep scenario-specific evidence and accusation options',()=>{
- const ui=adapter(null,{llmActive:()=>false});ui.click('choose-case');assert.match(ui.node('#modal').innerHTML,/Generate a new validated case/);
+ const ui=adapter(null,{llmActive:()=>false});
  ui.click('start-case',{id:'bellweather-02'});
  assert.equal(ui.run('session.world.caseId'),'bellweather-02');assert.match(ui.node('#app').innerHTML,/The Codicil/);
  ui.run("act({type:'move',to:'manor'});act({type:'inspect',object:'body'});act({type:'move',to:'square'})");ui.click('accusation');
@@ -393,16 +393,6 @@ test('A new player turn aborts in-flight background deliberation so it cannot st
  assert.ok(ui.run("session.events.some(e=>e.kind==='speech'&&e.actor==='bell')"),'the character turn applied, not stale');
 });
 
-test('Structure generation still works with AI off',()=>{
- const ui=adapter(null,{llmActive:()=>false});
- for(const structure of ['cleanup','clockwork']){
-  ui.run(`generateAndStart({structure:'${structure}'})`);
-  assert.equal(ui.run('caseTables(session).kernel.model.forensics.structure'),structure);
-  assert.equal(ui.run('session.world.status'),'playing');
-  assert.equal(ui.run('session.world.player.evidence.length'),0);
- }
-});
-
 test('A settings change cannot bypass an in-flight Director deferral',async()=>{
  let enabled=true;
  const ui=adapter(null,{directorEnabled:()=>enabled,commitDirectedTurn:async()=>{enabled=false;return {status:'defer',reason:'No valid route'};},llmActive:()=>false});
@@ -432,7 +422,7 @@ test('A generated kernel case plays in the Bellweather UI: case suspects, no met
  assert.equal(ui.run('session.world.caseId'),'mk-bw-pair');
  assert.ok(ui.run('CASE.kernel'),'the runtime case is the kernel case');
  const surface=records.signs.find(s=>s.kind!=='testimony'&&!(s.requires||[]).length);
- ui.run(`act({type:'move',to:${JSON.stringify(surface.at)}});act({type:'inspect',object:${JSON.stringify(surface.id)}})`);
+ ui.run(`act({type:'move',to:${JSON.stringify(surface.at)}});act({type:'inspect',object:${JSON.stringify(surface.id)}});act({type:'move',to:'square'})`);
  ui.click('accusation');
  const form=ui.node('#modal').innerHTML;
  for(const h of records.question.candidates)assert.match(form,new RegExp(`value="${h.facts.actor}"`),'every candidate is accusable');
@@ -450,7 +440,7 @@ test('Every UI mode and inspector tab renders for a generated kernel case, befor
  ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
  const surface=records.signs.find(s=>s.kind!=='testimony'&&!(s.requires||[]).length);
  ui.run(`act({type:'move',to:${JSON.stringify(surface.at)}});act({type:'inspect',object:${JSON.stringify(surface.id)}})`);
- for(const code of ["mode='game';notebook='evidence';render()","notebook='people';render()","notebook='notes';render()",
+ for(const code of ["mode='game';notebook='evidence';render()","notebook='people';render()","notebook='hints';render()",
    "mode='reasoning';reasonSuspect=null;render()","reasonSuspect='silas';render()",
    "mode='inspector';inspectorTab='world';render()","inspectorTab='timeline';render()","inspectorTab='missed';missedRevealed=true;render()",
    "detailPanel='character';person='ada';personTab='profile';render()","personTab='memories';render()"])
@@ -458,4 +448,61 @@ test('Every UI mode and inspector tab renders for a generated kernel case, befor
  const restored=adapter(ui.saved(),{llmActive:()=>false});
  assert.equal(restored.run('session.world.caseId'),'mk-bw-poison');
  assert.match(restored.node('#app').innerHTML,/Vale Manor|Rook/);
+});
+
+// A stub of the static server + generator server for the generation UI.
+function genStub(records){
+ const events=[{kind:'phase',phase:'seed',t:0},{kind:'seed',t:40,case:records,metrics:{solve_depth:0,twist:false}},
+  {kind:'step_start',t:41,step:1,mode:'twist',target:records.signs[0].id,target_title:records.signs[0].title},
+  {kind:'step',t:90,step:1,mode:'twist',accepted:true,operator:'Mislead',blocks:['Lie','Alibi'],story:'Ada lies to protect Miss Vale.',
+   attempts:[[]],critic:[{pass:true,issues:[]}],seconds:49,added:{attitudes:[{id:'a_x',agent:'ada',mode:'wants',content:'protect Miss Vale'}]},metrics:{solve_depth:2,twist:true,herrings:[],motive:[],means:[]}}];
+ let status='running',started=false;
+ const job=()=>({id:'j1',status,title:'The Study Door',premise:'Edmund Vale is found dead.',elapsed:95,result:status==='done'?{file:'live/mk-live-j1.json',id:'mk-live-j1',title:'The Study Door'}:null});
+ const json=(obj,ok=true,code=200)=>Promise.resolve({ok,status:code,json:async()=>obj});
+ const fetch=async(url,opts={})=>{
+  if(url.endsWith('cases/generated/index.json'))return json([{id:'mk-bw-pair',file:'mk-bw-pair.json',title:'The Greenhouse Steps',blurb:'b'}]);
+  if(url.endsWith('cases/generated/live/index.json'))return json([],false,404);
+  if(url.includes('cases/generated/live/mk-live-j1.json'))return json({...records,id:'mk-live-j1',title:'The Study Door'});
+  if(url.endsWith('/jobs')&&opts.method==='POST'){started=true;return json(job(),true,201);}
+  if(url.includes('/jobs/current'))return started?json(job()):json({error:'no_job'},false,404);
+  if(url.includes('/jobs/j1')){const since=Number(new URL(url).searchParams.get('since')||0);return json({...job(),since,next:events.length,eventsNew:events.slice(since)});}
+  return json({},false,404);
+ };
+ return {fetch,finish:()=>{status='done';events.push({kind:'done',t:120,result:job().result});}};
+}
+
+test('The chooser offers one generator, the shipped cases and the original — no old generators',async()=>{
+ const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-bw-pair.json',import.meta.url),'utf8'));
+ const stub=genStub(records),ui=adapter(null,{llmActive:()=>false,fetch:stub.fetch});
+ ui.click('choose-case');await new Promise(r=>setTimeout(r,5));
+ const html=ui.node('#modal').innerHTML;
+ assert.equal((html.match(/data-do="generate-new"/g)||[]).length,1,'exactly one generate button');
+ assert.doesNotMatch(html,/generate-ai|generate-deep|generate-case|validated case|with AI/i);
+ assert.match(html,/The Greenhouse Steps/);assert.match(html,/data-do="start-case"/);
+});
+
+test('Generation shows high-level progress with the spoiler collapsed, full detail inside it, and plays the result',async()=>{
+ const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-bw-pair.json',import.meta.url),'utf8'));
+ const stub=genStub(records),ui=adapter(null,{llmActive:()=>false,fetch:stub.fetch});
+ ui.click('generate-new');await new Promise(r=>setTimeout(r,10));
+ // progress updates are written into the open panel (inside #modal in a real DOM)
+ const html=ui.node('#gen-panel').innerHTML||ui.node('#modal').innerHTML;
+ assert.match(html,/The Study Door/);assert.match(html,/Solve depth/);assert.match(html,/Misdirection/);
+ assert.match(html,/<details class="gen-spoiler" data-open-key="gen-spoiler">/,'the spoiler is closed by default');
+ const culprit=records.question.candidates.find(h=>h.id===records.question.truth).facts.actor;
+ const spoiler=html.slice(html.indexOf('gen-spoiler-body'));
+ assert.match(spoiler,/THE CULPRIT/);assert.match(spoiler,/Layer 1/);assert.match(spoiler,/Ada lies to protect Miss Vale/);
+ assert.match(spoiler,/What really happened/);assert.ok(spoiler.includes(records.people.find(p=>p.id===culprit).name));
+ assert.doesNotMatch(html.slice(0,html.indexOf('gen-spoiler')),/THE CULPRIT/,'nothing is revealed outside the spoiler');
+ ui.run('clearTimeout(genTimer)');stub.finish();await ui.run('pollGeneration()');
+ // updates land inside the open panel (in a real DOM that is part of #modal)
+ assert.match(ui.node('#modal').innerHTML+ui.node('#gen-panel').innerHTML,/Play this case/);
+ ui.click('start-generated',{file:'live/mk-live-j1.json'});await new Promise(r=>setTimeout(r,10));
+ assert.equal(ui.run('session.world.caseId'),'mk-live-j1');
+});
+
+test('Generation reports a missing generator server clearly',async()=>{
+ const ui=adapter(null,{llmActive:()=>false,fetch:async()=>{throw Error('connection refused');}});
+ ui.click('generate-new');await new Promise(r=>setTimeout(r,5));
+ assert.match(ui.node('#modal').innerHTML,/generator is not running/);
 });

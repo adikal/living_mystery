@@ -176,3 +176,21 @@ candidate patch must certify, obey the refinement laws, make progress, and pass 
 several candidates run in parallel and the best passing one is kept. Across the experiment runs this reliably reached
 solve depth 5–9 with every target met. In the fixed Bellweather setting, published cases are compiled into the
 existing runtime by a bridge, so they play with the original characters, including model-driven dialogue.
+
+## 10.15 Generation in the game and play-time content
+
+**Status: implemented for the Bellweather setting.**
+
+`server/generator_server.py` (loopback, port 8789, exact Origin/Host and an `X-Living-Mystery: generator-v1` header)
+runs one generation at a time and exposes incremental progress events that the browser polls. On completion the case is
+published: questions for each account, every character's evening account, the doctor's examination, spoken lines for
+showing each clue and reactions for the characters involved, then JavaScript certification before it is listed.
+
+Two pieces of generated content bear on fairness. The examination states the time window the certification already
+assumed, which the player needs in order to use alibis; its claim equals the question's window, so it changes no
+elimination and no depth. The physical traits that trait claims test are shown in each person's public description,
+because a trait clue can only be used if the player can observe who has the trait. Other generated lines are claimless
+and do not enter certification; they are checked mechanically (no times or numbers that are not in the source, length
+limits, no second-person address in third-person lines).
+
+A generated case takes roughly 10 to 20 minutes, dominated by sequential model calls for the first draft and each layer.

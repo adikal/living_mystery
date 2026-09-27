@@ -886,6 +886,63 @@
  ],
  "signs": [
   {
+   "id": "s_medical",
+   "kind": "record",
+   "medical": true,
+   "at": "surgery",
+   "title": "The doctor\u2019s examination notes",
+   "text": "Examination of the deceased, Edmund Vale, reveals a heavy blow to the back of the head as the cause of death, consistent with a single forceful strike from a hard, blunt object. There is no indication of a prolonged struggle. Based on the state of the body, death is estimated to have occurred between 21:30 and 22:00 last night.",
+   "claim": {
+    "kind": "time",
+    "start": 1290,
+    "end": 1320
+   },
+   "show": "The examination notes show Edmund Vale died from a single heavy blow to the back of the head, likely between half past nine and ten that night. Does that fit with what you know?",
+   "reactions": {
+    "silas": "That window merely confirms I was at my desk, as my day-book shows. A single blow suggests a struggle got quickly out of hand \u2014 tragic, but it hardly points to me. I had no cause to wish Edmund harm."
+   }
+  },
+  {
+   "id": "s_medical_iris",
+   "kind": "testimony",
+   "medical": true,
+   "speaker": "iris",
+   "claim": {
+    "kind": "time",
+    "start": 1290,
+    "end": 1320
+   },
+   "title": "Dr Marsh on the body",
+   "text": "He died from a heavy blow to the back of the head, delivered with some force by a blunt object. By the state of him, I'd place his death sometime between half past nine and ten o'clock last night.",
+   "ask": "Doctor, what did you find when you examined Mr Vale?",
+   "show": "Dr Marsh says the fatal blow was struck by a blunt object with some force, sometime between half past nine and ten last night. Does that match what you saw?",
+   "confront": "You said he died from one heavy blow to the head, sometime between half past nine and ten. Is that your full assessment?"
+  },
+  {
+   "id": "s_surface_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "surface": true,
+   "deceptive": false,
+   "title": "Arthur Bell on the evening",
+   "text": "I did my rounds same as always, stopped in for a pint after, then went about my business. Nothing more to it than that.",
+   "ask": "Where were you last night?",
+   "confront": "You told me you did your rounds as usual, stopped for a pint, and went about your business. Is that the whole of it?",
+   "show": "Constable Bell says he did his rounds as usual, stopped for a pint, then went about his business. Does that match what you know of his evening?"
+  },
+  {
+   "id": "s_surface_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "surface": true,
+   "deceptive": false,
+   "title": "Dr Iris Marsh on the evening",
+   "text": "I was seeing to patients at the surgery until I was called out to tend a hand injury, and I saw to that before returning to write up my notes. I did not mark the hour by any clock, only that I went and came back and got on with my work.",
+   "ask": "Where were you last night?",
+   "confront": "You said you were seeing patients, then called out to tend a hand injury, then returned to write up notes, without marking any times. Is that the whole of it?",
+   "show": "Dr Marsh says she was seeing patients at the surgery, then was called out to tend a hand injury before returning to write up her notes, though she marked no times. Does that fit with what you know?"
+  },
+  {
    "id": "s_surface_ada",
    "kind": "testimony",
    "speaker": "ada",
@@ -893,7 +950,9 @@
    "title": "Ada Finch on the evening",
    "text": "Oh, I was run off my feet all evening, love, taproom and parlour both - never had a moment to sit down. Can't say I noticed much else with all that going on, truth be told.",
    "ask": "Where were you last night?",
-   "deceptive": false
+   "deceptive": false,
+   "confront": "You told me you were run off your feet all evening and didn't notice much else. Is that really all you can tell me?",
+   "show": "Mrs Finch says she was run off her feet in the taproom and parlour all evening and noticed little else. Does that sound right to you?"
   },
   {
    "id": "s_surface_silas",
@@ -903,7 +962,9 @@
    "title": "Silas Voss on the evening",
    "text": "I was at my desk in the vestry office the whole evening, working through the accounts by lamplight, as my day-book will show. I kept to my usual hours and saw no one after I finished at the church.",
    "ask": "Where were you last night?",
-   "deceptive": true
+   "deceptive": true,
+   "confront": "You told me you were at your desk in the vestry office all evening and saw no one after church. Is that the whole of it?",
+   "show": "Mr Voss says he was at his desk in the vestry office all evening working through the accounts, and saw no one after leaving the church. Does that match what you know?"
   },
   {
    "id": "s_surface_rowan",
@@ -913,7 +974,9 @@
    "title": "Rowan Pike on the evening",
    "text": "Was in the greenhouse, potting up the late cuttings. Cut my hand on a broken pane, got it bandaged, then stopped in my quarters there the rest of the night.",
    "ask": "Where were you last night?",
-   "deceptive": false
+   "deceptive": false,
+   "confront": "You said you were potting cuttings, cut your hand, had it bandaged, and stayed in your quarters the rest of the night. Is that the whole of it?",
+   "show": "Mr Pike says he was in the greenhouse potting cuttings, cut his hand on a broken pane, had it bandaged, and stayed in his quarters the rest of the night. Does that fit with what you saw?"
   },
   {
    "id": "s_surface_clara",
@@ -923,7 +986,9 @@
    "title": "Clara Vale on the evening",
    "text": "I took a quiet supper alone in the parlour at the inn, then came straight home to the manor and went up to bed. I didn't look in on Edmund's study - I meant to sort things out with him this morning.",
    "ask": "Where were you last night?",
-   "deceptive": false
+   "deceptive": false,
+   "confront": "You told me you supped alone, came straight home, and went to bed without looking in on the study. Is that the whole of it?",
+   "show": "Miss Vale says she took a quiet supper alone at the inn, then came straight home to bed without looking in on Mr Vale's study. Does that match what you know?"
   },
   {
    "id": "s_iris_rowan",
@@ -948,7 +1013,9 @@
    "because": [
     "a_iris_precise"
    ],
-   "ask": "Dr Marsh, what happened when you were called to the greenhouse?"
+   "ask": "Dr Marsh, what happened when you were called to the greenhouse?",
+   "show": "Dr Marsh says she went straight to the greenhouse, gave Mr Pike eleven stitches to his palm, and that he never left the bench while she was there. Would you say that's accurate?",
+   "confront": "Dr Marsh says she gave you eleven stitches in the greenhouse and that you never left the bench while she was there. Is that right?"
   },
   {
    "id": "s_bell_ada",
@@ -974,7 +1041,9 @@
     "r_travel"
    ],
    "reading": "The beat card shows Bell signed at the square pillar box at 20:55. The square is three minutes' walk from the Rook, so he was in the taproom by 21:00. From then until 23:20 he could see Mrs Finch.",
-   "ask": "Constable Bell, how did you spend your evening?"
+   "ask": "Constable Bell, how did you spend your evening?",
+   "show": "Constable Bell says he went straight into the Rook instead of walking his beat, and stayed until twenty past eleven, with Mrs Finch behind the bar the whole time. Does that match what you remember?",
+   "confront": "You told me you went straight into the Rook and stayed until twenty past eleven, with Mrs Finch never leaving the bar. Is that the whole of it?"
   },
   {
    "id": "s_ada_clara",
@@ -995,7 +1064,9 @@
     "s_bell_ada"
    ],
    "unlock": "Mrs Finch promised Miss Vale she'd keep quiet. Once you tell her the constable has already said Miss Vale was in the parlour, she thinks the promise no longer matters.",
-   "ask": "Mrs Finch, what can you tell me about your guest in the parlour?"
+   "ask": "Mrs Finch, what can you tell me about your guest in the parlour?",
+   "show": "Mrs Finch says Miss Vale took the little parlour from nine until past eleven, had soup and a chop, and had been crying. Can you confirm that's what happened?",
+   "confront": "Mrs Finch says you sat in the little parlour from nine until past eleven, had soup and a chop, and had been crying. Is that so?"
   },
   {
    "id": "s_cape",
@@ -1007,7 +1078,11 @@
    "requires": [
     "s_peg_thread"
    ],
-   "unlock": "You show Mrs Finch the blue wool from the bare peg. She has no wish to lie about her own taproom, so she admits she put away what was left hanging there and fetches it from the scullery."
+   "unlock": "You show Mrs Finch the blue wool from the bare peg. She has no wish to lie about her own taproom, so she admits she put away what was left hanging there and fetches it from the scullery.",
+   "show": "This is a police cape found hidden under aprons in your scullery, with a numbered collar badge and something stiff tucked in the pocket - can you explain how it came to be here?",
+   "reactions": {
+    "ada": "Oh! That's Constable Bell's cape, sir, plain as day\u2014badge number and all. I only tucked it away so the regulars wouldn't be nattering about whose coat that was, hanging there all evening. No harm meant by it, I'm sure."
+   }
   },
   {
    "id": "s_daybook",
@@ -1022,6 +1097,10 @@
     "place": "vestry",
     "start": 1290,
     "end": 1320
+   },
+   "show": "This is your day-book, showing neat entries for conveyancing and ledger work up to ten o'clock that evening - can you confirm these times are accurate?",
+   "reactions": {
+    "silas": "That is my day-book, kept as I keep it every evening, entry by entry. I worked at my desk through those hours, as the record plainly shows. I see nothing there requiring explanation."
    }
   },
   {
@@ -1047,7 +1126,9 @@
    "defeats": [
     "s_daybook"
    ],
-   "ask": "Dr Marsh, what did you see at the greenhouse door?"
+   "ask": "Dr Marsh, what did you see at the greenhouse door?",
+   "show": "Dr Marsh says that around ten to ten she saw Mr Voss leave by the garden door in a grey homburg with a silver-topped cane, and hurry off through the lane. Does that match what you know?",
+   "confront": "You told me you saw Mr Voss leave by the garden door around ten to ten, in a grey homburg with a silver-topped cane, hurrying through the lane. Is that everything you saw?"
   },
   {
    "id": "s_letter",
@@ -1065,6 +1146,11 @@
     "a": "silas",
     "rel": "embezzled_from",
     "b": "edmund"
+   },
+   "show": "This is a scorched scrap of a letter in Edmund's hand, accusing Mr Voss of mishandling nearly four hundred pounds and threatening to report him to the law society - what can you tell me about it?",
+   "reactions": {
+    "silas": "I cannot speak to what Edmund chose to write or burn in his own grate. If he had concerns about the accounts, he never raised them with me in any formal way. I'd advise caution in reading too much into a scrap of ash.",
+    "clara": "I... did not know that survived. Edmund and I quarrelled, yes, about money as much as anything\u2014but I took nothing from that room, and I'll say no more of it."
    }
   },
   {
@@ -1086,6 +1172,11 @@
     "kind": "trait",
     "trait": "handed",
     "value": "left"
+   },
+   "show": "The post-mortem notes describe a single blow to the right temple from in front, with flecks of brass in the wound - can you help me understand what struck him?",
+   "reactions": {
+    "iris": "The wound is consistent with what I observed: a single blow, from in front, above the ear. The brass flecks are notable\u2014I'd want them matched against anything found at the scene. I have nothing further to add beyond what's written.",
+    "silas": "That is a matter for the coroner and Dr Marsh's expertise, not for me to interpret. I was nowhere near Edmund that evening, as my day-book shows. I can offer no theory as to the weapon."
    }
   },
   {
@@ -1098,7 +1189,12 @@
    "about": "clara",
    "explainedBy": [
     "s_letter"
-   ]
+   ],
+   "show": "Miss Vale kept a writing case in her lap and her hand on it throughout, with ash on her cuff, and looked away when the study fire came up. Have you noticed her behaving this way?",
+   "confront": "You've kept your hand on that writing case the whole time we've spoken, and there's ash on your cuff. Why did you look away when I mentioned the study grate?",
+   "reactions": {
+    "clara": "It's simply my writing case\u2014I keep it close from habit, nothing more. As for the grate, I'd rather not dwell on it. Shall I ring for tea?"
+   }
   },
   {
    "id": "s_slate",
@@ -1110,7 +1206,11 @@
    "requires": [
     "s_bell_ada"
    ],
-   "unlock": "Dr Marsh has put the slate with her papers for the coroner and gives them out only on the constable's authority. Once Bell is cooperating, he authorises it and she hands the slate over."
+   "unlock": "Dr Marsh has put the slate with her papers for the coroner and gives them out only on the constable's authority. Once Bell is cooperating, he authorises it and she hands the slate over.",
+   "show": "This slate from your surgery door records Mr Pike going out to the greenhouse at 9.05 and your own return at 10.55 - can you confirm these times?",
+   "reactions": {
+    "iris": "Yes, that's my own hand and my own chalk\u2014I went out to the greenhouse when Rowan sent for me, and returned when I'd finished. I didn't check a clock, but the slate was accurate as I wrote it."
+   }
   },
   {
    "id": "s_beatcard",
@@ -1122,7 +1222,11 @@
    "requires": [
     "s_cape"
    ],
-   "unlock": "The card is folded in the inside pocket of the cape; you find it when you take the cape down."
+   "unlock": "The card is folded in the inside pocket of the cape; you find it when you take the cape down.",
+   "show": "This beat card from the cape shows you signed the square point at 8.55, but the greenhouse lane and church gate points were never marked - can you account for that?",
+   "reactions": {
+    "bell": "Aye, that's mine. Signed the pillar box right enough at 8.55. Rest of the round I... never mind that now \u2014 there's a dead man to see to."
+   }
   },
   {
    "id": "s_border",
@@ -1134,7 +1238,11 @@
    "requires": [
     "s_bell_ada"
    ],
-   "unlock": "Bell has roped off the garden door. Once he has stopped dodging and is cooperating, he lifts the rope and lets you look at the terrace border."
+   "unlock": "Bell has roped off the garden door. Once he has stopped dodging and is cooperating, he lifts the rope and lets you look at the terrace border.",
+   "show": "The soft border below the terrace lamp shows narrow heel prints from a town shoe heading to the lane gate, with a small round hole beside them at every second step - do you know what made these?",
+   "reactions": {
+    "silas": "Heel prints in a wet border prove little; half the parish wears town shoes. I cannot account for every mark left near that lamp, nor would I try to invent an explanation to satisfy you."
+   }
   },
   {
    "id": "s_peg_thread",
@@ -1146,7 +1254,11 @@
    "requires": [
     "s_bell_shoulders"
    ],
-   "unlock": "Bell has plainly lost his cape and won't say where. Since the Rook is where a man sheds a coat, you search the taproom pegs and lift the hop bine that hangs over the one by the settle."
+   "unlock": "Bell has plainly lost his cape and won't say where. Since the Rook is where a man sheds a coat, you search the taproom pegs and lift the hop bine that hangs over the one by the settle.",
+   "show": "Behind this hop bine there's an empty peg with a pale patch on the wall and a few dark blue wool fibres caught on a splinter beneath it - can you tell me what usually hangs there?",
+   "reactions": {
+    "ada": "Oh, that old peg! I hung the hops there myself, just to brighten the wall a bit\u2014didn't care for that bare patch staring out at everyone. As for blue wool, well, all sorts hang their coats there of an evening, I couldn't tell you whose is whose."
+   }
   },
   {
    "id": "s_bell_shoulders",
@@ -1162,7 +1274,12 @@
    "requires": [
     "s_study_sheet"
    ],
-   "unlock": "The sheet in the study means the constable came to the manor without his cape. So you go and find him at his post in the square and watch how he is standing up to the frost, rather than taking his word that he's warm enough."
+   "unlock": "The sheet in the study means the constable came to the manor without his cape. So you go and find him at his post in the square and watch how he is standing up to the frost, rather than taking his word that he's warm enough.",
+   "show": "Constable Bell was standing by the pillar box in just his tunic despite the frost, rubbing his arms, and turned the talk from the cold back to the manor. Have you noticed him acting strangely like this?",
+   "confront": "You're stood out here in just your tunic despite the frost, rubbing your arms, and you brushed off my remark on the cold. Why is that?",
+   "reactions": {
+    "bell": "I'm warm enough, I told you. Never mind my arms, you want to be looking at that garden door, not fussing over my cape."
+   }
   },
   {
    "id": "s_study_sheet",
@@ -1174,7 +1291,11 @@
    "needs": [
     "r_cape_cover"
    ],
-   "reading": "The constable was the first official at the scene, and he would normally have covered the body with his own cape. Since a sofa sheet had to be used instead, he did not have his cape with him at dawn."
+   "reading": "The constable was the first official at the scene, and he would normally have covered the body with his own cape. Since a sofa sheet had to be used instead, he did not have his cape with him at dawn.",
+   "show": "The sheet over Mr Vale is creased as though taken from the drawing-room sofa, with dust marks and fluff trailing from that door - do you know who covered him and why?",
+   "reactions": {
+    "bell": "Aye, that's off the drawing-room sofa. Had no cape on me, so I used what was to hand \u2014 man deserved covering decent, not left bare on the floor."
+   }
   }
  ],
  "id": "mk-bw-letter",

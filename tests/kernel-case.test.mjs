@@ -58,3 +58,26 @@ test('kernel-case records cannot inject markup into the UI', async () => {
   assert.ok(!/[<>"]/.test(JSON.stringify(out.signs[0].text) .slice(1, -1)) && !out.signs[0].title.includes('"'));
   assert.equal(out.id, 'mk-x');
 });
+
+test('showing evidence: generated lines first, kind templates as fallback; reactions per person, else by relation', async () => {
+  const {registerKernelCase, createSession, caseTables, dispatch} = await import('../dist/engine.mjs');
+  const kc = JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-bw-letter.json', import.meta.url), 'utf8'));
+  const doc = kc.signs.find(x => x.kind === 'document'), beh = kc.signs.find(x => x.kind === 'behavior' && x.about);
+  doc.show = 'I found this letter. Do you recognise the hand?'; delete kc.signs.find(x => x.kind === 'trace').show;
+  const trace = kc.signs.find(x => x.kind === 'trace');
+  doc.reactions = {rowan: 'Never seen it in my life.'};
+  kc.id = 'mk-test-show';
+  const s = autoplay(kc).session, B = caseTables(s).behavior;
+  assert.equal(B.presentLine(s, 'rowan', doc.id), doc.show, 'generated show line');
+  assert.match(B.presentLine(s, 'rowan', trace.id), /^I noticed .* at .*\?$/, 'trace template');
+  assert.equal(B.presentLine(s, beh.about, beh.id), beh.confront || B.presentLine(s, beh.about, beh.id), 'own behaviour is a confrontation');
+  assert.ok(!B.presentLine(s, 'rowan', doc.id).includes(doc.text.slice(0, 40)), 'never reads the clue out');
+  // present it: the written reaction is used; someone else gets a relation-aware template
+  for (const pid of ['rowan', 'ada']) {
+    const w = s.world.npcs[pid].location; if (s.world.player.location !== w) dispatch(s, {type: 'move', to: w});
+    dispatch(s, {type: 'present', person: pid, clue: doc.id});
+  }
+  const said = pid => s.events.findLast(e => e.kind === 'speech' && e.actor === pid)?.data.assertion;
+  assert.equal(said('rowan'), 'Never seen it in my life.');
+  assert.match(said('ada'), /know|recognise|seen/i);
+});

@@ -54,6 +54,13 @@ if HOST not in ("127.0.0.1", "localhost"):
 if "*" in ALLOWED_ORIGINS or "null" in ALLOWED_ORIGINS:
     raise ValueError("Configure explicit game origins, not wildcard or null")
 _client = None
+import logging, time as _time
+_LOG_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs")
+os.makedirs(_LOG_DIR, exist_ok=True)
+LOG = logging.getLogger("proxy")
+_h = logging.FileHandler(os.path.join(_LOG_DIR, "proxy.log"))
+_h.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+LOG.addHandler(_h); LOG.setLevel(logging.INFO)
 
 def bedrock_client():
     global _client
@@ -144,6 +151,7 @@ class Handler(BaseHTTPRequestHandler):
             if system.strip():
                 kwargs["system"] = [{"text": system}]
 
+            t0 = _time.time()
             try:
                 resp = bedrock_client().converse(**kwargs)
             except Exception:
@@ -156,10 +164,14 @@ class Handler(BaseHTTPRequestHandler):
                 block.get("text", "")
                 for block in resp["output"]["message"]["content"]
             ).strip()
+            LOG.info("ok profile=%s model=%s prompt_chars=%d max_tokens=%d reply_chars=%d %.1fs",
+                     profile, kwargs["modelId"], len(prompt), max_tokens, len(text), _time.time() - t0)
             self._send(200, {"text": text})
         except (ValueError, TypeError) as exc:
+            LOG.warning("invalid request: %s", str(exc)[:200])
             self._send(400, {"error": "invalid_request", "detail": str(exc)[:100]})
         except Exception as exc:  # proxy is fail-soft; the browser falls back to the authored line
+            LOG.error("model_unavailable: %s: %s", type(exc).__name__, str(exc)[:300])
             self._send(502, {"error": "model_unavailable"})
 
     def log_message(self, *args) -> None:  # keep the console quiet

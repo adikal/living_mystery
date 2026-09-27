@@ -6,7 +6,7 @@ import {claimsAt,claimRelations} from './claims.mjs';
 import {exportDialogueSave,importDialogueSave,dialogueEntities,normalizeBoardNotes} from './dialogue-save.mjs';
 import {idbGet,idbSet} from './idb-save.mjs';
 import {perspectiveAt,missedAt} from './inspector.mjs';
-import {registerKernelCase,caseTables,CASE_OPTIONS,SUSPECTS,PILLARS,copy,createSession,dispatch,followupOptions,playerClaims,parseCommand,playerView,worldAt,timeLabel,distance,diagnostics,caseHealth,exportSession,importSession,generateCase,generateDeepCase} from './engine.mjs';
+import {registerKernelCase,caseTables,CASE_OPTIONS,SUSPECTS,PILLARS,copy,createSession,dispatch,followupOptions,playerClaims,parseCommand,playerView,worldAt,timeLabel,distance,diagnostics,caseHealth,exportSession,importSession} from './engine.mjs';
 import {llmActive,llmConfig,setLlmConfig} from './llm.mjs';
 
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -72,7 +72,26 @@ function eventById(id){return session.events.find(e=>e.id===id);}
 function selectedIndex(){return cursor===null?session.events.length-1:Math.min(cursor,session.events.length-1);}
 function selectedWorld(){return cursor===null?session.world:worldAt(session,selectedIndex());}
 function selectEvent(index){cursor=Number(index);if(cursor<0||cursor>=session.events.length)cursor=null;stopReplay();render();}
-function toast(message){const el=$('#toast');el.textContent=message;el.classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('visible'),4200);}
+// Debug log: batched to the game server (logs/game.log). Best-effort; never affects play.
+const dlogQueue=[];let dlogTimer=null;
+function dlog(kind,data={}){
+  try{dlogQueue.push({t:new Date().toISOString(),kind,caseId:session?.world?.caseId??null,minute:session?.world?.minute??null,at:session?.world?.player?.location??null,...data});}catch{}
+  if(!dlogTimer)dlogTimer=setTimeout(dlogFlush,800);
+}
+function dlogFlush(){
+  dlogTimer=null;if(!dlogQueue.length)return;
+  const batch=dlogQueue.splice(0,dlogQueue.length);
+  try{fetch('/__log',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(batch),keepalive:true}).catch(()=>{});}catch{}
+}
+function toast(message,{ms}={}){dlog('toast',{message});const el=$('#toast');el.textContent=message;el.classList.add('visible');clearTimeout(toast.timer);
+  // long enough to read: ~70 ms per character, 4–16 s; hovering pauses it, clicking closes it
+  const wait=ms??Math.min(16000,Math.max(4200,String(message).length*70));
+  const hide=()=>el.classList.remove('visible');toast.timer=setTimeout(hide,wait);
+  if(!toast.wired&&el.addEventListener){toast.wired=true;
+    el.addEventListener('mouseenter',()=>clearTimeout(toast.timer));
+    el.addEventListener('mouseleave',()=>{toast.timer=setTimeout(hide,2500);});
+    el.addEventListener('click',()=>{clearTimeout(toast.timer);hide();});}
+}
 function persist(){
   const full=exportDialogueSave(session,dialogueAudit,boardNotes,{pretty:false});
   // Synchronous mirror to localStorage for instant boot and browsers without IndexedDB.
@@ -88,7 +107,7 @@ function persist(){
   // localStorage rejected everything — depend entirely on IndexedDB.
   idb.then(()=>{saveError=false;}).catch(()=>{saveError=true;toast('This browser could not save the investigation. Use Export to keep a copy.');});
 }
-function act(action){if(characterBusy){toast('Wait for the reply or cancel it before acting.');return;}if(llmActive()&&llmConfig().reasoning&&['ask','present'].includes(action.type)){const label=action.type==='present'?`${CLUES[action.clue]?.presentLine??`I'd like to discuss ${CLUES[action.clue]?.title?.toLowerCase()}.`}${action.tone==='press'?' If you refuse, I will expose your private affairs.':''}`:([...topicsFor(action.person),...followupOptions(session,action.person)].find(([topic])=>topic===action.topic)?.[1]??action.topic??'Tell me about last night.');runCharacter(action.person,label,action);return;}if(directorEnabled()||(llmActive()&&llmConfig().reasoning&&session.world.flags.lifeVersion)){runDirectedAction(action);return;}stopReplay();cursor=null;try{const from=session.world.player.location;dispatch(session,action);sceneTransition=from!==session.world.player.location?{from,to:session.world.player.location}:null;if(sceneTransition){chat=null;actionGroup='inspect';}healthCache=null;persist();render();if(sceneTransition){$('.scene-heading')?.focus({preventScroll:true});}}catch(error){toast(`The action could not be completed: ${error.message}`);}}
+function act(action){dlog('action',{action});const before=session.events.length;globalThis.queueMicrotask?.(()=>{for(const e of session.events.slice(before))if(e.kind==='rejected')dlog('rejected',{title:e.title,text:e.playerText,reason:e.data?.reason,admission:e.data?.admission?.reason});});if(characterBusy){toast('Wait for the reply or cancel it before acting.');return;}if(llmActive()&&llmConfig().reasoning&&['ask','present'].includes(action.type)){const label=action.type==='present'?`${caseTables(session).behavior?.presentLine?.(session,action.person,action.clue)??`I'd like to discuss ${CLUES[action.clue]?.title?.toLowerCase()}.`}${action.tone==='press'?' If you refuse, I will expose your private affairs.':''}`:([...topicsFor(action.person),...followupOptions(session,action.person)].find(([topic])=>topic===action.topic)?.[1]??action.topic??'Tell me about last night.');runCharacter(action.person,label,action);return;}if(directorEnabled()||(llmActive()&&llmConfig().reasoning&&session.world.flags.lifeVersion)){runDirectedAction(action);return;}stopReplay();cursor=null;try{const from=session.world.player.location;dispatch(session,action);sceneTransition=from!==session.world.player.location?{from,to:session.world.player.location}:null;if(sceneTransition){chat=null;actionGroup='inspect';}healthCache=null;persist();render();if(sceneTransition){$('.scene-heading')?.focus({preventScroll:true});}}catch(error){toast(`The action could not be completed: ${error.message}`);}}
 async function runDirectedAction(action){
   autonomyController?.abort(); // cancel any detached NPC deliberation before staging this turn
   stopReplay();cursor=null;const target=session,epoch=++characterEpoch,from=session.world.player.location,useDirector=directorEnabled();
@@ -114,6 +133,10 @@ async function runCharacter(person,text,action=null){
   characterController=new AbortController();characterBusy=true;characterPending={person,text};renderVoiceResult();
   try{
     const result=await proposeCharacterTurn(ticket,{signal:characterController.signal});
+    dlog('character_turn',{person,text,action,status:result.audit?.status,reason:result.audit?.reason,
+      accounts:ticket.context.accounts.map(a=>a.id+(a.deceptive?'[lie]':'')),
+      attempts:(result.audit?.attempts||[]).map(a=>({validation:a.validation,critic:String(a.critic?.response??'').slice(0,400),reply:String(a.generation?.response??'').slice(0,400)})),
+      chosen:result.proposal?{intent:result.proposal.intent,account:result.proposal.account,utterance:result.proposal.utterance}:null});
     if(epoch!==characterEpoch||session!==target)return;
     const candidate=copy(session);
     const applied=applyCharacterTurn(candidate,ticket,result);
@@ -123,9 +146,24 @@ async function runCharacter(person,text,action=null){
       if(!['verified','not_needed'].includes(checked.status)){healthCache=null;persist();if(checked.status!=='cancelled')toast(`${checked.reason??'Turn deferred'}. Disable World Director Z3 checks (or run the Z3 service on :8788) to continue.`);return;}
       if(!useDirector){target.world=candidate.world;target.events=candidate.events;}
     }
-    if(!applied.cancelled){characterDraft='';if($('#character-question'))$('#character-question').value='';healthCache=null;persist();if(result.proposal?.engagement==='end')chat=null;if(applied.fallback)toast('Using an authored response because the AI turn could not be validated.');setTimeout(scheduleAutonomy,0);}
+    if(!applied.cancelled){characterDraft='';if($('#character-question'))$('#character-question').value='';healthCache=null;persist();if(result.proposal?.engagement==='end')chat=null;if(applied.fallback)toast(`Used the scripted line: ${fallbackReason(result.audit)}.`,{ms:12000});setTimeout(scheduleAutonomy,0);}
   }catch(error){if(epoch===characterEpoch)toast(`The character turn was not applied: ${error.message}`);}
   finally{if(epoch===characterEpoch){characterBusy=false;characterController=null;characterPending=null;directorPending=false;renderVoiceResult();}}
+}
+const VALIDATION_REASON={invalid_json:'the reply was not in the expected format',invalid_shape:'the reply was malformed',invalid_choice:'the reply was malformed',
+ invalid_text:'the reply was malformed',unavailable_account:'it tried to use an account this character cannot give yet',unavailable_plan:'it proposed an action the character cannot take',
+ unsupported_claims_or_sources:'it changed the facts of the account',invalid_deception:'it lied where the character tells the truth, or the other way round',
+ changed_numbers:'it added a time or number that is not in the account',invalid_belief_choice:'the reply was malformed'};
+function fallbackReason(audit){
+  const r=audit?.reason;
+  if(r==='timeout')return 'the AI took too long to answer';
+  if(r==='disabled')return 'AI is turned off';
+  if(r&&r!=='rejected')return `the AI was unavailable (${String(r).slice(0,60)})`;
+  const last=(audit?.attempts||[]).at(-1);
+  if(last&&last.validation&&last.validation!=='pass')return `the AI reply was rejected because ${VALIDATION_REASON[last.validation]||'it stated facts this character does not know'}`;
+  const crit=last?.critic?.response;let v=null;try{v=JSON.parse(String(crit).replace(/^[^{]*/,'').replace(/[^}]*$/,''))?.violations?.[0];}catch{}
+  if(v&&/memor|not (present|contained|in) (in )?the (selected )?account|added (a )?fact/i.test(String(v)))return 'the AI reply revealed something the character remembers but has not told you yet, so they kept it to themselves';
+  return v?`the fact-checker rejected the AI reply (${String(v).slice(0,140)})`:'the AI reply could not be checked';
 }
 function characterComposer(){return llmActive()&&llmConfig().reasoning?`<form id="character-form" class="character-composer"><label for="character-question">Speak in your own words</label><textarea id="character-question" maxlength="1200" rows="2" placeholder="Ask a question or challenge an account…" ${characterBusy?'disabled':''}>${esc(characterDraft)}</textarea><button class="primary" ${characterBusy?'disabled':''}>Send</button></form>`:'';}
 // While a character turn is in flight, show the player's question and a spinner
@@ -158,7 +196,7 @@ function game(){chat??=session.world.player.conversation??null;const v=playerVie
   <div class="journal" id="journal" role="log" aria-label="Recent investigation activity" aria-live="polite">${visibleTranscript(v.transcript).slice(-5).map(journalEntry).join('')}${pendingEntries()}</div>
   </main>
   <aside class="side-panel panel" aria-label="Your notebook">
-  <div class="notebook-region"><div class="panel-heading"><span class="eyebrow">YOUR CASE FILE</span><span class="meta">${v.evidence.length} entries</span></div><h2 class="section-heading">The notebook</h2><div class="small-tabs" role="tablist" aria-label="Notebook views">${[['evidence','Evidence'],['people','People'],['notes','Hypotheses']].map(([id,label])=>`<button role="tab" aria-selected="${notebook===id}" class="${notebook===id?'active':''}" data-do="notebook" data-id="${id}">${label}</button>`).join('')}</div><div class="notebook-content">${notebookContent(v)}</div><div class="notebook-footer"><span class="meta">${v.pins.length} pinned for your case</span><button class="primary full" data-do="accusation">${v.status==='solved'?'Review your accusation':'Make an accusation'} <span>↗</span></button><span class="save-note">${saveError?'Not saved · export a copy':'Saved on this device'}</span></div></div>
+  <div class="notebook-region"><div class="panel-heading"><span class="eyebrow">YOUR CASE FILE</span><span class="meta">${v.evidence.length} entries</span></div><h2 class="section-heading">The notebook</h2><div class="small-tabs" role="tablist" aria-label="Notebook views">${[['evidence','Evidence'],['people','People'],['hints','Hints']].map(([id,label])=>`<button role="tab" aria-selected="${notebook===id}" class="${notebook===id?'active':''}" data-do="notebook" data-id="${id}">${label}</button>`).join('')}</div><div class="notebook-content">${notebookContent(v)}</div><div class="notebook-footer"><span class="meta">${v.pins.length} pinned for your case</span><button class="primary full" data-do="accusation">${v.status==='solved'?'Review your accusation':'Make an accusation'} <span>↗</span></button><span class="save-note">${saveError?'Not saved · export a copy':'Saved on this device'}</span></div></div>
   </aside>
 </div>`;}
 
@@ -291,8 +329,8 @@ function notebookContent(v){
     const cards=shown.map(e=>`<article class="evidence-card ${v.pins.includes(e.clue)?'pinned':''}"><button class="evidence-open" data-do="clue" data-id="${e.clue}">${artifactArt(e.clue)}<span class="eyebrow kind-label">${e.kind} · ${timeLabel(e.minute)}</span><strong>${e.title}</strong><small>${esc(e.source)}</small></button><button class="pin-button ${v.pins.includes(e.clue)?'on':''}" data-do="pin" data-id="${e.clue}" aria-label="${v.pins.includes(e.clue)?'Unpin':'Pin'} ${e.title}" aria-pressed="${v.pins.includes(e.clue)}">${v.pins.includes(e.clue)?'◆':'◇'}</button></article>`).join('')||`<p class="empty-state">No ${esc(active.toLowerCase())} evidence recorded yet.</p>`;
     return subtabs+cards;
   }
-  if(notebook==='people')return (chat?[...v.profiles].sort((a,b)=>(b.id===chat?1:0)-(a.id===chat?1:0)):v.profiles).map(p=>{const id=p.id,seen=v.lastSeen[id],here=v.people.some(x=>x.id===id),talking=id===chat;return `<div class="notebook-person ${here?'present-person':''}${talking?' speaking':''}">${avatar(id)}<div><strong>${p.name}</strong>${talking?'<span class="speaking-badge">In conversation</span>':''}<span>${p.role}</span><p>${esc(p.public)}</p>${p.metrics?`<div class="notebook-metrics">${meter('Trust in you',p.metrics.trust,'teal')}${meter('Stress factor',p.metrics.stress,'amber')}</div>`:'<p class="meta">Meet in person to see trust and stress.</p>'}<small>${v.people.some(x=>x.id===id)?'● Here with you':seen?`Last seen: ${placeName(seen.location)} · ${timeLabel(seen.minute)}${seen.departed?' (departed)':''}`:'Not yet encountered'}</small>${here&&v.status!=='solved'?`<button class="soft-button full" data-do="chat" data-id="${id}">Conversation options →</button>`:''}</div></div>`;}).join('');
-  return `<p class="muted">Keep your own theories. A hypothesis stays separate from a discovered fact.</p><form id="note-form"><label class="sr-only" for="note">Your hypothesis</label><textarea id="note" name="note" rows="4" maxlength="1000" placeholder="What do you think happened?"></textarea><button class="soft-button full" type="submit">Add hypothesis</button></form><div class="notes-list">${v.notes.slice().reverse().map(n=>`<article><span class="meta">${timeLabel(n.minute)}</span><p>${esc(n.text)}</p></article>`).join('')}</div>`;
+  if(notebook==='people')return (chat?[...v.profiles].sort((a,b)=>(b.id===chat?1:0)-(a.id===chat?1:0)):v.profiles).map(p=>{const id=p.id,seen=v.lastSeen[id],here=v.people.some(x=>x.id===id),talking=id===chat;return `<div class="notebook-person ${here?'present-person':''}${talking?' speaking':''}">${avatar(id)}<div><strong>${p.name}</strong>${talking?'<span class="speaking-badge">In conversation</span>':''}<span>${p.role}</span><p>${esc(p.public)}</p>${p.metrics?`<div class="notebook-metrics">${meter('Trust in you',p.metrics.trust,'teal')}${meter('Stress factor',p.metrics.stress,'amber')}</div>`:'<p class="meta">Meet in person to see trust and stress.</p>'}<small>${CASE.kernel&&PEOPLE[id]?.home&&LOCATIONS[PEOPLE[id].home]?`Usually at ${LOCATIONS[PEOPLE[id].home].name} · `:''}${v.people.some(x=>x.id===id)?'● Here with you':seen?`Last seen: ${placeName(seen.location)} · ${timeLabel(seen.minute)}${seen.departed?' (departed)':''}`:'Not yet encountered'}</small>${here&&v.status!=='solved'?`<button class="soft-button full" data-do="chat" data-id="${id}">Conversation options →</button>`:''}</div></div>`;}).join('');
+  return hintsPanel();
 }
 
 function inspector(){const w=selectedWorld(),health=getHealth();return `<main class="inspector-shell">
@@ -456,85 +494,173 @@ function accusationModal(){const w=session.world;if(w.status==='solved'){openMod
   const selected=w.player.pins.length?w.player.pins:w.player.evidence.map(e=>e.clue);openModal(`<div class="eyebrow gold">CONSTABLE BELL’S CASE FILE</div><h2>Make the connections.</h2><p>Select the evidence supporting your account. An unsupported accusation will not end the investigation.</p><form id="accusation-form"><div class="accusation-fields"><label>Who killed Edmund?<select name="suspect" required><option value="">Choose a suspect</option>${(CASE.suspects??['clara','rowan','silas']).map(id=>`<option value="${id}">${PEOPLE[id].name}</option>`).join('')}</select></label>${CASE.askMethod===false?'':`<label>How?<select name="method" required><option value="">Choose a method</option>${(CASE.methodOptions??[["poison","Poison in his drink"],["seal","A blow from the brass seal"],["knife","A concealed knife"]]).map(([id,label])=>`<option value="${id}">${esc(label)}</option>`).join('')}</select></label><label>Why?<select name="motive" required><option value="">Choose a motive</option>${(CASE.motiveOptions??[["jealousy","Jealousy over a relationship"],["inheritance","An inheritance dispute"],["fraud","Conceal the diverted estate payments"]]).map(([id,label])=>`<option value="${id}">${esc(label)}</option>`).join('')}</select></label>`}</div><fieldset class="evidence-selection"><legend>Supporting evidence</legend>${w.player.evidence.map(e=>`<label><input type="checkbox" name="evidence" value="${e.clue}" ${selected.includes(e.clue)?'checked':''}><span>${CLUES[e.clue].title}<small>${CLUES[e.clue].kind}</small></span></label>`).join('')}</fieldset><button class="primary full" type="submit">Present the accusation</button></form>`,'Present an accusation');}
 // Synchronous core: generate one validated case and start it. Returns false if none was found.
 // Certified cases produced offline by the mystery-kernel generator (tools/refine-c), shipped as full records.
-async function openGeneratedList(){
-  let list=[];try{list=await (await fetch('cases/generated/index.json',{cache:'no-store'})).json();}catch{list=[];}
-  openModal(`<h2>Generated deep cases</h2><p>Each case was written by the new generator in the Bellweather setting and certified by the mystery kernel: every layer is reachable, the answer is unique, and the surface points the wrong way.</p><div class="menu-actions">${list.map(c=>`<button class="soft-button" data-do="start-generated" data-file="${esc(c.file)}"><strong>${esc(c.title)}</strong><br><small>${esc(c.blurb||'')}</small></button>`).join('')||'<p class="meta">No generated cases found.</p>'}</div>`,'Generated deep cases');
+// ---- Case generation (the mystery-kernel generator, via the local generator server) -------------------------
+// Finished cases: shipped examples (cases/generated/index.json) and cases generated on this machine (live/).
+const GENERATOR='http://127.0.0.1:8789';
+let genJob=null,genEvents=[],genNext=0,genTimer=null,genSpoiler=false,genError=null;
+async function listCases(){
+  const read=async u=>{try{const r=await fetch(u,{cache:'no-store'});return r.ok?await r.json():[];}catch{return [];}};
+  const [live,shipped]=await Promise.all([read('cases/generated/live/index.json'),read('cases/generated/index.json')]);
+  return [...live.map(c=>({...c,live:true})),...shipped];
+}
+async function chooseCaseModal(){
+  const cases=await listCases();
+  const item=c=>`<button class="soft-button case-choice" data-do="start-generated" data-file="${esc(c.file)}"><span class="case-title"><strong>${esc(c.title)}</strong>${c.live?' <span class="meta">· generated here</span>':''}</span><small>${esc(c.blurb||'')}</small></button>`;
+  openModal(`<h2>Choose a case</h2><p>Generate a new mystery, or play one that was generated before. Every case is written by the generator and certified before you play it: every clue can be reached, exactly one suspect fits all the evidence, and the obvious reading is wrong. Starting a case replaces your current investigation, so export it first if you want to keep it.</p><button class="soft-button" data-do="export">Export current investigation</button><div class="menu-actions">${genJob?.status==='running'?`<button class="primary" data-do="show-generation">⏳ Generating “${esc(genJob.title)}” — show progress</button>`:'<button class="primary" data-do="generate-new">✨ Generate a new deep case</button>'}</div><h3 class="case-list-head">Play a generated case</h3><div class="menu-actions case-list">${cases.map(item).join('')||'<p class="meta">No generated cases yet.</p>'}</div><h3 class="case-list-head">The original</h3><div class="menu-actions">${CASE_OPTIONS.slice(0,1).map(c=>`<button class="soft-button" data-do="start-case" data-id="${c.id}">${esc(c.title)}</button>`).join('')}</div>`,'Choose a case');
 }
 async function startKernelCase(file){
-  try{const records=await (await fetch(`cases/generated/${file}`,{cache:'no-store'})).json();const id=registerKernelCase(records);startGenerated(id,records.title);}
+  try{const r=await fetch(`cases/generated/${file}`,{cache:'no-store'});if(!r.ok)throw Error(`HTTP ${r.status}`);const records=await r.json();const id=registerKernelCase(records);startGenerated(id,records.title);}
   catch(e){toast(`Could not load that case: ${e.message}`);}
 }
-function startGenerated(id,title,flavor){
+function startGenerated(id,title){
+  dlog('case_start',{id,title});
   const fresh=createSession(17,id);
-  // Overlay non-authoritative LLM flavor onto the runtime case (title shows in the header; synopsis is
-  // surfaced as the case premise). It cannot change any fact — clues, claims and routes are unaffected.
-  if(flavor){const c=caseTables(fresh)?.CASE;if(c){if(flavor.title)c.title=flavor.title;if(flavor.synopsis)c.synopsis=flavor.synopsis;}}
-  cancelCharacter();stopReplay();session=fresh;resetRealized();boardNotes={};healthCache=null;cursor=null;chat=null;chosenClue=null;reasonSuspect=null;detailPanel=null;missedRevealed=false;sceneTransition=null;actionGroup='inspect';mode='game';persist();$('#modal')?.close?.();render();toast(`New case generated: ${flavor?.title||title}`);
+  cancelCharacter();stopReplay();session=fresh;resetRealized();boardNotes={};healthCache=null;cursor=null;chat=null;chosenClue=null;reasonSuspect=null;detailPanel=null;missedRevealed=false;sceneTransition=null;actionGroup='inspect';mode='game';persist();$('#modal')?.close?.();render();toast(`Case ready: ${title}`);
 }
-function generateAndStart(opts){
-  let gen=null;try{gen=generateCase(undefined,opts);}catch{gen=null;}
-  if(!gen)return false;
-  startGenerated(gen.id,gen.title);return true;
+async function genFetch(path,method='GET'){
+  const r=await fetch(`${GENERATOR}${path}`,{method,cache:'no-store',headers:method==='POST'?{'X-Living-Mystery':'generator-v1'}:{}});
+  const body=await r.json().catch(()=>({}));
+  if(!r.ok&&r.status!==409)throw Error(body.error||`HTTP ${r.status}`);
+  return {status:r.status,body};
 }
-// Async UI wrapper: show a spinner, yield to the UI between attempts so it stays responsive and shows
-// progress, retry a few times, then surface a clear, actionable failure instead of a silent hang.
-async function runGenerate(opts){
-  const kind=opts.manner==='accident'?'staged-accident':opts.structure==='cleanup'?'cleanup':opts.structure==='clockwork'?'clock-dependent':'validated';
-  openModal(`<div class="eyebrow gold">GENERATING</div><h2>Building a ${kind} mystery…</h2><p class="generating-row"><span class="spinner"></span> <span id="gen-status">Composing and validating a candidate…</span></p><p class="meta">Each candidate must pass physical consistency, legitimate knowledge, a replayed solution route, evidence distinguishability, multi-hop clues and multiple independent routes. This can take a few seconds.</p>`,'Generating a case');
-  await new Promise(r=>setTimeout(r,45)); // let the spinner paint before the synchronous burst
-  let done=false;
-  for(let attempt=1;attempt<=8&&!done;attempt++){
-    const st=$('#gen-status');if(st)st.textContent=attempt===1?'Composing and validating a candidate…':`Rechecking (attempt ${attempt})…`;
-    await new Promise(r=>setTimeout(r,0)); // yield so the UI can repaint between attempts
-    done=generateAndStart(opts);
-  }
-  if(!done)openModal(`<div class="eyebrow gold">GENERATION</div><h2>Couldn’t build one this time</h2><p>The validator rejected the candidates it tried — this is rare. Please try again.</p><div class="menu-actions"><button class="soft-button" data-do="generate-case"${opts.structure?` data-structure="${esc(opts.structure)}"`:''}${opts.manner?` data-manner="${esc(opts.manner)}"`:''}>Try again</button><button class="soft-button" data-do="choose-case">Back to cases</button></div>`,'Generation failed');
-}
-
-async function runGenerateAI(){
-  if(!llmActive()){toast('Enable AI reasoning (with a proxy URL) in AI settings to compose with the model.');return;}
-  openModal(`<div class="eyebrow gold">GENERATING · AI</div><h2>The model is composing a mystery…</h2><p class="generating-row"><span class="spinner"></span> <span id="gen-status">Proposing a case and validating it…</span></p><p class="meta">The model composes only over the validated palette; every candidate passes the same checks as a sampled case (physical, epistemic, replayed route, distinguishability, multi-hop, multi-path). Invalid proposals are repaired with structured feedback; if the model can’t produce one, a validated fallback is used.</p>`,'Composing with AI');
-  await new Promise(r=>setTimeout(r,45));
+async function startGeneration(){
+  genError=null;
   try{
-    const {composeCase,llmFromProxy}=await import('./llm-composer.mjs');
-    const endpoint=llmConfig().endpoint;
-    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),45000);
-    const seed=Math.floor(Math.random()*0x7ffffffe)+1;
-    const temperature=0.7+Math.random()*0.3; // vary 0.7–1.0 so repeated generations diverge
-    const result=await composeCase(llmFromProxy(endpoint,{max_tokens:700,temperature,signal:controller.signal}),{seed,attempts:3}).finally(()=>clearTimeout(timer));
-    startGenerated(result.spec.id,result.flavor?.title||result.spec.title,result.flavor);
-    toast(result.source==='llm'?`AI composed a validated case in ${result.attempts} attempt(s).`:'The AI model was unavailable, so I started a validated case instead.');
-  }catch(e){
-    $('#modal')?.close?.();
-    if(generateAndStart({}))toast('The AI model was unavailable, so I started a validated case instead.');
-    else toast('Generation failed. Please try again.');
-  }
+    const {status,body}=await genFetch('/jobs','POST');
+    if(status===409)toast('A case is already being generated — showing its progress.');
+    genJob=body;genEvents=[];genNext=0;dlog('generation_start',{job:body?.id,title:body?.title,httpStatus:status});
+  }catch(e){dlog('generation_error',{error:String(e.message)});genJob=null;genError='The case generator is not running. Start it with: .venv/bin/python server/generator_server.py';}
+  renderGeneration();if(genJob)pollGeneration();
 }
-async function runGenerateDeep(){
-  openModal(`<div class="eyebrow gold">GENERATING · DEEP</div><h2>Building a multi-hop mystery…</h2><p class="generating-row"><span class="spinner"></span> <span id="gen-status">Composing a gated, multi-step case and certifying it…</span></p><p class="meta">A deep case hides its decisive evidence behind other clues: you must find one thing to know where to look for the next. The recorded time of death is a misdirection until you reach the toxicology finding — which is gated behind a discovery chain. Every deep case is certified (fair-play, discovery-depth, a load-bearing inversion) before it starts.</p>`,'Composing a deep case');
-  await new Promise(r=>setTimeout(r,45));
+async function resumeGeneration(){
+  try{const {body}=await genFetch('/jobs/current');if(body?.id&&body.status==='running'){genJob=body;genEvents=[];genNext=0;renderGeneration();pollGeneration();return true;}}catch{}
+  return false;
+}
+async function pollGeneration(){
+  clearTimeout(genTimer);
+  if(!genJob)return;
   try{
-    if(llmActive()){
-      const {composeArtifactCase,llmFromProxy}=await import('./llm-composer.mjs');
-      const {registerCase}=await import('./engine.mjs');
-      const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),45000);
-      const seed=Math.floor(Math.random()*0x7ffffffe)+1;
-      const result=await composeArtifactCase(llmFromProxy(llmConfig().endpoint,{max_tokens:512,signal:controller.signal}),{seed,attempts:3}).finally(()=>clearTimeout(timer));
-      registerCase(result.spec);
-      startGenerated(result.spec.id,result.flavor?.title||result.spec.title,result.flavor);
-      toast(result.source==='llm-artifact'?'AI authored a deep, multi-hop case.':'The AI model was unavailable, so I started a validated deep case.');
-    }else{
-      const g=generateDeepCase();
-      startGenerated(g.id,g.title);
-      toast('A deeper, multi-hop case is ready — some evidence is hidden behind other clues.');
-    }
-  }catch(e){
-    $('#modal')?.close?.();
-    if(generateAndStart({}))toast('Could not build a deep case; started a validated case instead.');
-    else toast('Generation failed. Please try again.');
-  }
+    const {body}=await genFetch(`/jobs/${encodeURIComponent(genJob.id)}?since=${genNext}`);
+    const prev=genJob?.status;
+    for(const e of body.eventsNew||[])dlog('generation_event',{job:genJob.id,event:e.kind,t:e.t,step:e.step,mode:e.mode,accepted:e.accepted,ok:e.ok,message:e.message,errors:e.errors});
+    genEvents.push(...(body.eventsNew||[]));genNext=body.next??genNext;genJob={...genJob,...body};delete genJob.eventsNew;
+    if(prev!==genJob.status)dlog('generation_status',{job:genJob.id,status:genJob.status,error:genJob.error,result:genJob.result});
+  }catch(e){dlog('generation_error',{error:String(e.message)});genError='Lost contact with the case generator.';}
+  if($('#modal')?.open&&$('#gen-panel'))renderGeneration();
+  if(genJob?.status==='running'&&!genError)genTimer=setTimeout(pollGeneration,1500);
 }
-function menuModal(){openModal(`<div class="eyebrow gold">THE BELLWEATHER CASE</div><h2>Your investigation</h2><p>Progress is saved on this device. Export keeps a portable copy, including the full inspector history.</p><div class="menu-actions"><button class="soft-button" data-do="export">Export investigation & trace</button><button class="soft-button" data-do="import">Import saved investigation</button><button class="soft-button" data-do="llm">AI characters…</button><button class="soft-button" data-do="director">World Director…</button><button class="soft-button" data-do="choose-case">Choose a case configuration…</button><button class="soft-button" data-do="restart-confirm">Restart this case</button></div>`,'Investigation options');}
+async function cancelGeneration(){
+  if(!genJob)return;
+  try{await genFetch(`/jobs/${encodeURIComponent(genJob.id)}/cancel`,'POST');}catch{}
+  pollGeneration();
+}
+// Progressive hints: one gentle nudge at a time; each further level says more.
+let hintState={key:null,level:0};
+function hintsPanel(){
+  const h=caseTables(session).behavior?.hints?.(session);
+  if(!h)return '<p class="muted">Hints are available in generated cases.</p>';
+  const key=`${session.world.caseId}:${h.id}`;
+  if(hintState.key!==key)hintState={key,level:0};
+  const shown=h.levels.slice(0,hintState.level);
+  const labels=['Give me a hint','A little more','Just tell me'];
+  return `<p class="muted">Stuck? Hints come one at a time, from a gentle nudge to a plain answer. They update as you make progress.</p>
+   <div class="hint-list">${shown.map((t,i)=>`<article class="hint-card level-${i+1}"><span class="meta">${['Nudge','Clue','Answer'][i]}</span><p>${esc(t)}</p></article>`).join('')}</div>
+   ${hintState.level<h.levels.length?`<button class="soft-button full" data-do="hint-more">${labels[hintState.level]}</button>`:'<p class="meta">That is everything for this step. Hints move on when you do.</p>'}`;
+}
+function mmss(t){t=Math.max(0,Math.round(t||0));return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`;}
+const STAGE_LABEL={twist:'Planting the misdirection',implicate:'Hiding the motive and the means',herring:'Adding a red herring',refine:'Deepening the investigation'};
+const OP_LABEL={Conceal:'hidden',Fragment:'split into pieces',Mislead:'made misleading'};
+function genSummary(){
+  const seed=genEvents.find(e=>e.kind==='seed'),steps=genEvents.filter(e=>e.kind==='step'),last=[...genEvents].reverse().find(e=>e.metrics&&e.metrics.solve_depth!=null);
+  const started=[...genEvents].reverse().find(e=>e.kind==='step_start'),done=genEvents.find(e=>['done','failed','cancelled'].includes(e.kind));
+  const pending=started&&!steps.some(e=>e.step===started.step)?started:null;
+  return {seed,steps,last,pending,done,publishing:genEvents.some(e=>e.phase==='publish')&&!done};
+}
+function genProgress(){
+  const {seed,steps,last,pending,done,publishing}=genSummary(),m=last?.metrics||{};
+  const accepted=steps.filter(e=>e.accepted).length;
+  const stage=done?(done.kind==='done'?'Your case is ready.':done.kind==='cancelled'?'Generation cancelled.':'Generation failed.')
+    :publishing?'Writing the questions you can ask and each suspect’s account of the evening…'
+    :pending?`Layer ${pending.step}: ${STAGE_LABEL[pending.mode]||'Refining'}…`
+    :seed?'Choosing what to deepen next…':'Writing the setting, the cast and what really happened…';
+  const activity=done?'':genActivity(pending,seed,publishing);
+  const rows=[['The story',seed?'written':'writing'],['Layers added',`${accepted}${steps.length>accepted?` (${steps.length-accepted} rejected)`:''}`],
+    ['Solve depth',m.solve_depth??'—'],['Misdirection',m.twist?'yes':'not yet'],['Red herring',m.herrings?.length?'yes':'not yet'],
+    ['Motive and means',m.motive?.length&&m.means?.length?'hidden':'not yet']];
+  return `<div class="gen-stage">${done?'':'<span class="spinner"></span>'}<strong>${esc(stage)}</strong><span class="meta">${mmss(genJob?.elapsed)}</span></div>${activity?`<p class="meta gen-activity">${esc(activity)}</p>`:''}
+   <div class="gen-meter"><span style="width:${Math.min(100,done?.kind==='done'?100:Math.round(((seed?1:0)+accepted)/12*100))}%"></span></div>
+   <dl class="gen-facts">${rows.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(String(v))}</dd></div>`).join('')}</dl>`;
+}
+// What the generator is doing right now, from the fine-grained events since the current stage began.
+function genActivity(pending,seed,publishing){
+  if(publishing)return 'Usually under a minute.';
+  const from=pending?genEvents.lastIndexOf(pending):seed?genEvents.lastIndexOf(seed):0;
+  const recent=genEvents.slice(from+1),t=(genJob?.elapsed??0)-(genEvents[from]?.t??0);
+  const drafting=recent.filter(e=>e.kind==='drafting').at(-1),checked=recent.filter(e=>e.kind==='draft_checked'),review=recent.some(e=>e.kind==='reviewing');
+  if(!seed&&!pending)return drafting?`${drafting.round>1?'Revising after the checks rejected the first drafts. ':''}Writing ${drafting.drafts} drafts in parallel — the first draft usually takes 1–2 minutes (${mmss(t)} so far).`:'Starting…';
+  if(!pending)return '';
+  const ok=checked.filter(e=>e.ok).length,bad=checked.length-ok;
+  if(review)return `${ok} draft(s) passed the logic checks; a second model is reviewing them for plausibility…`;
+  if(checked.length)return `${checked.length} of ${drafting?.drafts??2} drafts back: ${ok} passed the checks${bad?`, ${bad} rejected`:''}…`;
+  return drafting?`${drafting.round>1?'Revising: ':''}the model is writing ${drafting.drafts} drafts of this layer — usually 30–60 seconds (${mmss(t)} so far).`:'';
+}
+function spoilerHtml(){
+  const {seed,steps,pending}=genSummary();
+  if(!seed)return '<p class="meta">Nothing yet: the story appears here as soon as the first draft passes its checks.</p>';
+  const c=seed.case,P=Object.fromEntries((c.people||[]).map(p=>[p.id,p]));
+  const name=id=>P[id]?.name??id,hm=x=>`${String(Math.floor(x/60)%24).padStart(2,'0')}:${String(Math.round(x)%60).padStart(2,'0')}`;
+  const truth=(c.question?.candidates||[]).find(h=>h.id===c.question.truth),culprit=truth?.facts?.actor;
+  const att=id=>(c.attitudes||[]).filter(a=>a.agent===id);
+  const list=(arr,f)=>arr.length?`<ul>${arr.map(f).join('')}</ul>`:'';
+  const signLine=x=>`<li><b>${esc(x.title||x.id)}</b> <span class="meta">${esc(x.kind||'')}${x.at?' · '+esc(x.at):''}${x.speaker?' · '+esc(name(x.speaker)):''}${(x.requires||[]).length?' · hidden until: '+esc(x.requires.join(', ')):''}</span><br>${esc(x.text||'')}</li>`;
+  const cast=`<h4>The cast</h4><div class="spoil-cast">${(c.people||[]).map(p=>`<div class="spoil-person${p.id===culprit?' culprit':''}"><strong>${esc(p.name)}</strong> <span class="meta">${esc(p.role||'')}${p.id===culprit?' · THE CULPRIT':''}</span>${Object.keys(p.traits||{}).length?`<div class="meta">${esc(Object.entries(p.traits).map(([k,v])=>`${k}: ${v}`).join(' · '))}</div>`:''}${list(att(p.id),a=>`<li><i>${esc(a.mode)}</i> ${esc(a.content)}</li>`)}</div>`).join('')}</div>`;
+  const question=`<h4>The question</h4><p><b>${esc(c.question?.text||'')}</b><br>Truth: <b>${esc(truth?.label||name(culprit))}</b> · suspects: ${esc((c.question?.candidates||[]).map(h=>h.label).join(', '))}</p>`;
+  const history=`<h4>What really happened (first draft)</h4>${list([...(c.events||[])].sort((a,b)=>a.start-b.start),e=>`<li><span class="meta">${hm(e.start)} · ${esc(e.place)}</span> ${esc(e.summary||e.type)}</li>`)}`;
+  const surface=`<h4>The first, easy clues</h4>${list(c.signs||[],signLine)}`;
+  const iter=steps.map(e=>{
+    const add=e.added||{},counts=Object.entries(add).map(([k,v])=>`${v.length} ${k}`).join(', ');
+    const tried=(e.attempts||[]).filter(a=>a&&a.length).length,review=(e.critic||[]).filter(r=>!r.pass).length;
+    return `<details class="spoil-step ${e.accepted?'ok':'no'}" data-step="${e.step}"><summary><b>Layer ${e.step}</b> · ${esc(STAGE_LABEL[e.mode]||e.mode)} · ${e.accepted?`${esc(e.operator||'')}${e.operator&&OP_LABEL[e.operator]?` (${OP_LABEL[e.operator]})`:''}`:'rejected'} <span class="meta">· ${e.seconds}s${e.metrics?.solve_depth!=null?` · solve depth ${e.metrics.solve_depth}`:''}</span></summary>
+      ${e.story?`<p class="spoil-story">${esc(e.story)}</p>`:''}
+      ${e.blocks?.length?`<p class="meta">Blocks: ${esc(e.blocks.join(', '))}</p>`:''}
+      ${counts?`<p class="meta">Added: ${esc(counts)}</p>`:''}
+      ${list(add.attitudes||[],a=>`<li><b>${esc(name(a.agent))}</b> <i>${esc(a.mode)}</i> ${esc(a.content)}</li>`)}
+      ${list(add.events||[],x=>`<li><span class="meta">${hm(x.start)} · ${esc(x.place)}</span> ${esc(x.summary||x.type)}</li>`)}
+      ${list(add.signs||[],signLine)}
+      ${tried||review?`<p class="meta">${tried?`${tried} candidate(s) failed the checks`:''}${tried&&review?'; ':''}${review?`${review} rejected by the plausibility review`:''}</p>`:''}
+      ${!e.accepted?list((e.attempts||[]).flat().slice(0,4),x=>`<li class="meta">${esc(String(x))}</li>`):''}
+    </details>`;}).join('');
+  const now=pending?`<p class="meta"><span class="spinner"></span> Layer ${pending.step}: ${esc(STAGE_LABEL[pending.mode]||pending.mode)} around “${esc(pending.target_title||pending.target)}”…</p>`:'';
+  return question+cast+history+surface+`<h4>How the story was deepened</h4>${iter||'<p class="meta">No layers yet.</p>'}${now}`;
+}
+function renderGeneration(){
+  const prevBody=$('.gen-spoiler-body'),keepScroll=prevBody?prevBody.scrollTop:0,prevOpen=$('.gen-spoiler');
+  if(prevOpen&&typeof prevOpen.open==='boolean')genSpoiler=prevOpen.open;
+  const openSteps=new Set([...(document.querySelectorAll?document.querySelectorAll('.spoil-step[open]'):[])].map(d=>d.dataset?.step));
+  const job=genJob,done=['done','failed','cancelled'].includes(job?.status);
+  const head=job?`<div class="eyebrow gold">GENERATING A NEW CASE</div><h2>${esc(job.title||'A new mystery')}</h2><p class="meta">${esc(job.premise||'')}</p>`:'<div class="eyebrow gold">GENERATING A NEW CASE</div><h2>Generate a new deep case</h2>';
+  const body=genError?`<p class="gen-error">${esc(genError)}</p>`:job?genProgress():'<p class="meta">Starting…</p>';
+  const actions=job?.status==='done'&&job.result?`<button class="primary" data-do="start-generated" data-file="${esc(job.result.file)}">Play this case</button>`
+    :job?.status==='running'?`<button class="soft-button" data-do="cancel-generation">Cancel</button><button class="soft-button" data-do="close-modal">Keep going in the background</button>`
+    :`<button class="soft-button" data-do="generate-new">Try again</button>`;
+  const err=job?.status==='failed'||job?.status==='cancelled'?`<p class="gen-error">${esc(job.error||'')}</p>`:'';
+  const note=job?.status==='running'?'<p class="meta">This takes several minutes. A language model writes the story one layer at a time, and every layer is checked before it is kept.</p>':'';
+  const inner=`${head}${body}${err}${note}<div class="menu-actions gen-actions">${actions}</div>
+    <details class="gen-spoiler" data-open-key="gen-spoiler"${genSpoiler?' open':''}><summary>⚠️ Spoiler: watch the story being built (for testing)</summary><div class="gen-spoiler-body">${job?spoilerHtml():''}</div></details>`;
+  const m=$('#modal'),panel=m?.open&&String(m.innerHTML||'').includes('id="gen-panel"')?$('#gen-panel'):null;
+  if(panel)panel.innerHTML=inner;else openModal(`<div id="gen-panel">${inner}</div>`,'Generating a case');
+  const d=$('.gen-spoiler');if(d?.addEventListener)d.addEventListener('toggle',()=>{genSpoiler=d.open;});
+  for(const el of (document.querySelectorAll?document.querySelectorAll('.spoil-step'):[]))if(openSteps.has(el.dataset?.step))el.open=true;
+  const nb=$('.gen-spoiler-body');if(nb)nb.scrollTop=keepScroll;
+}
+function menuModal(){openModal(`<div class="eyebrow gold">THE BELLWEATHER CASE</div><h2>Your investigation</h2><p>Progress is saved on this device. Export keeps a portable copy, including the full inspector history.</p><div class="menu-actions"><button class="soft-button" data-do="export">Export investigation & trace</button><button class="soft-button" data-do="import">Import saved investigation</button><button class="soft-button" data-do="llm">AI characters…</button><button class="soft-button" data-do="director">World Director…</button><button class="soft-button" data-do="choose-case">Choose a case configuration…</button><button class="soft-button" data-do="restart-confirm">Restart this case</button><button class="soft-button" data-do="flag-issue">🐞 Flag an issue</button></div>`,'Investigation options');}
+function flagIssueModal(){openModal(`<div class="eyebrow gold">DEBUG</div><h2>Flag an issue</h2><p class="meta">What went wrong? Your note is saved to the debug log with a snapshot of the current game state.</p><form id="issue-form"><textarea id="issue-note" rows="4" maxlength="2000" placeholder="e.g. Ada answered about the wrong night"></textarea><button class="primary full" type="submit">Save to the debug log</button></form>`,'Flag an issue');}
+function flagIssue(note){
+  const w=session.world,recent=playerView(session).transcript.slice(-12).map(e=>({minute:e.minute,kind:e.kind,actor:e.actor,text:String(e.text).slice(0,500)}));
+  dlog('issue',{note,status:w.status,evidence:w.player.evidence.map(e=>e.clue),locked:w.flags?.lockedObjects??[],conversation:w.player.conversation,
+    npcs:Object.fromEntries(Object.entries(w.npcs).map(([id,n])=>[id,n.travel?'transit':n.location])),mode,notebook,recent});
+  dlogFlush();toast('Saved to the debug log. Tell me what you flagged and I can look it up.');
+}
 function llmModal(){const c=llmConfig();openModal(`<div class="eyebrow teal">OPTIONAL · EXPERIMENTAL</div><h2>AI characters</h2><p>Character reasoning combines response decisions with natural dialogue. Characters receive their own beliefs, memories, goals and conversation history. They can answer, evade, clarify, challenge, refuse or end a conversation. The engine limits disclosures and consequences; a separate critic checks the proposal before it is recorded. Failed turns use an authored fallback. The critic can still make mistakes.</p><form id="llm-form"><div class="accusation-fields"><label>Proxy endpoint URL<input name="endpoint" autocomplete="off" placeholder="http://127.0.0.1:8787" value="${esc(c.endpoint||'http://127.0.0.1:8787')}"></label><label style="flex-direction:row;align-items:center;gap:10px"><input type="checkbox" name="reasoning" ${c.enabled&&c.reasoning?'checked':''} style="width:16px;height:16px;accent-color:var(--teal)"> Enable character reasoning and free-text conversation</label></div><button class="primary full" type="submit">Save settings</button></form><p class="meta">With this setting off, responses are immediate and scripted; no AI requests are made. Reasoning permits up to two proposals and two critic calls per turn, with a 30-second total timeout. Accepted turns and audits survive export and replay. In configured cases this also enables occasional autonomous goal selection: at most one additional request per player turn, a five-second timeout, and a twenty-minute cooldown per NPC. Scripted life continues when the request fails. Your local proxy receives this character’s private perspective, not the full world. Restart the proxy after updating its code.</p>`,'AI character settings');}
 
 function exportFile(){const blob=new Blob([exportDialogueSave(session,dialogueAudit,boardNotes)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`bellweather-investigation-${session.events.length}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Investigation and full history exported.');}
@@ -573,13 +699,14 @@ document.addEventListener('click',event=>{const b=event.target.closest('[data-do
     case 'accusation':accusationModal();break;
     case 'visit-bell':$('#modal').close();chat=null;act({type:'move',to:'square'});accusationModal();break;
     case 'menu':menuModal();break;
-    case 'generated-list':openGeneratedList();break;
     case 'start-generated':startKernelCase(b.dataset.file);break;
-    case 'choose-case':openModal(`<h2>Choose a case</h2><p>Generate a fresh, validated mystery, or replay the authored original. Every generated case is certified — source checks, finite-explanation checks and a played-through solution route — before it starts. Starting a case replaces your current investigation, so export it first if you want to keep it.</p><button class="soft-button" data-do="export">Export current investigation</button><div class="menu-actions"><button class="soft-button" data-do="generated-list">📜 Play a generated deep case (new kernel)</button><button class="soft-button" data-do="generate-ai">🤖 Generate with AI (experimental)</button><button class="soft-button" data-do="generate-deep">🧩 Generate a deep case (multi-hop, experimental)</button><button class="soft-button" data-do="generate-case">🎲 Generate a new validated case</button>${CASE_OPTIONS.slice(0,1).map(c=>`<button class="soft-button" data-do="start-case" data-id="${c.id}">${esc(c.title)}</button>`).join('')}</div>`,'Choose a case');break;
+    case 'choose-case':chooseCaseModal();break;
     case 'start-case':{const fresh=createSession(17,id);cancelCharacter();stopReplay();session=fresh;resetRealized();boardNotes={};healthCache=null;cursor=null;chat=null;chosenClue=null;reasonSuspect=null;detailPanel=null;missedRevealed=false;sceneTransition=null;actionGroup='inspect';mode='game';persist();$('#modal').close();render();break;}
-    case 'generate-case':runGenerate({structure:b.dataset.structure,manner:b.dataset.manner});break;
-    case 'generate-ai':runGenerateAI();break;
-    case 'generate-deep':runGenerateDeep();break;
+    case 'generate-new':startGeneration();break;
+    case 'cancel-generation':cancelGeneration();break;
+    case 'hint-more':hintState.level++;dlog('hint',{level:hintState.level,key:hintState.key});render();break;
+    case 'flag-issue':flagIssueModal();break;
+    case 'show-generation':renderGeneration();pollGeneration();break;
 
     case 'close-modal':$('#modal').close();break;
     case 'director':directorModal();break;
@@ -588,7 +715,7 @@ document.addEventListener('click',event=>{const b=event.target.closest('[data-do
     case 'export':exportFile();break;
     case 'import':$('#import-file').click();break;
     case 'restart-confirm':openModal(`<div class="eyebrow gold">RESTART THE LAST BELL</div><h2>Return to the beginning?</h2><p>Your current investigation will be replaced on this device. Export it first if you want to keep its history. This remains the same authored case.</p><div class="menu-actions"><button class="soft-button" data-do="export">Export current investigation</button><button class="primary" data-do="restart">Restart from 08:00</button></div>`,'Restart this investigation');break;
-    case 'restart':missedRevealed=false;detailPanel=null;sceneTransition=null;actionGroup='inspect';session=createSession(session.seed,session.world.caseId??'last-bell');healthCache=null;cursor=null;chat=null;resetRealized();boardNotes={};reasonSuspect=null;stopReplay();persist();$('#modal').close();render();toast('A new morning in Bellweather.');break;
+    case 'restart':if(String(session.world.caseId).startsWith('mk-')){const id=session.world.caseId;$('#modal').close();startKernelCase(id.startsWith('mk-live-')?`live/${id}.json`:`${id}.json`);break;}missedRevealed=false;detailPanel=null;sceneTransition=null;actionGroup='inspect';session=createSession(session.seed,session.world.caseId??'last-bell');healthCache=null;cursor=null;chat=null;resetRealized();boardNotes={};reasonSuspect=null;stopReplay();persist();$('#modal').close();render();toast('A new morning in Bellweather.');break;
     case 'close-detail':detailPanel=null;render();break;
     case 'reveal-missed':missedRevealed=true;render();break;
     case 'hide-missed':missedRevealed=false;detailPanel=null;render();break;
@@ -605,7 +732,8 @@ document.addEventListener('click',event=>{const b=event.target.closest('[data-do
     case 'play-replay':if(timer){stopReplay();render();}else{const f=filteredEvents()[0];if(cursor===null||cursor>=session.events.length-1)cursor=f?f.index:0;timer=setInterval(()=>{const events=filteredEvents(),idx=selectedIndex(),next=events.find(e=>e.index>idx);if(next)cursor=next.index;else stopReplay();render();},1300);render();}break;
   }
 });
-document.addEventListener('submit',event=>{event.preventDefault();if(event.target.id==='character-form'){characterDraft=$('#character-question').value;if(chat&&characterDraft.trim())runCharacter(chat,characterDraft);}else if(event.target.id==='command-form'){const input=$('#command');if(input.value.trim())act(parseCommand(input.value,session));$('#command')?.focus();}else if(event.target.id==='note-form'){const val=$('#note').value;if(val.trim())act({type:'note',text:val});}else if(event.target.id==='llm-form'){const m=$('#modal');const endpoint=(m.querySelector('[name=endpoint]')?.value||'').trim();const reasoning=!!m.querySelector('[name=reasoning]')?.checked;const enabled=reasoning;setLlmConfig({endpoint,enabled,reasoning});cancelCharacter();stopRealizing();const active=llmActive();m.close();render();toast(active?'AI character reasoning enabled.':enabled?'Saved — but add a valid proxy URL (http://…) to turn it on.':'Scripted mode enabled. Responses are immediate; saved dialogue is retained.');}else if(event.target.id==='accusation-form'){const f=new FormData(event.target);$('#modal').close();act({type:'accuse',suspect:f.get('suspect'),method:f.get('method'),motive:f.get('motive'),evidence:f.getAll('evidence')});}});
+document.addEventListener('submit',event=>{event.preventDefault();if(event.target.id==='character-form'){characterDraft=$('#character-question').value;if(chat&&characterDraft.trim())runCharacter(chat,characterDraft);}else if(event.target.id==='command-form'){const input=$('#command');if(input.value.trim())act(parseCommand(input.value,session));$('#command')?.focus();}else if(event.target.id==='note-form'){const val=$('#note').value;if(val.trim())act({type:'note',text:val});}else if(event.target.id==='llm-form'){const m=$('#modal');const endpoint=(m.querySelector('[name=endpoint]')?.value||'').trim();const reasoning=!!m.querySelector('[name=reasoning]')?.checked;const enabled=reasoning;setLlmConfig({endpoint,enabled,reasoning});cancelCharacter();stopRealizing();const active=llmActive();m.close();render();toast(active?'AI character reasoning enabled.':enabled?'Saved — but add a valid proxy URL (http://…) to turn it on.':'Scripted mode enabled. Responses are immediate; saved dialogue is retained.');}else if(event.target.id==='issue-form'){const note=$('#issue-note')?.value??'';$('#modal').close();flagIssue(note);
+  }else if(event.target.id==='accusation-form'){const f=new FormData(event.target);$('#modal').close();act({type:'accuse',suspect:f.get('suspect'),method:f.get('method'),motive:f.get('motive'),evidence:f.getAll('evidence')});}});
 document.addEventListener('change',event=>{const el=event.target;if(el.id==='world-perspective'){perspective=el.value;detailPanel=null;render();}else if(el.id==='present-clue'){chosenClue=el.value;render();}else if(el.id==='character-select'){person=el.value;render();}else if(el.id==='actor-filter'){actorFilter=el.value;render();}else if(el.id==='type-filter'){typeFilter=el.value;render();}else if(el.id==='clock-filter'){includeClock=el.checked;render();}else if(el.id==='import-file'&&el.files[0]){const file=el.files[0];if(file.size>20_000_000){toast('Choose a save smaller than 20 MB.');return;}file.text().then(text=>{const imported=importDialogueSave(text);session=imported.session;boardNotes=imported.boardNotes;reasonSuspect=null;missedRevealed=false;detailPanel=null;sceneTransition=null;actionGroup='inspect';healthCache=null;cursor=null;chat=null;resetRealized();for(const [id,r]of imported.audit){dialogueAudit.set(id,r);realized.set(id,`${actorName(eventById(id).actor)}\n"${r.text}"`);}stopReplay();persist();$('#modal').close();render();toast('Saved investigation restored, with its full history.');}).catch(err=>toast(`Could not import: ${err.message}`));el.value='';}});
 document.addEventListener('input',event=>{if(event.target.id==='character-question'){characterDraft=event.target.value;}else if(event.target.id==='history-search'){query=event.target.value;$('#event-list').innerHTML=eventList();followTraceCursor();}else if(event.target.id==='history-cursor'){
   // Keep the range input itself mounted while dragging so pointer capture is preserved.
@@ -639,6 +767,14 @@ render();if(saveError)toast('A previous save could not be loaded. The original r
   for(const [id,r]of imported.audit){dialogueAudit.set(id,r);const e=session.events.find(ev=>ev.id===id);if(e)realized.set(id,`${actorName(e.actor)}\n"${r.text}"`);}
   render();
 })();
+
+// A generation keeps running in the background; after a reload, offer to reopen its progress.
+setTimeout(async()=>{try{const r=await fetch(`${GENERATOR}/jobs/current`,{cache:'no-store'});if(!r.ok)return;const j=await r.json();
+  if(j?.status==='running'){genJob=j;genEvents=[];genNext=0;toast(`Still generating “${j.title}” — open Menu → Choose a case to watch it.`);pollGeneration();}}catch{}},400);
+
+globalThis.window?.addEventListener?.('error',e=>{if(e?.message)dlog('js_error',{message:e.message,source:e.filename,line:e.lineno,stack:String(e.error?.stack??'').slice(0,1500)});});
+globalThis.window?.addEventListener?.('unhandledrejection',e=>dlog('js_error',{message:String(e?.reason?.message??e?.reason),stack:String(e?.reason?.stack??'').slice(0,1500)}));
+globalThis.window?.addEventListener?.('pagehide',dlogFlush);
 
 // Asset failures must never prevent play or remove accessible text labels.
 document.addEventListener('error',event=>{if(event.target?.classList?.contains('game-art'))event.target.hidden=true;},true);

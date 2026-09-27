@@ -603,3 +603,40 @@ accusation form, and `tools/refine-c/parity.py` (Python and JS checkers agree on
 Known gaps: characters know only what the case records (no public facts of the morning, thin reactions to evidence
 that does not concern them); no take/use/combine verbs; no art for new objects; generation takes about 8–10 minutes per
 case; the question is always "who".
+
+### On-demand generation and hints
+
+`server/generator_server.py` (loopback, port 8789; exact Origin/Host and an `X-Living-Mystery: generator-v1` header)
+runs one generation at a time with the harness in Bellweather mode and streams progress events: the first draft of
+the case, then each layer with its story, blocks, the records it added, rejected candidates and review verdicts, and
+the certification metrics. The UI polls it, shows a high-level progress view, and keeps the full story in a collapsed
+spoiler section. On completion the case is published to `dist/cases/generated/live/` (JS-certified again) and played.
+
+Conversation topics never reveal an account's content: a character's ungated accounts come one at a time through the
+night question and "anything else?", and an account earned by a clue is asked about in terms of that clue. Every
+character has a claimless evening account.
+
+Hints (`hints()` in the bridge) pick the shallowest thing the player can do next — an account someone will now give,
+an object to examine, a lead that points elsewhere, or the accusation — and phrase it at three levels: a nudge, a
+clue, and the plain answer.
+
+### Play-time refinements (September 2026)
+
+- **Showing evidence.** Each clue carries a spoken `show` line written at publish time (a third-person line for accounts
+  and behaviour, which names the speaker or subject) and a `confront` line said to that person. Characters involved in a
+  clue get a written `reactions[person]`. Fallbacks are templates by clue kind and by the listener's relation (took part,
+  subject, was at that place, uninvolved; the culprit deflects).
+- **Concessions.** A false account the speaker believed is conceded as a mistake; one given to protect someone as a lie.
+- **The doctor's examination.** Every case gets examination notes and an account from Dr Marsh: cause of death in general
+  terms and the time window the certification already assumes (so depth and verdicts are unchanged). Spoken times are
+  written by code.
+- **Observable traits.** Traits that clues test (shoe size, handedness) are shown in each person's public description.
+- **Stationary people.** Generated cases disable the wandering routines; everyone keeps to their own place, and the
+  notebook says where each person is usually found.
+- **Free-text dialogue.** A question may draw on every account the character can give now; a character's own observed
+  behaviour can be put to them. After two rejected replies, a guarded third attempt keeps untold memories private in
+  character; the rejection message says why in story terms.
+- **Inspector.** The canonical crime history is every true event in order, with the culprit, time and motive.
+- **Debugging.** The browser logs actions, dialogue turns (with audit detail), toasts, generation events and errors to
+  `logs/game.log` via the game server; the generator and proxy log to `logs/generator.log` and `logs/proxy.log`.
+  Menu → Flag an issue saves a note with a snapshot of the game state.

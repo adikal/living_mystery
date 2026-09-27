@@ -52,7 +52,8 @@ export function prepareCharacterTurn(s,{person,text,action=null}){
   if(action&&(!['ask','present'].includes(action.type)||action.person!==person))throw Error('Invalid dialogue action.');
   if(action?.type==='present'&&!s.world.player.evidence.some(e=>e.clue===action.clue))throw Error('Discover the evidence before presenting it.');
   const C=caseTables(s).CASE,baseTopics=C.topics?(C.topicsFor?.[person]??C.topics).map(([t])=>t):TOPICS[person];
-  const actions=action?[copy(action)]:[...baseTopics,...followupOptions(s,person).map(([key])=>key)].map(topic=>({type:'ask',person,topic}));
+  const extra=action?[]:(caseTables(s).behavior?.freeTextTopics?.(s,person)??[]);
+  const actions=action?[copy(action)]:[...new Set([...baseTopics,...followupOptions(s,person).map(([key])=>key),...extra])].map(topic=>({type:'ask',person,topic}));
   const accounts=[],routes={};let presentedInfo=null;
   for(const a of actions){
     const preview=copy(s),start=preview.events.length;dispatch(preview,a);
@@ -100,7 +101,7 @@ export async function proposeCharacterTurn(ticket,opts={}){
   const controller=new AbortController();let timer;
   const abort=()=>controller.abort();opts.signal?.addEventListener('abort',abort,{once:true});
   if(opts.signal?.aborted)controller.abort();
-  const timeout=new Promise(resolve=>{timer=setTimeout(()=>{controller.abort();resolve({audit:{...audit,reason:'timeout'},proposal:null});},opts.timeoutMs??30000);});
+  const timeout=new Promise(resolve=>{timer=setTimeout(()=>{controller.abort();resolve({audit:{...audit,reason:'timeout'},proposal:null});},opts.timeoutMs??45000);});
   const cancelled=new Promise(resolve=>controller.signal.addEventListener('abort',()=>resolve({audit:{...audit,reason:opts.signal?.aborted?'cancelled':'timeout'},proposal:null}),{once:true}));
   const call=async(system,prompt,max_tokens,temperature)=>{
     if(controller.signal.aborted)throw Error('cancelled');
@@ -114,13 +115,18 @@ export async function proposeCharacterTurn(ticket,opts={}){
   const run=async()=>{
     let violations=[];
     try{
-      for(let attempt=0;attempt<2;attempt++){
+      for(let attempt=0;attempt<3;attempt++){
+        // Third try: the character keeps to what they have already told the detective. Memories that no account
+        // covers are theirs to keep, so they deflect or decline in character instead of revealing them.
+        const guarded=attempt===2;
+        if(guarded)violations=[...violations.slice(0,2),'Your previous replies revealed things you have not told the detective (from your memories, not your accounts). Do not reveal them. Reply in character with account null and intent "evade", "refuse" or "clarify": deflect, decline, or say you cannot say, as your attitudes and loyalties suggest. State no fact about any person, place, time or event.'];
         const generation=await call(CHARACTER_PROMPT,{...ticket.context,revisionFeedback:violations},1200,0.85);
         if(controller.signal.aborted)throw Error('cancelled');
         const entry={generation,validation:null,critic:null};audit.attempts.push(entry);
         let p=parseJsonLoose(generation.response);if(p===null){entry.validation='invalid_json';violations=['Return the specified JSON object.'];continue;}
         const validation=validateCharacterProposal(ticket,p);entry.validation=validation.ok?'pass':validation.reason;
         if(!validation.ok){violations=[validation.reason];continue;}
+        if(guarded&&(p.account!==null||!['evade','refuse','clarify'].includes(p.intent))){entry.validation='guarded_not_followed';continue;}
         entry.critic=await call(CHARACTER_CRITIC,{character:ticket.context.character,player:ticket.context.player,account:validation.account??null,cast:CAST,proposal:p},700);
         if(controller.signal.aborted)throw Error('cancelled');
         const verdict=parseCritic(entry.critic.response);
@@ -133,6 +139,14 @@ export async function proposeCharacterTurn(ticket,opts={}){
   try{return copy(await Promise.race([run(),timeout,cancelled]));}finally{clearTimeout(timer);opts.signal?.removeEventListener('abort',abort);}
 }
 
+// Last resort when no account fits and the model's reply was rejected: stay non-committal, but about what was asked.
+function noAccountLine(s,ticket){
+  const {PEOPLE}=caseTables(s)||{};
+  const q=String(ticket.text||'').toLowerCase();
+  const who=Object.entries(PEOPLE||{}).find(([id,p])=>id!==ticket.person&&[p.name,...String(p.name).split(' ')].some(n=>n.length>2&&q.includes(n.toLowerCase())));
+  return who?`I couldn't tell you about ${who[1].address??who[1].name} — not from anything I saw myself.`
+    :"I couldn't tell you that — not from anything I saw myself.";
+}
 export function applyCharacterTurn(s,ticket,result){
   if(exportSession(s)!==ticket.base)throw Error('The world changed while the character was responding. Please try again.');
   if(result.audit.reason==='cancelled')return {cancelled:true};
@@ -152,7 +166,7 @@ export function applyCharacterTurn(s,ticket,result){
   // Free text fallback asks for a supported topic; never guesses an accusation or threat.
   const written=ticket.action?ticket.context.accounts[0]:null;
   const fallback={intent:written?(written.deceptive?'deceive':'answer'):'clarify',account:written?.id??null,
-    utterance:written?.statement??"I can't speak to that from what I know myself. Ask me about something I saw, or show me what you have found.",
+    utterance:written?.statement??noAccountLine(s,ticket),
     claims:written?.claims??[],sources:written?.sources??[],trust:'unchanged',belief:'remember_only',engagement:'continue',rationale:'The model was unavailable or its proposal did not pass validation.'};
   dispatchCharacter(trial,{person:ticket.person,text:ticket.text,proposal:p??fallback,action:p?.account?ticket.routes[p.account]:!p?ticket.action:null,audit:result.audit,useAuthored:!p&&Boolean(ticket.action),presented:ticket.action?.type==='present'?ticket.action.clue:null,origin:ticket.action,queuedPlan:p?.plan?ticket.context.character.plans.find(plan=>plan.id===p.plan):null});
   const health=diagnostics(trial);if(!health.ok)throw Error(`Character turn failed integrity checks: ${health.errors[0]}`);
