@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.16 · 27 September 2026**
+**Living technical report · Edition 0.17 · 27 September 2026**
 
 ### Abstract
 
@@ -150,6 +150,15 @@ Bellweather setting with the original cast, map and art, the generator produced 
 4–7 (14–24 clues, 27–35 history events, a certified twist, lies and red herrings), which play in the existing game
 through a bridge (`dist/cases/kernel-case.mjs`) including free-text character dialogue grounded in each character's
 memories and beliefs. See `docs/mystery-kernel.md`.
+
+### Edition 0.17: a visible village
+
+The game now shows the world instead of listing it: an illustrated village map with who is where and what is left to
+do, the scene of the current place, a full-height two-sided conversation, a Talk panel (people here, questions, free
+text), an inventory with clue art and drag-to-show, a Clue Board with every villager's profile and the full history,
+and an opening with the cast and a tour. Everything is drawn from engine state and never reveals hidden facts. Art for
+new places, people, the detective and a 30-object clue library was generated in the game's style. The design is in
+`docs/visual-world.md`.
 
 ### Edition 0.16: fair, varied cases and characters that talk like people
 

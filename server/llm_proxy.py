@@ -67,7 +67,8 @@ def bedrock_client():
     if _client is None:
         import boto3
         from botocore.config import Config
-        _client = boto3.client("bedrock-runtime", region_name=REGION,
+        # a fresh Session re-reads the credentials file (the default session caches expired keys)
+        _client = boto3.Session().client("bedrock-runtime", region_name=REGION,
                               config=Config(connect_timeout=3, read_timeout=7, retries={"max_attempts": 0}))
     return _client
 

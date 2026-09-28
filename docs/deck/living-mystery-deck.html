@@ -497,6 +497,19 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
   <div class="slide-number"></div>
 </div>
 
+<!-- 14d. THE VISIBLE VILLAGE -->
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-blue">IN THE GAME</span><h2>A village you can see</h2>
+  <p class="sub">Everything on screen is drawn from the engine's state, so it never shows what the player could not see. Free-form conversation stays at the centre.</p></div>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="card fade-in delay-2" style="padding:22px;"><div class="num" style="color:var(--gold)">LEFT</div><div class="ct">Map and Look around</div><p>Places with their art, minutes on foot, who is where, and symbols for a lead (!), something to examine (?) or done (✓). Below: what can be examined here.</p></div>
+    <div class="card fade-in delay-3" style="padding:22px;"><div class="num" style="color:var(--accent)">MIDDLE</div><div class="ct">The conversation</div><p>The scene, then a full-height two-sided conversation with portraits, trust and stress. Finds and recorded replies appear as evidence cards in it.</p></div>
+    <div class="card fade-in delay-4" style="padding:22px;"><div class="num" style="color:var(--green)">RIGHT</div><div class="ct">Talk, Evidence, Hints</div><p>Faces of the people here, suggested questions and your own words; the evidence you hold with clue art — drag a card onto the conversation to show it.</p></div>
+    <div class="card fade-in delay-5" style="padding:22px;"><div class="num" style="color:var(--red)">CLUE BOARD</div><div class="ct">Think it through</div><p>Every villager's profile, your case under Motive, Means and Opportunity with an honest ✓, conflicts between accounts, the night's timeline and the full history.</p></div>
+  </div>
+  <div class="slide-number"></div>
+</div>
+
 <!-- 15. BRIDGE -->
 <div class="slide" style="background:var(--bg-warm);">
   <div class="fade-in delay-1"><span class="tag tag-blue">INTO THE GAME</span><h2>Certified records become a playable case</h2>
@@ -524,12 +537,12 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
 <div class="slide">
   <div class="fade-in delay-1"><span class="tag tag-green">WHAT IS VERIFIED</span><h2>Guarantees, and how we know</h2></div>
   <div class="grid" style="grid-template-columns:repeat(4,1fr);">
-    <div class="card fade-in delay-2" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--accent);">185</div><div class="ct">JS tests</div><p>engine, characters, kernel, generated-case play, UI — plus 22 Python (Z3 oracle, servers)</p></div>
+    <div class="card fade-in delay-2" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--accent);">198</div><div class="ct">JS tests</div><p>engine, characters, kernel, generated-case play, the visible village UI — plus 22 Python (Z3 oracle, servers)</p></div>
     <div class="card fade-in delay-3" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--green);">443</div><div class="ct">cases in parity</div><p>Python and JS checkers agree on every generated case; Z3 agrees on 1,110 depth checks</p></div>
     <div class="card fade-in delay-4" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--gold);">13</div><div class="ct">playable deep cases</div><p>depth 3–7; the newest five each with a different victim, culprit, method and motive; solved only by the truth</p></div>
     <div class="card fade-in delay-5" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--blue);">3</div><div class="ct">independent certifiers</div><p>a case is published only when the Python kernel, the JS kernel and Z3 all certify it and agree</p></div>
   </div>
-  <div class="card fade-in delay-6" style="padding:18px 24px;margin-top:6px;"><p style="font-size:15px;"><b style="color:var(--text-primary)">Honest limits.</b> The kernel certifies fair, solvable, deep and misleading — not fun. A culprit's hidden secret is revealed at the end, not yet discoverable in play. No take/use/combine, no art for new objects, questions are “who” only, and a case takes about 15 minutes to build (one is kept ready).</p></div>
+  <div class="card fade-in delay-6" style="padding:18px 24px;margin-top:6px;"><p style="font-size:15px;"><b style="color:var(--text-primary)">Honest limits.</b> The kernel certifies fair, solvable, deep and misleading — not fun. Villagers keep to their places in generated cases (routines are next), clue art is a shared library matched by keyword, touch screens have no drag and drop, and a case takes about 15 minutes to build (one is kept ready).</p></div>
   <div class="slide-number"></div>
 </div>
 
@@ -539,7 +552,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
   <p class="sub"><b style="color:var(--text-primary)">North star:</b> an endless supply of Christie-grade mysteries in any setting, with characters who live and talk believably, and an engine that guarantees every case stays fair and solvable however the player behaves.</p></div>
   <div class="grid" style="grid-template-columns:repeat(4,1fr);">
     <div class="card fade-in delay-2" style="padding:20px;"><div class="num">01 · CONTENT</div><div class="ct">Secrets in play</div><p>Every motive discoverable in play, not just at the end; more witness detail, all certified.</p></div>
-    <div class="card fade-in delay-2" style="padding:20px;"><div class="num">02 · PLAY</div><div class="ct">Adventure verbs</div><p>Take, use, combine, give, tone; an inventory; a dead-end check in certification.</p></div>
+    <div class="card fade-in delay-2" style="padding:20px;"><div class="num">02 · LIFE</div><div class="ct">A living village</div><p>Routines and activities for every villager, people moving on the map, culprits who react.</p></div>
     <div class="card fade-in delay-3" style="padding:20px;"><div class="num">03 · SPEED</div><div class="ct">Faster to build</div><p>A ready case already hides the wait; next, cut the ~15-minute build without losing depth.</p></div>
     <div class="card fade-in delay-3" style="padding:20px;"><div class="num">04 · LIBRARY</div><div class="ct">Blocks as code</div><p>The block library compiled and tested, with the five design examples as acceptance cases.</p></div>
     <div class="card fade-in delay-4" style="padding:20px;"><div class="num">05 · QUESTIONS</div><div class="ct">Beyond “who”</div><p>Who, how and why are asked now; next, when, identity and “what happened”, with matching accusation forms.</p></div>

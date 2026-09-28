@@ -29,10 +29,42 @@ STYLE = ('Hand painted gouache and ink illustration, subdued jewel colours, warm
          'clear silhouettes, inviting mysterious English village atmosphere, 1932.')
 PORTRAIT = ('Head and shoulders portrait, centred, eyes at 38 percent height, head about half the width, plain muted '
             'slate backdrop with soft vignette. {subject}. ' + STYLE + ' Square, full bleed, no frame.')
+OBJECT = ('Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. {subject}. ' + STYLE + ' Square, full bleed, generous margin.')
 PLACE = ('Atmospheric establishing scene, landscape, large recognisable shapes, no people. {subject}. ' + STYLE + ' Full bleed.')
-NEGATIVE = 'text, letters, words, caption, watermark, signature, frame, border, panel, collage, photo, 3d render, extra people, deformed hands'
+NEGATIVE = 'houses, buildings, street, village, landscape, sky, person, face, hands, text, letters, words, caption, watermark, signature, frame, border, panel, collage, photo, 3d render, extra people, deformed hands'
 
 SUBJECTS = {
+    'detective': ('portrait', 'silas', 'The detective, a sharp-eyed investigator in their forties, calm and attentive, dark overcoat with raised collar and a grey trilby hat, a notebook in the breast pocket'),
+    'obj-letter': ('object', 'obj-bottle', 'a folded handwritten letter with a broken red wax seal'),
+    'obj-note': ('object', 'obj-bottle', 'a small torn scrap of notepaper with pencil writing'),
+    'obj-key': ('object', 'obj-bottle', 'an old iron door key on a ring'),
+    'obj-glove': ('object', 'obj-bottle', 'a single grey kid leather lady’s glove'),
+    'obj-slate': ('object', 'obj-bottle', 'a small wooden-framed chalk slate with chalk tallies'),
+    'obj-bottle': ('object', 'obj-bottle', 'a small brown glass medicine bottle with a paper label and cork'),
+    'obj-footprint': ('object', 'obj-bottle', 'a muddy boot print on a flagstone floor, seen from above'),
+    'obj-ledger': ('object', 'obj-bottle', 'a thick open account ledger with columns of ink figures'),
+    'obj-watch': ('object', 'obj-bottle', 'a brass pocket watch with a cracked glass'),
+    'obj-cloak': ('object', 'obj-bottle', 'a grey wool hooded cloak folded over a chair'),
+    'obj-ticket': ('object', 'obj-bottle', 'a small printed railway ticket stub'),
+    'obj-receipt': ('object', 'obj-bottle', 'a half sheet of paper receipt with a pencilled sum'),
+    'obj-photo': ('object', 'obj-bottle', 'an old sepia photograph in a small frame'),
+    'obj-knife': ('object', 'obj-bottle', 'a small folding pocket knife, closed'),
+    'obj-tin': ('object', 'obj-bottle', 'a small round tin with a pressed lid'),
+    'obj-basin': ('object', 'obj-bottle', 'an enamel washbasin with a jug'),
+    'obj-lamp': ('object', 'obj-bottle', 'a brass oil lamp with a glass chimney'),
+    'obj-rope': ('object', 'obj-bottle', 'a coil of old hemp rope'),
+    'obj-oar': ('object', 'obj-bottle', 'a wooden rowing oar lying flat'),
+    'obj-book': ('object', 'obj-bottle', 'a closed leather-bound book'),
+    'obj-diary': ('object', 'obj-bottle', 'a small open diary with ribbon marker and handwriting'),
+    'obj-button': ('object', 'obj-bottle', 'a single brass cuff button'),
+    'obj-handkerchief': ('object', 'obj-bottle', 'a white linen handkerchief with an embroidered initial'),
+    'obj-candle': ('object', 'obj-bottle', 'a half-burnt candle in a brass candlestick'),
+    'obj-bag': ('object', 'obj-bottle', 'a battered leather doctor’s bag, closed'),
+    'obj-glass': ('object', 'obj-bottle', 'an empty cut-glass brandy tumbler'),
+    'obj-envelope': ('object', 'obj-bottle', 'a sealed cream envelope addressed in ink'),
+    'obj-gun': ('object', 'obj-bottle', 'an old service revolver lying on a cloth'),
+    'obj-flowers': ('object', 'obj-bottle', 'a small bunch of garden flowers tied with string'),
+    'obj-register': ('object', 'obj-bottle', 'a large open parish register'),
     'edmund': ('portrait', 'bell', 'Edmund Vale, a stout, broad-faced, heavy-set proud country squire in his fifties, round ruddy cheeks and double chin, thinning sandy-grey hair, big walrus moustache, brown checked tweed shooting jacket and mustard waistcoat, no tie'),
     'vicar': ('portrait', 'bell', 'The Reverend Thomas Hale, a gentle elderly village vicar, thin and stooped, white hair, round wire spectacles, black cassock with a white clerical dog collar, no tie'),
     'dora': ('portrait', 'iris', 'Dorothy Pruett, a prim thin postmistress in her forties, hair in a tight bun, pince-nez spectacles, high-collared navy blouse with a cameo brooch'),
@@ -53,11 +85,12 @@ def reference(ref_id):
     return base64.b64encode(open(os.path.join(ASSETS, f'{ref_id}.jpg'), 'rb').read()).decode()
 
 
-def generate(aid, n=N):
+def generate(aid, n=None):
+    n = n or (1 if SUBJECTS[aid][0] == 'object' else N)
     kind, ref, subject = SUBJECTS[aid]
-    prompt = (PORTRAIT if kind == 'portrait' else PLACE).format(subject=subject)
+    prompt = {'portrait': PORTRAIT, 'location': PLACE, 'object': OBJECT}[kind].format(subject=subject)
     body = {'prompt': prompt, 'image': reference(ref), 'fidelity': 0.35, 'negative_prompt': NEGATIVE,
-            'aspect_ratio': '1:1' if kind == 'portrait' else '3:2', 'output_format': 'jpeg'}
+            'aspect_ratio': '3:2' if kind == 'location' else '1:1', 'output_format': 'jpeg'}
     c = client()
     os.makedirs(OUT, exist_ok=True)
     def one(i):
@@ -82,12 +115,12 @@ def choose(aid, n):
     kind, ref, subject = SUBJECTS[aid]
     src = os.path.join(OUT, f'{aid}-{n}.jpg')
     dst = os.path.join(ASSETS, f'{aid}.jpg')
-    size = '256' if kind == 'portrait' else '640'
+    size = '640' if kind == 'location' else '256'
     subprocess.run(['sips', '-Z', size, '-s', 'format', 'jpeg', '-s', 'formatOptions', '80', src, '--out', dst], check=True, capture_output=True)
     m = json.load(open(MANIFEST))
     m['assets'] = [a for a in m['assets'] if a['id'] != aid] + [{
         'id': aid, 'kind': kind, 'subject': subject,
-        'prompt': (PORTRAIT if kind == 'portrait' else PLACE).format(subject=subject),
+        'prompt': {'portrait': PORTRAIT, 'location': PLACE, 'object': OBJECT}[kind].format(subject=subject),
         'source': f'Stability Style Guide ({MODEL}), style reference dist/assets/last-bell/{ref}.jpg, fidelity 0.35, candidate {n} of {N}',
         'output': f'dist/assets/last-bell/{aid}.jpg', 'packaging': f'{size} px JPEG q80', 'review': 'chosen from a contact sheet'}]
     json.dump(m, open(MANIFEST, 'w'), indent=1)

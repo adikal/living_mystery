@@ -316,6 +316,316 @@
    "output": "dist/assets/last-bell/boathouse.jpg",
    "packaging": "640 px JPEG q80",
    "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-bag",
+   "kind": "object",
+   "subject": "a battered leather doctor\u2019s bag, closed",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. a battered leather doctor\u2019s bag, closed. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-bag.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-book",
+   "kind": "object",
+   "subject": "a closed leather-bound book",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. a closed leather-bound book. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-book.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-bottle",
+   "kind": "object",
+   "subject": "a small brown glass medicine bottle with a paper label and cork",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. a small brown glass medicine bottle with a paper label and cork. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-bottle.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-candle",
+   "kind": "object",
+   "subject": "a half-burnt candle in a brass candlestick",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. a half-burnt candle in a brass candlestick. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-candle.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-cloak",
+   "kind": "object",
+   "subject": "a grey wool hooded cloak folded over a chair",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. a grey wool hooded cloak folded over a chair. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-cloak.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-diary",
+   "kind": "object",
+   "subject": "a small open diary with ribbon marker and handwriting",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. a small open diary with ribbon marker and handwriting. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-diary.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-flowers",
+   "kind": "object",
+   "subject": "a small bunch of garden flowers tied with string",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. a small bunch of garden flowers tied with string. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-flowers.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-footprint",
+   "kind": "object",
+   "subject": "a muddy boot print on a flagstone floor, seen from above",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. a muddy boot print on a flagstone floor, seen from above. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-footprint.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-glass",
+   "kind": "object",
+   "subject": "an empty cut-glass brandy tumbler",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. an empty cut-glass brandy tumbler. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-glass.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-gun",
+   "kind": "object",
+   "subject": "an old service revolver lying on a cloth",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. an old service revolver lying on a cloth. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-gun.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-key",
+   "kind": "object",
+   "subject": "an old iron door key on a ring",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. an old iron door key on a ring. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-key.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-lamp",
+   "kind": "object",
+   "subject": "a brass oil lamp with a glass chimney",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. a brass oil lamp with a glass chimney. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-lamp.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-letter",
+   "kind": "object",
+   "subject": "a folded handwritten letter with a broken red wax seal",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. a folded handwritten letter with a broken red wax seal. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-letter.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-watch",
+   "kind": "object",
+   "subject": "a brass pocket watch with a cracked glass",
+   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. a brass pocket watch with a cracked glass. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-watch.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-note",
+   "kind": "object",
+   "subject": "a small torn scrap of notepaper with pencil writing",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a small torn scrap of notepaper with pencil writing. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-note.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-glove",
+   "kind": "object",
+   "subject": "a single grey kid leather lady\u2019s glove",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a single grey kid leather lady\u2019s glove. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-glove.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-slate",
+   "kind": "object",
+   "subject": "a small wooden-framed chalk slate with chalk tallies",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a small wooden-framed chalk slate with chalk tallies. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-slate.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-ledger",
+   "kind": "object",
+   "subject": "a thick open account ledger with columns of ink figures",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a thick open account ledger with columns of ink figures. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-ledger.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-ticket",
+   "kind": "object",
+   "subject": "a small printed railway ticket stub",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a small printed railway ticket stub. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-ticket.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-receipt",
+   "kind": "object",
+   "subject": "a half sheet of paper receipt with a pencilled sum",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a half sheet of paper receipt with a pencilled sum. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-receipt.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-photo",
+   "kind": "object",
+   "subject": "an old sepia photograph in a small frame",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. an old sepia photograph in a small frame. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-photo.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-knife",
+   "kind": "object",
+   "subject": "a small folding pocket knife, closed",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a small folding pocket knife, closed. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-knife.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-tin",
+   "kind": "object",
+   "subject": "a small round tin with a pressed lid",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a small round tin with a pressed lid. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-tin.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-rope",
+   "kind": "object",
+   "subject": "a coil of old hemp rope",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a coil of old hemp rope. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-rope.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-oar",
+   "kind": "object",
+   "subject": "a wooden rowing oar lying flat",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a wooden rowing oar lying flat. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-oar.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-button",
+   "kind": "object",
+   "subject": "a single brass cuff button",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a single brass cuff button. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-button.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-handkerchief",
+   "kind": "object",
+   "subject": "a white linen handkerchief with an embroidered initial",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a white linen handkerchief with an embroidered initial. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-handkerchief.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-envelope",
+   "kind": "object",
+   "subject": "a sealed cream envelope addressed in ink",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a sealed cream envelope addressed in ink. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-envelope.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-register",
+   "kind": "object",
+   "subject": "a large open parish register",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a large open parish register. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-register.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-basin",
+   "kind": "object",
+   "subject": "an enamel washbasin with a jug",
+   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. an enamel washbasin with a jug. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-basin.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "detective",
+   "kind": "portrait",
+   "subject": "The detective, a sharp-eyed investigator in their forties, calm and attentive, dark overcoat with raised collar and a grey trilby hat, a notebook in the breast pocket",
+   "prompt": "Head and shoulders portrait, centred, eyes at 38 percent height, head about half the width, plain muted slate backdrop with soft vignette. The detective, a sharp-eyed investigator in their forties, calm and attentive, dark overcoat with raised collar and a grey trilby hat, a notebook in the breast pocket. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, no frame.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/silas.jpg, fidelity 0.35, candidate 2 of 3",
+   "output": "dist/assets/last-bell/detective.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen from a contact sheet"
   }
  ]
 }

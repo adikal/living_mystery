@@ -3,8 +3,8 @@
 ## Latest (September 2026)
 
 Generated cases are certified for motive, means and opportunity, checked independently by Z3, and varied by a premise
-deck. Next: make each case's hidden secret discoverable in play (not only in the ending), generate faster than about
-fifteen minutes per case, and extend questions beyond "who".
+deck. The visible village (map, scene, game-style dialogue, inventory, Clue Board, opening and tour) is built; next are
+routines and a living world, then expressions: see [visual-world.md](visual-world.md). Free-form dialogue stays central; adventure verbs are not planned.
 
 ## Direction
 

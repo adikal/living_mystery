@@ -80,7 +80,8 @@ export function makeKernelCase(records) {
     l.description = `${l.description} Constable Bell has authorised you to examine anything here.`;
   }
   for (const s of kc.signs) {
-    CLUES[s.id] = {title: s.title || s.id, text: s.text, tags: [KIND[s.kind] || 'Observation'], kind: KIND[s.kind] || 'Observation', source: s.title || s.id};
+    CLUES[s.id] = {title: s.title || s.id, text: s.text, tags: [KIND[s.kind] || 'Observation'], kind: KIND[s.kind] || 'Observation', source: s.title || s.id,
+      raw: s.kind, at: s.at ?? null, speaker: s.speaker ?? null, about: s.about ?? null};
     if (s.kind === 'testimony') continue;
     const at = LOCATIONS[s.at] ? s.at : 'square';
     OBJECTS[s.id] = {label: s.title || s.id, clue: s.id, description: s.kind === 'behavior' ? 'Watch more closely' : 'Examine this'};
@@ -144,7 +145,21 @@ export function makeKernelCase(records) {
       flags: {victimAlive: false, victimLocation: kc.question.crime.place, evidenceOrigins: {}, lockedObjects: [...gatedObjects], history: {}, read: []}, ending: null};
   }
 
-  const model = {CASE, PEOPLE, LOCATIONS, OBJECTS, CLUES, baseWorld, evidenceClaims: {}, testimonyClues: [], version: VERSION,
+  // The reasoning board reads claims in the notebook's format: whereabouts and the time of death, from the typed claims.
+  const evidenceClaims = {};
+  for (const x of kc.signs) {
+    const c = claimOf(x);
+    if (c?.kind === 'place' && PEOPLE[c.person] !== undefined || c?.kind === 'place' && c.person === victim)
+      evidenceClaims[x.id] = [{key: x.id, subject: c.person, predicate: 'location', value: c.place,
+        interval: {start: Math.round(c.start), end: Math.round(c.end)}, confidence: .9, attribution: x.title || x.id}];
+    else if (c?.kind === 'time')
+      evidenceClaims[x.id] = [{key: 'time_of_crime', subject: victim, predicate: 'death_time', value: 'window',
+        interval: {start: Math.round(c.start), end: Math.round(c.end)}, confidence: .95, attribution: x.title || x.id}];
+  }
+  const [w0, w1] = kc.question.crime.window;
+  CASE.night = [Math.floor((w0 - 45) / 15) * 15, Math.ceil((w1 + 45) / 15) * 15];   // the board's timeline span
+  CASE.scene = kc.question.crime.place;
+  const model = {CASE, PEOPLE, LOCATIONS, OBJECTS, CLUES, baseWorld, evidenceClaims, testimonyClues: [], version: VERSION,
     commitments: {bell: {location: 'square', from: START}}, agentPermissions: {}, boundedInvestigation: false, modules: [],
     // No wandering routines in generated cases: everyone keeps to their own place through the morning, so the
     // player can always find them (the notebook says where). Only the case's own events move people.
@@ -501,6 +516,12 @@ export function makeKernelCase(records) {
               pillarEvidence: {means: st.means, motive: st.motive}, alternative: alt};
     }
     // What the held evidence establishes so far, for the leading suspect (the only one left, if any).
+    // For the board: which pillars the held evidence really establishes for this suspect (same check as Bell's).
+    function pillarsHeld(s, pid) {
+      const st = pillarsFor(held(s), pid);
+      return {opportunity: st.opportunity, means: st.means.length > 0, motive: st.motive.length > 0,
+              evidence: {means: st.means, motive: st.motive}, remaining: st.sv.map(h => actorOf(hyps[h]))};
+    }
     function caseStatus(s) {
       const have = held(s), {sv} = standing(have);
       const lead = sv.length === 1 ? actorOf(hyps[sv[0]]) : null;
@@ -539,9 +560,9 @@ export function makeKernelCase(records) {
     // Free-text questions may draw on every account this person can give now (the buttons still offer them one at a
     // time), so "did you see Voss?" can be answered from the account about Voss.
     const freeTextTopics = (s, pid) => [...(everyday(pid) ? ['everyday'] : []), ...accounts(s, pid).map(x => x.id)];
-    return {seedSession, afterAction, decide, canAsk, ask, present, presentLine, checkCase, caseStatus, followupOptions, freeTextTopics, hints, parseCommand, reconcileKnowledge() {},
+    return {seedSession, afterAction, decide, canAsk, ask, present, presentLine, checkCase, caseStatus, pillarsHeld, followupOptions, freeTextTopics, hints, parseCommand, reconcileKnowledge() {},
       commandLabel: a => `${a.type} ${a.person ?? a.object ?? a.to ?? ''}`, caseHealth: () => []};
   }
   return {CASE, LOCATIONS, PEOPLE, CLUES, OBJECTS, model, baseWorld, createBehavior, SUSPECTS: suspects,
-    PILLARS: [['motive', 'Motive'], ['means', 'Means'], ['opportunity', 'Opportunity'], ['alibi', 'Alibi']]};
+    PILLARS: [['motive', 'Motive'], ['means', 'Means'], ['opportunity', 'Opportunity']]};
 }

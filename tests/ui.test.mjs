@@ -44,8 +44,8 @@ test('Recent history stays bounded and chronological; full history pages preserv
   const ui=adapter();
   ui.run("for(let n=0;n<45;n++)dispatch(session,{type:'look'});render()");
   const html=ui.node('#app').innerHTML;
-  assert.equal((html.match(/class="journal-entry /g)||[]).length,5);
-  assert.ok(ui.run("const ids=playerView(session).transcript.slice(-5).map(e=>e.id);const calls=[];const original=journalEntry;journalEntry=e=>{calls.push(e.id);return original(e)};game();journalEntry=original;JSON.stringify(calls)===JSON.stringify(ids)"));
+  assert.ok((html.match(/class="journal-entry /g)||[]).length<=12);
+  assert.ok(ui.run("const ids=playerView(session).transcript.slice(-12).map(e=>e.id);const calls=[];const original=journalEntry;journalEntry=e=>{calls.push(e.id);return original(e)};game();journalEntry=original;JSON.stringify(calls)===JSON.stringify(ids)"));
   ui.click('history');assert.match(ui.node('#modal').innerHTML,/page 1 of 3/);
   ui.click('history-newer');assert.match(ui.node('#modal').innerHTML,/page 2 of 3/);
   ui.click('history-older');assert.match(ui.node('#modal').innerHTML,/page 1 of 3/);
@@ -66,9 +66,11 @@ test('Done markers distinguish options, ignore rejection, survive restore, and a
 
 test('Movement updates the scene and local people; memories render in acquisition order',()=>{
   const ui=adapter();
-  ui.run("notebook='people';act({type:'move',to:'manor'})");
+  ui.run("act({type:'move',to:'manor'})");
   assert.match(ui.node('#app').innerHTML,/scene-transition/);
-  assert.match(ui.node('#app').innerHTML,/Here with you/);
+  assert.doesNotMatch(ui.node('#journal').innerHTML,/SCENE CHANGE| is here\./,'no repeated scene text or who-is-here lines');
+  assert.match(ui.node('#app').innerHTML,/talk-faces[\s\S]*data-id="clara"/,'people here are in the Talk tab');
+  ui.run("mode='reasoning';reasonSuspect='clara';render()");assert.match(ui.node('#app').innerHTML,/profile-card[\s\S]*Here with you/);ui.run("mode='game';reasonSuspect=null;render()");
   assert.ok(ui.run("const exp=session.world.npcs.clara.memories.map(id=>session.events.find(e=>e.id===id)).filter(e=>e&&(e.kind==='observation'||e.kind==='speech')).map(e=>e.id);const seen=[];const old=memoryCard;memoryCard=id=>{seen.push(id);return old(id)};person='clara';personTab='memories';characterPanel(session.world);memoryCard=old;JSON.stringify(seen)===JSON.stringify(exp)"));
   for(const person of Object.keys(engine.PEOPLE))assert.doesNotThrow(()=>ui.run(`chat=${JSON.stringify(person)};conversation(playerView(session))`));
 });
@@ -247,7 +249,8 @@ test('Notebook profiles expose only public descriptions and local trust and stre
  assert.ok(profiles.find(p=>p.id==='bell').metrics);
  assert.equal(profiles.find(p=>p.id==='clara').metrics,null);
  const html=ui.node('#app').innerHTML;
- assert.match(html,/Trust in you/);assert.match(html,/Stress factor/);
+ assert.doesNotMatch(html,/Stress factor/,'meters moved to the conversation');
+ ui.run("chat='bell';render()");const talk=ui.node('#app').innerHTML;assert.match(talk,/dlg-meters[\s\S]*Trust in you[\s\S]*Stress/);ui.run("chat=null;render()");
  for(const p of Object.values(engine.PEOPLE))assert.ok(!html.includes(p.secret));
  assert.doesNotMatch(html,/Private background|Competing goals|Relationships/);
  ui.run("act({type:'move',to:'manor'})");
@@ -509,16 +512,150 @@ test('Generation reports a missing generator server clearly',async()=>{
  assert.match(ui.node('#modal').innerHTML,/generator is not running/);
 });
 
-test('People is the first notebook tab and shows the victim; new evidence is boxed in the chat and added to the Evidence tab',()=>{
+test('Right panel is Talk, Evidence, Hints; the victim is on the Clue Board; new evidence is boxed in the chat and added to the Evidence tab',()=>{
  const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-bw-pair.json',import.meta.url),'utf8'));
  const ui=adapter(null,{llmActive:()=>false});
  ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
- ui.run(`notebook='people';render()`);
  const app=ui.node('#app').innerHTML,tabs=app.slice(app.indexOf('Notebook views'));
- assert.ok(tabs.indexOf('People')>=0&&tabs.indexOf('People')<tabs.indexOf('Evidence'),`People comes first: ${tabs.slice(0,200)}`);
- assert.match(ui.node('#app').innerHTML,/victim-person[\s\S]*?Edmund Vale[\s\S]*?Deceased/,'the victim, greyed out');
+ ui.run(`mode='reasoning';render()`);
+ assert.ok(tabs.indexOf('Talk')>=0&&tabs.indexOf('Talk')<tabs.indexOf('Evidence')&&!/data-id="people"/.test(tabs),`Talk, Evidence, Hints (no People): ${tabs.slice(0,200)}`);
+ assert.match(ui.node('#app').innerHTML,/cast-chip victim[\s\S]*?Edmund Vale · deceased/,'the victim, greyed out, on the Clue Board');ui.run(`mode='game';render()`);
  const surface=records.signs.find(s=>s.kind!=='testimony'&&!(s.requires||[]).length);
  ui.run(`act({type:'move',to:${JSON.stringify(surface.at)}});act({type:'inspect',object:${JSON.stringify(surface.id)}})`);
  assert.match(ui.run('visibleTranscript(playerView(session).transcript).slice(-5).map(journalEntry).join("")'),/clue-found/,'the discovery appears in the chat, as a boxed card');
  assert.ok(ui.run('session.world.player.evidence.length')>0,'and in the Evidence tab');
+});
+
+test('Reasoning board is correct for a generated case: its own night, scene and three pillars, honest check marks',()=>{
+ const records=JSON.parse(readFileSync(new URL('./fixtures/mk-cordial.json',import.meta.url),'utf8'));
+ const ui=adapter(null,{llmActive:()=>false});
+ ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
+ // play the whole case headlessly, then open the board on the culprit
+ ui.run(`(()=>{const B=caseTables(session).behavior;for(let i=0;i<160;i++){const h=B.hints(session);const x=caseTables(session).CLUES[h.id]&&${JSON.stringify(records.signs)}.find(z=>z.id===h.id);if(!x)break;
+   if(x.kind==='testimony'){dispatch(session,{type:'move',to:session.world.npcs[x.speaker].location});dispatch(session,{type:'ask',person:x.speaker,topic:x.id});}
+   else{dispatch(session,{type:'move',to:x.at});dispatch(session,{type:'inspect',object:x.id});}}})()`);
+ ui.run(`mode='reasoning';reasonSuspect='ada';render()`);
+ const html=ui.node('#app').innerHTML;
+ assert.doesNotMatch(html,/data-drop-pillar="alibi"/,'three columns: motive, means, opportunity');
+ for(const k of ['motive','means','opportunity'])assert.match(html,new RegExp(`data-drop-pillar="${k}"`));
+ assert.equal((html.match(/s-established/g)||[]).length,3,'all three established for the culprit once everything is found');
+ assert.match(html,/tl-death/,'the time window comes from the examination');
+ assert.match(html,/tl-bar/,'whereabouts appear on the timeline');
+ ui.run(`reasonSuspect='clara';render()`);
+ assert.ok((ui.node('#app').innerHTML.match(/s-established/g)||[]).length<3,'an innocent is not fully established');
+ ui.run(`notesFor('ada')[session.world.player.evidence[0].clue]={pillar:'alibi',polarity:'supports'};reasonSuspect='ada';render()`);
+ assert.match(ui.node('#app').innerHTML,/board-card/,'an old "alibi" filing still shows (under opportunity)');
+});
+
+test('The visible village: map, scene cast, pinned objects, two-sided dialogue with free text first, inventory, opening',()=>{
+ const records=JSON.parse(readFileSync(new URL('./fixtures/mk-cordial.json',import.meta.url),'utf8'));
+ const ui=adapter(null,{llmActive:()=>true,llmConfig:()=>({reasoning:true})});
+ ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
+ // the opening scene opens once, with the cast and the victim but no secrets
+ const opening=ui.node('#modal').innerHTML;
+ assert.match(opening,/Who killed Dorothy Pruett\?/);
+ ui.run('openingModal(1)');const cast=ui.node('#modal').innerHTML;
+ assert.match(cast,/cast-card victim/);assert.match(cast,/Ada Finch/);
+ for(const a of records.attitudes)assert.ok(!cast.includes(a.content),'no attitude (secret) is shown in the cast');
+ ui.click('opening-done');
+ // map: every place is a pin; the current place is marked
+ ui.run("mode='game';render()");
+ let html=ui.node('#app').innerHTML;
+ for(const pl of records.setting.places)assert.match(html,new RegExp(`class="map-pin[^"]*"[^>]*data-id="${pl.id}"`),`pin for ${pl.id}`);
+ assert.match(html,/you-marker/);
+ // scene: go where someone is; they stand in the scene; objects are pinned; hidden leads are not shown
+ ui.run("act({type:'move',to:'inn'})");html=ui.node('#app').innerHTML;
+ assert.match(html,/class="talk-face[^"]*" data-do="chat" data-id="ada" data-drop-person="ada"/,'people here are faces in the Talk tab');
+ assert.match(html,/room-left[\s\S]*LOOK AROUND/,'the left panel lists what to examine here');assert.match(html,/<div class="scene-description">/);assert.doesNotMatch(html,/Look at the scene/);
+
+ const hidden=records.signs.filter(x=>x.at==='inn'&&x.kind!=='testimony'&&(x.requires||[]).length).map(x=>x.title);
+ for(const t of hidden)assert.ok(!html.includes(`<span>${t}</span>`),`hidden lead not shown: ${t}`);
+ // dialogue: two-sided, free text first, then question chips; lines neutral
+ ui.run("chat='ada';render()");html=ui.node('#app').innerHTML;
+ assert.match(html,/class="dialogue"/);assert.match(html,/Speak in your own words/,'free text is always there');assert.match(html,/dialogue-options chips/);
+ ui.run("act({type:'ask',person:'ada',topic:'night'})");html=ui.node('#app').innerHTML;
+ assert.match(html,/bubble-row mine[\s\S]*bubble-row theirs/,'your line on the right, theirs on the left');
+ assert.doesNotMatch(html,/bubble[^"]*(lie|decept)/i,'nothing marks a lie');
+ // inventory: grouped by type, or newest first; draggable onto people
+ ui.run("invSort='type';dispatch(session,{type:'endConversation'});dispatch(session,{type:'move',to:'surgery'});dispatch(session,{type:'inspect',object:'s_medical'});chat=null;notebook='evidence';invSort='type';render()");
+ html=ui.node('#app').innerHTML;assert.match(html,/inv-group/,`notebook=${ui.run('notebook')} evidence=${ui.run('session.world.player.evidence.length')} ${html.slice(html.indexOf('notebook-content'),html.indexOf('notebook-content')+300)}`);assert.match(html,/draggable="true" data-drag-clue=/);
+ ui.run("invSort='time';render()");assert.doesNotMatch(ui.node('#app').innerHTML,/inv-group/);
+ assert.match(ui.node('#app').innerHTML,/data-drag-object=|Nothing to inspect|no longer/,'objects in Look around are draggable');
+});
+
+test('A pending line in the conversation is escaped once (apostrophes show as apostrophes)',()=>{
+ const ui=adapter(null,{llmActive:()=>true,llmConfig:()=>({reasoning:true})});
+ ui.run("dispatch(session,{type:'move',to:'manor'});chat='clara';characterBusy=true;characterPending={person:'clara',text:\"I've seen your skirt <b>\"};render()");
+ const html=ui.node('#app').innerHTML;
+ assert.match(html,/I&#39;ve seen your skirt &lt;b&gt;/,'escaped once');assert.doesNotMatch(html,/&amp;#39;|&amp;lt;/,'not twice');
+ ui.run('characterBusy=false;characterPending=null');
+});
+
+test('Conversation: the middle is the conversation; your words and the questions are in the Talk panel',()=>{
+ const ui=adapter(null,{llmActive:()=>true,llmConfig:()=>({reasoning:true})});
+ ui.run("dispatch(session,{type:'move',to:'manor'});chat='clara';render()");
+ const html=ui.node('#app').innerHTML;
+ assert.match(html,/class="talk-panel"[\s\S]*Speak in your own words/,'your own words in the Talk panel');assert.doesNotMatch(html.slice(html.indexOf('class="dialogue"'),html.indexOf('</section>',html.indexOf('class="dialogue"'))),/Speak in your own words/,'the middle is the conversation only');
+ assert.match(html,/class="talk-panel"[\s\S]*dialogue-options chips/,'the question choices in the Talk panel');
+});
+
+test('A discovery in the chat shows the clue picture and a separate title',()=>{
+ const records=JSON.parse(readFileSync(new URL('./fixtures/mk-cordial.json',import.meta.url),'utf8'));
+ const ui=adapter(null,{llmActive:()=>false});
+ ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
+ const x=records.signs.find(s=>s.kind!=='testimony'&&!(s.requires||[]).length&&s.at);
+ ui.run(`$('#modal')?.close?.();dispatch(session,{type:'move',to:'${x.at}'});dispatch(session,{type:'inspect',object:'${x.id}'});render()`);
+ const html=ui.run('visibleTranscript(playerView(session).transcript).slice(-5).map(journalEntry).join("")');
+ assert.match(html,/clue-found[\s\S]*clue-body[\s\S]*(clue-found-art|art-placeholder)[\s\S]*clue-found-title/);
+});
+
+test('The middle panel shows only what happened since arriving at this place',()=>{
+ const ui=adapter();
+ ui.run("act({type:'move',to:'manor'});act({type:'move',to:'inn'})");
+ const html=ui.node('#journal').innerHTML;
+ assert.doesNotMatch(ui.node('#app').innerHTML,/HERE SINCE YOU ARRIVED/);
+ assert.doesNotMatch(html,/You reach Vale Manor|The manor is quiet/,'nothing from the manor visit');
+});
+
+test('An empty place tells the player what to do; no history bar in the middle',()=>{
+ const ui=adapter();ui.run("act({type:'move',to:'manor'})");
+ const html=ui.run('nextSteps(playerView(session))');
+ assert.match(html,/What now\?[\s\S]*Look around[\s\S]*Talk[\s\S]*Walk/);
+ assert.doesNotMatch(ui.node('#app').innerHTML,/Full history \(/);
+});
+
+test('Examining something during a conversation shows the find in the conversation',()=>{
+ const records=JSON.parse(readFileSync(new URL('./fixtures/mk-cordial.json',import.meta.url),'utf8'));
+ const ui=adapter(null,{llmActive:()=>false});
+ ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
+ const x=records.signs.find(s=>s.kind!=='testimony'&&!(s.requires||[]).length&&s.at);
+ const who=Object.entries(records.people).length&&ui.run(`(()=>{dispatch(session,{type:'move',to:'${x.at}'});return playerView(session).people[0]?.id??null})()`);
+ if(!who)return;
+ ui.run(`$('#modal')?.close?.();chat='${who}';chatSince={id:'${who}',from:session.events.length};notebook='talk';render();act({type:'inspect',object:'${x.id}'});chat='${who}';render()`);
+ assert.match(ui.run('dialogueLines(playerView(session))'),/bubble-row found[\s\S]*clue-found/,'the find is in the conversation');
+});
+
+test('A find made before the conversation began is not shown in it (it is in Evidence)',()=>{
+ const records=JSON.parse(readFileSync(new URL('./fixtures/mk-cordial.json',import.meta.url),'utf8'));
+ const ui=adapter(null,{llmActive:()=>false});
+ ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
+ const x=records.signs.find(s=>s.kind!=='testimony'&&!(s.requires||[]).length&&s.at);
+ const who=ui.run(`(()=>{$('#modal')?.close?.();dispatch(session,{type:'move',to:'${x.at}'});return playerView(session).people[0]?.id??null})()`);
+ if(!who)return;
+ ui.run(`act({type:'inspect',object:'${x.id}'});chat=null;render()`);
+ ui.click('chat',{id:who});
+ assert.doesNotMatch(ui.run('dialogueLines(playerView(session))'),/bubble-row found/,'the earlier find is not in the conversation');
+});
+
+test('A reply that becomes evidence appears once in the conversation, as the evidence card',()=>{
+ const records=JSON.parse(readFileSync(new URL('./fixtures/mk-cordial.json',import.meta.url),'utf8'));
+ const ui=adapter(null,{llmActive:()=>false});
+ ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
+ ui.run(`$('#modal')?.close?.();dispatch(session,{type:'move',to:'square'})`);
+ ui.click('chat',{id:'bell'});ui.run(`act({type:'ask',person:'bell',topic:'night'})`);
+ const html=ui.run('dialogueLines(playerView(session))');
+ const recorded=(html.match(/bubble-row theirs recorded/g)||[]).length;
+ assert.equal(recorded,1,'the account is shown as one evidence card');
+ const text=records.signs.find(x=>x.id==='s_surface_bell').text.slice(0,30);
+ assert.equal(html.split(text).length-1,1,'and not repeated as a plain bubble');
 });

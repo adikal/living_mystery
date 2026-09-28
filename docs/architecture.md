@@ -229,6 +229,12 @@ Configured/generated cases now support persistent ordinary goals, timed activiti
 New configured/generated cases now use typed source support, registered live belief rules, a shared crime/explanation IR, and a finite competing-explanation accusation grader. Generation varies `trace`, `cleanup` and `clockwork` structures and independently replays every declared route. Optional Z3 verifies recorded history and excludes competing explanations; local non-AI play uses the same finite rules. The original case retains its legacy rubric. See [the forensic model and testing contract](forensic-model.md) for exact scope, commands and limits.
 
 
+## The visible village (September 2026)
+
+`dist/ui.mjs` renders the map, scene, conversation, Talk/Evidence/Hints panel, Clue Board and opening from the session
+and the case tables only; see [visual-world.md](visual-world.md). Clue art is matched in `dist/art.mjs`; new art is made
+with `tools/art/generate.py` (Bedrock Stability, reviewed on contact sheets).
+
 ## Generated cases: premise, certification and play (September 2026)
 
 - **Premise deck** (`tools/refine-c/premise.py`): code draws the victim, culprit, four suspects, method, motive, scene and

@@ -211,3 +211,23 @@ test('Guards: a time the detective already said may be repeated; the constable m
   const p = u => ({plan: null, intent: 'answer', account: 'ask:night', utterance: u, claims: [], sources: [], trust: 'unchanged', belief: 'remember_only', engagement: 'continue', rationale: 'x'});
   assert.ok(validateCharacterProposal(t, p('A quarter past ten? If the vicar says so. I went to see Mr Voss about money, and Constable Bell can think what he likes.')).ok);
 });
+
+test('Name guard: a person named together with their own place is public knowledge', async () => {
+  const {validateCharacterProposal} = await import('../dist/character-turn.mjs');
+  const roster = [{name: 'Ada Finch', address: 'Mrs Finch', role: 'The innkeeper', homeName: 'The Rook & Lantern'}];
+  const t = {action: null, context: {player: {utterance: 'Whose is this flask?', presented: {clue: 'x', description: "A flask marked 'R & L', from the Rook & Lantern."}},
+    accounts: [{id: 'present:x:private', statement: 'I have not seen it before.', deceptive: false, flexible: true, claims: [], sources: []}],
+    character: {name: 'Silas Voss', roster, plans: [], history: []}}};
+  const p = u => ({plan: null, intent: 'answer', account: 'present:x:private', utterance: u, claims: [], sources: [], trust: 'unchanged', belief: 'remember_only', engagement: 'continue', rationale: 'x'});
+  assert.ok(validateCharacterProposal(t, p("I have not seen it before. R & L would be the Rook & Lantern, Mrs Finch's house.")).ok);
+});
+
+test('Name guard: naming a place in the reply itself does not license naming its keeper', async () => {
+  const {validateCharacterProposal} = await import('../dist/character-turn.mjs');
+  const roster = [{name: 'Ada Finch', address: 'Mrs Finch', role: 'The innkeeper', homeName: 'The Rook & Lantern'}];
+  const t = {action: null, context: {player: {utterance: 'Who took it?', presented: null},
+    accounts: [{id: 'ask:night', statement: 'I saw nothing.', deceptive: false, flexible: true, claims: [], sources: []}],
+    character: {name: 'Silas Voss', roster, plans: [], history: []}}};
+  const p = u => ({plan: null, intent: 'answer', account: 'ask:night', utterance: u, claims: [], sources: [], trust: 'unchanged', belief: 'remember_only', engagement: 'continue', rationale: 'x'});
+  assert.match(validateCharacterProposal(t, p('I saw nothing. Mrs Finch at the Rook & Lantern took it.')).reason, /wrong_or_new_name/);
+});

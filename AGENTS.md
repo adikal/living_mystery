@@ -62,7 +62,7 @@ The user's screenshots are on `~/Desktop` (names contain a narrow no-break space
 | UI | `dist/ui.mjs`, `dist/styles.css` |
 | Generation | `tools/refine-c/premise.py` (premise deck: who, how, why, where; rotation; seed checks), `tools/refine-c/refine.py` (harness, reviewer), `tools/refine-c/publish.py` (`enrich_case` pipeline + `gate`), `tools/refine-c/enrich.py` (answer, loose ends, everyday knowledge, moods, publish review), `server/generator_server.py` |
 | Cases | `dist/cases/generated/*.json` (shipped), `dist/cases/generated/live/` (generated on this machine, gitignored) |
-| Design | `docs/mystery-kernel.md`, `docs/architecture.md`, `docs/roadmap.md`, report in `docs/report/`, deck in `docs/deck/` |
+| Design | `docs/visual-world.md` (next: map, scenes, dialogue, inventory; free-form dialogue is never dropped), `docs/mystery-kernel.md`, `docs/architecture.md`, `docs/roadmap.md`, report in `docs/report/`, deck in `docs/deck/` |
 
 ## Testing
 
@@ -90,6 +90,6 @@ the proxy (`prepareCharacterTurn` → `proposeCharacterTurn` → `applyCharacter
 - **Motive = culprit ↔ victim.** Motive evidence must connect the culprit to the victim; publishing adds a linking clue if missing.
 - **Text written for play must not mention clues or lies** (`enrich.clue_nouns`); the culprit's mood never comes from their attitudes.
 - **Bedrock image calls throttle**: `tools/art/generate.py` runs them one at a time with backoff.
-- **UI conventions:** the notebook opens on People (the victim is shown greyed out); evidence found is boxed in the chat and added to the Evidence tab; toasts have a close button.
+- **UI layout** (docs/visual-world.md, "As built"): map and Look around (left); scene and conversation (middle); Talk, Evidence, Hints (right); Clue Board with every villager; Accuse in the top bar. Free-form dialogue must always stay available; drag and drop shows evidence (keyboard: Show buttons). A pressed-button transform must never move absolutely positioned pins (use `translate`).
 - **Generated cases use their own cast and places** (`caseTables(s)`), never the Last Bell's `PEOPLE`/`LOCATIONS` imports.
 - Browser caching is handled by `static_server.py`; do not serve `dist/` with `python -m http.server`.
