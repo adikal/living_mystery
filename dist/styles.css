@@ -652,3 +652,11 @@ dialog:has(.opening){max-width:min(920px,calc(100vw - 30px))}
 
 .bubble-row.recorded{max-width:92%}
 .bubble-row.recorded .journal-entry{margin:0;flex:1}
+/* case difficulty: pips plus a word (never colour alone) */
+.difficulty{margin-left:.5em;font-size:.8em;font-weight:600;letter-spacing:.04em;white-space:nowrap;color:var(--ink-soft,#5b5346)}
+.difficulty span{letter-spacing:.12em}
+.generate-choice{display:grid;grid-template-columns:repeat(3,1fr);gap:.6em;margin-bottom:.4em}
+.generate-choice button{font-size:.88rem;padding:.45em .6em;min-height:0;display:flex;flex-direction:column;align-items:center;gap:.1em;line-height:1.25}
+.generate-choice button small{font-size:.78rem;opacity:.8}
+.case-filter{display:flex;align-items:center;gap:.5em;margin:.2em 0 .7em;font-size:.9rem}
+.case-filter select{font:inherit;padding:.25em .5em}

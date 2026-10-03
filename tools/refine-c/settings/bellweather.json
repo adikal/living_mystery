@@ -131,7 +131,8 @@
    "address": "Miss Vale",
    "voice": "Composed, dry and exact; she chooses words like a woman choosing gloves. Polite to the point of chill with strangers, warmer once she respects you.",
    "public": "Edmund’s younger sister. She has run Vale Manor’s household for years and guards its privacy.",
-   "home": "manor"
+   "home": "manor",
+   "role_words": []
   },
   {
    "id": "rowan",
@@ -141,7 +142,11 @@
    "address": "Mr Pike",
    "voice": "A plain-spoken countryman: short, blunt, practical, with a gardener’s patience and the odd dour joke.",
    "public": "The manor’s groundskeeper. He lives among his glasshouses and says little to anyone.",
-   "home": "greenhouse"
+   "home": "greenhouse",
+   "role_words": [
+    "groundskeeper",
+    "gardener"
+   ]
   },
   {
    "id": "silas",
@@ -151,7 +156,10 @@
    "address": "Mr Voss",
    "voice": "Measured, formal and faintly amused; speaks in tidy clauses and likes a Latin tag. Never rambles.",
    "public": "A precise, courteous solicitor who keeps an office in the vestry and handles the affairs of half the parish.",
-   "home": "vestry"
+   "home": "vestry",
+   "role_words": [
+    "solicitor"
+   ]
   },
   {
    "id": "ada",
@@ -161,7 +169,11 @@
    "address": "Mrs Finch",
    "voice": "Warm, chatty and colloquial; calls people \"love\", runs on a little, and enjoys a bit of news more than she should.",
    "public": "Proprietor of the Rook & Lantern. She knows everyone’s habits and most of their business.",
-   "home": "inn"
+   "home": "inn",
+   "role_words": [
+    "innkeeper",
+    "landlady"
+   ]
   },
   {
    "id": "iris",
@@ -171,7 +183,10 @@
    "address": "Dr Marsh",
    "voice": "Clinical and direct, with brisk warmth underneath; says exactly what she observed and no more.",
    "public": "The village doctor. Methodical and direct; she is called whenever anyone in Bellweather is hurt or ill.",
-   "home": "surgery"
+   "home": "surgery",
+   "role_words": [
+    "doctor"
+   ]
   },
   {
    "id": "bell",
@@ -181,7 +196,10 @@
    "address": "Constable Bell",
    "voice": "A gruff country constable: terse, dry and matter-of-fact, with a soft spot he hides badly.",
    "public": "The village constable. He has secured the scene and asked you to investigate; he will hear an accusation when you can back it with evidence.",
-   "home": "square"
+   "home": "square",
+   "role_words": [
+    "constable"
+   ]
   },
   {
    "id": "edmund",
@@ -191,7 +209,10 @@
    "address": "Mr Vale",
    "voice": "Loud, confident and used to being obeyed; bluff good humour that turns cold when crossed.",
    "public": "Master of Vale Manor: a man of fixed habits, generous in public and hard in private.",
-   "home": "manor"
+   "home": "manor",
+   "role_words": [
+    "squire"
+   ]
   },
   {
    "id": "vicar",
@@ -201,7 +222,12 @@
    "address": "Mr Hale",
    "voice": "Gentle and rambling, with a scholar’s digressions and a surprising steel when conscience is touched.",
    "public": "Vicar of St. Alden’s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
-   "home": "vestry"
+   "home": "vestry",
+   "role_words": [
+    "vicar",
+    "rector",
+    "parson"
+   ]
   },
   {
    "id": "dora",
@@ -211,7 +237,10 @@
    "address": "Miss Pruett",
    "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people’s business.",
    "public": "The postmistress. Every letter, parcel and telegram in Bellweather passes over her counter, and she forgets nothing.",
-   "home": "post"
+   "home": "post",
+   "role_words": [
+    "postmistress"
+   ]
   },
   {
    "id": "jonah",
@@ -221,7 +250,12 @@
    "address": "Mr Reed",
    "voice": "Slow, weathered and wry; a river man who speaks in the present tense and weighs every word like a stone.",
    "public": "Keeper of the manor’s boathouse and ferryman when the river is up. He knows the water and keeps his own counsel.",
-   "home": "boathouse"
+   "home": "boathouse",
+   "role_words": [
+    "boatman",
+    "boathouse keeper",
+    "ferryman"
+   ]
   },
   {
    "id": "hugo",
@@ -231,17 +265,246 @@
    "address": "Mr Hugo",
    "voice": "Quick, flippant and charming, full of London slang; hides nerves behind jokes and talks a little too fast.",
    "public": "Edmund’s nephew, down from London by train. Charming, restless and plainly bored by the country.",
-   "home": "manor"
+   "home": "manor",
+   "role_words": [
+    "nephew"
+   ]
+  },
+  {
+   "id": "vera",
+   "name": "Vera Lacey",
+   "role": "A newcomer, lodging at the Rook",
+   "pronoun": "she",
+   "address": "Mrs Lacey",
+   "voice": "Low, amused and worldly: a London polish over something harder. Answers a question with a question and watches your face while you answer.",
+   "public": "A widow down from London three weeks ago, lodging in the Rook’s back bedroom. Says she is sketching old churches for a book, and asks a great many questions.",
+   "home": "inn",
+   "role_words": [
+    "newcomer",
+    "lodger",
+    "widow"
+   ]
   }
  ],
  "victim": "edmund",
  "investigator": "Constable Bell assists the detective",
+ "roles": {
+  "examiner": "iris",
+  "constable": "bell"
+ },
+ "day": {
+  "evening": 1080,
+  "morning": 1740,
+  "start": 1920
+ },
  "not_victim": [
-  "bell",
-  "iris"
+  "iris",
+  "bell"
  ],
  "not_culprit": [
-  "bell",
-  "iris"
+  "iris",
+  "bell"
+ ],
+ "objects": [
+  {
+   "id": "letter",
+   "label": "a handwritten letter"
+  },
+  {
+   "id": "note",
+   "label": "a scrap of notepaper"
+  },
+  {
+   "id": "key",
+   "label": "a door key"
+  },
+  {
+   "id": "glove",
+   "label": "a lady’s glove"
+  },
+  {
+   "id": "slate",
+   "label": "a chalk slate"
+  },
+  {
+   "id": "bottle",
+   "label": "a medicine bottle"
+  },
+  {
+   "id": "footprint",
+   "label": "a muddy boot print"
+  },
+  {
+   "id": "ledger",
+   "label": "an account ledger"
+  },
+  {
+   "id": "watch",
+   "label": "a pocket watch"
+  },
+  {
+   "id": "cloak",
+   "label": "a cloak or coat"
+  },
+  {
+   "id": "ticket",
+   "label": "a railway ticket"
+  },
+  {
+   "id": "receipt",
+   "label": "a paper receipt"
+  },
+  {
+   "id": "photo",
+   "label": "a framed photograph"
+  },
+  {
+   "id": "knife",
+   "label": "a pocket knife or blade"
+  },
+  {
+   "id": "tin",
+   "label": "a small tin"
+  },
+  {
+   "id": "basin",
+   "label": "a washbasin and jug"
+  },
+  {
+   "id": "lamp",
+   "label": "an oil lamp"
+  },
+  {
+   "id": "rope",
+   "label": "a coil of rope"
+  },
+  {
+   "id": "oar",
+   "label": "a rowing oar"
+  },
+  {
+   "id": "book",
+   "label": "a leather-bound book"
+  },
+  {
+   "id": "diary",
+   "label": "a diary"
+  },
+  {
+   "id": "button",
+   "label": "a coat button"
+  },
+  {
+   "id": "handkerchief",
+   "label": "a handkerchief"
+  },
+  {
+   "id": "candle",
+   "label": "a candle in a candlestick"
+  },
+  {
+   "id": "bag",
+   "label": "a doctor’s bag"
+  },
+  {
+   "id": "glass",
+   "label": "a drinking glass"
+  },
+  {
+   "id": "envelope",
+   "label": "a sealed envelope"
+  },
+  {
+   "id": "gun",
+   "label": "a revolver"
+  },
+  {
+   "id": "flowers",
+   "label": "a bunch of flowers"
+  },
+  {
+   "id": "register",
+   "label": "a parish register"
+  },
+  {
+   "id": "notes",
+   "label": "a doctor’s case notes"
+  },
+  {
+   "id": "coin",
+   "label": "a coin"
+  },
+  {
+   "id": "ashes",
+   "label": "a half-burnt paper"
+  },
+  {
+   "id": "telephone",
+   "label": "a telephone"
+  },
+  {
+   "id": "telegram",
+   "label": "a telegram"
+  },
+  {
+   "id": "cashbox",
+   "label": "a cash box or strongbox"
+  },
+  {
+   "id": "notebook",
+   "label": "a pocket notebook"
+  },
+  {
+   "id": "door",
+   "label": "a locked door"
+  },
+  {
+   "id": "hook",
+   "label": "an empty hook or peg"
+  },
+  {
+   "id": "sacking",
+   "label": "a bundle in sacking"
+  },
+  {
+   "id": "stairs",
+   "label": "a staircase or steps"
+  },
+  {
+   "id": "card",
+   "label": "a printed card or scorecard"
+  },
+  {
+   "id": "timetable",
+   "label": "a railway timetable"
+  },
+  {
+   "id": "suitcase",
+   "label": "a suitcase with luggage labels"
+  },
+  {
+   "id": "badge",
+   "label": "a military badge"
+  },
+  {
+   "id": "cigarette_case",
+   "label": "a cigarette case"
+  },
+  {
+   "id": "spectacles",
+   "label": "spectacles"
+  },
+  {
+   "id": "inkwell",
+   "label": "an inkwell and pen"
+  },
+  {
+   "id": "spade",
+   "label": "a garden spade"
+  },
+  {
+   "id": "matchbox",
+   "label": "a box of matches"
+  }
  ]
 }

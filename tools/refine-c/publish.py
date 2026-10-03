@@ -1,8 +1,9 @@
 """Publish generated Bellweather cases for the game: for each brief, take the deepest case that the JS kernel
 certifies (across every run), give it a stable id and title, and write dist/cases/generated/{id}.json + index.json."""
-import glob, json, os, subprocess, sys
+import glob, json, os, re, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import enrich
+import difficulty  # noqa: E402
 import threading
 SIGNS = threading.Lock()   # publish steps run in parallel; sign-list changes are serialised
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -29,7 +30,7 @@ def gate(case):
     import tempfile
     import case_oracle
     from refine import certify
-    py = certify(case)
+    py = certify(case, require_backing=True)
     with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as f:
         json.dump(case, f)
     try:
@@ -81,7 +82,7 @@ def add_questions(case, synopsis):
 
 SURFACE = """You write what each person in a 1920s English village mystery says when first asked "Where were you last
 night?". You are given their voice, what they actually did (their own true events), what they want, fear or hide, and
-whether they are the culprit. Write 1 to 3 sentences in their voice. Rules:
+whether they are the culprit. Write 1 to 3 sentences in their voice, about the evening and night only (up to when they slept), never this morning. Rules:
 - The culprit gives a false but vague account that hides the crime and does not prove anything.
 - An innocent gives a true but vague account that keeps their private secret hidden.
 - No clock times, no numbers, no named witnesses who could confirm it; nothing that would clear or convict anyone.
@@ -97,11 +98,14 @@ def add_surface_accounts(case):
     truth = next(h for h in q['candidates'] if h['id'] == q['truth'])['facts']['actor']
     people = {p['id']: p for p in case['people']}
     victim = enrich.victim_of(case)
-    todo = [p['id'] for p in case['people'] if p['id'] != victim and p['id'] not in have]
+    # only people the history gives an evening to: a summary of nothing would be a fact the case never recorded
+    morning = enrich.day(case, 'morning')
+    active = {q for e in case['events'] if e['start'] < morning for q in [e.get('agent'), *e.get('others', [])] if q}
+    todo = [p['id'] for p in case['people'] if p['id'] != victim and p['id'] not in have and p['id'] in active]
     if not todo:
         return 0
     items = [{'id': pid, 'name': people[pid]['name'], 'voice': people[pid].get('voice'), 'culprit': pid == truth,
-              'events': [e.get('summary') for e in case['events'] if pid == e.get('agent') or pid in e.get('others', [])],
+              'events': [e.get('summary') for e in case['events'] if (pid == e.get('agent') or pid in e.get('others', [])) and e['start'] < morning],
               'attitudes': [f"{a['mode']}: {a['content']}" for a in case['attitudes'] if a['agent'] == pid]} for pid in todo]
     out = llm_json(SURFACE, json.dumps(items), 2500, model=CRITIC_MODEL).get('accounts', {})
     n = 0
@@ -114,6 +118,71 @@ def add_surface_accounts(case):
     return n
 
 
+MORNING = """You write what each person in a 1920s English village mystery says when asked "What did you do this morning?".
+You are given their voice, what they actually did this morning (their own true events, each with its time in words),
+what they want, fear or hide, and whether they are the culprit. Write 1 to 3 sentences in their voice. Rules:
+- Speak ONLY of: where they were and when; finding the body or examining it, if they did; who fetched them or told them
+  of the death, if an event says so. Nothing else anyone did (no letters, wires, purchases or conversations), nothing
+  about the evening, nothing that is evidence, no cause of death, no opinions about anyone.
+- An innocent says only what is true; the times as given (in words, never digits).
+- The culprit gives a plausible account that leaves out anything they did in secret (it may be a cover story).
+- If 'previous_attempt' is given, it was judged untrue for the reason stated: write it again without that.
+Return {"accounts": {"<person id>": "<what they say>"}}."""
+
+
+def spoken_about(minute):
+    """A time as people say it: to the nearest five minutes ('about twenty to seven'), exact when it is."""
+    r = int(round(minute / 5.0) * 5)
+    return clock_words(r) if r == int(round(minute)) else 'about ' + clock_words(r)
+
+
+def add_morning_accounts(case, rounds=3):
+    """Each person's morning, worded from their own events between the morning and the investigation, like the evening
+    summary: claimless, backed by their own events, and checked against the true history. An innocent's account must come
+    out honest (rewritten once, else dropped); only the culprit may give a cover story."""
+    from refine import llm_json, CRITIC_MODEL
+    import re
+    people = {p['id']: p for p in case['people']}
+    victim, truth = enrich.victim_of(case), enrich.truth_actor(case)
+    morning, start = enrich.day(case, 'morning'), enrich.day(case, 'start')
+    crime = case['question']['crime']['event']
+    # what the writer may see: the person's own morning events that are not the source of any clue (the discovery and the
+    # examination always), so the account cannot reveal evidence it was never shown
+    sources = {x.get('source') for x in case['signs']}
+    own = lambda pid: sorted([e for e in case['events'] if (pid == e.get('agent') or pid in (e.get('others') or []))
+                              and morning <= e['start'] < start and e['id'] != crime
+                              and (e.get('type') in ('discovery', 'examination') or e['id'] not in sources)], key=lambda e: e['start'])
+    n, failed = 0, {}
+    for _ in range(rounds):
+        have = {x['speaker'] for x in case['signs'] if x.get('morning')}
+        todo = [pid for pid in people if pid != victim and pid not in have and own(pid)
+                and f's_morning_{pid}' not in case.get('morning_dropped', [])]
+        if not todo:
+            break
+        items = [{'id': pid, 'name': people[pid]['name'], 'voice': people[pid].get('voice'), 'culprit': pid == truth,
+                  'morning': [f"at {spoken_about(e['start'])}: {e.get('summary')}" for e in own(pid)],
+                  **({'previous_attempt': failed[pid]} if pid in failed else {}),
+                  # only the culprit needs to know what to hide
+                  'hides': [a['content'] for a in case['attitudes'] if a['agent'] == pid] if pid == truth else []} for pid in todo]
+        out = llm_json(MORNING, json.dumps(items), 2500, model=CRITIC_MODEL).get('accounts', {})
+        for pid in todo:
+            text = str(out.get(pid, '')).strip()
+            if text and not re.search(r'\d', text) and len(text.split()) <= 80:
+                with SIGNS: case['signs'].insert(0, {'id': f's_morning_{pid}', 'kind': 'testimony', 'speaker': pid, 'morning': True,
+                                                     'deceptive': pid == truth, 'title': f"{people[pid]['name']} on the morning",
+                                                     'text': text, 'ask': 'What did you do this morning?'})
+                n += 1
+        mark_surface_truth(case)
+        # an innocent's morning that is not honest is the wording's fault, not a lie with a reason: rewrite, then drop
+        bad = [x['id'] for x in case['signs'] if x.get('morning') and x['speaker'] != truth and x.get('surface_checked') == 'cover']
+        failed = {x['speaker']: {'text': x['text'], 'not_true_because': x.get('surface_why', '')} for x in case['signs'] if x['id'] in bad}
+        case['signs'] = [x for x in case['signs'] if x['id'] not in bad]
+        if _ == rounds - 1 and bad:
+            case.setdefault('morning_dropped', []).extend(bad)
+        n -= len(bad)
+    return n
+
+
 SHOW = """You write the detective's lines for a 1920s English village mystery. For each clue, write what the detective
 says aloud when showing it to someone: one or two natural sentences that name what it is and ask about it. Rules:
 - Do not read the clue out. Mention only what the detective can see or has read, in their own words.
@@ -122,12 +191,17 @@ says aloud when showing it to someone: one or two natural sentences that name wh
   true?"); for behaviour, it names the person behaving that way.
 - 'confront' is said TO that person: to the speaker of an account ("You told me you went straight home. Is that the
   whole of it?") or to the person whose behaviour it is. Write 'confront' only for accounts and behaviour.
+- 'to' and 'direct': if the clue concerns one particular person other than an account's speaker (the person an account
+  is about, or the owner of a belonging, letter or mark it names), 'to' is that person's id (from 'people') and 'direct' is
+  what the detective says TO them, addressing them as "you" ("Dr Marsh says you were at her surgery until ten. Is that
+  so?"). Otherwise 'to' is null and there is no 'direct'.
 - Add no facts that are not in the clue. At most 35 words each. End with a question mark.
-Return {"lines": {"<clue id>": {"show": "...", "confront": "..."}}}."""
+Return {"lines": {"<clue id>": {"show": "...", "confront": "...", "to": "<person id or null>", "direct": "..."}}}."""
 
 REACT = """You write how characters in a 1920s English village mystery react when the detective shows them a clue.
 Each item gives the character (voice, what they want, fear or hide, what they did that night), the clue, and how the
-character relates to it. Write their spoken reply: one to three sentences in their voice. Rules:
+character relates to it. Write their spoken reply: one to three sentences in their voice, spoken words only (first
+person, no narration or stage directions such as "she laughs"). Rules:
 - React to what the clue actually is, from the character's own position and knowledge.
 - If the clue contradicts something they told the detective, they concede it, giving their real reason if they have one.
 - The culprit never confesses; they deflect or minimise. An innocent keeps their private secret unless the clue exposes it.
@@ -161,20 +235,36 @@ def _digits_ok(text, allowed):
 def add_show_lines(case, _retry=True):
     import re
     from refine import llm_json, CRITIC_MODEL
-    todo = [x for x in case['signs'] if not x.get('show')]
+    todo = [x for x in case['signs'] if not x.get('show') or 'to' not in x or (x.get('to') and not x.get('direct'))]
     if not todo:
         return 0
     names = {p['id']: p['name'] for p in case['people']}
     items = [{'id': x['id'], 'kind': x['kind'], 'title': x.get('title'), 'text': x.get('text'), 'place': x.get('at'),
               'speaker': names.get(x.get('speaker')), 'about': names.get(x.get('about'))} for x in todo]
-    raw = llm_json(SHOW, json.dumps(items), 6000, model=CRITIC_MODEL)
+    raw = llm_json(SHOW, json.dumps({'people': names, 'clues': items}), 8000, model=CRITIC_MODEL)
     out = _as_map(raw.get('lines', raw.get('clues', {})))
     n = 0
     for x in todo:
         got = out.get(x['id']) or {}
         if isinstance(got, str):
             got = {'show': got}
+        if not got:
+            continue                  # no reply for this clue: try again on the next pass
+        # who the clue concerns: an account's subject is structural; for other clues the model names them
+        if x['kind'] == 'testimony':
+            subject = (x.get('claim') or {}).get('person')
+        else:   # the model names the person the clue concerns; review_publish drops the addressed line (and 'to') unless
+            #     the clue or the history supports it ("your ledger" only if the clue says it is theirs)
+            subject = x.get('about') or got.get('to')
+        if subject not in names or subject == x.get('speaker'):
+            subject = None
+        direct = str(got.get('direct') or '').strip()
+        x['to'] = subject
+        if subject and direct.endswith('?') and len(direct.split()) <= 40 and _digits_ok(direct, x.get('text', '')):
+            x['direct'] = direct; n += 1
         for key in ('show', 'confront'):
+            if x.get(key):
+                continue
             line = str(got.get(key) or '').strip()
             if key == 'confront' and x['kind'] not in ('behavior', 'testimony'):
                 continue
@@ -188,10 +278,10 @@ def add_show_lines(case, _retry=True):
     return n
 
 
-SURFACE_TRUTH = """For each person in a 1920s village mystery you get their evening account (what they tell the detective) and what
-they really did that evening. Decide whether the account is HONEST (true, even if vague or incomplete: leaving things out
+SURFACE_TRUTH = """For each account in a 1920s village mystery you get what a person tells the detective about their evening or their
+morning, and what they really did (their true events). Decide whether the account is HONEST (true, even if vague or incomplete: leaving things out
 is honest) or a COVER story (it states or clearly implies something false about where they were or what they did).
-Return {"verdicts": {"<id>": "honest" | "cover"}}."""
+Return {"verdicts": {"<id>": {"v": "honest" | "cover", "why": "<for a cover story: what in it is false>"}}}."""
 
 
 def mark_surface_truth(case):
@@ -199,16 +289,19 @@ def mark_surface_truth(case):
     from refine import llm_json, CRITIC_MODEL
     import enrich
     ta = enrich.truth_actor(case)
-    todo = [x for x in case['signs'] if x.get('surface') and 'surface_checked' not in x]
+    todo = [x for x in case['signs'] if (x.get('surface') or x.get('morning')) and 'surface_checked' not in x]
     if not todo:
         return 0
-    items = [{'id': x['speaker'], 'account': x['text'],
+    items = [{'id': x['id'], 'account': x['text'],
               'really': [e.get('summary') for e in case['events'] if x['speaker'] == e.get('agent') or x['speaker'] in e.get('others', [])]}
              for x in todo]
     out = _as_map(llm_json(SURFACE_TRUTH, json.dumps(items), 1500, model=CRITIC_MODEL).get('verdicts', {}))
     n = 0
     for x in todo:
-        v = str(out.get(x['speaker'], '')).lower()
+        got = out.get(x['id'], out.get(x['speaker'], ''))
+        v = str(got.get('v', '') if isinstance(got, dict) else got).lower()
+        if isinstance(got, dict) and got.get('why'):
+            x['surface_why'] = str(got['why'])[:300]
         if v not in ('honest', 'cover'):
             continue
         x['deceptive'] = x['speaker'] == ta or v == 'cover'
@@ -285,6 +378,9 @@ def involved_pairs(case):
         src = evs.get(x.get('source'))
         if src:
             who |= {src.get('agent'), *src.get('others', [])}
+        # the people the clue is about: its claim names them, or it is addressed to them
+        c = x.get('claim') or {}
+        who |= {c.get('person'), c.get('a'), c.get('b'), x.get('to')} - {None}
         if x['kind'] == 'behavior' and x.get('about'):
             who.add(x['about'])
         for d in x.get('defeats', []):
@@ -316,6 +412,9 @@ def add_reactions(case):
             r.append(f"took part in what produced it: {src.get('summary')}")
         if x['kind'] == 'behavior' and x.get('about') == pid:
             r.append('it describes their own behaviour')
+        c = x.get('claim') or {}
+        if pid in (c.get('person'), c.get('a'), c.get('b')) or x.get('to') == pid:
+            r.append('it is about them')
         for d in x.get('defeats', []):
             t = next((y for y in case['signs'] if y['id'] == d and y.get('speaker') == pid), None)
             if t:
@@ -391,6 +490,9 @@ def add_medical(case):
     q = case['question']
     crime = enrich.crime_event(case)
     victim = enrich.victim_of(case)
+    exam = next((e for e in case['events'] if e.get('type') == 'examination' and e.get('agent') == enrich.role(case, 'examiner')), None)
+    if exam is None:
+        raise ValueError('no examination event to word (generation must write it)')
     vname = next((p['name'] for p in case['people'] if p['id'] == victim), 'the deceased')
     vaddr = next((p.get('address') or p['name'] for p in case['people'] if p['id'] == victim), 'the body')
     w0, w1 = q['crime']['window']
@@ -428,14 +530,16 @@ def add_medical(case):
     with SIGNS:
         case['signs'][:] = [x for x in case['signs'] if not x.get('medical')]
     claim = {'kind': 'time', 'start': w0, 'end': w1}
-    doctor = 'iris' if any(p['id'] == 'iris' for p in case['people']) and victim != 'iris' else None
+    doctor = enrich.role(case, 'examiner')
+    doctor = doctor if doctor != victim else None
     SIGNS.acquire()
-    case['signs'].insert(0, {'id': 's_medical', 'kind': 'record', 'medical': True, 'medical_v': MEDICAL_V,
-                             'at': 'surgery' if doctor else q['crime']['place'],
+    home = next((p.get('home') for p in case['people'] if p['id'] == doctor), None)
+    case['signs'].insert(0, {'id': 's_medical', 'kind': 'record', 'medical': True, 'medical_v': MEDICAL_V, 'source': exam['id'],
+                             'at': home or q['crime']['place'],
                              'title': 'The doctor\u2019s examination notes', 'text': notes, 'claim': claim})
     if doctor:
-        case['signs'].insert(1, {'id': 's_medical_iris', 'kind': 'testimony', 'medical': True, 'medical_v': MEDICAL_V,
-                                 'speaker': doctor, 'claim': claim, 'title': 'Dr Marsh on the body', 'text': says,
+        case['signs'].insert(1, {'id': f's_medical_{doctor}', 'kind': 'testimony', 'medical': True, 'medical_v': MEDICAL_V,
+                                 'speaker': doctor, 'source': exam['id'], 'claim': claim, 'title': f"{next(p['address'] or p['name'] for p in case['people'] if p['id'] == doctor)} on the body", 'text': says,
                                  'ask': f"Doctor, what did you find when you examined {vaddr}?"})
     SIGNS.release()
     return 1
@@ -461,22 +565,40 @@ LIVE_BRIEFS = [
 ]
 
 
+def prune_people(case):
+    """People the true history never mentions have nothing true to say about the night, so they are not part of the
+    case (premise.involved, the same definition the generator's evening rule uses). Returns the ids removed."""
+    import premise
+    keep = premise.involved(case)
+    gone = [p['id'] for p in case['people'] if p['id'] not in keep]
+    case['people'] = [p for p in case['people'] if p['id'] not in gone]
+    return gone
+
+
 def enrich_case(case, log=print):
-    """Every publish-time step, in order; each only fills what is missing. Then review what was written against the
-    true history, repair once, and drop anything still faulty (the game falls back to templates)."""
+    """Publishing adds only WORDING to a certified case: the history is the only source of facts.
+    Questions, evening summaries (claimless, of the speaker's own events), the examination's notes and account (worded
+    from the examination event), the answer's method and motive, concessions, everyday facts, moods, show lines and
+    reactions. Then everything written is reviewed against the true history and faulty lines are dropped."""
     import concurrent.futures as cf
+    missing = __import__('premise').morning_errors(case)
+    if missing:
+        raise ValueError('the case has no morning to word: ' + '; '.join(missing))
+    removed = prune_people(case)                       # nobody the history never mentions is in the case
+    if removed:
+        log(f'  not in the history, so not in the case: {removed}')
     enrich.add_answer(case)                            # the examination wording depends on the method
-    enrich.add_motive_link(case)                       # the motive must connect the culprit to THIS victim
-    enrich.add_secret_clue(case)                       # and what the secret is must be discoverable in play
-    # independent steps, in parallel: each writes to its own part of the case
-    with cf.ThreadPoolExecutor(8) as ex:
-        for f in [ex.submit(fn, case) for fn in (add_surface_accounts, add_medical, add_concessions, enrich.add_knowledge,
-                                                  enrich.add_moods, enrich.add_loose_ends, add_show_lines)]:
+    enrich.add_accepted(case)                          # every answer the player's evidence fairly supports
+    with cf.ThreadPoolExecutor(7) as ex:               # independent: each writes to its own part of the case
+        for f in [ex.submit(fn, case) for fn in (add_surface_accounts, add_morning_accounts, add_medical, add_concessions, enrich.add_knowledge,
+                                                  enrich.add_moods, add_show_lines, enrich.add_art)]:
             f.result()
     with cf.ThreadPoolExecutor(3) as ex:               # these need the accounts written above
         for f in [ex.submit(mark_surface_truth, case), ex.submit(add_questions, case, case.get('synopsis', '')), ex.submit(add_reactions, case)]:
             f.result()
     add_show_lines(case)                               # lines for accounts added above
+    enrich.add_art(case)                               # pictures for any clue added above
+    enrich.add_unlock_groups(case)                     # leads that open together share one opening line
     for round_ in range(2):
         problems = enrich.review_publish(case)
         if problems:
@@ -497,7 +619,9 @@ def publish_live(case, brief_entry, stamp):
         case['answer'] = {'method': pr['method'], 'motive': pr['motive']}
         case['victim'] = pr['victim']
         title = str(case.get('title') or '').strip()[:60] or title
-        if any(n in title for n in {w for p in case['people'] for w in p['name'].split()}):
+        # a title must not name anyone (it would give a suspect away): whole words, not honorifics or articles
+        name_words = {w for p in case['people'] for w in p['name'].split()} - {'The', 'Reverend', 'Dr', 'Mr', 'Mrs', 'Miss', 'Constable'}
+        if set(re.findall(r"[A-Za-z]+", title)) & name_words:
             import premise as P
             where = P.at(place)
             title = 'Death at ' + (' '.join(w[:1].upper() + w[1:] if i else w for i, w in enumerate(where.split())) if where.startswith('the ') else where)
@@ -512,17 +636,22 @@ def publish_live(case, brief_entry, stamp):
     if not g['ok']:
         raise ValueError('the published case failed certification: ' + '; '.join(g['errors'][:3]))
     r = g['js']
+    case['difficulty'] = {**difficulty.rate(case), 'target': case.pop('difficulty_target', None)}
     json.dump(case, open(path, 'w'), indent=1)
     if pr:
         import premise as P
         P.remember(pr)
     idx_path = f'{LIVE}/index.json'
+    import fcntl
+    lock = open(f'{LIVE}/.index.lock', 'w')          # several generators may publish at once (tools/refine-c/batch.py)
+    fcntl.flock(lock, fcntl.LOCK_EX)
     index = json.load(open(idx_path)) if os.path.exists(idx_path) else []
     entry = {'id': case['id'], 'file': f"live/{case['id']}.json", 'title': title, 'solveDepth': r['solveDepth'],
              'blurb': f"{case['synopsis']} Depth {r['solveDepth']}, {len(case['signs'])} clues, {len(case['question']['candidates'])} suspects.",
-             'generated': stamp}
+             'generated': stamp, 'difficulty': {k: case['difficulty'][k] for k in ('level', 'score', 'target')}}
     index = [entry] + [e for e in index if e['id'] != case['id']]
     json.dump(index[:30], open(idx_path, 'w'), indent=1)
+    fcntl.flock(lock, fcntl.LOCK_UN)
     return entry, r
 
 
@@ -551,20 +680,15 @@ def js_certify_obj(case):
 
 
 CARRY_SIGN_KEYS = ('ask', 'show', 'confront', 'reactions', 'concede', 'surface_checked')
-CARRY_CASE_KEYS = ('answer', 'reviewed', 'loose_ends_checked', 'secret_checked', 'knowledge', 'moods', 'victim', 'premise')
+CARRY_CASE_KEYS = ('answer', 'reviewed', 'knowledge', 'moods', 'victim', 'premise')
 
 
 def carry_over(case, prev):
     """Keep what publishing already wrote for this exact case: added signs and per-sign lines."""
-    added = [x for x in prev['signs'] if (x.get('surface') or x.get('medical') or x.get('loose_end') or x.get('motive_link') or x.get('secret'))
+    added = [x for x in prev['signs'] if (x.get('surface') or x.get('morning') or x.get('medical'))
              and not any(y['id'] == x['id'] for y in case['signs'])]
     case['signs'] = added + case['signs']
-    for x in added:   # a linking clue's relation is part of the case's world facts
-        c = x.get('claim') or {}
-        if x.get('motive_link') and c.get('kind') == 'relation':
-            rel = {'a': c['a'], 'rel': c['rel'], 'b': c['b']}
-            if rel not in case.get('relations', []):
-                case.setdefault('relations', []).append(rel)
+
     old = {x['id']: x for x in prev['signs']}
     for x in case['signs']:
         o = old.get(x['id'], {})
@@ -605,10 +729,12 @@ def main():
                 index.append(next((e for e in json.load(open(f'{OUT}/index.json')) if e['id'] == case['id']), None))
             continue
         r = g['js']
+        case['difficulty'] = difficulty.rate(case)
         json.dump(case, open(prev, 'w'), indent=1)
         index.append({'id': case['id'], 'file': f'mk-{brief}.json', 'title': title,
                       'blurb': f"{blurb} Depth {r['solveDepth']}, {len(case['signs'])} clues, {len(case['question']['candidates'])} suspects.",
-                      'solveDepth': r['solveDepth'], 'source': os.path.relpath(f, ROOT)})
+                      'solveDepth': r['solveDepth'], 'source': os.path.relpath(f, ROOT),
+                      'difficulty': {k: case['difficulty'][k] for k in ('level', 'score')}})
         print(f"published mk-{brief}: depth {r['solveDepth']}, pillars {r['pillars']}, {len(case['signs'])} clues <- {os.path.relpath(f, ROOT)}")
     json.dump([e for e in index if e], open(f'{OUT}/index.json', 'w'), indent=1)
     print(f'{len(index)} cases in {os.path.relpath(OUT, ROOT)}/index.json')

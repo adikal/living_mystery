@@ -1,6 +1,15 @@
 # Roadmap: finish The Last Bell before generating mysteries
 
-## Latest (September 2026)
+## Latest (October 2026)
+
+The history is the only source of facts: every account is backed by the history, generation writes the morning (the
+discovery and the examination), everyone involved has an evening, and publishing adds only wording. Cases carry a
+computed difficulty and can be generated to one; the village has a twelfth person (Mrs Vera Lacey) and 50 clue pictures.
+`tools/e2e_dialogue.mjs` measures dialogue end to end (about 96% of replies by the AI in fresh cases). Next: a nudge
+when the player has nothing new to find, pictures for invented objects (docs/visual-world.md), fitting the difficulty
+model once enough plays are logged, and fewer blunt declines when a character has nothing to go on.
+
+## Earlier (September 2026)
 
 Generated cases are certified for motive, means and opportunity, checked independently by Z3, and varied by a premise
 deck. The visible village (map, scene, game-style dialogue, inventory, Clue Board, opening and tour) is built; next are

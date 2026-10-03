@@ -229,6 +229,22 @@ const sameArr = (x, y) => x.length === y.length && x.every((v, i) => v === y[i])
 /** Motive and means evidence for an actor: understood, true signs that establish rather than eliminate.
  *  motive: a relation claim whose subject is the actor (or a fact keyed 'motive');
  *  means: a possession or trait claim the actor satisfies. held (optional Set) limits to the player's evidence. */
+/** Why the speaker can give this account, from the case records alone (mirrors refine.account_backing), or null. */
+export function accountBacking(c, sign) {
+  const sp = sign.speaker, evs = Object.fromEntries(c.events.map(e => [e.id, e]));
+  const part = e => Boolean(e) && (e.agent === sp || arr(e.others).includes(sp));
+  if (part(evs[sign.source])) return 'source';
+  if (arr(c.attitudes).some(a => a.agent === sp && arr(sign.because).includes(a.id))) return 'because';
+  const x = claimOf(sign);
+  if (!x) return c.events.some(part) ? 'own_events' : null;
+  if (x.kind === 'place') {
+    if (x.person === sp) return 'self';
+    if (c.events.some(e => part(e) && e.place === x.place && e.start < x.end && e.end > x.start)) return 'witnessed';
+  }
+  return null;
+}
+export const unbackedAccounts = c => c.signs.filter(x => x.kind === 'testimony' && accountBacking(c, x) === null).map(x => x.id).sort();
+
 export function pillarSignsFor(c, A, actor, held = null) {
   const ppl = peopleOf(c), means = [];
   let motive = [];
@@ -248,7 +264,7 @@ export function pillarSignsFor(c, A, actor, held = null) {
 }
 export function pillarSigns(c, A) { return pillarSignsFor(c, A, actorOf(hypMap(c)[c.question.truth])); }
 
-export function certify(c, requirePillars = true) {
+export function certify(c, requirePillars = true, requireBacking = false) {
   const errs = [];
   const ids = ['people', 'objects', 'attitudes', 'events', 'signs', 'rules'].flatMap(k => arr(c[k]).map(x => x.id));
   const dup = [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))].sort();
@@ -362,8 +378,13 @@ export function certify(c, requirePillars = true) {
   if (requirePillars && !pil.motive.length) errs.push("no reachable, true evidence of the culprit's MOTIVE (a relation claim with a = the culprit)");
   if (requirePillars && !pil.means.length) errs.push("no reachable, true evidence of the culprit's MEANS (a possession or trait claim the culprit satisfies)");
   if (errs.length) return { ok: false, errors: errs, A };
+  const unbacked = unbackedAccounts(c);
+  if (requireBacking && unbacked.length) {
+    errs.push(`accounts not backed by the true history (an event the speaker took part in or saw, or something they knew): ${JSON.stringify(unbacked)}; add the event, the speaker to it, or a 'knows' attitude and cite it in 'because'`);
+    return { ok: false, errors: errs, A };
+  }
   const pillars = { opportunity: solve, means: pd('means'), motive: pd('motive') };
-  return { ok: true, A, solveDepth: solve, maxDepth: maxd, surface, threads, motive, means, pillars, pillarSigns: pil,
+  return { ok: true, A, solveDepth: solve, maxDepth: maxd, surface, threads, motive, means, pillars, pillarSigns: pil, unbacked,
            mmoDepth: Math.max(...Object.values(pillars).filter(v => v != null)),
            twist: !surface.includes(q.truth), key, herrings,
            falseSigns: Object.entries(A.truthval).filter(([, v]) => !v).map(([k]) => k).sort() };

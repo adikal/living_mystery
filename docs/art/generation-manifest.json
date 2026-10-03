@@ -438,16 +438,6 @@
    "review": "chosen from a contact sheet"
   },
   {
-   "id": "obj-letter",
-   "kind": "object",
-   "subject": "a folded handwritten letter with a broken red wax seal",
-   "prompt": "A single object on a plain muted slate-grey backdrop, centred, soft lamplight, no hands, no people. a folded handwritten letter with a broken red wax seal. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
-   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/folio.jpg, fidelity 0.35, candidate 1 of 3",
-   "output": "dist/assets/last-bell/obj-letter.jpg",
-   "packaging": "256 px JPEG q80",
-   "review": "chosen from a contact sheet"
-  },
-  {
    "id": "obj-watch",
    "kind": "object",
    "subject": "a brass pocket watch with a cracked glass",
@@ -478,52 +468,12 @@
    "review": "chosen from a contact sheet"
   },
   {
-   "id": "obj-slate",
-   "kind": "object",
-   "subject": "a small wooden-framed chalk slate with chalk tallies",
-   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a small wooden-framed chalk slate with chalk tallies. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
-   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
-   "output": "dist/assets/last-bell/obj-slate.jpg",
-   "packaging": "256 px JPEG q80",
-   "review": "chosen from a contact sheet"
-  },
-  {
    "id": "obj-ledger",
    "kind": "object",
    "subject": "a thick open account ledger with columns of ink figures",
    "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a thick open account ledger with columns of ink figures. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
    "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
    "output": "dist/assets/last-bell/obj-ledger.jpg",
-   "packaging": "256 px JPEG q80",
-   "review": "chosen from a contact sheet"
-  },
-  {
-   "id": "obj-ticket",
-   "kind": "object",
-   "subject": "a small printed railway ticket stub",
-   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a small printed railway ticket stub. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
-   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
-   "output": "dist/assets/last-bell/obj-ticket.jpg",
-   "packaging": "256 px JPEG q80",
-   "review": "chosen from a contact sheet"
-  },
-  {
-   "id": "obj-receipt",
-   "kind": "object",
-   "subject": "a half sheet of paper receipt with a pencilled sum",
-   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a half sheet of paper receipt with a pencilled sum. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
-   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
-   "output": "dist/assets/last-bell/obj-receipt.jpg",
-   "packaging": "256 px JPEG q80",
-   "review": "chosen from a contact sheet"
-  },
-  {
-   "id": "obj-photo",
-   "kind": "object",
-   "subject": "an old sepia photograph in a small frame",
-   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. an old sepia photograph in a small frame. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
-   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
-   "output": "dist/assets/last-bell/obj-photo.jpg",
    "packaging": "256 px JPEG q80",
    "review": "chosen from a contact sheet"
   },
@@ -568,36 +518,6 @@
    "review": "chosen from a contact sheet"
   },
   {
-   "id": "obj-button",
-   "kind": "object",
-   "subject": "a single brass cuff button",
-   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a single brass cuff button. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
-   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
-   "output": "dist/assets/last-bell/obj-button.jpg",
-   "packaging": "256 px JPEG q80",
-   "review": "chosen from a contact sheet"
-  },
-  {
-   "id": "obj-handkerchief",
-   "kind": "object",
-   "subject": "a white linen handkerchief with an embroidered initial",
-   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a white linen handkerchief with an embroidered initial. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
-   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
-   "output": "dist/assets/last-bell/obj-handkerchief.jpg",
-   "packaging": "256 px JPEG q80",
-   "review": "chosen from a contact sheet"
-  },
-  {
-   "id": "obj-envelope",
-   "kind": "object",
-   "subject": "a sealed cream envelope addressed in ink",
-   "prompt": "Still life of ONE single object only, isolated on plain parchment, centred, filling the frame, soft lamplight. No buildings, no street, no houses, no landscape, no people, no hands. a sealed cream envelope addressed in ink. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, generous margin.",
-   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/obj-bottle.jpg, fidelity 0.35, candidate 1 of 3",
-   "output": "dist/assets/last-bell/obj-envelope.jpg",
-   "packaging": "256 px JPEG q80",
-   "review": "chosen from a contact sheet"
-  },
-  {
    "id": "obj-register",
    "kind": "object",
    "subject": "a large open parish register",
@@ -626,6 +546,296 @@
    "output": "dist/assets/last-bell/detective.jpg",
    "packaging": "256 px JPEG q80",
    "review": "chosen from a contact sheet"
+  },
+  {
+   "id": "obj-slate",
+   "kind": "object",
+   "subject": "a small wooden-framed school slate lying flat, white chalk tally marks on it",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a small wooden-framed school slate lying flat, white chalk tally marks on it. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 2 of 3",
+   "output": "dist/assets/last-bell/obj-slate.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [6.0, 8.0, 7.0]: All show painted school slates with chalk marks; Candidate 2 best shows clear tally marks, Candidate 1 has musical notation instead, Candidate 3 has X marks rather than proper tallies."
+  },
+  {
+   "id": "obj-receipt",
+   "kind": "object",
+   "subject": "a small torn paper receipt with a pencilled sum and a scrawled signature, lying flat",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a small torn paper receipt with a pencilled sum and a scrawled signature, lying flat. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-receipt.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [4.0, 3.0, 7.0]: Candidate 3 best shows a small torn receipt as one clear object; 1 looks like torn letter, 2 has confusing composition."
+  },
+  {
+   "id": "obj-ticket",
+   "kind": "object",
+   "subject": "a small stiff pasteboard railway ticket with printing and a punched hole, lying flat",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a small stiff pasteboard railway ticket with printing and a punched hole, lying flat. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 2 of 3",
+   "output": "dist/assets/last-bell/obj-ticket.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [3.0, 8.0, 7.0]: Candidate 1 looks photographic; Candidates 2 and 3 show painted railway tickets with punched holes, with 2 being clearer and more recognizable at small size."
+  },
+  {
+   "id": "obj-letter",
+   "kind": "object",
+   "subject": "a folded handwritten letter on cream paper with a broken red wax seal, lying flat",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a folded handwritten letter on cream paper with a broken red wax seal, lying flat. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 2 of 3",
+   "output": "dist/assets/last-bell/obj-letter.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [4.0, 7.0, 4.0]: Candidate 2 best shows a folded letter lying flat; 1 and 3 show envelope backs with blood drips (wrong subject)."
+  },
+  {
+   "id": "obj-envelope",
+   "kind": "object",
+   "subject": "a sealed cream envelope with a red wax seal and a postage stamp, addressed in ink, lying flat",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a sealed cream envelope with a red wax seal and a postage stamp, addressed in ink, lying flat. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-envelope.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [9.0, 7.0, 6.0]: Candidate 1 shows the back with stamp and seal clearly; 2 shows back only; 3 shows back with addressing visible but less clear at small size."
+  },
+  {
+   "id": "obj-handkerchief",
+   "kind": "object",
+   "subject": "a neatly folded white linen handkerchief with lace edging and an embroidered initial in one corner",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a neatly folded white linen handkerchief with lace edging and an embroidered initial in one corner. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-handkerchief.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [7.0, 4.0, 9.0]: Candidate 3 best shows a white linen handkerchief with lace edging and embroidered initial; 1 has red border; 2 has multiple colored handkerchiefs stacked."
+  },
+  {
+   "id": "obj-button",
+   "kind": "object",
+   "subject": "one large brass coat button with an anchor emblem, close-up, filling the frame",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: one large brass coat button with an anchor emblem, close-up, filling the frame. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 2 of 3",
+   "output": "dist/assets/last-bell/obj-button.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [8.0, 9.0, 7.0]: All show brass button with anchor; #2 best painted look and fills frame well, #1 good but slightly photographic, #3 too small in frame."
+  },
+  {
+   "id": "obj-photo",
+   "kind": "object",
+   "subject": "an old sepia photograph of a couple in a small standing silver frame",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: an old sepia photograph of a couple in a small standing silver frame. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 2 of 3",
+   "output": "dist/assets/last-bell/obj-photo.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [3.0, 8.0, 4.0]: Candidate 2 best shows a sepia couple photo in silver standing frame; 1 shows backs (wrong), 3 has easel not standing frame."
+  },
+  {
+   "id": "obj-notes",
+   "kind": "object",
+   "subject": "a doctor\u2019s case notes: a few handwritten sheets clipped together, a fountain pen lying across them",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a doctor\u2019s case notes: a few handwritten sheets clipped together, a fountain pen lying across them. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 2 of 3",
+   "output": "dist/assets/last-bell/obj-notes.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [4.0, 8.0, 7.0]: Candidate 1 shows clipboard/folder (wrong); 2 best shows clipped papers with pen; 3 shows clipboard (less accurate for case notes)."
+  },
+  {
+   "id": "obj-telegram",
+   "kind": "object",
+   "subject": "a buff Post Office telegram form folded once, with pasted strips of printed tape",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a buff Post Office telegram form folded once, with pasted strips of printed tape. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-telegram.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [3.0, 2.0, 9.0]: Candidate 3 clearly shows a telegram form with pasted tape strips; 1 shows wrong document type; 2 shows an envelope."
+  },
+  {
+   "id": "obj-notebook",
+   "kind": "object",
+   "subject": "a small black pocket notebook held shut with an elastic band, a stub of pencil beside it",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a small black pocket notebook held shut with an elastic band, a stub of pencil beside it. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-notebook.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [8.0, 6.0, 4.0]: Candidate 1 best shows black notebook with elastic band and pencil stub beside it; 2 has ribbon not elastic band; 3 missing pencil entirely."
+  },
+  {
+   "id": "obj-cashbox",
+   "kind": "object",
+   "subject": "a small black japanned metal cash box with a brass handle, lid closed",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a small black japanned metal cash box with a brass handle, lid closed. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-cashbox.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [9.0, 9.0, 10.0]: All show black japanned cash boxes with brass handles, painted style; Candidate 3 is cleanest and most recognizable at small size."
+  },
+  {
+   "id": "obj-door",
+   "kind": "object",
+   "subject": "a heavy oak door seen close up, with an iron lock plate and a dark keyhole",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a heavy oak door seen close up, with an iron lock plate and a dark keyhole. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-door.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [4.0, 4.0, 7.0]: Candidates 1-2 show full doors with surroundings, not close-ups; Candidate 3 best shows door close-up with visible lock plate and keyhole."
+  },
+  {
+   "id": "obj-hook",
+   "kind": "object",
+   "subject": "an empty iron hook on a whitewashed wall, a pale outline on the wall where something used to hang",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: an empty iron hook on a whitewashed wall, a pale outline on the wall where something used to hang. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-hook.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [3.0, 5.0, 8.0]: Candidate 1 shows multiple hooks (wrong), 2 looks photographic, 3 shows single iron hook on whitewashed wall with pale outline as intended."
+  },
+  {
+   "id": "obj-sacking",
+   "kind": "object",
+   "subject": "a lumpy bundle wrapped in rough hessian sacking and tied with twine",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a lumpy bundle wrapped in rough hessian sacking and tied with twine. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-sacking.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [10.0, 9.0, 8.0]: All show hessian bundles with twine; Candidate 1 is most clearly lumpy and recognizable, 2 is similar but slightly less lumpy, 3 is too tall/cylindrical."
+  },
+  {
+   "id": "obj-stairs",
+   "kind": "object",
+   "subject": "the foot of a narrow wooden staircase with worn treads, seen from below",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: the foot of a narrow wooden staircase with worn treads, seen from below. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 2 of 3",
+   "output": "dist/assets/last-bell/obj-stairs.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [4.0, 8.0, 3.0]: Candidate 2 best shows foot of narrow stairs from below; 1 shows side view; 3 shows full staircase not foot from below."
+  },
+  {
+   "id": "obj-card",
+   "kind": "object",
+   "subject": "a small printed scoring card with pencilled tallies in its columns, lying flat",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a small printed scoring card with pencilled tallies in its columns, lying flat. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-card.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [8.0, 3.0, 6.0]: Candidate 1 shows a single scoring card with pencilled tallies, painted style; 2 has extra objects (scroll); 3 lacks visible pencilled tallies."
+  },
+  {
+   "id": "obj-timetable",
+   "kind": "object",
+   "subject": "a printed railway timetable sheet pinned to a small wooden board",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a printed railway timetable sheet pinned to a small wooden board. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-timetable.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [8.0, 8.0, 9.0]: All three show railway timetables on wooden boards with painted style; Candidate 3 scores highest with clearest 'Timetable Sheet' header and most recognizable period-appropriate presentation."
+  },
+  {
+   "id": "obj-suitcase",
+   "kind": "object",
+   "subject": "a battered leather travelling suitcase with brass catches and old paper luggage labels",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a battered leather travelling suitcase with brass catches and old paper luggage labels. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-suitcase.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [9.0, 9.0, 7.0]: All show vintage suitcases with brass catches and labels; 1 & 2 are clearer leather cases, 3 has odd two-tone coloring."
+  },
+  {
+   "id": "obj-cigarette-case",
+   "kind": "object",
+   "subject": "a slim engraved silver cigarette case, closed",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a slim engraved silver cigarette case, closed. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-cigarette-case.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [8.0, 4.0, 4.0]: Candidate 1 shows correct closed cigarette case with engraving, painted style; 2 and 3 appear photographic not painted."
+  },
+  {
+   "id": "obj-spectacles",
+   "kind": "object",
+   "subject": "a pair of round wire-rimmed spectacles, folded",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a pair of round wire-rimmed spectacles, folded. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-spectacles.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [3.0, 3.0, 8.0]: First two are photographs; third is painted/illustrated and shows folded round wire-rimmed spectacles clearly."
+  },
+  {
+   "id": "obj-inkwell",
+   "kind": "object",
+   "subject": "a glass inkwell and a dip pen standing on an ink-stained blotter",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a glass inkwell and a dip pen standing on an ink-stained blotter. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-inkwell.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [6.0, 8.0, 9.0]: All show inkwell and pen painted style; Candidate 3 best shows unified subject on blotter, Candidate 2 good but pen in inkwell, Candidate 1 has distracting ornate base."
+  },
+  {
+   "id": "obj-spade",
+   "kind": "object",
+   "subject": "a garden spade with a worn wooden handle, clods of earth on the blade",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a garden spade with a worn wooden handle, clods of earth on the blade. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-spade.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [6.0, 4.0, 8.0]: Candidate 1 has D-grip handle (not typical spade); Candidate 2 looks photographic; Candidate 3 best shows painted garden spade with worn wooden handle and earth."
+  },
+  {
+   "id": "vera",
+   "kind": "portrait",
+   "subject": "Mrs Vera Lacey, a handsome, self-possessed widow of about forty, dark bobbed hair touched with grey, arched brows and a knowing half-smile, a plum cloche hat and a fur-collared travelling coat, pearl earrings",
+   "prompt": "Head and shoulders portrait, centred, eyes at 38 percent height, head about half the width, plain muted slate backdrop with soft vignette. Mrs Vera Lacey, a handsome, self-possessed widow of about forty, dark bobbed hair touched with grey, arched brows and a knowing half-smile, a plum cloche hat and a fur-collared travelling coat, pearl earrings. Hand painted gouache and ink illustration, subdued jewel colours, warm lamplight and cool slate shadows, clear silhouettes, inviting mysterious English village atmosphere, 1932. Square, full bleed, no frame.",
+   "source": "Stability Style Guide (us.stability.stable-image-style-guide-v1:0), style reference dist/assets/last-bell/clara.jpg, fidelity 0.35, candidate 2 of 3",
+   "output": "dist/assets/last-bell/vera.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [7.0, 8.0, 8.0]: All show painted 1930s woman with dark bobbed hair, cloche hat, and period clothing; candidates 2-3 better capture the plum/purple tones and knowing expression."
+  },
+  {
+   "id": "obj-telephone",
+   "kind": "object",
+   "subject": "an old black upright desk telephone of the 1920s, a tall stem with a mouthpiece, its earpiece hanging on a cord",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: an old black upright desk telephone of the 1920s, a tall stem with a mouthpiece, its earpiece hanging on a cord. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-telephone.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [9.0, 3.0, 8.0]: Candidate 1 shows correct 1920s upright phone, painted style; Candidate 2 looks photographic; Candidate 3 correct but slightly less clear at small size."
+  },
+  {
+   "id": "obj-badge",
+   "kind": "object",
+   "subject": "one small brass regimental badge on its own, a crown above a wreath, close-up (only the badge, no cap)",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: one small brass regimental badge on its own, a crown above a wreath, close-up (only the badge, no cap). Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-badge.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [3.0, 4.0, 8.0]: Candidates 1-2 look too photographic; Candidate 3 shows a single brass badge with crown and wreath in painted style."
+  },
+  {
+   "id": "obj-coin",
+   "kind": "object",
+   "subject": "a painted study of one worn silver coin with a king\u2019s profile, seen from above, flat brushwork",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a painted study of one worn silver coin with a king\u2019s profile, seen from above, flat brushwork. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-coin.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [7.0, 6.0, 4.0]: All show silver coins with royal profiles, but 1 is clearest; 2 too detailed/3D; 3 too small and appears photographic rather than painted."
+  },
+  {
+   "id": "obj-matchbox",
+   "kind": "object",
+   "subject": "a small open matchbox of the 1930s with a few red-tipped matches spilling out",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a small open matchbox of the 1930s with a few red-tipped matches spilling out. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-matchbox.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [10.0, 4.0, 10.0]: Candidates 1 and 3 show open matchboxes with spilling matches, painted style; Candidate 2 shows matches standing upright, not spilling out."
+  },
+  {
+   "id": "obj-ashes",
+   "kind": "object",
+   "subject": "a single sheet of old paper lying flat, its edges blackened and crumbling brown, a dark scorched hole in one corner, on bare parchment",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a single sheet of old paper lying flat, its edges blackened and crumbling brown, a dark scorched hole in one corner, on bare parchment. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 2 of 3",
+   "output": "dist/assets/last-bell/obj-ashes.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [3.0, 9.0, 4.0]: Candidate 2 best shows a single burnt paper with scorched hole; 1 shows two sheets; 3 has confusing layered papers."
   }
  ]
 }

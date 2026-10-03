@@ -60,7 +60,16 @@
     "b": "greenhouse",
     "minutes": 6
    }
-  ]
+  ],
+  "roles": {
+   "examiner": "iris",
+   "constable": "bell"
+  },
+  "day": {
+   "evening": 1080,
+   "morning": 1740,
+   "start": 1920
+  }
  },
  "rules": [
   {
@@ -535,6 +544,18 @@
    "because": [
     "a_clara_doubt"
    ]
+  },
+  {
+   "id": "a_iris_knew_s_loose_iris_s_clara_leave",
+   "agent": "iris",
+   "mode": "knows",
+   "content": "Dr Marsh knew what Clara's note said because Clara's leave-note was delivered to her at the surgery to authorize the examination of Edmund's body."
+  },
+  {
+   "id": "a_bell_finds",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "Raise the alarm on finding the body."
   }
  ],
  "events": [
@@ -700,7 +721,7 @@
   },
   {
    "id": "e_iris_exam",
-   "type": "examine",
+   "type": "examination",
    "agent": "iris",
    "others": [],
    "place": "inn",
@@ -864,6 +885,17 @@
    "end": 1935,
    "causedBy": "a_clara_leave",
    "summary": "Clara writes and signs a short note giving the investigator leave to see Edmund's body."
+  },
+  {
+   "id": "e_discovery",
+   "type": "discovery",
+   "agent": "bell",
+   "others": [],
+   "place": "inn",
+   "start": 1330,
+   "end": 1335,
+   "causedBy": "a_bell_finds",
+   "summary": "Arthur Bell finds Edmund Vale dead and sends for the doctor."
   }
  ],
  "signs": [
@@ -883,7 +915,9 @@
    "show": "The doctor's notes say Edmund Vale was poisoned through a drink, with convulsions, and place his death between 21:25 and 21:45 last night. Does that match what you know?",
    "reactions": {
     "silas": "A grim finding, Inspector, but it tells you only how the man died, not who was near him. I was at my vestry office with my lamp lit, as anyone passing would have seen. I quarrelled with Edmund over accounts, yes \u2014 I've not hidden that \u2014 but a quarrel is not poison."
-   }
+   },
+   "source": "e_iris_exam",
+   "to": null
   },
   {
    "id": "s_medical_iris",
@@ -900,7 +934,9 @@
    "text": "Death occurred between twenty-five past nine and quarter to ten, poor man \u2014 a poison taken by mouth, and it took him quickly, by the look of it. There's no mark of violence on him, so whatever he swallowed did its cruel work fast.",
    "ask": "Doctor, what did you find when you examined Edmund?",
    "show": "Dr Marsh says Edmund Vale died from a poison taken by mouth, sometime between twenty-five past nine and quarter to ten last night. Does that match what you saw?",
-   "confront": "You told me Edmund Vale died from a poison taken by mouth, sometime between twenty-five past nine and quarter to ten last night. Is that the whole of it?"
+   "confront": "You told me Edmund Vale died from a poison taken by mouth, sometime between twenty-five past nine and quarter to ten last night. Is that the whole of it?",
+   "source": "e_iris_exam",
+   "to": null
   },
   {
    "id": "s_surface_bell",
@@ -913,7 +949,8 @@
    "ask": "Where were you last night?",
    "confront": "You told me you did your usual round, saw the vestry lit, and later found the parlour locked proper. Is that the whole of it?",
    "show": "Constable Bell says he did his usual churchyard round, saw the vestry window lit, and later found the back parlour locked proper after fetching Mr Vale's body. Does that match what you know?",
-   "surface_checked": "honest"
+   "surface_checked": "honest",
+   "to": null
   },
   {
    "id": "s_surface_iris",
@@ -926,7 +963,8 @@
    "ask": "Where were you last night?",
    "confront": "You told me you kept surgery, saw to a hand at the greenhouse, then were called to the inn before locking up. Is that the whole of it?",
    "show": "Dr Marsh says she kept her usual evening surgery, saw to a hand injury at the greenhouse, was called to the inn for Mr Vale, then went back and locked up as usual. Does that sound right to you?",
-   "surface_checked": "honest"
+   "surface_checked": "honest",
+   "to": null
   },
   {
    "id": "s_surface_ada",
@@ -939,7 +977,8 @@
    "deceptive": true,
    "confront": "You told me you were run off your feet serving, then locked up and went to bed. Is that the whole of it?",
    "show": "Mrs Finch says she was busy serving in the taproom all evening, then locked up and went straight to bed. Do you know if that's true?",
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "to": null
   },
   {
    "id": "s_surface_silas",
@@ -952,7 +991,8 @@
    "deceptive": true,
    "confront": "You told me you dined out, then worked late at your desk in the vestry office. Is that the whole of it?",
    "show": "Mr Voss says he dined out, then returned to his vestry office and worked late at his desk by lamplight. Do you know if that's true?",
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "to": null
   },
   {
    "id": "s_surface_rowan",
@@ -965,7 +1005,8 @@
    "deceptive": false,
    "confront": "You told me you were reglazing frames, cut your hand, had it seen to, and stayed at the greenhouse the whole while. Is that the whole of it?",
    "show": "Mr Pike says he was reglazing frames at the greenhouse, cut his hand on a pane, had it seen to, then tidied the glass and stayed put the whole while. Do you know if that's true?",
-   "surface_checked": "honest"
+   "surface_checked": "honest",
+   "to": null
   },
   {
    "id": "s_surface_clara",
@@ -978,7 +1019,8 @@
    "deceptive": true,
    "confront": "You told me you were seeing to the household books after dinner and then retired. Is that the whole of it?",
    "show": "Miss Vale says she was at the manor going over the household books after dinner, then retired for the night. Do you know if that's true?",
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "to": null
   },
   {
    "id": "s_iris_rowan",
@@ -987,7 +1029,6 @@
    "text": "After my last patient I went straight up to Mr Pike at the greenhouse. His left palm was laid open by glass. I stitched and bandaged it. He sat at the bench the whole time, and I was with him until I was fetched to the inn for Mr Vale. I'd left my watch behind, so I can't give you the hours.",
    "at": "surgery",
    "speaker": "iris",
-   "because": [],
    "claim": {
     "kind": "place",
     "person": "rowan",
@@ -1013,7 +1054,9 @@
    },
    "concede": {
     "s_surgery_slate": "Ah \u2014 the slate. Yes, that would have been quarter past nine when I went up, and I stayed with him until quarter past ten, when I was fetched to the inn; I only said I couldn't give you the hours because I'd left my watch, not to muddy the matter."
-   }
+   },
+   "to": "rowan",
+   "direct": "Dr Marsh says she went straight to you at the greenhouse and stitched your left palm after it was laid open by glass. Is that so?"
   },
   {
    "id": "s_glass",
@@ -1034,7 +1077,8 @@
    "reactions": {
     "ada": "Oh, that's his glass right enough, I put it down cellar myself so no wagging tongues would start over the taproom brandy. I never touched what was in it, mind \u2014 I only wanted it out of sight till things settled. If there's poison in there, it's none of my doing, I swear it on the inn's good name.",
     "silas": "That is unfortunate, but it proves nothing beyond what the doctor already told you \u2014 the glass sat unwashed in a cellar overnight. I poured Mr Vale no drink and mixed him nothing. You will need more than dregs to hang a man."
-   }
+   },
+   "to": null
   },
   {
    "id": "s_ring",
@@ -1046,7 +1090,8 @@
     "s_bell_key"
    ],
    "unlock": "Constable Bell walks you to the Rook & Lantern and unlocks the back parlour with his key.",
-   "show": "There's a dried, sticky ring on the parlour table beside Mr Vale's chair where a glass must have stood, yet no glass can be found anywhere in the room - what happened to it?"
+   "show": "There's a dried, sticky ring on the parlour table beside Mr Vale's chair where a glass must have stood, yet no glass can be found anywhere in the room - what happened to it?",
+   "to": null
   },
   {
    "id": "s_bell_vestry",
@@ -1071,7 +1116,9 @@
    "confront": "You told me you saw Mr Voss at his papers in the vestry the whole time you walked the churchyard, from twenty past nine till near twenty to ten. Is that the whole of it?",
    "reactions": {
     "silas": "Just so. I kept to my papers, and the constable's round confirms it \u2014 as I told you, I never left the vestry that evening."
-   }
+   },
+   "to": "silas",
+   "direct": "Constable Bell says your hat and coat were by your desk and you were at your papers while he walked the churchyard. Is that so?"
   },
   {
    "id": "s_ada_parlour",
@@ -1080,7 +1127,6 @@
    "text": "Mr Voss came in about twenty to nine and never ordered a drop. He and Mr Vale went at it in the parlour till near half past nine. Mr Vale came out for more brandy, and Mr Voss was still sat in there. He went out the side door a bit after. Twenty to ten, I'd say.",
    "at": "inn",
    "speaker": "ada",
-   "because": [],
    "requires": [
     "s_glass"
    ],
@@ -1102,7 +1148,9 @@
     "silas": "Mrs Finch is mistaken, or has muddled her evening. I do not deny Edmund and I exchanged words over the accounts, but I returned directly to the vestry and worked, as Bell will attest.",
     "bell": "Aye, well. I told it as I saw it \u2014 lamp lit, hat and coat by the desk, and I took that for him at his papers. If Mrs Finch had him in the parlour till near half past nine, then I were wrong about the lamp meaning aught. I'll not argue with what she saw plain."
    },
-   "show": "Mrs Finch says Mr Voss arrived without ordering a drink and argued with Mr Vale in the back parlour until about half past nine, leaving by the side door near twenty to ten. Does that match what you know?"
+   "show": "Mrs Finch says Mr Voss arrived without ordering a drink and argued with Mr Vale in the back parlour until about half past nine, leaving by the side door near twenty to ten. Does that match what you know?",
+   "to": "silas",
+   "direct": "Mrs Finch says you argued with Mr Vale in the parlour until half past nine and were still seated there when he fetched more brandy, before you left by the side door around twenty to ten. Is that so?"
   },
   {
    "id": "s_edmund_notes",
@@ -1142,7 +1190,9 @@
    "confront": "You keep the study locked and brushed off my question about it, glancing twice at your locked writing box. What is it you're not telling me?",
    "reactions": {
     "clara": "I locked the study because Edmund's papers are not for idle eyes, not because I have anything to hide from you. The writing box holds nothing but what I've already given you notice of \u2014 his notes on the accounts."
-   }
+   },
+   "to": "clara",
+   "direct": "You keep your brother's study locked and brushed off my question about it, while glancing twice at your own locked writing box. Can you explain that?"
   },
   {
    "id": "s_surgery_slate",
@@ -1158,7 +1208,9 @@
    "show": "This slate by the surgery door notes you left for the greenhouse to see Mr Pike's cut hand, but the hour is smeared away and there's a broken chalk end on the step - can you explain that?",
    "reactions": {
     "iris": "Yes, that's my slate and my hand, though the chalk failed me on the hour \u2014 I was in too much haste over Mr Pike's hand to mind it. I can't give you the exact time from that smear, only that I left as soon as I was sent for."
-   }
+   },
+   "to": "rowan",
+   "direct": "Dr Marsh's slate says she left to see to your cut hand, but the hour is smeared out and there's a snapped chalk end on the step. Can you tell me what time that really was?"
   },
   {
    "id": "s_bell_key",
@@ -1167,7 +1219,6 @@
    "text": "Locked the inn's back parlour myself last night, once the doctor was done. Key's in my pocket. Wasn't opening it for gossip. Arched like that, though... that's no fit. Nobody's been in. I'll walk you over and open it.",
    "at": "square",
    "speaker": "bell",
-   "because": [],
    "source": "e_bell_seal",
    "requires": [
     "s_body"
@@ -1175,7 +1226,8 @@
    "unlock": "When you describe the state of the body to Constable Bell, he stops treating the death as a fit and agrees to open the parlour he sealed.",
    "ask": "Constable Bell, what can you tell me about the key?",
    "show": "Constable Bell says he locked the inn's back parlour himself once the doctor was done, and he's certain nobody's been in since, though he thought the door's arched fitting looked wrong. Do you know anything about that?",
-   "confront": "You told me you locked the back parlour yourself and that nobody's been in since. What did you mean about the arched fitting not being right?"
+   "confront": "You told me you locked the back parlour yourself and that nobody's been in since. What did you mean about the arched fitting not being right?",
+   "to": null
   },
   {
    "id": "s_daybook",
@@ -1191,7 +1243,9 @@
    "show": "The surgery day-book shows Dr Marsh was called away to the greenhouse at nine for R. Pike's cut hand, with no entries after that, and her wristwatch was left lying beside it. Does that match your understanding of her movements?",
    "reactions": {
     "iris": "That's my day-book, kept as I always keep it, and those entries are accurate as far as they go. I set my watch beside it when I wrote them and put it back on when I returned \u2014 nothing after that concerns the greenhouse call."
-   }
+   },
+   "to": "iris",
+   "direct": "Your day-book stops after you record being sent to the greenhouse at nine for Mr Pike's cut, with your watch left lying beside it. Can you explain the gap after that?"
   },
   {
    "id": "s_body",
@@ -1211,7 +1265,8 @@
    "show": "Mr Vale's body shows a stiffly arched back, clenched fists, a fixed grin, and heels scuffed raw as if they'd drummed against the floor - can you help me understand what caused this?",
    "reactions": {
     "bell": "Aye, I laid him there myself, off the handcart. Didn't much like the look of him then, and I like it less now \u2014 that arching and the grin weren't natural for a seizure, to my mind. Best the doctor makes sense of it, that's not my trade."
-   }
+   },
+   "to": null
   },
   {
    "id": "s_ada_green",
@@ -1236,7 +1291,9 @@
    "confront": "Mrs Finch says she saw you hurrying across the inn yard around twenty to ten, hatless, in your green coat. What were you doing there at that hour?",
    "reactions": {
     "rowan": "Weren't me. I was up at the greenhouse the whole time, hand cut open, doctor stitching me. Ask her yourself."
-   }
+   },
+   "to": "rowan",
+   "direct": "Mrs Finch says she saw you hurrying across the inn yard about twenty to ten, no hat, in your green coat. Is that so?"
   },
   {
    "id": "s_bell_fit",
@@ -1251,7 +1308,8 @@
    "source": "e_body_carried",
    "ask": "Constable Bell, what did you observe about Mr Vale's death?",
    "show": "Constable Bell says he took it for a fit, that Mr Vale collapsed in the inn parlour before the doctor arrived, and that he carried him to the surgery's back room himself. Does that match what you saw?",
-   "confront": "You told me you thought it was a fit, that Mr Vale collapsed in the inn parlour, and that you carried him to the surgery's back room yourself. Is that truly the end of it?"
+   "confront": "You told me you thought it was a fit, that Mr Vale collapsed in the inn parlour, and that you carried him to the surgery's back room yourself. Is that truly the end of it?",
+   "to": null
   },
   {
    "id": "s_clara_leave",
@@ -1267,7 +1325,9 @@
    "show": "This note on Vale Manor paper, signed by you, asks Dr Marsh to let the bearer see your brother, and the ink looks quite fresh - can you tell me about it?",
    "reactions": {
     "clara": "Yes, that's my hand and my leave. See him, if it helps you find what happened \u2014 he never had a seizure in his life, whatever anyone says."
-   }
+   },
+   "to": "clara",
+   "direct": "You wrote this note asking Dr Marsh to let the bearer see your brother, and the ink is still fresh. Can you tell me more about it?"
   },
   {
    "id": "s_loose_rowan_s_surgery_slate",
@@ -1281,7 +1341,11 @@
    "title": "Rowan Pike on the surgery door slate",
    "text": "That's just where Dr Marsh chalked she'd gone to see to my hand at the greenhouse. I keep glazing tools out there and a pane caught me, nothing more to it.",
    "ask": "This slate mentions your cut hand, Mr Pike - do you know anything about it?",
-   "deceptive": false
+   "deceptive": false,
+   "source": "e_treat",
+   "to": null,
+   "show": "Mr Pike says the surgery slate was just Dr Marsh noting she'd gone to see to his cut hand at the greenhouse, from a pane that caught him while glazing. Does that match what you know?",
+   "confront": "You told me the slate was simply Dr Marsh noting she'd gone to tend your cut hand at the greenhouse, from a pane that caught you glazing. Is that the whole of it?"
   },
   {
    "id": "s_loose_iris_s_clara_leave",
@@ -1295,7 +1359,13 @@
    "title": "Dr Iris Marsh on miss vale's note",
    "text": "She sent it round so whoever was asking could be let in to see him properly, that's all - I keep such notes with the day-book once they've served their purpose.",
    "ask": "Miss Vale wrote this note allowing someone to see her brother's body - do you know why it came to you?",
-   "deceptive": false
+   "deceptive": false,
+   "because": [
+    "a_iris_knew_s_loose_iris_s_clara_leave"
+   ],
+   "to": null,
+   "show": "Dr Marsh says Miss Vale's note was sent so whoever was asking could be let in to see Mr Vale properly, and that she keeps such notes with the day-book afterward. Does that match what you understood?",
+   "confront": "You told me Miss Vale's note was meant to let the bearer in to see Mr Vale properly, and that you keep such notes with the day-book. Is that the whole of it?"
   }
  ],
  "id": "mk-bw-inn",
@@ -1303,13 +1373,22 @@
  "synopsis": "Edmund Vale collapsed and died in the back parlour of the Rook & Lantern.",
  "answer": {
   "method": "poison",
-  "motive": "money"
+  "motive": "money",
+  "methods": [
+   "poison"
+  ],
+  "motives": [
+   "money"
+  ],
+  "accepted_v": 1
  },
  "reviewed": [
   "s_ada_green|confront",
+  "s_ada_green|direct",
   "s_ada_green|reactions|rowan",
   "s_ada_green|show",
   "s_ada_parlour|confront",
+  "s_ada_parlour|direct",
   "s_ada_parlour|reactions|bell",
   "s_ada_parlour|reactions|silas",
   "s_bell_fit|confront",
@@ -1317,15 +1396,19 @@
   "s_bell_key|confront",
   "s_bell_key|show",
   "s_bell_vestry|confront",
+  "s_bell_vestry|direct",
   "s_bell_vestry|reactions|silas",
   "s_bell_vestry|show",
   "s_body|reactions|bell",
   "s_body|show",
+  "s_clara_leave|direct",
   "s_clara_leave|reactions|clara",
   "s_clara_leave|show",
   "s_clara_study|confront",
+  "s_clara_study|direct",
   "s_clara_study|reactions|clara",
   "s_clara_study|show",
+  "s_daybook|direct",
   "s_daybook|reactions|iris",
   "s_daybook|show",
   "s_edmund_notes|reactions|clara",
@@ -1336,6 +1419,7 @@
   "s_glass|show",
   "s_iris_rowan|concede|s_surgery_slate",
   "s_iris_rowan|confront",
+  "s_iris_rowan|direct",
   "s_iris_rowan|reactions|ada",
   "s_iris_rowan|reactions|rowan",
   "s_iris_rowan|reactions|silas",
@@ -1367,6 +1451,7 @@
   "s_surface_silas|confront",
   "s_surface_silas|show",
   "s_surface_silas|text",
+  "s_surgery_slate|direct",
   "s_surgery_slate|reactions|iris",
   "s_surgery_slate|show"
  ],
@@ -1402,5 +1487,18 @@
   "iris": "Weary and tight-lipped, guarding her patients' privacy and keeping a firm watch over who comes near the cold room.",
   "bell": "Steady and a touch officious, satisfied he's got everything properly locked up and in order."
  },
- "secret_checked": true
+ "secret_checked": true,
+ "difficulty": {
+  "v": 1,
+  "score": 10.75,
+  "level": "hard",
+  "features": {
+   "depth": 7,
+   "lies_on_path": 2,
+   "lies_other": 0,
+   "herrings_aimed": 1,
+   "herrings_other": 0,
+   "lenient_motives": 0
+  }
+ }
 }

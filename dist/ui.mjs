@@ -70,7 +70,7 @@ function artifactArt(id,kind='artifact-art'){
   if(!CASE.kernel)return session.world.caseId?'':artImage(ART.artifacts[id],kind);
   const c=CLUES[id];if(!c)return '';
   const who=['testimony','behavior'].includes(c.raw)?(c.speaker??c.about):null;   // accounts and behaviour: the person
-  return artImage(who&&ART.people[who]?ART.people[who]:clueArt(c.title,c.raw),`${kind}${who?' clue-person-art':''}`)||`<span class="${kind} art-placeholder" aria-hidden="true">${c.raw==='behavior'?'👁':'✦'}</span>`;
+  return artImage(who&&ART.people[who]?ART.people[who]:clueArt(c.title,c.raw,c.art),`${kind}${who?' clue-person-art':''}`)||`<span class="${kind} art-placeholder" aria-hidden="true">${c.raw==='behavior'?'👁':'✦'}</span>`;
 }
 function actorName(id){return PEOPLE[id]?.name??(id==='player'?'You':id==='world'?'World':'Simulation');}
 function placeName(id){return LOCATIONS[id]?.name??(id==='transit'?'In transit':id==='drawer'?'Vestry · deed drawer':id==='silas'?'Carried by Silas':id??'—');}
@@ -156,7 +156,7 @@ async function runCharacter(person,text,action=null){
       if(!['verified','not_needed'].includes(checked.status)){healthCache=null;persist();if(checked.status!=='cancelled')toast(`${checked.reason??'Turn deferred'}. Disable World Director Z3 checks (or run the Z3 service on :8788) to continue.`);return;}
       if(!useDirector){target.world=candidate.world;target.events=candidate.events;}
     }
-    if(!applied.cancelled){characterDraft='';if($('#character-question'))$('#character-question').value='';healthCache=null;persist();if(result.proposal?.engagement==='end')chat=null;if(applied.fallback)toast(`Used the scripted line: ${fallbackReason(result.audit)}.`,{ms:12000});setTimeout(scheduleAutonomy,0);}
+    if(!applied.cancelled){characterDraft='';if($('#character-question'))$('#character-question').value='';healthCache=null;persist();if(result.proposal?.engagement==='end')chat=null;if(applied.fallback&&!['rejected','disabled'].includes(result.audit?.reason)&&result.audit?.context?.accounts?.length)toast(`Used the scripted line: ${fallbackReason(result.audit)}.`,{ms:12000});setTimeout(scheduleAutonomy,0);}
   }catch(error){if(epoch===characterEpoch)toast(`The character turn was not applied: ${error.message}`);}
   finally{if(epoch===characterEpoch){characterBusy=false;characterController=null;characterPending=null;directorPending=false;renderVoiceResult();}}
 }
@@ -338,7 +338,7 @@ const dialogueTopics={bell:[['case','What makes a convincing case?'],['night','C
 function topicsFor(id){if(CASE.topics)return CASE.topicsFor?.[id]??CASE.topics;return session.world.caseId?[['night','What is your account of last night?'],['accounts','What can you tell me about the estate dispute?'],['sightings','What have you observed today?']]:dialogueTopics[id];}
 function conversation(v){const p=PEOPLE[chat];if(!v.evidence.some(e=>e.clue===chosenClue))chosenClue=v.evidence[0]?.clue??null;
   // free text always comes first; the questions are shortcuts beside it
-  return `<div class="dlg-choices"><div class="dialogue-options chips" aria-label="Suggested questions">${[...topicsFor(chat),...followupOptions(session,chat)].map(([topic,label])=>{const done=actionDone({type:'ask',person:chat,topic});return `<button class="text-action chip ${done?'action-done':''}" data-do="ask" data-person="${chat}" data-topic="${topic}"><span>${label}${doneLabel(done)}</span><span>3 min</span></button>`;}).join('')}</div>${v.evidence.length&&CASE.kernel?`<p class="drag-hint">To show ${esc(p.address??p.name)} something, drag an evidence card or an object from Look around onto the conversation.</p>`:v.evidence.length?`<div class="present-controls"><label for="present-clue">Show evidence · 4 min <small class="meta">or drag an evidence card onto a face</small></label><select id="present-clue">${v.evidence.map(e=>`<option value="${e.clue}" ${e.clue===chosenClue?'selected':''}>${e.title}</option>`).join('')}</select>${chat==='clara'&&['letter','record'].includes(chosenClue)?`<div class="two-actions">${presentButton('clara','private','Offer discretion')}${presentButton('clara','press','Threaten exposure')}</div>`:`${presentButton(chat,'private','Present & discuss')}`}</div>`:'<p class="meta">Discover evidence to present it in conversation.</p>'}</div>`;}
+  return `<div class="dlg-choices"><div class="dialogue-options chips" aria-label="Suggested questions">${[...topicsFor(chat),...followupOptions(session,chat)].map(([topic,label])=>{const done=actionDone({type:'ask',person:chat,topic});return `<button class="text-action chip ${done?'action-done':''}" data-do="ask" data-person="${chat}" data-topic="${topic}"${characterBusy?' disabled aria-disabled="true"':''}><span>${label}${doneLabel(done)}</span><span>3 min</span></button>`;}).join('')}</div>${v.evidence.length&&CASE.kernel?`<p class="drag-hint">To show ${esc(p.address??p.name)} something, drag a card from “Evidence” or an object from “Look around” onto the conversation.</p>`:v.evidence.length?`<div class="present-controls"><label for="present-clue">Show evidence · 4 min <small class="meta">or drag a card from “Evidence” onto a face</small></label><select id="present-clue">${v.evidence.map(e=>`<option value="${e.clue}" ${e.clue===chosenClue?'selected':''}>${e.title}</option>`).join('')}</select>${chat==='clara'&&['letter','record'].includes(chosenClue)?`<div class="two-actions">${presentButton('clara','private','Offer discretion')}${presentButton('clara','press','Threaten exposure')}</div>`:`${presentButton(chat,'private','Present & discuss')}`}</div>`:'<p class="meta">Discover evidence to present it in conversation.</p>'}</div>`;}
 
 const humanLabel=v=>LOCATIONS[v]?.name??PEOPLE[v]?.name??String(v).replaceAll('_',' ');
 // The board's night: the case's own span (generated cases) or the Last Bell's authored one.
@@ -416,7 +416,7 @@ function profileCard(id,compact=false){
 // The whole investigation so far, oldest first: every conversation and discovery in one place.
 function historySection(){const all=playerView(session).transcript;if(!all.length)return '';
   return `<details class="board-history" data-open-key="board-history"><summary>The investigation so far <span class="meta">${all.length} entries · oldest first</span></summary><div class="board-history-list">${all.map(journalEntry).join('')}</div></details>`;}
-function victimChip(){const id=CASE.victimId??'edmund';return `<span class="cast-chip victim" title="${esc(CASE.victimPublic??'')}">${artImage(ART.people[id],'chip-art')}<span>${esc(CASE.victim??'Edmund Vale')} · deceased</span></span>`;}
+function victimChip(){const id=CASE.victimId;return `<span class="cast-chip victim" title="${esc(CASE.victimPublic??'')}">${artImage(ART.people[id],'chip-art')}<span>${esc(CASE.victim??'Edmund Vale')} · deceased</span></span>`;}
 function reasoning(){
   const claims=playerClaims(session);
   const suspects=caseTables(session).SUSPECTS??SUSPECTS,others=Object.keys(PEOPLE).filter(id=>!suspects.includes(id));
@@ -636,10 +636,27 @@ async function listCases(){
   const [live,shipped]=await Promise.all([read('cases/generated/live/index.json'),read('cases/generated/index.json')]);
   return [...live.map(c=>({...c,live:true})),...shipped];
 }
+// Difficulty: a level computed from the certified case (tools/refine-c/difficulty.py). Pips and a word, never colour alone.
+const DIFFICULTY={easy:['●○○','Easy'],medium:['●●○','Medium'],hard:['●●●','Hard']};
+const GEN_TIME={easy:'~5 min',medium:'~10 min',hard:'~25 min'};
+function difficultyBadge(d){const l=DIFFICULTY[d?.level];return l?` <span class="difficulty ${d.level}" title="Difficulty: ${l[1]} (score ${d.score})"><span aria-hidden="true">${l[0]}</span> ${l[1]}</span>`:'';}
+// The case list, filtered by difficulty (the filter survives reopening the menu).
+let caseFilter='all',caseItems=[],caseItem=null;
+function caseListHTML(cases,item){
+  caseItems=cases;caseItem=item;
+  const shown=cases.filter(c=>caseFilter==='all'||c.difficulty?.level===caseFilter);
+  return shown.map(item).join('')||`<p class="meta">${cases.length?'No cases at this difficulty yet. Generate one above.':'No generated cases yet.'}</p>`;
+}
 async function chooseCaseModal(){
-  const cases=await listCases();
-  const item=c=>`<button class="soft-button case-choice" data-do="start-generated" data-file="${esc(c.file)}"><span class="case-title"><strong>${esc(c.title)}</strong>${c.live?' <span class="meta">· generated here</span>':''}</span><small>${esc(c.blurb||'')}</small></button>`;
-  openModal(`<h2>Choose a case</h2><p>Generate a new mystery, or play one that was generated before. Every case is written by the generator and certified before you play it: every clue can be reached, exactly one suspect fits all the evidence, and the obvious reading is wrong. Starting a case replaces your current investigation, so export it first if you want to keep it.</p><button class="soft-button" data-do="export">Export current investigation</button><div class="menu-actions">${genJob?.status==='running'?`<button class="primary" data-do="show-generation">⏳ Generating “${esc(genJob.title)}” — show progress</button>`:'<button class="primary" data-do="generate-new">✨ Generate a new deep case</button>'}</div><h3 class="case-list-head">Play a generated case</h3><div class="menu-actions case-list">${cases.map(item).join('')||'<p class="meta">No generated cases yet.</p>'}</div><h3 class="case-list-head">The original</h3><div class="menu-actions">${CASE_OPTIONS.slice(0,1).map(c=>`<button class="soft-button" data-do="start-case" data-id="${c.id}">${esc(c.title)}</button>`).join('')}</div>`,'Choose a case');
+  const cases=(await listCases()).sort((a,b)=>(a.difficulty?.score??99)-(b.difficulty?.score??99));
+  const item=c=>`<button class="soft-button case-choice" data-do="start-generated" data-file="${esc(c.file)}"><span class="case-title"><strong>${esc(c.title)}</strong>${difficultyBadge(c.difficulty)}${c.live?' <span class="meta">· generated here</span>':''}</span><small>${esc(c.blurb||'')}</small></button>`;
+  openModal(`<h2>Choose a case</h2><p>Generate a new mystery, or play one that was generated before. Every case is written by the generator and certified before you play it: every clue can be reached and exactly one suspect fits all the evidence. Harder cases hide the answer deeper, behind lies you must see through and behaviour meant to mislead. Starting a case replaces your current investigation, so export it first if you want to keep it.</p><button class="soft-button" data-do="export">Export current investigation</button><div class="menu-actions">${genJob?.status==='running'?`<button class="primary" data-do="show-generation">⏳ Generating “${esc(genJob.title)}” — show progress</button>`:`<h3 class="case-list-head" id="gen-head">Generate a new case</h3><div class="generate-choice" role="group" aria-labelledby="gen-head">${Object.entries(DIFFICULTY).map(([k,[pips,word]])=>`<button class="soft-button" data-do="generate-new" data-level="${k}"><span aria-hidden="true">${pips}</span> ${word}<small>${GEN_TIME[k]}</small></button>`).join('')}</div>`}</div><h3 class="case-list-head">Play a generated case</h3><label class="case-filter">Difficulty <select id="case-filter">${[['all','All'],...Object.entries(DIFFICULTY).map(([k,[pips,w]])=>[k,`${pips} ${w}`])].map(([k,l])=>`<option value="${k}"${caseFilter===k?' selected':''}>${l}</option>`).join('')}</select></label><div class="menu-actions case-list" id="case-list">${caseListHTML(cases,item)}</div><h3 class="case-list-head">The original</h3><div class="menu-actions">${CASE_OPTIONS.slice(0,1).map(c=>`<button class="soft-button" data-do="start-case" data-id="${c.id}">${esc(c.title)}</button>`).join('')}</div>`,'Choose a case');
+}
+// Restart a generated case: find its file in the case lists by id (a case keeps its id when it moves between them).
+async function restartKernelCase(id){
+  const entry=(await listCases()).find(c=>c.id===id);
+  if(entry){startKernelCase(entry.file);return;}
+  toast('That case is no longer in the case list. Choose another from Menu \u2192 Choose a case.');
 }
 async function startKernelCase(file){
   try{const r=await fetch(`cases/generated/${file}`,{cache:'no-store'});if(!r.ok)throw Error(`HTTP ${r.status}`);const records=await r.json();const id=registerKernelCase(records);startGenerated(id,records.title);}
@@ -658,7 +675,7 @@ function firstStep(){
   return LOCATIONS[at]?at:Object.keys(LOCATIONS)[0];
 }
 function openingModal(page=0){
-  openingPage=page;const pages=4,victim=CASE.victimId??'edmund',vname=CASE.victim??'Edmund Vale',vfirst=CASE.victimFirst??vname.split(' ')[0];
+  openingPage=page;const pages=4,victim=CASE.victimId,vname=CASE.victim??'the deceased',vfirst=CASE.victimFirst??vname.split(' ')[0];
   const dots=`<div class="opening-dots">${Array.from({length:pages},(_,i)=>`<button class="${i===page?'on':''}" data-do="opening-page" data-id="${i}" aria-label="Page ${i+1}"></button>`).join('')}</div>`;
   const nav=`<div class="opening-nav">${page?`<button class="soft-button" data-do="opening-page" data-id="${page-1}">← Back</button>`:'<span></span>'}${dots}${page<pages-1?`<button class="primary" data-do="opening-page" data-id="${page+1}">Next →</button>`:`<span class="two-actions"><button class="soft-button" data-do="opening-tour">Take the tour</button><button class="primary" data-do="opening-done">Begin</button></span>`}</div>`;
   const cast=Object.keys(PEOPLE).map(id=>{const p=PEOPLE[id],sh=p.sheet||{};return `<article class="cast-card">${artImage(ART.people[id],'cast-art')||avatar(id,'large')}<div><strong>${esc(p.name)}</strong><small>${esc(p.role)}</small><p>${esc(p.public??'')}</p>${sh.temperament?`<p class="meta">${esc(sh.temperament)}${sh.pet_subject?` · talks about ${esc(sh.pet_subject)}`:''}</p>`:''}</div></article>`;}).join('');
@@ -701,18 +718,19 @@ function startGenerated(id,title){
   const fresh=createSession(17,id);
   cancelCharacter();stopReplay();session=fresh;resetRealized();boardNotes={};healthCache=null;cursor=null;chat=null;chosenClue=null;reasonSuspect=null;detailPanel=null;missedRevealed=false;sceneTransition=null;actionGroup='inspect';mode='game';persist();$('#modal')?.close?.();render();toast(`Case ready: ${title}`);maybeOpening();
 }
-async function genFetch(path,method='GET'){
-  const r=await fetch(`${GENERATOR}${path}`,{method,cache:'no-store',headers:method==='POST'?{'X-Living-Mystery':'generator-v1'}:{}});
+async function genFetch(path,method='GET',payload=null){
+  const r=await fetch(`${GENERATOR}${path}`,{method,cache:'no-store',headers:method==='POST'?{'X-Living-Mystery':'generator-v1',...(payload?{'content-type':'application/json'}:{})}:{},...(payload?{body:JSON.stringify(payload)}:{})});
   const body=await r.json().catch(()=>({}));
   if(!r.ok&&r.status!==409)throw Error(body.error||`HTTP ${r.status}`);
   return {status:r.status,body};
 }
-async function startGeneration(){
-  genError=null;
+let genLevel='medium';
+async function startGeneration(level=genLevel){
+  genError=null;genLevel=level;
   try{
-    const {status,body}=await genFetch('/jobs','POST');
+    const {status,body}=await genFetch('/jobs','POST',{difficulty:level});
     if(status===409)toast('A case is already being generated — showing its progress.');
-    genJob=body;genEvents=[];genNext=0;dlog('generation_start',{job:body?.id,title:body?.title,httpStatus:status});
+    genJob=body;genEvents=[];genNext=0;dlog('generation_start',{job:body?.id,title:body?.title,difficulty:level,httpStatus:status});
   }catch(e){dlog('generation_error',{error:String(e.message)});genJob=null;genError='The case generator is not running. Start it with: .venv/bin/python server/generator_server.py';}
   renderGeneration();if(genJob)pollGeneration();
 }
@@ -945,7 +963,7 @@ document.addEventListener('click',event=>{const b=event.target.closest('[data-do
     case 'start-generated':startKernelCase(b.dataset.file);break;
     case 'choose-case':chooseCaseModal();break;
     case 'start-case':{const fresh=createSession(17,id);cancelCharacter();stopReplay();session=fresh;resetRealized();boardNotes={};healthCache=null;cursor=null;chat=null;chosenClue=null;reasonSuspect=null;detailPanel=null;missedRevealed=false;sceneTransition=null;actionGroup='inspect';mode='game';persist();$('#modal').close();render();maybeOpening();break;}
-    case 'generate-new':startGeneration();break;
+    case 'generate-new':startGeneration(b.dataset.level||genLevel);break;
     case 'cancel-generation':cancelGeneration();break;
     case 'hint-more':hintState.level++;dlog('hint',{level:hintState.level,key:hintState.key});render();break;
     case 'flag-issue':flagIssueModal();break;
@@ -958,7 +976,7 @@ document.addEventListener('click',event=>{const b=event.target.closest('[data-do
     case 'export':exportFile();break;
     case 'import':$('#import-file').click();break;
     case 'restart-confirm':openModal(`<div class="eyebrow gold">RESTART THE LAST BELL</div><h2>Return to the beginning?</h2><p>Your current investigation will be replaced on this device. Export it first if you want to keep its history. This remains the same authored case.</p><div class="menu-actions"><button class="soft-button" data-do="export">Export current investigation</button><button class="primary" data-do="restart">Restart from 08:00</button></div>`,'Restart this investigation');break;
-    case 'restart':if(String(session.world.caseId).startsWith('mk-')){const id=session.world.caseId;$('#modal').close();startKernelCase(id.startsWith('mk-live-')?`live/${id}.json`:`${id}.json`);break;}missedRevealed=false;detailPanel=null;sceneTransition=null;actionGroup='inspect';session=createSession(session.seed,session.world.caseId??'last-bell');healthCache=null;cursor=null;chat=null;resetRealized();boardNotes={};reasonSuspect=null;stopReplay();persist();$('#modal').close();render();toast('A new morning in Bellweather.');break;
+    case 'restart':if(String(session.world.caseId).startsWith('mk-')){const id=session.world.caseId;$('#modal').close();restartKernelCase(id);break;}missedRevealed=false;detailPanel=null;sceneTransition=null;actionGroup='inspect';session=createSession(session.seed,session.world.caseId??'last-bell');healthCache=null;cursor=null;chat=null;resetRealized();boardNotes={};reasonSuspect=null;stopReplay();persist();$('#modal').close();render();toast('A new morning in Bellweather.');break;
     case 'close-detail':detailPanel=null;render();break;
     case 'reveal-missed':missedRevealed=true;render();break;
     case 'hide-missed':missedRevealed=false;detailPanel=null;render();break;
@@ -979,7 +997,7 @@ document.addEventListener('click',event=>{const b=event.target.closest('[data-do
 document.addEventListener('keydown',event=>{if(event.target?.id==='character-question'&&event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();$('#character-form')?.requestSubmit?.();}});
 document.addEventListener('submit',event=>{event.preventDefault();if(event.target.id==='character-form'){characterDraft=$('#character-question').value;if(chat&&characterDraft.trim())runCharacter(chat,characterDraft);}else if(event.target.id==='command-form'){const input=$('#command');if(input.value.trim())act(parseCommand(input.value,session));$('#command')?.focus();}else if(event.target.id==='note-form'){const val=$('#note').value;if(val.trim())act({type:'note',text:val});}else if(event.target.id==='llm-form'){const m=$('#modal');const endpoint=(m.querySelector('[name=endpoint]')?.value||'').trim();const reasoning=!!m.querySelector('[name=reasoning]')?.checked;const enabled=reasoning;setLlmConfig({endpoint,enabled,reasoning});cancelCharacter();stopRealizing();const active=llmActive();m.close();render();toast(active?'AI character reasoning enabled.':enabled?'Saved — but add a valid proxy URL (http://…) to turn it on.':'Scripted mode enabled. Responses are immediate; saved dialogue is retained.');}else if(event.target.id==='issue-form'){const note=$('#issue-note')?.value??'';$('#modal').close();flagIssue(note);
   }else if(event.target.id==='accusation-form'){const f=new FormData(event.target);$('#modal').close();submitAccusation({type:'accuse',suspect:f.get('suspect'),method:f.get('method'),motive:f.get('motive'),evidence:f.getAll('evidence')});}});
-document.addEventListener('change',event=>{const el=event.target;if(el.id==='world-perspective'){perspective=el.value;detailPanel=null;render();}else if(el.id==='present-clue'){chosenClue=el.value;render();}else if(el.id==='character-select'){person=el.value;render();}else if(el.id==='actor-filter'){actorFilter=el.value;render();}else if(el.id==='type-filter'){typeFilter=el.value;render();}else if(el.id==='clock-filter'){includeClock=el.checked;render();}else if(el.id==='import-file'&&el.files[0]){const file=el.files[0];if(file.size>20_000_000){toast('Choose a save smaller than 20 MB.');return;}file.text().then(text=>{const imported=importDialogueSave(text);session=imported.session;boardNotes=imported.boardNotes;reasonSuspect=null;missedRevealed=false;detailPanel=null;sceneTransition=null;actionGroup='inspect';healthCache=null;cursor=null;chat=null;resetRealized();for(const [id,r]of imported.audit){dialogueAudit.set(id,r);realized.set(id,`${actorName(eventById(id).actor)}\n"${r.text}"`);}stopReplay();persist();$('#modal').close();render();toast('Saved investigation restored, with its full history.');}).catch(err=>toast(`Could not import: ${err.message}`));el.value='';}});
+document.addEventListener('change',event=>{const el=event.target;if(el.id==='case-filter'){caseFilter=el.value;const list=$('#case-list');if(list&&caseItem)list.innerHTML=caseListHTML(caseItems,caseItem);return;}if(el.id==='world-perspective'){perspective=el.value;detailPanel=null;render();}else if(el.id==='present-clue'){chosenClue=el.value;render();}else if(el.id==='character-select'){person=el.value;render();}else if(el.id==='actor-filter'){actorFilter=el.value;render();}else if(el.id==='type-filter'){typeFilter=el.value;render();}else if(el.id==='clock-filter'){includeClock=el.checked;render();}else if(el.id==='import-file'&&el.files[0]){const file=el.files[0];if(file.size>20_000_000){toast('Choose a save smaller than 20 MB.');return;}file.text().then(text=>{const imported=importDialogueSave(text);session=imported.session;boardNotes=imported.boardNotes;reasonSuspect=null;missedRevealed=false;detailPanel=null;sceneTransition=null;actionGroup='inspect';healthCache=null;cursor=null;chat=null;resetRealized();for(const [id,r]of imported.audit){dialogueAudit.set(id,r);realized.set(id,`${actorName(eventById(id).actor)}\n"${r.text}"`);}stopReplay();persist();$('#modal').close();render();toast('Saved investigation restored, with its full history.');}).catch(err=>toast(`Could not import: ${err.message}`));el.value='';}});
 document.addEventListener('input',event=>{if(event.target.id==='character-question'){characterDraft=event.target.value;}else if(event.target.id==='history-search'){query=event.target.value;$('#event-list').innerHTML=eventList();followTraceCursor();}else if(event.target.id==='history-cursor'){
   // Keep the range input itself mounted while dragging so pointer capture is preserved.
   stopReplay();cursor=Number(event.target.value);const w=selectedWorld(),e=session.events[selectedIndex()];

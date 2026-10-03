@@ -1,0 +1,79 @@
+{
+ "v": 1,
+ "kind": "linear",
+ "source": "hand-set prior (October 2026); replace with `difficulty.py fit` once enough plays are logged",
+ "bias": 0.0,
+ "weights": {
+  "depth": 1.0,
+  "lies_on_path": 1.5,
+  "lies_other": 0.5,
+  "herrings_aimed": 0.75,
+  "herrings_other": 0.25,
+  "lenient_motives": -0.5
+ },
+ "bands": [
+  [
+   6.5,
+   "easy"
+  ],
+  [
+   8.0,
+   "medium"
+  ],
+  [
+   null,
+   "hard"
+  ]
+ ],
+ "clean_solve": {
+  "max_hints": 3,
+  "max_wrong_accusations": 1
+ },
+ "min_plays_to_fit": 30,
+ "levels": [
+  "easy",
+  "medium",
+  "hard"
+ ],
+ "targets": {
+  "easy": {
+   "depth": 3,
+   "innocents": 0,
+   "truth": 0,
+   "twist": false,
+   "herrings": [
+    0,
+    1
+   ],
+   "herrings_aimed": 0,
+   "steps": 8,
+   "seconds": 480
+  },
+  "medium": {
+   "depth": 5,
+   "innocents": 2,
+   "truth": 3,
+   "twist": true,
+   "herrings": [
+    1,
+    2
+   ],
+   "herrings_aimed": 0,
+   "steps": 16,
+   "seconds": 900
+  },
+  "hard": {
+   "depth": 7,
+   "innocents": 3,
+   "truth": 4,
+   "twist": true,
+   "herrings": [
+    2,
+    3
+   ],
+   "herrings_aimed": 1,
+   "steps": 28,
+   "seconds": 1500
+  }
+ }
+}

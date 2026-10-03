@@ -60,7 +60,16 @@
     "b": "greenhouse",
     "minutes": 6
    }
-  ]
+  ],
+  "roles": {
+   "examiner": "iris",
+   "constable": "bell"
+  },
+  "day": {
+   "evening": 1080,
+   "morning": 1740,
+   "start": 1920
+  }
  },
  "rules": [
   {
@@ -1042,7 +1051,9 @@
    "reactions": {
     "silas": "A grim business, Doctor's notes or not. I was at my vestry desk by nine, as my day-book will show \u2014 you may check it against the sexton's own comings and goings if you doubt me. I can hardly account for what happened at the manor after I left."
    },
-   "show": "The doctor's notes say Edmund Vale had no wounds, but stomach irritation consistent with poison taken by mouth some hours before he died, between ten past and twenty past nine. Does that time mean anything to you?"
+   "show": "The doctor's notes say Edmund Vale had no wounds, but stomach irritation consistent with poison taken by mouth some hours before he died, between ten past and twenty past nine. Does that time mean anything to you?",
+   "source": "e_iris_exam",
+   "to": null
   },
   {
    "id": "s_medical_iris",
@@ -1059,7 +1070,9 @@
    "text": "Mr Vale died around one o'clock, but whatever he swallowed was taken well before that, between ten past nine and twenty past nine \u2014 there's not a mark on him, only the signs of a poison taken by mouth.",
    "ask": "Doctor, what did you find when you examined Edmund?",
    "show": "Dr Marsh says Mr Vale died from poison taken by mouth, sometime between ten past and twenty past nine last night. Does that match what you know?",
-   "confront": "You told me Mr Vale died from poison taken by mouth, between ten past and twenty past nine last night. Is that the whole of what you can tell me?"
+   "confront": "You told me Mr Vale died from poison taken by mouth, between ten past and twenty past nine last night. Is that the whole of what you can tell me?",
+   "source": "e_iris_exam",
+   "to": null
   },
   {
    "id": "s_surface_bell",
@@ -1072,7 +1085,8 @@
    "ask": "Where were you last night?",
    "confront": "You told me you were on your rounds and stopped at the Rook for a pint, with nothing out of the ordinary. Is that the whole of it?",
    "show": "Constable Bell says he did his rounds as usual and stopped at the Rook for a pint, noticing nothing unusual that night. Does that match what you saw?",
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "to": null
   },
   {
    "id": "s_surface_iris",
@@ -1085,7 +1099,8 @@
    "ask": "Where were you last night?",
    "confront": "You told me you tended a cut hand, then were at your surgery with notes and patients, but wouldn't say more. Is that the whole of it?",
    "show": "Dr Marsh says she was called out to stitch a cut hand, then returned to her surgery for notes and patients, but won't say more without the constable's leave. Do you know anything about that evening?",
-   "surface_checked": "honest"
+   "surface_checked": "honest",
+   "to": null
   },
   {
    "id": "s_surface_ada",
@@ -1098,7 +1113,8 @@
    "deceptive": true,
    "confront": "You told me it was a quiet night with just your regulars, and that you never saw Miss Vale. Is that the whole of it?",
    "show": "Mrs Finch says it was a quiet night at the Rook with just her regulars, and that she never saw Miss Vale at all. Does that tally with what you know?",
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "to": null
   },
   {
    "id": "s_surface_silas",
@@ -1111,7 +1127,8 @@
    "deceptive": true,
    "confront": "You told me you were at the vestry office all evening working on the day-books. Is that the whole of it?",
    "show": "Mr Voss says he spent the whole evening at the vestry office catching up on the day-books after supper at the manor. Do you know if that's true?",
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "to": null
   },
   {
    "id": "s_surface_rowan",
@@ -1124,7 +1141,8 @@
    "deceptive": false,
    "confront": "You told me you were in the greenhouse potting seedlings, cut your hand, had it tended, then went home. Is that the whole of it?",
    "show": "Mr Pike says he was potting seedlings in the greenhouse, cut his hand on a pane, had it seen to, then went home. Does that match what you know?",
-   "surface_checked": "honest"
+   "surface_checked": "honest",
+   "to": null
   },
   {
    "id": "s_surface_clara",
@@ -1137,7 +1155,8 @@
    "deceptive": true,
    "confront": "You told me you supped at the manor, walked a little, and turned in early. Is that the whole of it?",
    "show": "Miss Vale says she supped at the manor with her brother and Mr Voss, then walked a little before turning in early. Do you know if that's so?",
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "to": null
   },
   {
    "id": "s_iris_rowan",
@@ -1166,7 +1185,9 @@
    },
    "reactions": {
     "rowan": "Aye, that's right. I sat still the whole time, hand throbbing something awful. Doctor'll tell you the same - I never moved off that stool."
-   }
+   },
+   "to": "rowan",
+   "direct": "Dr Marsh says you sat on the stool the whole hour she stitched your hand. Is that so?"
   },
   {
    "id": "s_ada_clara",
@@ -1196,7 +1217,9 @@
    "reactions": {
     "clara": "Yes. I went for a letter of my own, and I'd rather it stayed my own affair. It has nothing to do with my brother.",
     "silas": "Miss Vale's evening is her own business, not mine. I was at my desk in the vestry the whole time, as my day-book shows."
-   }
+   },
+   "to": "clara",
+   "direct": "Mrs Finch says you came in just after nine for a letter and sat reading it by her fire until ten. Is that so?"
   },
   {
    "id": "s_bell_ada",
@@ -1223,7 +1246,9 @@
    "confront": "You told me it was quiet with just your regulars, but Constable Bell says he was there from half eight to ten past ten and you never left the bar. Is that the whole of it?",
    "reactions": {
     "ada": "That's right, love, never left the bar all night. Steady as you like, weren't it, Constable - nothing out of the ordinary happened here."
-   }
+   },
+   "to": "ada",
+   "direct": "Constable Bell says you were behind the bar the whole time he was there. Is that so?"
   },
   {
    "id": "s_slate",
@@ -1243,7 +1268,8 @@
    "show": "I found a chalk slate hidden behind the barrels in your cellar, unwiped, showing 'Const. B. paid 10.10' and 'Miss V., cocoa 9.05, letter handed over.' Can you explain why this was hidden away rather than kept on its nail?",
    "reactions": {
     "ada": "Oh \u2014 that's the cellar slate, that. I'll own it, I put it down there and said Miss Vale never came in, but she asked me to keep quiet about her visit, and I don't break a promise to a lady, not even for you. Cocoa and a letter, that's all it was \u2014 nothing wicked in that."
-   }
+   },
+   "to": null
   },
   {
    "id": "s_daybook",
@@ -1262,7 +1288,9 @@
    "show": "This is Mr Voss's day-book, open to last night, with times for the Harcourt conveyance and the Michaelmas rents written in one steady hand with no blots. Does that match what you know of his evening?",
    "reactions": {
     "silas": "That is precisely how I keep my day-book, entered as I go, without blot or delay. I worked at that desk through the whole evening on estate business, as the entries plainly show. I've nothing further to add."
-   }
+   },
+   "to": "silas",
+   "direct": "Your day-book shows you at your desk from nine till half past ten without a blot. Is that so?"
   },
   {
    "id": "s_rowan_window",
@@ -1301,7 +1329,9 @@
    "show": "Mr Pike says he sat facing the lawn while the doctor stitched him, with the study lamp lit, and saw the solicitor in that window from after nine till half past. Does that match what you know?",
    "reactions": {
     "silas": "Mr Pike is mistaken, or the light played tricks on him. My day-book shows plainly where I was that evening, and I stand by it."
-   }
+   },
+   "to": "silas",
+   "direct": "Mr Pike says you were at the study window from after nine until half past, with the lamp lit. Is that so?"
   },
   {
    "id": "s_audit_notes",
@@ -1325,7 +1355,9 @@
     "clara": "Yes \u2014 I took those from his desk after I found him. They were his private business with Mr Voss, and I saw no reason the whole village should paw through our affairs before you'd even asked.",
     "silas": "Edmund's arithmetic, not mine. I have managed those ledgers scrupulously for years, and I resent the implication otherwise. If discrepancies exist, they are clerical, and I should have welcomed the chance to reconcile them with him myself, in good time."
    },
-   "show": "These pencilled sheets in Edmund's hand set his ledger against the bank book and total a gap of \u00a31,140 over two years, with a note to put it to 'V.' after supper that night. Do you know what this concerns?"
+   "show": "These pencilled sheets in Edmund's hand set his ledger against the bank book and total a gap of \u00a31,140 over two years, with a note to put it to 'V.' after supper that night. Do you know what this concerns?",
+   "to": "silas",
+   "direct": "Edmund's sheets show a \u00a31,140 gap between your ledger and the bank book over two years, and say he meant to put it to you after supper that night. Did he?"
   },
   {
    "id": "s_phial",
@@ -1346,7 +1378,9 @@
    "show": "Buried under cold ash in the vestry stove, I found a small unbroken glass phial with charred paper around it, holding a dry crust that smells faintly of garlic. Can you tell me what this phial contained?",
    "reactions": {
     "silas": "Weedkiller is kept in every glasshouse in the parish, Inspector; I could not tell you how that came to be in my stove. I burn a great deal of waste paper there, as any man with a fire does."
-   }
+   },
+   "to": "silas",
+   "direct": "I found a stoppered phial smelling of garlic hidden in your stove's ash. Can you account for how it got there?"
   },
   {
    "id": "s_clara_grate",
@@ -1363,7 +1397,9 @@
    "confront": "I saw you kneeling at the grate burning an envelope and slipping a paper into your sleeve, saying it was nothing of Edmund's. Is that the whole of it?",
    "reactions": {
     "clara": "It was a private letter of mine, nothing of Edmund's affairs. I'd rather not say more than that."
-   }
+   },
+   "to": "clara",
+   "direct": "You were burning an envelope at the grate and slipped a paper into your sleeve, saying it was nothing of Edmund's. Is that the whole of it?"
   },
   {
    "id": "s_clara_letter",
@@ -1380,7 +1416,9 @@
    "reactions": {
     "ada": "That's Miss Vale's letter, right enough \u2014 I kept it for her like she asked, and she came in quiet for it and sat by the fire a while. I didn't read it, mind, only held it safe till she called.",
     "clara": "Yes, that letter is mine. I collected it at the Rook, quietly, because Edmund had forbidden me to go \u2014 I'd rather that stayed between us if it can."
-   }
+   },
+   "to": "clara",
+   "direct": "I found a letter accepting you as a probationer nurse at the Nightingale School from October. Can you tell me about it?"
   },
   {
    "id": "s_door_card",
@@ -1396,7 +1434,9 @@
    "reactions": {
     "iris": "I wrote that card myself before I went out to Pike \u2014 the rain has spoiled the last figure, but I was back within the hour, as my case-book will show. I left the watch behind by mistake, nothing more."
    },
-   "show": "There's a visiting card wedged in the surgery door, rain-stained, noting a call to the greenhouse and a return by half past ten, though the last figure's smeared. Do you know anything about that?"
+   "show": "There's a visiting card wedged in the surgery door, rain-stained, noting a call to the greenhouse and a return by half past ten, though the last figure's smeared. Do you know anything about that?",
+   "to": "iris",
+   "direct": "Your visiting card says you were called to the greenhouse around a quarter to nine, back by half past ten. Is that so?"
   },
   {
    "id": "s_slate_gap",
@@ -1412,7 +1452,9 @@
    "show": "Behind where the slate hangs, the wall shows a clean patch larger than the slate itself, with chalk dust on the shelf and white fingermarks on the cellar hatch ring. Can you explain how that patch came to be there?",
    "reactions": {
     "ada": "That's only the little slate I chalked fresh for the nail, plain and small, I'll grant you \u2014 the proper one's a good deal bigger, kept down cellar out of the way. I've no more to say on it than that."
-   }
+   },
+   "to": "ada",
+   "direct": "Behind your slate there's a clean oblong bigger than it, chalk dust below, and fingermarks on the cellar hatch. Can you account for that?"
   },
   {
    "id": "s_iris_casebook",
@@ -1428,7 +1470,9 @@
    "show": "Your case-book records that you were called to Mr Pike's greenhouse at ten to nine by your surgery clock, gave seven sutures for a deep laceration, and advised rest. Can you confirm this was the exact time you were called?",
    "reactions": {
     "iris": "That entry is accurate to my clock, which I keep a little fast so I'm never late to a patient. Pike's wound was as I've described \u2014 seven sutures, dressed, and sent to rest."
-   }
+   },
+   "to": "iris",
+   "direct": "Your case-book says you treated Mr Pike's hand at ten to nine with seven sutures. Is that so?"
   },
   {
    "id": "s_chute",
@@ -1444,7 +1488,9 @@
    "show": "In the Rook's yard, the cellar barrel-chute flap is unbolted, with fresh cart-wheel ruts in the mud beside it and a brewer's chalk mark noting two hogsheads at five in the morning. Do you know who left that flap open?",
    "reactions": {
     "ada": "That's the drayman's mark, love, two hogsheads down at five, same as any brewing day \u2014 nothing more sinister than beer in that."
-   }
+   },
+   "to": "ada",
+   "direct": "Your barrel-chute flap is unbolted, with fresh cart ruts beside it and a brewer's mark for a five o'clock delivery. Can you account for that?"
   },
   {
    "id": "s_surgery_clock",
@@ -1460,7 +1506,9 @@
    "show": "The wall clock above your desk stands at twenty-five past nine, its glass freshly wiped, with a winding key hanging beside it. Can you tell me if this clock has been recently altered?",
    "reactions": {
     "iris": "Yes, it runs some minutes fast \u2014 I keep it so deliberately, that I'm never late to a call. I didn't think it worth mentioning before now."
-   }
+   },
+   "to": "iris",
+   "direct": "Your surgery clock is stopped at twenty-five past nine, freshly wiped, with the winding key hung beside it. Can you account for that?"
   },
   {
    "id": "s_spare_slate",
@@ -1476,7 +1524,9 @@
    "show": "This slate behind your bar shows only fresh, even lines for the farmers' table and darts club, all marked paid, with nothing crossed out or wiped. Can you tell me why this slate looks untouched compared to the other one?",
    "reactions": {
     "ada": "That's just the spare I hung up fresh, nice and tidy, so folk needn't fret over names and tabs from the night before. Nothing wiped or crossed out because there was nothing much to wipe."
-   }
+   },
+   "to": "ada",
+   "direct": "The slate behind your bar shows only fresh, even entries for the farmers' table and darts club, nothing wiped. Does that match the night?"
   },
   {
    "id": "s_iris_glance",
@@ -1494,7 +1544,9 @@
    "confront": "I asked you the time and you looked at the clock, then waited for the church bell to chime before saying a quarter past nine. Is that the whole of it?",
    "reactions": {
     "iris": "I gave you the church bell's time, not the clock's \u2014 the clock runs fast by design, and I've no cause to correct a patient's hurry over it. That is all there is to it."
-   }
+   },
+   "to": "iris",
+   "direct": "When I asked you the time, you glanced at your clock, then waited for the church bell before answering. Why was that?"
   },
   {
    "id": "s_ada_quiet",
@@ -1520,7 +1572,9 @@
    "reactions": {
     "clara": "Mrs Finch is mistaken, or kind enough to shield me. I did go into the village that evening, though I'd rather not say why."
    },
-   "show": "Mrs Finch says the inn was quiet that night, just the farmers' table and the darts lot, and reckons Miss Vale was up at the manor with her brother all evening. Does that match what you remember?"
+   "show": "Mrs Finch says the inn was quiet that night, just the farmers' table and the darts lot, and reckons Miss Vale was up at the manor with her brother all evening. Does that match what you remember?",
+   "to": "clara",
+   "direct": "Mrs Finch says you never set foot in the inn that night, and were up at the manor with your brother instead. Is that so?"
   },
   {
    "id": "s_iris_refuse",
@@ -1534,7 +1588,9 @@
    "confront": "You opened your door only a crack and told me your patients' business was their own, that I must ask in writing, then bolted the door. Is that the whole of it?",
    "reactions": {
     "iris": "I stand by that. My patients trust me to keep their business close, and I'll not open that door wider without the constable's word in writing."
-   }
+   },
+   "to": "iris",
+   "direct": "You opened your door only a hand's width, said your patients' business was their own, and shut it on me. Why refuse to say more?"
   },
   {
    "id": "s_bell_note",
@@ -1550,7 +1606,9 @@
    "show": "This torn page from Constable Bell's pocket-book asks Dr Marsh to oblige the bearer in helping with Mr Vale's matter, and bears a pencil-lead thumbprint in the corner. Can you tell me how you came to have this note?",
    "reactions": {
     "bell": "Aye, that's mine right enough \u2014 my own hand and my thumb's mark an' all. Wrote it out in the square so the doctor'd know who sent the bearer, plain and simple. Nowt strange in it, just me doing my duty by Mr Vale."
-   }
+   },
+   "to": "bell",
+   "direct": "This note in your hand asks Dr Marsh to oblige the bearer assisting you, with your thumbprint at the corner. Can you tell me about it?"
   },
   {
    "id": "s_secret",
@@ -1563,7 +1621,9 @@
    ],
    "unlock": "once you have edmund's pencilled sheets, you know what to ask",
    "at": "manor",
-   "show": "I've found a torn note from Edmund to Voss, accusing him of years of gaps in the rent entries and saying he meant to have it out with him that very night. Do you know anything about this dispute?"
+   "show": "I've found a torn note from Edmund to Voss, accusing him of years of gaps in the rent entries and saying he meant to have it out with him that very night. Do you know anything about this dispute?",
+   "to": "silas",
+   "direct": "Edmund's note accuses you of rent entries that don't match the bank's figures, with two years of gaps all in your column, and says he meant to have it out with you that night. Is that true?"
   }
  ],
  "id": "mk-bw-poison",
@@ -1571,45 +1631,66 @@
  "synopsis": "Edmund Vale died in the night, after supper at Vale Manor.",
  "answer": {
   "method": "poison",
-  "motive": "money"
+  "motive": "money",
+  "methods": [
+   "poison"
+  ],
+  "motives": [
+   "money"
+  ],
+  "accepted_v": 1
  },
  "reviewed": [
   "s_ada_clara|confront",
+  "s_ada_clara|direct",
   "s_ada_clara|reactions|clara",
   "s_ada_clara|reactions|silas",
   "s_ada_clara|show",
   "s_ada_quiet|confront",
+  "s_ada_quiet|direct",
   "s_ada_quiet|reactions|clara",
+  "s_audit_notes|direct",
   "s_audit_notes|reactions|clara",
   "s_audit_notes|reactions|silas",
   "s_audit_notes|show",
   "s_bell_ada|confront",
+  "s_bell_ada|direct",
   "s_bell_ada|reactions|ada",
   "s_bell_ada|show",
+  "s_bell_note|direct",
   "s_bell_note|reactions|bell",
   "s_bell_note|show",
+  "s_chute|direct",
   "s_chute|reactions|ada",
   "s_chute|show",
   "s_clara_grate|confront",
+  "s_clara_grate|direct",
   "s_clara_grate|reactions|clara",
   "s_clara_grate|show",
+  "s_clara_letter|direct",
   "s_clara_letter|reactions|ada",
   "s_clara_letter|reactions|clara",
   "s_clara_letter|show",
+  "s_daybook|direct",
   "s_daybook|reactions|silas",
   "s_daybook|show",
+  "s_door_card|direct",
   "s_door_card|reactions|iris",
   "s_door_card|show",
+  "s_iris_casebook|direct",
   "s_iris_casebook|reactions|iris",
   "s_iris_casebook|show",
   "s_iris_glance|confront",
+  "s_iris_glance|direct",
   "s_iris_glance|reactions|iris",
   "s_iris_glance|show",
   "s_iris_refuse|confront",
+  "s_iris_refuse|direct",
   "s_iris_refuse|reactions|iris",
   "s_iris_refuse|show",
   "s_iris_rowan|concede|s_door_card",
   "s_iris_rowan|confront",
+  "s_iris_rowan|direct",
   "s_iris_rowan|reactions|rowan",
   "s_iris_rowan|show",
   "s_medical_iris|confront",
@@ -1618,17 +1699,22 @@
   "s_medical|reactions|silas",
   "s_medical|show",
   "s_medical|text",
+  "s_phial|direct",
   "s_phial|reactions|silas",
   "s_phial|show",
   "s_rowan_window|concede|s_iris_rowan",
   "s_rowan_window|confront",
+  "s_rowan_window|direct",
   "s_rowan_window|reactions|silas",
   "s_rowan_window|show",
+  "s_secret|direct",
   "s_secret|text",
+  "s_slate_gap|direct",
   "s_slate_gap|reactions|ada",
   "s_slate_gap|show",
   "s_slate|reactions|ada",
   "s_slate|show",
+  "s_spare_slate|direct",
   "s_spare_slate|reactions|ada",
   "s_spare_slate|show",
   "s_surface_ada|confront",
@@ -1649,6 +1735,7 @@
   "s_surface_silas|confront",
   "s_surface_silas|show",
   "s_surface_silas|text",
+  "s_surgery_clock|direct",
   "s_surgery_clock|reactions|iris",
   "s_surgery_clock|show"
  ],
@@ -1683,5 +1770,18 @@
   "iris": "Brisk and tight-lipped, hurrying between patients and deflecting questions about her night calls.",
   "bell": "Gruff and evasive, keen to look busy securing the scene rather than talk about his own evening."
  },
- "secret_checked": true
+ "secret_checked": true,
+ "difficulty": {
+  "v": 1,
+  "score": 9.75,
+  "level": "hard",
+  "features": {
+   "depth": 7,
+   "lies_on_path": 1,
+   "lies_other": 1,
+   "herrings_aimed": 1,
+   "herrings_other": 0,
+   "lenient_motives": 0
+  }
+ }
 }

@@ -37,6 +37,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 
 REGION = os.environ.get("AWS_REGION") or os.environ.get("AWS_DEFAULT_REGION") or "us-west-2"
+TRANSIENT = {"InternalServerException", "ServiceUnavailableException", "ThrottlingException", "ModelNotReadyException"}
 MODEL_ID = os.environ.get("LM_BEDROCK_MODEL", "us.anthropic.claude-haiku-4-5-20251001-v1:0")
 CHARACTER_MODEL = os.environ.get("LM_CHARACTER_MODEL", "us.anthropic.claude-sonnet-4-5-20250929-v1:0")
 HOST = os.environ.get("LM_PROXY_HOST", "127.0.0.1")
@@ -69,7 +70,7 @@ def bedrock_client():
         from botocore.config import Config
         # a fresh Session re-reads the credentials file (the default session caches expired keys)
         _client = boto3.Session().client("bedrock-runtime", region_name=REGION,
-                              config=Config(connect_timeout=3, read_timeout=7, retries={"max_attempts": 0}))
+                              config=Config(connect_timeout=3, read_timeout=30, retries={"max_attempts": 0}))
     return _client
 
 def validate_payload(payload, profile="dialogue-v2"):
@@ -153,14 +154,23 @@ class Handler(BaseHTTPRequestHandler):
                 kwargs["system"] = [{"text": system}]
 
             t0 = _time.time()
-            try:
-                resp = bedrock_client().converse(**kwargs)
-            except Exception:
-                # A long-lived cached client can hold stale credentials; rebuild once and retry so the
-                # proxy self-heals without a manual restart (still fails cleanly if the creds are truly gone).
-                global _client
-                _client = None
-                resp = bedrock_client().converse(**kwargs)
+            resp = None
+            for attempt in range(3):
+                try:
+                    resp = bedrock_client().converse(**kwargs)
+                    break
+                except Exception as exc:
+                    code = ((getattr(exc, "response", None) or {}).get("Error") or {}).get("Code", "")
+                    if code in TRANSIENT and attempt < 2:
+                        _time.sleep(0.6 * (attempt + 1))   # a passing service error: wait briefly and try again
+                        continue
+                    if attempt == 0:
+                        # A long-lived cached client can hold stale credentials; rebuild once and retry so the
+                        # proxy self-heals without a manual restart (still fails cleanly if the creds are truly gone).
+                        global _client
+                        _client = None
+                        continue
+                    raise
             text = "".join(
                 block.get("text", "")
                 for block in resp["output"]["message"]["content"]

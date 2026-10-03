@@ -1,6 +1,6 @@
 // Authored case data. The inspector can read this; the player projection cannot.
 export const CASE = Object.freeze({
-  id: 'last-bell', title: 'The Last Bell', date: '18 November 1932', victim: 'Edmund Vale',
+  id: 'last-bell', title: 'The Last Bell', date: '18 November 1932', victim: 'Edmund Vale', victimId: 'edmund',
   culprit: 'silas', method: 'seal', motive: 'fraud',
   synopsis: 'Edmund Vale, Bellweather’s estate trustee, was found dead in his study last night. Three people had reasons to fear him. By morning, the village has begun to choose its own version of events.',
   truth: 'Silas Voss killed Edmund Vale with his brass document seal at 21:14, after Edmund confronted him over diverted estate payments. Silas removed the seal and later returned it to the vestry. Clara and Rowan were meeting secretly in the greenhouse. Ada saw Silas in a borrowed green coat and assumed it was Rowan; her inn clock was twelve minutes fast.',

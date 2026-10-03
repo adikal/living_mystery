@@ -20,12 +20,13 @@ from urllib.parse import urlparse, parse_qs
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 sys.path.insert(0, os.path.join(ROOT, 'tools', 'refine-c'))
+import difficulty  # noqa: E402
 
 HOST = os.environ.get('LM_GENERATOR_HOST', '127.0.0.1')
 PORT = int(os.environ.get('LM_GENERATOR_PORT', '8789'))
 ALLOWED_ORIGINS = frozenset(os.environ.get('LM_ALLOWED_ORIGINS', 'http://127.0.0.1:8000,http://localhost:8000').split(','))
 ALLOWED_HOSTS = {f'127.0.0.1:{PORT}', f'localhost:{PORT}'}
-TIME_LIMIT = int(os.environ.get('LM_GENERATOR_TIME_LIMIT', str(25 * 60)))
+TIME_LIMIT = int(os.environ.get('LM_GENERATOR_TIME_LIMIT', str(12 * 60)))   # beyond the profile's own budget
 STEPS, DEPTH = int(os.environ.get('LM_GENERATOR_STEPS', '16')), int(os.environ.get('LM_GENERATOR_DEPTH', '5'))
 if HOST not in ('127.0.0.1', 'localhost'):
     raise ValueError('The generator server must bind to loopback')
@@ -51,13 +52,15 @@ if '*' in ALLOWED_ORIGINS or 'null' in ALLOWED_ORIGINS:
 
 
 class Job:
-    def __init__(self, brief, premise=None):
+    def __init__(self, brief, premise=None, level='medium'):
         stamp = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
         Job.seq = getattr(Job, 'seq', 0) + 1
         self.id = stamp if stamp != getattr(Job, 'last', None) else f'{stamp}-{Job.seq}'
         Job.last = stamp
         self.brief = brief                    # (title, premise, place, generator brief)
         self.premise = premise                # drawn by code: victim, culprit, suspects, method, motive, place, shape
+        self.profile = difficulty.target(level)   # targets, steps and time budget for the requested difficulty
+        self.level = self.profile['level']
         self.events, self.lock = [], threading.Lock()
         self.status, self.result, self.error = 'running', None, None
         self.cancel = threading.Event()
@@ -69,7 +72,7 @@ class Job:
         LOG.info('job %s +%ss %s', self.id, event.get('t'), summarize(event))
 
     def summary(self):
-        return {'id': self.id, 'status': self.status, 'title': self.brief[0], 'premise': self.brief[1],
+        return {'id': self.id, 'status': self.status, 'title': self.brief[0], 'premise': self.brief[1], 'difficulty': self.level,
                 'elapsed': round(time.time() - self.started), 'events': len(self.events), 'result': self.result, 'error': self.error}
 
 
@@ -87,15 +90,19 @@ def default_runner(job):
     def log(line):
         if logf:
             logf.write(f"{datetime.datetime.now():%H:%M:%S} {line}\n"); logf.flush()
-    stop = lambda: job.cancel.is_set() or time.time() - job.started > TIME_LIMIT
-    result = refine.run_case('live', job.brief[3], STEPS, DEPTH, outdir, log, emit=job.emit, should_stop=stop, premise=job.premise)
+    # the profile's budget ends refinement gracefully; TIME_LIMIT (budget + seed and publishing) is the hard stop
+    limit = job.profile['seconds'] + TIME_LIMIT
+    stop = lambda: job.cancel.is_set() or time.time() - job.started > limit
+    result = refine.run_case('live', job.brief[3], STEPS, DEPTH, outdir, log, emit=job.emit, should_stop=stop, premise=job.premise,
+                             profile=job.profile)
     if not result.get('ok') or 'case' not in result:
         raise RuntimeError(result.get('reason') or 'the generated case did not certify')
     job.emit({'kind': 'phase', 'phase': 'publish', 't': round(time.time() - job.started, 1),
               'message': 'Writing the questions you can ask and every suspect\u2019s account of the evening'})
+    result['case']['difficulty_target'] = job.level
     entry, cert = publish.publish_live(result['case'], job.brief, job.id)
     return {'file': entry['file'], 'id': entry['id'], 'title': entry['title'], 'solveDepth': cert['solveDepth'],
-            'seconds': round(time.time() - job.started)}
+            'difficulty': entry.get('difficulty'), 'target': job.level, 'seconds': round(time.time() - job.started)}
 
 
 RUNNER = default_runner
@@ -107,11 +114,11 @@ RESERVE = os.environ.get('LM_GENERATOR_RESERVE', '1') != '0'
 STATE['reserve'] = None
 
 
-def new_job():
+def new_job(level='medium'):
     import premise as P
     pr = P.draw(history=P._history() + ([STATE['reserve'].premise] if STATE.get('reserve') and STATE['reserve'].premise else [])
                 + ([STATE['job'].premise] if STATE.get('job') and STATE['job'].premise else []))
-    return Job(('A new case', P.blurb(pr), pr['place'], P.brief(pr)), pr)
+    return Job(('A new case', P.blurb(pr), pr['place'], P.brief(pr)), pr, level)
 
 
 def launch(job):
@@ -152,17 +159,18 @@ def ensure_reserve():
     launch(res)
 
 
-def start_job():
+def start_job(level='medium'):
+    """Start a case of the requested difficulty; the reserve (always medium) is handed over when it matches."""
     with STATE_LOCK:
         current, res = STATE['job'], STATE.get('reserve')
         if current and current.status == 'running':
             return current, False
-        if res:                                  # hand over the reserve: finished already, or partly built
+        if res and res.level == level:           # hand over the reserve: finished already, or partly built
             STATE['job'], STATE['reserve'] = res, None
             LOG.info('job %s taken from reserve (%s)', res.id, res.status)
             job, fresh = res, False
         else:
-            job = STATE['job'] = new_job()
+            job = STATE['job'] = new_job(level)
             LOG.info('job %s started: %s', job.id, job.brief[0])
             fresh = True
     if fresh:
@@ -231,7 +239,14 @@ class Handler(BaseHTTPRequestHandler):
             self._send(403, {'error': 'origin_not_allowed'}); return
         path = urlparse(self.path).path
         if path == '/jobs':
-            job, started = start_job()
+            try:
+                body = json.loads(self.rfile.read(min(int(self.headers.get('content-length') or 0), 1000)) or b'{}')
+            except ValueError:
+                body = {}
+            level = body.get('difficulty') if isinstance(body, dict) else None
+            if level is not None and level not in difficulty.load_model()['targets']:
+                self._send(400, {'error': 'unknown_difficulty'}); return
+            job, started = start_job(level or 'medium')
             self._send(201 if started else 409, job.summary()); return
         parts = path.strip('/').split('/')
         if len(parts) == 3 and parts[0] == 'jobs' and parts[2] == 'cancel':

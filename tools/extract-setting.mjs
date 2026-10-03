@@ -3,7 +3,8 @@
 // and voice (dist/cases/village.mjs). Each generated case invents its own victim, culprit, secrets, relationships,
 // motives, objects and documents; the premise deck picks who is who. The Last Bell's authored data is not used.
 // Usage: node tools/extract-setting.mjs > tools/refine-c/settings/bellweather.json
-import {BW_LOCATIONS, BW_PEOPLE, BW_NOT_VICTIM, BW_NOT_CULPRIT} from '../dist/cases/village.mjs';
+import {OBJECT_LIBRARY} from '../dist/art.mjs';
+import {BW_LOCATIONS, BW_PEOPLE, BW_NOT_VICTIM, BW_NOT_CULPRIT, BW_ROLES, BW_ROLE_WORDS, BW_DAY, BW_DEFAULT_VICTIM} from '../dist/cases/village.mjs';
 
 const links = [];
 for (const [a, p] of Object.entries(BW_LOCATIONS))
@@ -12,6 +13,7 @@ for (const [a, p] of Object.entries(BW_LOCATIONS))
 
 const people = Object.entries(BW_PEOPLE).map(([id, p]) => ({
   id, name: p.name, role: p.role, pronoun: p.pronoun, address: p.address, voice: p.voice, public: p.public, home: p.home,
+  role_words: BW_ROLE_WORDS[id] ?? [],
 }));
 const setting = {
   id: 'bellweather',
@@ -22,9 +24,13 @@ const setting = {
   places: Object.entries(BW_LOCATIONS).map(([id, p]) => ({id, name: p.name})),
   links,
   people,
-  victim: 'edmund',
+  victim: BW_DEFAULT_VICTIM,
   investigator: 'Constable Bell assists the detective',
+  roles: BW_ROLES,
+  day: BW_DAY,
   not_victim: [...BW_NOT_VICTIM],
   not_culprit: [...BW_NOT_CULPRIT],
+  // objects that have pictures: the generator prefers them when they fit, and may invent others
+  objects: Object.entries(OBJECT_LIBRARY).map(([id, label]) => ({id, label})),
 };
 process.stdout.write(JSON.stringify(setting, null, 1) + '\n');

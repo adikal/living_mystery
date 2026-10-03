@@ -11,3 +11,4 @@ tools/refine-c/runs/
 dist/cases/generated/live/
 logs/
 tools/art/out/
+dist/cases/archive/live/

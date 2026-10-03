@@ -40,11 +40,11 @@ def server(monkeypatch):
     httpd.shutdown()
 
 
-def call(port, method, path, headers=None, origin='http://127.0.0.1:8000'):
+def call(port, method, path, headers=None, origin='http://127.0.0.1:8000', body=None):
     h = {'Origin': origin, **(headers or {})}
     if method == 'POST':
         h.setdefault('X-Living-Mystery', 'generator-v1')
-    req = urllib.request.Request(f'http://127.0.0.1:{port}{path}', method=method, headers=h, data=b'' if method == 'POST' else None)
+    req = urllib.request.Request(f'http://127.0.0.1:{port}{path}', method=method, headers=h, data=(json.dumps(body).encode() if body is not None else b'') if method == 'POST' else None)
     try:
         with urllib.request.urlopen(req, timeout=5) as r:
             return r.status, json.loads(r.read())
@@ -113,3 +113,13 @@ def test_reserve_case_is_handed_over_at_once(server):
     code, second = call(port, 'POST', '/jobs')
     assert code == 201 and second['id'] == res.id and second['status'] == 'done', 'the reserve is handed over, already finished'
     assert wait_for(lambda: gs.STATE.get('reserve') and gs.STATE['reserve'].id != res.id), 'and the next one starts'
+
+
+def test_difficulty_is_requested_and_reported(server):
+    gs, port, gate = server
+    code, body = call(port, 'POST', '/jobs', body={'difficulty': 'nonsense'})
+    assert code == 400 and body['error'] == 'unknown_difficulty'
+    code, body = call(port, 'POST', '/jobs', body={'difficulty': 'hard'})
+    assert code == 201 and body['difficulty'] == 'hard'
+    assert gs.STATE['job'].profile['depth'] == gs.difficulty.target('hard')['depth']
+    gate.set()

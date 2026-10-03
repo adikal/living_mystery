@@ -12,6 +12,8 @@ import {createKnowledge} from './knowledge.mjs';
 // See schema.mjs for the typed contracts (Model, Kernel, Event, Belief).
 
 import {validateClaim} from './claims.mjs';
+// The one stock reply that claims nothing: said when the history gives a person nothing to say on a question.
+export const NEUTRAL_LINE = 'I can’t help you with that.';
 export const VERSION = 1;
 export const copy = (x) => structuredClone(x);
 export const timeLabel = (m) =>

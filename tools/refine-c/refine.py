@@ -9,10 +9,12 @@ Usage: python tools/refine-c/refine.py [--steps 8] [--depth 5] [--only NAME] [--
 import argparse, concurrent.futures as cf, copy, datetime, json, os, re, sys, time, traceback
 import boto3
 from botocore.config import Config
+import difficulty as DF
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MODEL = 'us.anthropic.claude-opus-5-5'          # story steps and seed
 CRITIC_MODEL = 'us.anthropic.claude-sonnet-5'     # plausibility review (short verdicts)
+SEED_ROUNDS = 4                                  # draft, then up to three repairs of the best draft
 CANDIDATES = 2                                     # parallel speculative patches per round
 FIXED = None                                       # a fixed setting (e.g. Bellweather): its places, links and cast are locked
 CLAIM_KINDS = {'place', 'time', 'trait', 'relation', 'possession', 'fact'}
@@ -268,6 +270,33 @@ def critical_signs(case, A, thread, depth):
             out.append(sid)
     return out
 
+def account_backing(case, sign):
+    """Why the speaker can give this account, from the case records alone, or None.
+    source: an event the speaker took part in produced it; because: an attitude of the speaker (a reason or something
+    they knew); self: a place claim about the speaker; witnessed: the speaker was at that place during that time.
+    A claimless account (an evening summary) is backed by the speaker's own events."""
+    sp = sign.get('speaker')
+    evs = {e['id']: e for e in case['events']}
+    part = lambda e: bool(e) and (e.get('agent') == sp or sp in (e.get('others') or []))
+    if part(evs.get(sign.get('source'))):
+        return 'source'
+    if any(a['agent'] == sp and a['id'] in (sign.get('because') or []) for a in case.get('attitudes', [])):
+        return 'because'
+    c = claim_of(sign)
+    if not c:
+        return 'own_events' if any(part(e) for e in case['events']) else None
+    if c['kind'] == 'place':
+        if c.get('person') == sp:
+            return 'self'
+        if any(part(e) and e['place'] == c['place'] and e['start'] < c['end'] and e['end'] > c['start'] for e in case['events']):
+            return 'witnessed'
+    return None
+
+
+def unbacked_accounts(case):
+    return sorted(x['id'] for x in case['signs'] if x.get('kind') == 'testimony' and account_backing(case, x) is None)
+
+
 def pillar_signs(case, A):
     """Motive and means evidence for the true culprit: understood, true signs that establish (not eliminate).
     motive: a relation claim whose subject is the culprit (or a fact keyed 'motive');
@@ -307,7 +336,7 @@ def pillar_signs_for(case, A, actor, held=None):
 # Certification: every check is code
 # ----------------------------------------------------------------------------------------------------
 
-def certify(case, require_pillars=True):
+def certify(case, require_pillars=True, require_backing=False):
     errs, A = [], None
     ids = [x['id'] for k in ('people', 'objects', 'attitudes', 'events', 'signs', 'rules') for x in case.get(k, [])]
     dup = {i for i in ids if ids.count(i) > 1}
@@ -456,9 +485,14 @@ def certify(case, require_pillars=True):
         errs.append("no reachable, true evidence of the culprit's MEANS (a possession or trait claim the culprit satisfies)")
     if errs:
         return {'ok': False, 'errors': errs, 'A': A}
+    unbacked = unbacked_accounts(case)
+    if require_backing and unbacked:
+        errs.append(f"accounts not backed by the true history (an event the speaker took part in or saw, or something "
+                    f"they knew): {unbacked}; add the event, the speaker to it, or a 'knows' attitude and cite it in 'because'")
+        return {'ok': False, 'errors': errs, 'A': A}
     pillars = {'opportunity': solve, 'means': pd['means'], 'motive': pd['motive']}
     return {'ok': True, 'A': A, 'solve_depth': solve, 'max_depth': maxd, 'surface': surface, 'threads': threads,
-            'motive': motive, 'means': means, 'pillars': pillars, 'pillar_signs': pil,
+            'motive': motive, 'means': means, 'pillars': pillars, 'pillar_signs': pil, 'unbacked': unbacked,
             'mmo_depth': max(v for v in pillars.values() if v is not None),
             'twist': q['truth'] not in surface, 'key': sorted(key), 'herrings': herrings,
             'false_signs': sorted(k for k, v in A['truthval'].items() if not v)}
@@ -627,7 +661,8 @@ def seed_prompt(brief, premise=None):
     fixed = '' if not FIXED else f"""
 FIXED SETTING - use it exactly. Use these place ids and links unchanged. Use these people (same ids, names, roles,
 pronouns and voices); you may give them 'traits', secrets, relationships and motives of your own invention, but do NOT
-add people or places. You MAY invent any new objects and documents. The victim is '{(premise or {}).get('victim', FIXED['victim'])}'. Candidates are
+add people or places. You MAY invent any new objects and documents; these have pictures in the game, so prefer them
+when they fit the story: {', '.join(o['label'] for o in FIXED.get('objects', []))}. The victim is '{(premise or {}).get('victim', FIXED['victim'])}'. Candidates are
 {'exactly the suspects named in the premise' if premise else '4 or 5 of the living cast'}. Not everyone need take part: bystanders may simply have been at home. Testimony must sound like each person's voice. All true-history events fall between 1080
 (18:00) and 1860 (07:00 next morning); the investigation begins the next morning.
 {json.dumps({k: FIXED[k] for k in ('name', 'era', 'summary', 'places', 'links', 'people')})}
@@ -708,7 +743,7 @@ Return a PATCH as one JSON object:
   "add":{{"people":[],"objects":[],"relations":[],"possession":[],"rules":[],"attitudes":[],"events":[],"signs":[]}},
   "modify":{{"signs":{{"<id>":{{"requires":[],"needs":[],"text":"...","title":"...","claim":{{}}}}}},"events":{{"<id>":{{}}}}}},
   "remove":["<sign id, only the target, only if you split it>"]}}
-{('This case uses a FIXED setting: do not add people or places; new objects and documents are fine. ' if FIXED else '')}Rules for the patch: the patch MUST add at least one event or attitude (the story beat that causes the change);
+{('This case uses a FIXED setting: do not add people or places; new objects and documents are fine (prefer ones with pictures: ' + ', '.join(o['label'] for o in FIXED.get('objects', [])) + '). ' if FIXED else '')}Rules for the patch: the patch MUST add at least one event or attitude (the story beat that causes the change);
 every new event must fit each participant's timeline (one place at a time, with travel time between places, and people
 in 'others' are located there too); a false sign must list its speaker's reason in 'because' (testimony) or a deliberate
 'source' event, and some deeper TRUE sign must list it in 'defeats'; new ids must be unique; 'modify' replaces only the fields you give; the answer must remain uniquely
@@ -768,7 +803,8 @@ def lock_setting(case):
     """Fixed setting by construction: places and links are the setting's; cast identity fields are the setting's."""
     if not FIXED:
         return case
-    case['setting'] = {**case.get('setting', {}), 'places': FIXED['places'], 'links': FIXED['links'], 'name': FIXED['name']}
+    case['setting'] = {**case.get('setting', {}), 'places': FIXED['places'], 'links': FIXED['links'], 'name': FIXED['name'],
+                       'roles': FIXED.get('roles', {}), 'day': FIXED.get('day', {})}
     ident = {p['id']: p for p in FIXED['people']}
     for person in case.get('people', []):
         if person['id'] in ident:
@@ -796,6 +832,17 @@ def premise_errors(case, premise):
         return []
     import premise as P
     return P.seed_errors(case, premise)
+
+
+def history_errors(case):
+    """Requirements every generated case keeps after the seed: the morning (discovery and examination, typed) and
+    that every account is backed by the history."""
+    if not FIXED:
+        return []
+    import premise as P
+    unb = unbacked_accounts(case)
+    return P.morning_errors(case) + P.evening_errors(case) + ([f"accounts not backed by the true history (an event the speaker took part in or saw, or a 'knows' "
+                                      f"attitude of theirs cited in 'because'): {unb}; back each one, or drop it"] if unb else [])
 
 
 def setting_errors(case):
@@ -836,24 +883,32 @@ def apply_patch(case, patch, target):
 # Scheduler (code)
 # ----------------------------------------------------------------------------------------------------
 
-def schedule(case, report, step, hist, D):
+def schedule(case, report, step, hist, D, profile=None):
+    """The next step: what the case lacks for its difficulty profile (twist, implicate, herring, pillar), then
+    deepening the shallowest thread. With no profile, the medium targets."""
+    profile = profile or {'twist': True, 'herrings': [1, 2], 'herrings_aimed': 0}
     A, q = report['A'], case['question']
     truth_actor = actor_of(hyp_map(case)[q['truth']])
     ops = [h['operator'] for h in hist if h.get('accepted')]
     preferred = min(['Conceal', 'Fragment', 'Mislead'], key=ops.count)
-    if step >= 2 and not report['twist'] and 'twist' not in [h['mode'] for h in hist if h.get('accepted')]:
+    if profile['twist'] and step >= 2 and not report['twist'] and 'twist' not in [h['mode'] for h in hist if h.get('accepted')]:
         cand = [sid for sid in A['understood'] if claim_of(A['signs'][sid]) and A['truthval'].get(sid)]
         cand.sort(key=lambda s: (A['eff'][s], s))
         return 'twist', cand[0] if cand else None, 'Mislead', 'truth', None
-    if step >= 3 and (not report.get('motive') or not report.get('means')) and \
+    pil_now = report.get('pillars') or {}
+    if step >= 3 and (pil_now.get('motive') is None or pil_now.get('means') is None) and \
             [h['mode'] for h in hist if h.get('accepted')].count('implicate') < 2 and \
             [h['mode'] for h in hist[-2:]].count('implicate') < 2:
         return 'implicate', actor_of(hyp_map(case)[q['truth']]), 'Conceal', None, None
-    if step >= 3 and not report['herrings']:
+    lo, hi = profile['herrings']
+    if step >= 3 and len(report['herrings']) < max(lo, 1 if hi else 0):
         innocents = [h for h in q['candidates'] if h['id'] != q['truth'] and actor_of(h) and actor_of(h) != truth_actor]
         used = {s.get('about') for s in case['signs'] if s['kind'] == 'behavior'}
-        pick = next((actor_of(h) for h in innocents if actor_of(h) not in used), actor_of(innocents[0]) if innocents else None)
-        if pick and [h['mode'] for h in hist if h.get('accepted')].count('herring') < 2:
+        # aimed misdirection: the suspect the obvious reading already points to
+        obvious = [actor_of(h) for h in innocents if h['id'] in (report.get('surface') or [])]
+        order = (obvious if profile.get('herrings_aimed') else []) + [actor_of(h) for h in innocents]
+        pick = next((a for a in order if a not in used), order[0] if order else None)
+        if pick and [h['mode'] for h in hist if h.get('accepted')].count('herring') < hi:
             return 'herring', pick, 'Mislead', None, None
     # The means or motive evidence must not be obvious long before the answer: deepen a pillar more than two levels
     # shallower than the solve depth (at most twice in a row).
@@ -918,6 +973,10 @@ def step_laws(case, report, new, rep, patch, mode, target, thread, tdepth):
                    "keep the surface deception intact and only make its defeat deeper")
     if mode == 'twist' and not rep['twist']:
         law.append(f"the surface still admits the truth (surface survivors {rep['surface']}); the deception must exclude it")
+    # motive and means evidence, once reachable, must stay reachable (deepening may hide it further, never lose it)
+    for key in ('motive', 'means'):
+        if (report.get('pillars') or {}).get(key) is not None and (rep.get('pillars') or {}).get(key) is None:
+            law.append(f"the culprit's {key.upper()} evidence is no longer reachable and true; keep a way to it (it may lie deeper)")
     add = patch.get('add') or {}
     if not (add.get('events') or add.get('attitudes') or (patch.get('modify') or {}).get('events')):
         law.append('no story beat: every refinement must add the event or attitude that causes it (who did what, and why)')
@@ -963,8 +1022,12 @@ def case_added(before, after):
     return out
 
 
-def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, premise=None):
-    """emit(event: dict) receives progress events; should_stop() is polled between model calls to cancel."""
+def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, premise=None, profile=None):
+    """emit(event: dict) receives progress events; should_stop() is polled between model calls to cancel.
+    profile (difficulty.target(level)) sets the depth, the steps, the time budget and what the case must have; when the
+    budget runs out, refinement stops and the case is what it has become (rated honestly at publish)."""
+    if profile:
+        steps, D = profile['steps'], profile['depth']
     os.makedirs(outdir, exist_ok=True)
     t0 = time.time()
     emit = emit or (lambda e: None)
@@ -977,11 +1040,17 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
     pool = cf.ThreadPoolExecutor(max_workers=CANDIDATES * 2)
 
     # SEED: CANDIDATES in parallel per round; first that certifies wins
-    case, fb = None, None
+    case, fb, best_case, seen = None, None, None, []
     send('phase', phase='seed', message='Writing the setting, cast, secrets and what really happened')
-    for rnd in range(3):
+    for rnd in range(SEED_ROUNDS):
         check_stop()
-        extra = ('\n\nPREVIOUS SEED REJECTED BY THE CHECKER:\n- ' + '\n- '.join(fb)) if fb else ''
+        # after the first round, repair the best draft so far rather than start again (a fresh draft fixes one error
+        # and brings back another); every rule broken so far is listed, so none returns
+        extra = '' if not fb else (
+            '\n\nYOUR PREVIOUS DRAFT (the closest so far) BROKE THESE RULES. Return the COMPLETE corrected case: keep '
+            'everything that was right, change only what these need:\n- ' + '\n- '.join(fb)
+            + ('\n\nRULES BROKEN IN EARLIER DRAFTS (keep them too):\n- ' + '\n- '.join(x for x in seen if x not in fb)[:3000] if any(x not in fb for x in seen) else '')
+            + ('\n\nTHE PREVIOUS DRAFT:\n' + json.dumps(best_case)[:60000] if best_case else ''))
         futs = [pool.submit(llm_json, SYSTEM_GEN, seed_prompt(brief, premise) + extra, 20000) for _ in range(CANDIDATES)]
         send('drafting', round=rnd + 1, drafts=CANDIDATES)
         best = None
@@ -990,7 +1059,7 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
             try:
                 raw = f.result()
                 cand = lock_setting(unwrap_case(parse_json(raw))); rep = certify(cand, False)
-                pe = premise_errors(cand, premise)
+                pe = premise_errors(cand, premise) + history_errors(cand)
                 if pe or (rep['ok'] and setting_errors(cand)):
                     rep = {'ok': False, 'errors': pe + setting_errors(cand) + (rep.get('errors') or [])}
             except Exception as e:
@@ -1004,9 +1073,11 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
                 case = cand; break
             if best is None or len(rep['errors']) < len(best):
                 best = rep['errors']
+                if cand is not None:
+                    best_case = cand
         if case:
             break
-        fb = (best or [])[:12]; log(f'[{name}] seed round {rnd+1} rejected: {fb[:2]}')
+        fb = (best or [])[:12]; seen += [x for x in fb if x not in seen]; log(f'[{name}] seed round {rnd+1} rejected: {fb[:2]}')
         send('seed_rejected', round=rnd + 1, errors=fb)
     if case is None:
         pool.shutdown(wait=False, cancel_futures=True)
@@ -1025,18 +1096,23 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
             patch = parse_json(patch_text); new = apply_patch(case, patch, target); rep = certify(new, False)
         except Exception as e:
             return None, None, None, [f'patch could not be applied: {e}']
-        errs = setting_errors(new) + premise_errors(new, premise) + (rep.get('errors') or []) + (step_laws(case, report, new, rep, patch, mode, target, thread, tdepth) if rep['ok'] else [])
+        errs = setting_errors(new) + premise_errors(new, premise) + history_errors(new) + (rep.get('errors') or []) + (step_laws(case, report, new, rep, patch, mode, target, thread, tdepth) if rep['ok'] else [])
         return patch, new, rep, errs
 
     for step in range(1, steps + 1):
         th = [d for d in (report.get('threads') or {}).values() if d is not None]
         truth_d = (report.get('threads') or {}).get('truth') or 0
         check_stop()
-        if (report['solve_depth'] or 0) >= D and min(th or [0]) >= 2 and truth_d >= 3 and report['twist'] and report['herrings'] \
-                and (report.get('pillar_signs') or {}).get('motive') and (report.get('pillar_signs') or {}).get('means'):
+        lacking = DF.targets_met(case, report, profile) if profile else (
+            [] if (report['solve_depth'] or 0) >= D and min(th or [0]) >= 2 and truth_d >= 3 and report['twist'] and report['herrings']
+            and (report.get('pillar_signs') or {}).get('motive') and (report.get('pillar_signs') or {}).get('means') else ['targets'])
+        if not lacking:
             send('phase', phase='targets', message='Every target met')
             log(f'[{name}] targets met at {time.time()-t0:.0f}s (solve depth {report["solve_depth"]}): stopping'); break
-        mode, target, preferred, thread, tdepth = schedule(case, report, step, hist, D)
+        if profile and time.time() - t0 > profile['seconds']:
+            send('phase', phase='targets', message='Time budget reached: the case is finished as it stands')
+            log(f'[{name}] time budget {profile["seconds"]}s reached at step {step}; still lacking: {lacking}'); break
+        mode, target, preferred, thread, tdepth = schedule(case, report, step, hist, D, profile)
         if not target:
             log(f'[{name}] step {step}: no qualifying target, stopping'); break
         fb, entry = None, {'step': step, 'mode': mode, 'target': target, 'thread': thread, 'preferred': preferred, 'attempts': []}

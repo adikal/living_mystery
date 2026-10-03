@@ -1,0 +1,1604 @@
+{
+ "title": "Sealing Wax and Steel",
+ "victim": "vicar",
+ "setting": {
+  "name": "Bellweather",
+  "era": "An English village, 1932",
+  "summary": "A small English village: a square, a manor with its greenhouse and boathouse on the river, an inn, the church vestry, a doctor's surgery, a post office, a railway halt and a disused mill. Someone is dead; the investigation begins the next morning.",
+  "places": [
+   {
+    "id": "square",
+    "name": "Village square"
+   },
+   {
+    "id": "manor",
+    "name": "Vale Manor"
+   },
+   {
+    "id": "inn",
+    "name": "The Rook & Lantern"
+   },
+   {
+    "id": "greenhouse",
+    "name": "The greenhouse"
+   },
+   {
+    "id": "vestry",
+    "name": "St. Alden\u2019s vestry"
+   },
+   {
+    "id": "surgery",
+    "name": "Dr Marsh\u2019s surgery"
+   },
+   {
+    "id": "halt",
+    "name": "Bellweather Halt"
+   },
+   {
+    "id": "post",
+    "name": "The post office"
+   },
+   {
+    "id": "mill",
+    "name": "Alder Mill"
+   },
+   {
+    "id": "boathouse",
+    "name": "The boathouse"
+   }
+  ],
+  "links": [
+   {
+    "a": "square",
+    "b": "manor",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "inn",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "vestry",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "surgery",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "post",
+    "minutes": 2
+   },
+   {
+    "a": "square",
+    "b": "halt",
+    "minutes": 6
+   },
+   {
+    "a": "manor",
+    "b": "greenhouse",
+    "minutes": 3
+   },
+   {
+    "a": "manor",
+    "b": "boathouse",
+    "minutes": 6
+   },
+   {
+    "a": "inn",
+    "b": "greenhouse",
+    "minutes": 6
+   },
+   {
+    "a": "inn",
+    "b": "post",
+    "minutes": 3
+   },
+   {
+    "a": "greenhouse",
+    "b": "mill",
+    "minutes": 7
+   },
+   {
+    "a": "vestry",
+    "b": "halt",
+    "minutes": 5
+   },
+   {
+    "a": "surgery",
+    "b": "post",
+    "minutes": 3
+   },
+   {
+    "a": "halt",
+    "b": "mill",
+    "minutes": 5
+   },
+   {
+    "a": "mill",
+    "b": "boathouse",
+    "minutes": 4
+   }
+  ],
+  "roles": {
+   "examiner": "iris",
+   "constable": "bell"
+  },
+  "day": {
+   "evening": 1080,
+   "morning": 1740,
+   "start": 1920
+  }
+ },
+ "rules": [
+  {
+   "id": "r_gpo",
+   "text": "Equipment issued to a sub-post office counter is stamped 'G.P.O.' by the Post Office.",
+   "knowledge": "common"
+  }
+ ],
+ "people": [
+  {
+   "id": "vicar",
+   "name": "The Reverend Thomas Hale",
+   "role": "The vicar",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "he",
+   "address": "Mr Hale",
+   "voice": "Gentle and rambling, with a scholar\u2019s digressions and a surprising steel when conscience is touched.",
+   "public": "Vicar of St. Alden\u2019s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
+   "home": "vestry",
+   "role_words": [
+    "vicar",
+    "rector",
+    "parson"
+   ]
+  },
+  {
+   "id": "dora",
+   "name": "Dorothy Pruett",
+   "role": "The postmistress",
+   "traits": {
+    "handed": "right",
+    "height": "short"
+   },
+   "pronoun": "she",
+   "address": "Miss Pruett",
+   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people\u2019s business.",
+   "public": "The postmistress. Every letter, parcel and telegram in Bellweather passes over her counter, and she forgets nothing.",
+   "home": "post",
+   "role_words": [
+    "postmistress"
+   ]
+  },
+  {
+   "id": "ada",
+   "name": "Ada Finch",
+   "role": "The innkeeper",
+   "traits": {
+    "handed": "right",
+    "height": "medium"
+   },
+   "pronoun": "she",
+   "address": "Mrs Finch",
+   "voice": "Warm, chatty and colloquial; calls people \"love\", runs on a little, and enjoys a bit of news more than she should.",
+   "public": "Proprietor of the Rook & Lantern. She knows everyone\u2019s habits and most of their business.",
+   "home": "inn",
+   "role_words": [
+    "innkeeper",
+    "landlady"
+   ]
+  },
+  {
+   "id": "clara",
+   "name": "Clara Vale",
+   "role": "Mistress of the household",
+   "traits": {
+    "handed": "left",
+    "height": "tall"
+   },
+   "pronoun": "she",
+   "address": "Miss Vale",
+   "voice": "Composed, dry and exact; she chooses words like a woman choosing gloves. Polite to the point of chill with strangers, warmer once she respects you.",
+   "public": "Edmund\u2019s younger sister. She has run Vale Manor\u2019s household for years and guards its privacy.",
+   "home": "manor",
+   "role_words": []
+  },
+  {
+   "id": "edmund",
+   "name": "Edmund Vale",
+   "role": "Master of Vale Manor",
+   "traits": {
+    "handed": "right",
+    "height": "tall"
+   },
+   "pronoun": "he",
+   "address": "Mr Vale",
+   "voice": "Loud, confident and used to being obeyed; bluff good humour that turns cold when crossed.",
+   "public": "Master of Vale Manor: a man of fixed habits, generous in public and hard in private.",
+   "home": "manor",
+   "role_words": [
+    "squire"
+   ]
+  },
+  {
+   "id": "iris",
+   "name": "Dr Iris Marsh",
+   "role": "The village doctor",
+   "traits": {},
+   "pronoun": "she",
+   "address": "Dr Marsh",
+   "voice": "Clinical and direct, with brisk warmth underneath; says exactly what she observed and no more.",
+   "public": "The village doctor. Methodical and direct; she is called whenever anyone in Bellweather is hurt or ill.",
+   "home": "surgery",
+   "role_words": [
+    "doctor"
+   ]
+  },
+  {
+   "id": "bell",
+   "name": "Arthur Bell",
+   "role": "The village constable",
+   "traits": {},
+   "pronoun": "he",
+   "address": "Constable Bell",
+   "voice": "A gruff country constable: terse, dry and matter-of-fact, with a soft spot he hides badly.",
+   "public": "The village constable. He has secured the scene and asked you to investigate; he will hear an accusation when you can back it with evidence.",
+   "home": "square",
+   "role_words": [
+    "constable"
+   ]
+  },
+  {
+   "id": "silas",
+   "name": "Silas Voss",
+   "role": "The solicitor",
+   "pronoun": "he",
+   "address": "Mr Voss",
+   "voice": "Measured, formal and faintly amused; speaks in tidy clauses and likes a Latin tag. Never rambles.",
+   "public": "A precise, courteous solicitor who keeps an office in the vestry and handles the affairs of half the parish.",
+   "home": "vestry",
+   "role_words": [
+    "solicitor"
+   ],
+   "traits": {}
+  }
+ ],
+ "objects": [
+  {
+   "id": "letter_opener",
+   "name": "Post office letter-opener",
+   "desc": "A slim steel letter-opener with a brass handle, stamped G.P.O., kept at the post office counter."
+  },
+  {
+   "id": "vicar_watch",
+   "name": "The vicar's pocket watch",
+   "desc": "An old silver hunter watch on a chain."
+  },
+  {
+   "id": "draft_letter",
+   "name": "Draft letter to the Postmaster",
+   "desc": "The vicar's unsent draft complaining that letters at Bellweather post office are being opened."
+  },
+  {
+   "id": "hunting_knife",
+   "name": "Hunting knife",
+   "desc": "Edmund Vale's sheath knife, kept in the gun room."
+  },
+  {
+   "id": "pruning_knife",
+   "name": "Pruning knife",
+   "desc": "A hooked pruning knife Clara Vale uses on the manor roses."
+  },
+  {
+   "id": "carving_knife",
+   "name": "Carving knife",
+   "desc": "The inn's kitchen carving knife."
+  },
+  {
+   "id": "forceps",
+   "name": "Dr Marsh's dressing forceps",
+   "desc": "Steel surgical forceps engraved 'I.M.', from the doctor's bag."
+  }
+ ],
+ "relations": [
+  {
+   "a": "vicar",
+   "rel": "threatened_to_expose",
+   "b": "dora"
+  },
+  {
+   "a": "ada",
+   "rel": "owes",
+   "b": "vicar"
+  },
+  {
+   "a": "edmund",
+   "rel": "quarrelled_with",
+   "b": "vicar"
+  },
+  {
+   "a": "clara",
+   "rel": "resents",
+   "b": "vicar"
+  },
+  {
+   "a": "ada",
+   "rel": "friend_of",
+   "b": "dora"
+  },
+  {
+   "a": "clara",
+   "rel": "sister_of",
+   "b": "edmund"
+  },
+  {
+   "a": "dora",
+   "rel": "accused_by",
+   "b": "vicar"
+  }
+ ],
+ "possession": [
+  {
+   "person": "dora",
+   "item": "letter_opener"
+  },
+  {
+   "person": "edmund",
+   "item": "hunting_knife"
+  },
+  {
+   "person": "clara",
+   "item": "pruning_knife"
+  },
+  {
+   "person": "ada",
+   "item": "carving_knife"
+  },
+  {
+   "person": "vicar",
+   "item": "vicar_watch"
+  },
+  {
+   "person": "vicar",
+   "item": "draft_letter"
+  },
+  {
+   "person": "iris",
+   "item": "forceps"
+  }
+ ],
+ "question": {
+  "text": "Who killed the Reverend Thomas Hale?",
+  "candidates": [
+   {
+    "id": "c_ada",
+    "label": "Ada Finch",
+    "facts": {
+     "actor": "ada"
+    }
+   },
+   {
+    "id": "c_clara",
+    "label": "Clara Vale",
+    "facts": {
+     "actor": "clara"
+    }
+   },
+   {
+    "id": "c_dora",
+    "label": "Dorothy Pruett",
+    "facts": {
+     "actor": "dora"
+    }
+   },
+   {
+    "id": "c_edmund",
+    "label": "Edmund Vale",
+    "facts": {
+     "actor": "edmund"
+    }
+   }
+  ],
+  "truth": "c_dora",
+  "crime": {
+   "event": "e_crime",
+   "place": "halt",
+   "window": [
+    1345,
+    1370
+   ]
+  }
+ },
+ "attitudes": [
+  {
+   "id": "a_vicar_knows",
+   "agent": "vicar",
+   "mode": "knows",
+   "content": "Dorothy Pruett has been steaming open and resealing parish letters.",
+   "because": []
+  },
+  {
+   "id": "a_vicar_report",
+   "agent": "vicar",
+   "mode": "intends",
+   "content": "To report Miss Pruett to the Postmaster unless she confesses, after one last talk at the Halt.",
+   "because": [
+    "a_vicar_knows"
+   ]
+  },
+  {
+   "id": "a_dora_fears",
+   "agent": "dora",
+   "mode": "fears",
+   "content": "Dismissal and disgrace if the vicar reports her letter-opening.",
+   "because": []
+  },
+  {
+   "id": "a_dora_unseen",
+   "agent": "dora",
+   "mode": "intends",
+   "content": "To meet the vicar unseen at the Halt and have Ada say she sat in the inn parlour.",
+   "because": [
+    "a_dora_fears"
+   ]
+  },
+  {
+   "id": "a_dora_rage",
+   "agent": "dora",
+   "mode": "feels",
+   "content": "Blind fury when the vicar refuses to spare her; the quarrel turns violent.",
+   "because": [
+    "a_dora_fears"
+   ],
+   "motive": "quarrel"
+  },
+  {
+   "id": "a_dora_hide",
+   "agent": "dora",
+   "mode": "intends",
+   "content": "To go home, say nothing, and hold to the parlour story.",
+   "because": [
+    "a_dora_rage"
+   ]
+  },
+  {
+   "id": "a_ada_believes",
+   "agent": "ada",
+   "mode": "believes",
+   "content": "Dora was slipping out to meet a sweetheart and wants it kept quiet.",
+   "because": []
+  },
+  {
+   "id": "a_ada_protect",
+   "agent": "ada",
+   "mode": "wants",
+   "content": "To spare Dora's good name by saying she sat in the back parlour all evening.",
+   "because": [
+    "a_ada_believes"
+   ]
+  },
+  {
+   "id": "a_ada_work",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "To keep her bar as every night.",
+   "because": []
+  },
+  {
+   "id": "a_edmund_drink",
+   "agent": "edmund",
+   "mode": "wants",
+   "content": "To drink at the Rook out of reach of his sister's reproaches.",
+   "because": []
+  },
+  {
+   "id": "a_clara_consult",
+   "agent": "clara",
+   "mode": "intends",
+   "content": "To consult Dr Marsh privately about her brother's drinking.",
+   "because": []
+  },
+  {
+   "id": "a_vale_dine",
+   "agent": "clara",
+   "mode": "intends",
+   "content": "To dine at home with Edmund as usual.",
+   "because": []
+  },
+  {
+   "id": "a_bell_rounds",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "To walk his early round to the Halt before the milk train.",
+   "because": []
+  },
+  {
+   "id": "a_bell_doctor",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "To fetch the doctor to the body and then tell the village.",
+   "because": [
+    "a_bell_rounds"
+   ]
+  },
+  {
+   "id": "a_iris_duty",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "To examine the body as the constable asks.",
+   "because": []
+  },
+  {
+   "id": "a_bell_secure",
+   "agent": "bell",
+   "mode": "wants",
+   "content": "To keep the vicar's private papers and effects locked away from village gossip until the inquest.",
+   "because": [
+    "a_bell_rounds"
+   ]
+  },
+  {
+   "id": "a_iris_discreet",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "To say nothing of her findings before the inquest except to someone who has plainly been to the scene with the constable's leave.",
+   "because": []
+  },
+  {
+   "id": "a_vicar_confront",
+   "agent": "vicar",
+   "mode": "intends",
+   "content": "To put the charge of letter-opening to Miss Pruett privately before taking any step.",
+   "because": [
+    "a_vicar_knows"
+   ]
+  },
+  {
+   "id": "a_silas_discreet",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "To repeat nothing overheard in the vestry unless the matter is already in writing before him; discretion is his trade.",
+   "because": []
+  },
+  {
+   "id": "a_ada_debt",
+   "agent": "ada",
+   "mode": "fears",
+   "content": "That word of the vicar's loan will get about and shame her before her customers.",
+   "because": []
+  },
+  {
+   "id": "a_ada_hide_cash",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "To hide away the money she owes the vicar and repay it quietly before anyone notices.",
+   "because": [
+    "a_ada_debt"
+   ]
+  },
+  {
+   "id": "a_bell_sand",
+   "agent": "bell",
+   "mode": "wants",
+   "content": "To hide the blood on the platform from the milk-train passengers and stop gossip.",
+   "because": [
+    "a_bell_secure"
+   ]
+  },
+  {
+   "id": "a_edmund_sulk",
+   "agent": "edmund",
+   "mode": "feels",
+   "content": "Resentful of being asked about his drinking, and reluctant to volunteer anything unless pressed on what he himself was doing that night.",
+   "because": []
+  },
+  {
+   "id": "a_bell_churns",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "To bunch the empty milk churns over the sanded patch so passengers see nothing amiss by the bench.",
+   "because": [
+    "a_bell_sand"
+   ]
+  },
+  {
+   "id": "a_bell_steer",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "To tell enquirers the body lay at the foot of the waiting-room steps, so nobody goes poking under the churns by the bench before the inquest.",
+   "because": [
+    "a_bell_sand",
+    "a_bell_churns"
+   ]
+  }
+ ],
+ "events": [
+  {
+   "id": "e_dinner",
+   "type": "dinner",
+   "agent": "clara",
+   "others": [
+    "edmund"
+   ],
+   "place": "manor",
+   "start": 1140,
+   "end": 1260,
+   "causedBy": "a_vale_dine",
+   "summary": "Clara and Edmund dine at the manor; she reproaches him over his drinking."
+  },
+  {
+   "id": "e_ada_bar",
+   "type": "work",
+   "agent": "ada",
+   "others": [],
+   "place": "inn",
+   "start": 1080,
+   "end": 1440,
+   "causedBy": "a_ada_work",
+   "summary": "Ada keeps the bar of the Rook & Lantern all evening."
+  },
+  {
+   "id": "e_vicar_letters",
+   "type": "writing",
+   "agent": "vicar",
+   "others": [],
+   "place": "vestry",
+   "start": 1200,
+   "end": 1325,
+   "causedBy": "a_vicar_report",
+   "summary": "The vicar drafts his letter to the Postmaster and pockets it."
+  },
+  {
+   "id": "e_clara_surgery",
+   "type": "consultation",
+   "agent": "clara",
+   "others": [
+    "iris"
+   ],
+   "place": "surgery",
+   "start": 1280,
+   "end": 1430,
+   "causedBy": "a_clara_consult",
+   "summary": "Clara sits with Dr Marsh discussing Edmund's drinking until half past eleven."
+  },
+  {
+   "id": "e_edmund_inn",
+   "type": "drinking",
+   "agent": "edmund",
+   "others": [],
+   "place": "inn",
+   "start": 1295,
+   "end": 1410,
+   "causedBy": "a_edmund_drink",
+   "summary": "Edmund drinks in the taproom, facing the back-parlour door, until half past eleven."
+  },
+  {
+   "id": "e_dora_visit",
+   "type": "request",
+   "agent": "dora",
+   "others": [
+    "ada"
+   ],
+   "place": "inn",
+   "start": 1300,
+   "end": 1310,
+   "causedBy": "a_dora_unseen",
+   "summary": "Dora whispers to Ada that she has someone to meet and asks to be said to be in the parlour."
+  },
+  {
+   "id": "e_vicar_wait",
+   "type": "waiting",
+   "agent": "vicar",
+   "others": [],
+   "place": "halt",
+   "start": 1335,
+   "end": 1350,
+   "causedBy": "a_vicar_report",
+   "summary": "The vicar waits on the Halt platform for Miss Pruett."
+  },
+  {
+   "id": "e_dora_wait",
+   "type": "meeting",
+   "agent": "dora",
+   "others": [
+    "vicar"
+   ],
+   "place": "halt",
+   "start": 1340,
+   "end": 1350,
+   "causedBy": "a_dora_unseen",
+   "summary": "Dora pleads with the vicar to keep silent; he refuses."
+  },
+  {
+   "id": "e_crime",
+   "type": "stabbing",
+   "agent": "dora",
+   "others": [
+    "vicar"
+   ],
+   "place": "halt",
+   "start": 1350,
+   "end": 1360,
+   "causedBy": "a_dora_rage",
+   "method": "blade",
+   "summary": "The quarrel turns violent; Dora stabs the vicar with her letter-opener, whose tip snaps off."
+  },
+  {
+   "id": "e_death",
+   "type": "death",
+   "agent": "vicar",
+   "others": [],
+   "place": "halt",
+   "start": 1360,
+   "end": 1362,
+   "causedBy": "nature",
+   "summary": "The vicar dies on the platform."
+  },
+  {
+   "id": "e_dora_home",
+   "type": "return",
+   "agent": "dora",
+   "others": [],
+   "place": "post",
+   "start": 1375,
+   "end": 1500,
+   "causedBy": "a_dora_hide",
+   "summary": "Dora returns to the post office and stays indoors."
+  },
+  {
+   "id": "e_discovery",
+   "type": "discovery",
+   "agent": "bell",
+   "others": [],
+   "place": "halt",
+   "start": 1760,
+   "end": 1770,
+   "causedBy": "a_bell_rounds",
+   "summary": "Constable Bell finds the vicar's body on the Halt platform at twenty past five."
+  },
+  {
+   "id": "e_bell_fetch",
+   "type": "summons",
+   "agent": "bell",
+   "others": [
+    "iris"
+   ],
+   "place": "surgery",
+   "start": 1780,
+   "end": 1785,
+   "causedBy": "a_bell_doctor",
+   "summary": "Bell wakes Dr Marsh and tells her of the death."
+  },
+  {
+   "id": "e_exam",
+   "type": "examination",
+   "agent": "iris",
+   "others": [
+    "bell"
+   ],
+   "place": "halt",
+   "start": 1800,
+   "end": 1836,
+   "causedBy": "a_iris_duty",
+   "summary": "Dr Marsh examines the body; Bell searches the coat."
+  },
+  {
+   "id": "e_news",
+   "type": "news",
+   "agent": "bell",
+   "others": [
+    "ada"
+   ],
+   "place": "inn",
+   "start": 1852,
+   "end": 1860,
+   "causedBy": "a_bell_doctor",
+   "summary": "Bell tells Ada Finch of the vicar's death."
+  },
+  {
+   "id": "e_bell_secure",
+   "type": "securing",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1846,
+   "end": 1849,
+   "causedBy": "a_bell_secure",
+   "summary": "Bell locks the vicar's watch, draft letter and the wound fragment in the evidence tin at his lock-up."
+  },
+  {
+   "id": "e_iris_drop",
+   "type": "mishap",
+   "agent": "iris",
+   "others": [],
+   "place": "halt",
+   "start": 1834,
+   "end": 1836,
+   "causedBy": "nature",
+   "summary": "In the dim dawn light Dr Marsh's forceps slip from her fingers and lodge between the platform boards."
+  },
+  {
+   "id": "e_vestry_confront",
+   "type": "confrontation",
+   "agent": "vicar",
+   "others": [
+    "dora",
+    "silas"
+   ],
+   "place": "vestry",
+   "start": 780,
+   "end": 795,
+   "causedBy": "a_vicar_confront",
+   "summary": "At the dinner hour the vicar accuses Dora of opening parish letters; Silas, at his desk beyond the partition, overhears."
+  },
+  {
+   "id": "e_ada_count",
+   "type": "behavior",
+   "agent": "ada",
+   "others": [],
+   "place": "inn",
+   "start": 1400,
+   "end": 1415,
+   "causedBy": "a_ada_hide_cash",
+   "summary": "After closing the bar, Ada counts coins into a tin box and hides it under a loose board."
+  },
+  {
+   "id": "e_bell_sand",
+   "type": "cover",
+   "agent": "bell",
+   "others": [],
+   "place": "halt",
+   "start": 1836,
+   "end": 1838,
+   "causedBy": "a_bell_sand",
+   "summary": "Bell shovels sand from the fire bucket over the bloodstained boards before the milk train."
+  },
+  {
+   "id": "e_edmund_grumble",
+   "type": "behavior",
+   "agent": "edmund",
+   "others": [],
+   "place": "inn",
+   "start": 1400,
+   "end": 1410,
+   "causedBy": "a_edmund_sulk",
+   "summary": "Still in his cups, Edmund mutters to no one about 'that woman slipping out the yard door' before Ada shoos him home."
+  },
+  {
+   "id": "e_tap_girl",
+   "type": "behavior",
+   "agent": "ada",
+   "others": [],
+   "place": "inn",
+   "start": 1830,
+   "end": 1840,
+   "causedBy": "a_ada_work",
+   "summary": "Tidying the taproom next morning, Ada recalls Edmund's drunken grumble while gossiping with a passing customer."
+  },
+  {
+   "id": "e_bell_churns",
+   "type": "cover",
+   "agent": "bell",
+   "others": [],
+   "place": "halt",
+   "start": 1838,
+   "end": 1840,
+   "causedBy": "a_bell_churns",
+   "summary": "Bell rolls the three empty milk churns from the platform's end and bunches them over the sanded boards."
+  }
+ ],
+ "signs": [
+  {
+   "id": "s_morning_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "morning": true,
+   "deceptive": false,
+   "title": "Dr Iris Marsh on the morning",
+   "text": "At twenty to six, Bell woke me and told me of the death. By six o'clock I was examining the body.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Dr Marsh says Bell woke her at twenty to six to tell her of the death, and that she was examining the body by six o'clock. Does that match what you recall?",
+   "confront": "You told me Bell woke you at twenty to six and that you were examining the body by six o'clock. Is that the whole of it?"
+  },
+  {
+   "id": "s_morning_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "morning": true,
+   "deceptive": false,
+   "title": "Arthur Bell on the morning",
+   "text": "I found the vicar's body on the Halt platform at twenty past five. I went and woke Dr Marsh at twenty to six and told her of it, and at six o'clock she examined the body while I searched the coat. At about twenty to seven I rolled the three empty milk churns from the end of the platform and bunched them over the sanded boards, and about ten to seven I told Ada Finch of the vicar's death.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Constable Bell says he found the vicar's body at twenty past five, woke Dr Marsh soon after, and later told Ada Finch of the death. Does that match what you know?",
+   "confront": "You say you found the vicar's body at twenty past five, woke Dr Marsh soon after, and moved the churns before telling Ada Finch. Is that the whole of it?"
+  },
+  {
+   "id": "s_morning_ada",
+   "kind": "testimony",
+   "speaker": "ada",
+   "morning": true,
+   "deceptive": false,
+   "title": "Ada Finch on the morning",
+   "text": "Oh, love, I was just about my morning when Constable Bell came to me at about ten to seven and told me the poor vicar had died - gave me ever such a start, it did.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Ada Finch says Constable Bell came to her at about ten to seven and told her the vicar had died. Does that fit with what you know?",
+   "confront": "You told me Constable Bell came to you at about ten to seven and told you the vicar had died. Is that the whole of it?"
+  },
+  {
+   "id": "s_surface_silas",
+   "kind": "testimony",
+   "speaker": "silas",
+   "surface": true,
+   "deceptive": false,
+   "title": "Silas Voss on the evening",
+   "text": "I kept to my desk at the vestry until my work was done, and went straight home after, as is my habit. I spoke to no one of parish business once I'd locked the door behind me.",
+   "ask": "Where were you last night?",
+   "surface_checked": "honest",
+   "show": "Silas Voss says he stayed at his desk in the vestry until his work was done, then went straight home, speaking to no one of parish business. Do you know if that's true?",
+   "confront": "You told me you stayed at your desk until your work was done, then went straight home and spoke to no one of parish business. Is that the whole of it?",
+   "to": null
+  },
+  {
+   "id": "s_surface_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "surface": true,
+   "deceptive": false,
+   "title": "Dr Iris Marsh on the evening",
+   "text": "I spent the evening in conversation, discussing a patient's drinking, until rather late. After that I retired for the night and saw no one further.",
+   "ask": "Where were you last night?",
+   "show": "Dr Marsh says she spent the latter part of the evening at the Vale house with Miss Vale on a confidential matter, then went straight home to bed. Do you know if that's true?",
+   "confront": "You told me you spent the latter part of the evening with Miss Vale on a confidential matter, then went home to bed. Is that the whole of it?",
+   "to": null,
+   "surface_checked": "honest"
+  },
+  {
+   "id": "s_surface_edmund",
+   "kind": "testimony",
+   "speaker": "edmund",
+   "surface": true,
+   "deceptive": true,
+   "title": "Edmund Vale on the evening",
+   "text": "I was in the taproom at the Rook, same as any other evening, nursing my glass and keeping my own company till they turned me out. I don't see what more a man's evening wants explaining than that.",
+   "ask": "Where were you last night?",
+   "surface_checked": "cover",
+   "show": "Edmund Vale says he was in the taproom at the Rook all evening, keeping to himself until closing. Do you know if that's true?",
+   "confront": "You told me you were in the taproom at the Rook all evening, keeping to yourself until closing. Is that the whole of it?",
+   "to": null
+  },
+  {
+   "id": "s_surface_clara",
+   "kind": "testimony",
+   "speaker": "clara",
+   "surface": true,
+   "deceptive": false,
+   "title": "Clara Vale on the evening",
+   "text": "I dined at home with my brother, and afterward I sat up a good while with Dr Marsh, talking over a private family matter. I did not stir from the house again that night.",
+   "ask": "Where were you last night?",
+   "surface_checked": "honest",
+   "show": "Clara Vale says she dined at home with her brother, then sat up a good while with Dr Marsh over a private family matter, never leaving the house. Do you know if that's true?",
+   "confront": "You told me you dined with your brother and then sat up with Dr Marsh on a private family matter, never leaving the house. Is that the whole of it?",
+   "to": null
+  },
+  {
+   "id": "s_surface_ada",
+   "kind": "testimony",
+   "speaker": "ada",
+   "surface": true,
+   "deceptive": true,
+   "title": "Ada Finch on the evening",
+   "text": "Oh, I was behind the bar same as every night, love, right through till closing \u2014 you could've set your watch by me. After I'd shut up I saw to the takings and locked them away safe, then off to my bed, quiet as you please. Dora sat in the back parlour the whole evening, poor dear, hardly stirred from her chair.",
+   "ask": "Where were you last night?",
+   "show": "Ada Finch says she was behind her bar all evening pulling pints, and that Dora sat quietly in the back parlour the whole time, as she saw herself. Do you know if that's true?",
+   "confront": "You told me you were behind the bar all evening and that you saw Dora sitting quietly in the back parlour the whole time. Is that the whole of it?",
+   "to": null,
+   "surface_checked": "cover"
+  },
+  {
+   "id": "s_surface_dora",
+   "kind": "testimony",
+   "speaker": "dora",
+   "surface": true,
+   "deceptive": true,
+   "title": "Dorothy Pruett on the evening",
+   "text": "I locked up the post office at the usual hour and sat quietly in the parlour the whole evening, as Ada will tell you \u2014 I never set foot outside once the shutters were up. There's nothing more to say of it; a dull evening and an early bed, that's all.",
+   "ask": "Where were you last night?",
+   "surface_checked": "cover",
+   "show": "Dorothy Pruett says she locked up the post office at the usual hour and sat quietly in the parlour all evening, never once stepping outside. Do you know if that's true?",
+   "confront": "You told me you locked up the post office and sat quietly in the parlour all evening without stepping outside. Is that the whole of it?",
+   "to": null
+  },
+  {
+   "id": "s_medical",
+   "kind": "record",
+   "medical": true,
+   "medical_v": 2,
+   "source": "e_exam",
+   "at": "surgery",
+   "title": "The doctor\u2019s examination notes",
+   "text": "Examination of the Reverend Thomas Hale reveals a single deep puncture wound to the torso, consistent with a sharp, narrow blade driven with considerable force. There is no evidence of a prolonged struggle or secondary injury, and the wound track shows no significant internal migration. Death occurred between twenty-five past ten and ten to eleven, the wound itself proving immediately fatal.",
+   "claim": {
+    "kind": "time",
+    "start": 1345,
+    "end": 1370
+   },
+   "reactions": {
+    "bell": "Puncture wound, driven hard and clean \u2014 that tallies with what Doctor Marsh found when I searched his coat. No struggle to speak of, which is why I never saw a mark on them boards past the one patch.",
+    "iris": "That's my finding, written plain. Single thrust, deep and narrow, death near-instant between those times \u2014 I'll say no more of it before the inquest, not even to you.",
+    "dora": "A single blow, you say \u2014 well, that only shows some ruffian meant business, doesn't it. I'm sure I couldn't tell you what manner of blade does that sort of thing."
+   },
+   "show": "The doctor's notes show the Reverend Hale died of a single deep stab wound to the torso from a narrow blade, driven with force, between twenty-five past ten and ten to eleven. Does that match what you understood?",
+   "to": null,
+   "art": "notes"
+  },
+  {
+   "id": "s_medical_iris",
+   "kind": "testimony",
+   "medical": true,
+   "medical_v": 2,
+   "speaker": "iris",
+   "source": "e_exam",
+   "claim": {
+    "kind": "time",
+    "start": 1345,
+    "end": 1370
+   },
+   "title": "Dr Marsh on the body",
+   "text": "The poor Reverend died between twenty-five past ten and ten to eleven \u2014 a single deep stab wound to the body, delivered with real force by a narrow blade. There was nothing to be done; death would have followed within moments.",
+   "ask": "Doctor, what did you find when you examined Mr Hale?",
+   "show": "Dr Marsh says the Reverend died between twenty-five past ten and ten to eleven, from one deep stab wound delivered with real force by a narrow blade. Do you know if that's consistent with what you saw?",
+   "confront": "You told me the Reverend died between twenty-five past ten and ten to eleven, from one deep stab wound delivered with force. Is that the whole of it?",
+   "to": null
+  },
+  {
+   "id": "s_tip",
+   "kind": "trace",
+   "title": "Steel in the wound",
+   "text": "In Constable Bell's evidence tin, wrapped in lint: an inch of snapped thin steel, bevelled on one edge and flecked with red sealing-wax. Near the break it is stamped 'G.P.O.' Dr Marsh's label reads: 'from the wound'.",
+   "at": "square",
+   "source": "e_bell_secure",
+   "claim": {
+    "kind": "possession",
+    "item": "letter_opener"
+   },
+   "requires": [
+    "t_iris_exam"
+   ],
+   "unlock": "Dr Marsh says the fragment is in Constable Bell's evidence tin and sends the detective to him; Bell opens it once she has vouched for them.",
+   "show": "This is a snapped inch of thin steel, bevelled on one edge, flecked with red sealing-wax and stamped 'G.P.O.', taken from the wound. Do you recognise it?",
+   "reactions": {
+    "bell": "G.P.O. stamp, is it. Found in the wound, right where Doctor Marsh's label says \u2014 I locked it away myself and haven't touched it since.",
+    "dora": "A broken bit of steel with the Post Office mark \u2014 well, that could belong to any manner of implement about the counter. I'm sure I don't know how such a thing came to be in a wound."
+   },
+   "to": null,
+   "art": null
+  },
+  {
+   "id": "s_watch",
+   "kind": "trace",
+   "title": "The stopped watch",
+   "text": "In Constable Bell's evidence tin: the vicar's silver hunter. Its glass is starred and its hands have stopped at 22:37. Bell's tag reads: 'found beneath the body'.",
+   "at": "square",
+   "source": "e_bell_secure",
+   "claim": {
+    "kind": "time",
+    "start": 1350,
+    "end": 1365
+   },
+   "requires": [
+    "t_iris_exam"
+   ],
+   "unlock": "Dr Marsh mentions the watch went into Bell's locked tin, so the detective asks the constable to open it.",
+   "show": "This is the vicar's silver hunter, its glass starred and its hands stopped at 22:37, found beneath the body. Does that time mean anything to you?",
+   "reactions": {
+    "bell": "Found it under him myself, glass starred, hands stopped dead at that hour. I logged it straight into the tin so there'd be no arguing the time later.",
+    "dora": "A stopped watch tells you when he died, not who did it, Inspector. I was home with my cocoa at that hour, as I've already said."
+   },
+   "to": null,
+   "art": "watch"
+  },
+  {
+   "id": "s_letter",
+   "kind": "document",
+   "title": "Draft in the coat pocket",
+   "text": "\"To the Postmaster. Sir, with sorrow I report that letters entrusted to Bellweather post office have been opened and resealed. I put it to Miss Pruett, who would not deny it. I see her once more tonight at the Halt; failing a confession, I post this.\" Signed T. Hale.",
+   "at": "square",
+   "source": "e_bell_secure",
+   "claim": {
+    "kind": "relation",
+    "a": "vicar",
+    "rel": "threatened_to_expose",
+    "b": "dora"
+   },
+   "requires": [
+    "t_iris_exam"
+   ],
+   "unlock": "Dr Marsh mentions a folded paper from the coat that is now locked in Bell's tin, so the detective asks to see it.",
+   "reactions": {
+    "bell": "That draft was in his coat when I searched it \u2014 put me in mind there was more to his business that night than just a late walk. I locked it up straight away, not for me to go blabbing it about the village.",
+    "dora": "He had no right to write such wicked slander, true or not. I never denied opening a letter or two out of due diligence \u2014 that's hardly murder, Inspector."
+   },
+   "show": "I've found a draft letter in the vicar's coat accusing Miss Pruett of opening and resealing letters, saying he meant to see her once more at the Halt. Do you know anything of this?",
+   "to": "dora",
+   "direct": "The vicar wrote that he intended to confront you once more that night at the Halt about the post office letters. Did you meet him?",
+   "art": "letter"
+  },
+  {
+   "id": "t_dora",
+   "kind": "testimony",
+   "title": "Miss Pruett's evening",
+   "text": "\"I closed the counter at six sharp, as regulations require. From half past nine until a quarter past eleven I sat in Mrs Finch's back parlour with my cocoa. She will tell you so. I do not go gadding about railway platforms at night.\"",
+   "at": "post",
+   "speaker": "dora",
+   "because": [
+    "a_dora_hide"
+   ],
+   "ask": "Where were you last night, Miss Pruett?",
+   "claim": {
+    "kind": "place",
+    "person": "dora",
+    "place": "inn",
+    "start": 1290,
+    "end": 1395
+   },
+   "show": "Miss Pruett says she closed the counter at six and spent from half past nine to a quarter past eleven in Mrs Finch's back parlour with her cocoa. Can you confirm that?",
+   "confront": "You told me you sat in Mrs Finch's parlour from half past nine to a quarter past eleven with your cocoa. Is that the whole of it?",
+   "to": null
+  },
+  {
+   "id": "t_ada",
+   "kind": "testimony",
+   "title": "Mrs Finch's evening",
+   "text": "\"Behind my bar the whole blessed night, love, same as always. Pulling pints, wiping glasses, listening to farmers grumble about the weather. Nothing to tell, more's the pity.\"",
+   "at": "inn",
+   "speaker": "ada",
+   "source": "e_ada_bar",
+   "ask": "Where were you last night, Mrs Finch?",
+   "show": "Mrs Finch says she was behind her bar the whole night, pulling pints and listening to the farmers grumble. Does that match what you saw?",
+   "confront": "You told me you were behind your bar the whole night, with nothing to tell. Is that the whole of it?",
+   "to": null
+  },
+  {
+   "id": "t_edmund",
+   "kind": "testimony",
+   "title": "Mr Vale's evening",
+   "text": "\"Dined at home, then took a glass or two at the Rook. A man may drink in his own village, I trust? Came home when I pleased. That's the whole of it.\"",
+   "at": "manor",
+   "speaker": "edmund",
+   "source": "e_edmund_inn",
+   "ask": "Where were you last night, Mr Vale?",
+   "show": "Mr Vale says he dined at home, then had a glass or two at the Rook, and came home when he pleased. Does that match what you know?",
+   "confront": "You told me you dined at home, drank at the Rook, and came home when you pleased. Is that the whole of it?",
+   "to": null
+  },
+  {
+   "id": "t_clara",
+   "kind": "testimony",
+   "title": "Miss Vale's evening",
+   "text": "\"We dined at eight. Afterwards I went out on a private errand, which I do not propose to describe. I was home before midnight.\"",
+   "at": "manor",
+   "speaker": "clara",
+   "source": "e_clara_surgery",
+   "ask": "Where were you last night, Miss Vale?",
+   "show": "Miss Vale says she dined at eight, then went out on a private errand she won't describe, returning before midnight. Do you know anything of that errand?",
+   "confront": "You told me you dined at eight, then went out on a private errand you won't describe, home before midnight. Is that the whole of it?",
+   "to": null
+  },
+  {
+   "id": "t_ada_cover",
+   "kind": "testimony",
+   "title": "Mrs Finch vouches",
+   "text": "\"Dora? Oh, she was in my back parlour, love, snug as you like, half nine till gone eleven. Mr Vale sat in his usual corner of the taproom all evening, but he'd not notice a thing past his glass.\"",
+   "at": "inn",
+   "speaker": "ada",
+   "because": [
+    "a_ada_protect"
+   ],
+   "source": "e_dora_visit",
+   "requires": [
+    "t_dora"
+   ],
+   "unlock": "Miss Pruett names Mrs Finch as her witness, so the detective goes to the inn to ask her.",
+   "ask": "Miss Pruett says she sat in your back parlour until a quarter past eleven. Did she?",
+   "claim": {
+    "kind": "place",
+    "person": "dora",
+    "place": "inn",
+    "start": 1290,
+    "end": 1395
+   },
+   "confront": "You told me Dora sat in your back parlour from half nine till gone eleven, and that Mr Vale sat in his corner all evening unlikely to notice anything. Is that the whole of it?",
+   "reactions": {
+    "dora": "Mrs Finch is a kind soul, always glad to oblige a friend with a story. I was in her parlour, as she says, and that's an end of it."
+   },
+   "show": "Ada Finch vouches that Dora sat in her back parlour from half nine till gone eleven, and that Mr Vale sat in his usual corner of the taproom all evening without noticing much. Do you know if that's true?",
+   "to": "dora",
+   "direct": "Mrs Finch says you were with her in her back parlour from half past nine till gone eleven. Is that so?"
+  },
+  {
+   "id": "t_edmund_parlour",
+   "kind": "testimony",
+   "title": "The view from the corner",
+   "text": "\"The Pruett woman? Came in about twenty to ten, whispered at Mrs Finch's elbow, and went out by the yard door before ten. That parlour was dark the rest of the night. I sat facing its door till half eleven.\"",
+   "at": "manor",
+   "speaker": "edmund",
+   "source": "e_edmund_inn",
+   "requires": [
+    "b_edmund_grumble"
+   ],
+   "unlock": "Ada's recollection of Edmund's drunken grumble about a woman at the yard door gives the detective cause to press him on exactly what he saw.",
+   "ask": "You sat in the taproom last night. Did you see Miss Pruett in the back parlour?",
+   "defeats": [
+    "t_dora",
+    "t_ada_cover"
+   ],
+   "needs": [
+    "b_edmund_grumble"
+   ],
+   "reading": "Ada's half-remembered grumble names no one outright, but it points to Edmund's corner view of the parlour door, so his fuller account now makes sense of it.",
+   "show": "Mr Vale says Miss Pruett came into the parlour about twenty to ten, whispered to Mrs Finch, and left by the yard door before ten, and that he watched that door till half eleven. Does that match what you recall?",
+   "confront": "You told me the Pruett woman slipped in near twenty to ten, whispered at Mrs Finch's elbow, and left by the yard door before ten, while you watched that door till half eleven. Is that the whole of it?",
+   "reactions": {
+    "dora": "Mr Vale was deep in his glass, as usual, and no doubt saw shapes in the dark that weren't there. I was in that parlour the whole evening, whatever he claims to have noticed.",
+    "ada": "Oh, well \u2014 Mr Vale does like to fancy he sees everything over his ale, love, but a body can slip to the privy and back without the whole taproom marking it. I only said what I believed to be true."
+   },
+   "to": null
+  },
+  {
+   "id": "t_iris_exam",
+   "kind": "testimony",
+   "title": "Dr Marsh's examination",
+   "text": "\"One narrow wound beneath the ribs. I drew a piece of metal out of it and gave it to the constable, along with everything in the coat: his watch and a folded paper. Constable Bell locked the lot in his tin at the lock-up. Tell him I sent you; he won't open it for anyone else.\"",
+   "at": "surgery",
+   "speaker": "iris",
+   "source": "e_exam",
+   "ask": "What did you find when you examined the vicar, Dr Marsh?",
+   "requires": [
+    "s_forceps"
+   ],
+   "unlock": "The forceps are engraved with Dr Marsh's initials. When the detective brings them back to her surgery, she sees they have been on the platform and agrees to describe what she drew out of the wound with them.",
+   "confront": "You told me you drew a piece of metal from the wound and gave it, with his watch and a folded paper, to Constable Bell to lock away. Is that the whole of it?",
+   "to": null,
+   "show": "Dr Marsh says she drew a piece of metal from the wound and gave Constable Bell everything from the coat, including the watch and a folded paper. Do you know if that's true?"
+  },
+  {
+   "id": "s_forceps",
+   "kind": "item",
+   "title": "Forceps between the boards",
+   "text": "Under the brushed-away sand, wedged between two platform boards beside the dark stain where the body lay: a pair of steel dressing forceps engraved 'I.M.'. Their jaws are tacky with dried blood, and there is a tiny fleck of red wax in the teeth.",
+   "at": "halt",
+   "source": "e_iris_drop",
+   "requires": [
+    "s_sand"
+   ],
+   "unlock": "The sand has been heaped over the spot where the body lay. The detective brushes it aside to look at the boards underneath.",
+   "show": "These are steel dressing forceps engraved 'I.M.', found wedged between the platform boards where the body lay, their jaws tacky with dried blood and a fleck of red wax caught in the teeth. Do you recognise these?",
+   "reactions": {
+    "iris": "Those are mine, engraved plain enough \u2014 must have slipped from my hand in that poor light while I worked. The blood on them is from the examination, nothing more sinister than that."
+   },
+   "to": "iris",
+   "direct": "I found your forceps, engraved 'I.M.', wedged in the platform boards with blood on the jaws and a fleck of red wax in the teeth. How did they come to be there?",
+   "art": null
+  },
+  {
+   "id": "t_silas_overheard",
+   "kind": "testimony",
+   "title": "Through the partition",
+   "text": "\"The partition between my office and the vestry is mere deal board, alas. Yesterday, about one o'clock, the vicar said: 'Dorothy, letters have been opened at your counter, and I know it.' She answered, very low, that it would finish her. He said she must make it right herself. Then the door. Audi alteram partem, but I heard only the one.\"",
+   "at": "vestry",
+   "speaker": "silas",
+   "source": "e_vestry_confront",
+   "because": [
+    "a_silas_discreet"
+   ],
+   "ask": "Mr Voss, you work beside the vestry. Did you hear anything pass between the vicar and Miss Pruett?",
+   "requires": [
+    "s_letter"
+   ],
+   "unlock": "The draft says the vicar 'put it to Miss Pruett'. He worked in the vestry, which shares a wall with Silas Voss's office, so the detective takes the draft to the solicitor. Since the matter is already in writing, Voss agrees to say what he heard.",
+   "claim": {
+    "kind": "relation",
+    "a": "dora",
+    "rel": "accused_by",
+    "b": "vicar"
+   },
+   "confront": "You told me you overheard the vicar accuse Dorothy of opening letters, and heard her say it would finish her, before he said she must put it right herself. Is that the whole of it?",
+   "to": null,
+   "show": "Mr Voss says he overheard the vicar tell Miss Pruett through the partition that letters had been opened at her counter, and that she must make it right. Do you know if that's true?"
+  },
+  {
+   "id": "b_ada_cash",
+   "kind": "behavior",
+   "about": "ada",
+   "title": "A tin box under the board",
+   "text": "Behind the bar, a loose board lifts to show a battered tin box with coins and folded notes inside, pushed well out of sight.",
+   "at": "inn",
+   "source": "e_ada_count",
+   "explainedBy": [
+    "s_iou"
+   ],
+   "requires": [
+    "s_florin"
+   ],
+   "unlock": "The stray florin lies beside the loose board, so the detective prises the board up.",
+   "show": "Behind the bar at the inn, a loose board lifts to show a battered tin box of coins and folded notes pushed well out of sight. Do you know why Mrs Finch keeps it hidden there?",
+   "confront": "I found a tin box of coins and notes hidden under a loose board behind your bar. Can you tell me why it's kept out of sight?",
+   "reactions": {
+    "ada": "Oh, that's just my little savings, love, nothing to trouble yourself over. A woman likes to keep a bit put by where wandering fingers won't find it."
+   },
+   "to": "ada",
+   "direct": "I found a tin box of coins and notes hidden under a loose board behind your bar. Can you tell me about that?"
+  },
+  {
+   "id": "s_iou",
+   "kind": "document",
+   "title": "A promissory note",
+   "text": "A slip in the vicar's hand: 'Received of the Reverend T. Hale, five pounds, to be repaid by Michaelmas. A. Finch.' Dated last spring, tucked behind the inn's ledger.",
+   "at": "inn",
+   "requires": [
+    "b_ada_cash"
+   ],
+   "unlock": "Having found the hidden tin, the detective asks Ada what it holds, and she fetches the note to explain it rather than be thought a thief.",
+   "claim": {
+    "kind": "relation",
+    "a": "ada",
+    "rel": "owes",
+    "b": "vicar"
+   },
+   "show": "This is a note in the vicar's hand recording five pounds received from him by A. Finch last spring, to be repaid by Michaelmas, tucked behind the inn's ledger. Do you know anything of this debt?",
+   "reactions": {
+    "dora": "A debt between Mrs Finch and the vicar is no business of mine, Inspector. I keep the post office accounts, not the Rook's."
+   },
+   "to": "ada",
+   "direct": "I found a note showing the vicar lent you five pounds last spring, to be repaid by Michaelmas. Was that debt ever settled?",
+   "art": "note"
+  },
+  {
+   "id": "s_sand",
+   "kind": "trace",
+   "title": "Churns by the bench",
+   "text": "Beside the platform bench, three empty milk churns stand bunched together on the boards, well away from the loading end. Rolled aside, they reveal a broad heap of fresh sand, raked flat. The red fire bucket on its hook by the waiting-room door is empty, with a scoop of wet sand stuck to the bottom.",
+   "at": "halt",
+   "source": "e_bell_sand",
+   "requires": [
+    "t_bell_found"
+   ],
+   "unlock": "The constable says the body lay by the platform bench, so the detective goes to the Halt to look there and finds churns standing on that very spot, which have to be moved.",
+   "reactions": {
+    "bell": "Aye, I shifted them churns and put sand down myself \u2014 couldn't have the milk-train folk gawping and gossiping before the inquest's had its say. No call for alarm, it was my doing and nothing hid but the mess."
+   },
+   "show": "By the platform bench I found milk churns moved aside to reveal a heap of fresh raked sand, and the fire bucket emptied with wet sand stuck inside. Do you know what happened here?",
+   "to": null,
+   "art": null
+  },
+  {
+   "id": "s_florin",
+   "kind": "trace",
+   "title": "A coin by the skirting",
+   "text": "Behind the bar of the Rook, a florin lies against the skirting. Beside it one floorboard sits a little proud, and its nails are bright and loose in their holes.",
+   "at": "inn",
+   "source": "e_ada_count",
+   "requires": [
+    "t_ada",
+    "t_ada_cover"
+   ],
+   "unlock": "To prove she would have seen Miss Pruett leave the parlour, Mrs Finch lifts the counter flap and has the detective stand where she stood all night. From behind the bar, the detective sees the floor by the skirting.",
+   "show": "Behind the Rook's bar a florin lies against the skirting, beside a floorboard sitting a little proud with bright, loose nails. Do you know anything about that board?",
+   "reactions": {
+    "ada": "Dear me, that board's been loose an age, love, I keep meaning to get Bert to nail it proper. Must've dropped that florin counting up of an evening, nothing more to it."
+   },
+   "to": null,
+   "art": "coin"
+  },
+  {
+   "id": "b_edmund_grumble",
+   "kind": "behavior",
+   "about": "edmund",
+   "title": "A grumble over the glasses",
+   "text": "Wiping down the taproom, Ada recalls that Mr Vale, well into his cups, had muttered something about 'that woman slipping out the yard door' before she sent him home.",
+   "at": "inn",
+   "source": "e_tap_girl",
+   "requires": [
+    "t_ada_cover"
+   ],
+   "unlock": "Mrs Finch's account of the back parlour makes Edmund's corner of the taproom worth asking about, so the detective presses her for anything else said that night.",
+   "show": "Ada recalls that Mr Vale, well into his cups, muttered something about 'that woman slipping out the yard door' before she sent him home. Do you know what he meant by that?",
+   "confront": "Ada recalls you muttering, well into your cups, about 'that woman slipping out the yard door' before she sent you home. Can you tell me what you meant?",
+   "reactions": {
+    "edmund": "A man can mutter what he likes in his cups, can't he. If I said something of the sort, I don't rightly recall it \u2014 ask Ada, she's the one with the memory for gossip.",
+    "ada": "Oh, Edmund's always one for a mutter in his cups, love, but that's just a drunk man's fancy talk - don't you go putting stock in it. He'd blame the moon for slipping out the yard door if you let him natter on long enough."
+   },
+   "to": "edmund",
+   "direct": "Mrs Finch recalls you, well in your cups, muttering about 'that woman slipping out the yard door'. What did you mean by that?"
+  },
+  {
+   "id": "t_bell_found",
+   "kind": "testimony",
+   "title": "Where the constable found him",
+   "text": "\"All right. Not the steps. He was on his back by the platform bench, cold as the rails, twenty past five. I fetched Dr Marsh straight off. The platform's been seen to since; I'll not have milk-train folk gawping.\"",
+   "at": "square",
+   "speaker": "bell",
+   "source": "e_discovery",
+   "because": [
+    "a_bell_sand"
+   ],
+   "ask": "The smuts at the foot of the steps haven't been touched, Constable. Where did he really lie?",
+   "requires": [
+    "s_steps"
+   ],
+   "unlock": "Told that the steps are untouched under their coal smuts, Bell can no longer stand by his story. He admits grudgingly where the body really lay.",
+   "defeats": [
+    "t_bell_first"
+   ],
+   "show": "Constable Bell now says the body was found on its back by the platform bench, not the steps, at twenty past five, and that the platform has since been tidied. Does that match what you understood?",
+   "confront": "You told me now that you found him on his back by the platform bench, not the steps, at twenty past five, and that you've since tidied the platform. Is that the whole of it?",
+   "reactions": {
+    "dora": "I'm sure I couldn't say where Constable Bell found him or at what hour - that's his business, not mine. I was indoors the whole evening and know nothing of platforms or benches, so you'll have to take his word for it, not mine."
+   },
+   "to": null
+  },
+  {
+   "id": "t_bell_first",
+   "kind": "testimony",
+   "title": "The constable's first account",
+   "text": "\"Twenty past five, on my round. Lying at the foot of the waiting-room steps, he was, poor soul. Cold as the rails. I fetched Dr Marsh straight off. Nothing more to see up there now.\"",
+   "at": "square",
+   "speaker": "bell",
+   "because": [
+    "a_bell_steer"
+   ],
+   "ask": "Where exactly did you find the vicar, Constable?",
+   "show": "Constable Bell says he found the body at the foot of the waiting-room steps at twenty past five and fetched Dr Marsh straight away. Does that match what you saw?",
+   "confront": "You told me you found him at the foot of the waiting-room steps at twenty past five and fetched Dr Marsh straight off. Is that the whole of it?",
+   "to": null
+  },
+  {
+   "id": "s_steps",
+   "kind": "absence",
+   "title": "The foot of the steps",
+   "text": "At the foot of the waiting-room steps the boards are evenly dusted with coal smuts from last evening's train. No footprint, no scuff, no stain, and no sign that anyone has scrubbed them. Further along the platform the dust has been swept about.",
+   "at": "halt",
+   "requires": [
+    "t_bell_first"
+   ],
+   "unlock": "The constable named the foot of the waiting-room steps, so the detective goes to the Halt to look at exactly that spot.",
+   "show": "At the foot of the waiting-room steps the coal-smut dust lies even and undisturbed, with no footprint, scuff, stain, or sign of scrubbing, though further along the platform the dust has been swept about. Can you account for that?",
+   "to": null,
+   "art": null
+  }
+ ],
+ "premise": {
+  "victim": "vicar",
+  "culprit": "dora",
+  "suspects": [
+   "ada",
+   "clara",
+   "dora",
+   "edmund"
+  ],
+  "bystanders": [
+   "jonah",
+   "hugo",
+   "silas",
+   "rowan"
+  ],
+  "method": "blade",
+  "motive": "quarrel",
+  "place": "halt",
+  "shape": "protector"
+ },
+ "id": "mk-live-20261002-222517",
+ "answer": {
+  "method": "blade",
+  "motive": "quarrel",
+  "methods": [
+   "blade"
+  ],
+  "motives": [
+   "quarrel",
+   "secret"
+  ],
+  "accepted_v": 3,
+  "accepted_scores": {
+   "methods": {
+    "poison": 0,
+    "blow": 0,
+    "fall": 0,
+    "smother": 0,
+    "drown": 0,
+    "blade": 3,
+    "gun": 0,
+    "gas": 0,
+    "staged": 0
+   },
+   "motives": {
+    "money": 1,
+    "inheritance": 0,
+    "love": 0,
+    "revenge": 0,
+    "secret": 2,
+    "protect": 0,
+    "blackmail": 1,
+    "quarrel": 2
+   }
+  }
+ },
+ "synopsis": "The Reverend Thomas Hale was found dead at Bellweather Halt.",
+ "moods": {
+  "dora": "Going about her morning quietly, a little tired and subdued like everyone else.",
+  "clara": "Weary and preoccupied, quietly resolved to speak to the doctor about family matters before anything else.",
+  "edmund": "Sullen and short-tempered, bristling at any question about his habits and unwilling to say where he'd been.",
+  "iris": "Composed and businesslike, keeping her findings close until the proper time to speak comes.",
+  "rowan": "Going about his morning chores, a little tired and saddened like everyone else.",
+  "silas": "Reserved and careful in manner, keeping whatever he's heard strictly to himself.",
+  "jonah": "Going about his morning quietly, a little tired and saddened like everyone else.",
+  "hugo": "Going about his morning quietly, a little tired and saddened like everyone else."
+ },
+ "knowledge": {},
+ "reviewed": [
+  "b_ada_cash|direct",
+  "b_ada_cash|reactions|ada",
+  "b_edmund_grumble|direct",
+  "b_edmund_grumble|reactions|ada",
+  "b_edmund_grumble|reactions|edmund",
+  "s_florin|reactions|ada",
+  "s_forceps|direct",
+  "s_forceps|reactions|iris",
+  "s_iou|direct",
+  "s_iou|reactions|dora",
+  "s_letter|direct",
+  "s_letter|reactions|bell",
+  "s_letter|reactions|dora",
+  "s_medical_iris|text",
+  "s_medical|reactions|bell",
+  "s_medical|reactions|dora",
+  "s_medical|reactions|iris",
+  "s_medical|text",
+  "s_morning_ada|text",
+  "s_morning_bell|text",
+  "s_morning_iris|text",
+  "s_sand|reactions|bell",
+  "s_surface_ada|text",
+  "s_surface_bell|text",
+  "s_surface_clara|text",
+  "s_surface_dora|text",
+  "s_surface_edmund|text",
+  "s_surface_iris|text",
+  "s_surface_silas|text",
+  "s_tip|reactions|bell",
+  "s_tip|reactions|dora",
+  "s_watch|reactions|bell",
+  "s_watch|reactions|dora",
+  "t_ada_cover|direct",
+  "t_ada_cover|reactions|dora",
+  "t_bell_found|reactions|dora",
+  "t_edmund_parlour|reactions|ada",
+  "t_edmund_parlour|reactions|dora"
+ ],
+ "difficulty": {
+  "v": 1,
+  "score": 7.25,
+  "level": "medium",
+  "features": {
+   "depth": 6,
+   "lies_on_path": 0,
+   "lies_other": 2,
+   "herrings_aimed": 1,
+   "herrings_other": 0,
+   "lenient_motives": 1
+  }
+ }
+}

@@ -124,7 +124,16 @@
     "b": "boathouse",
     "minutes": 4
    }
-  ]
+  ],
+  "roles": {
+   "examiner": "iris",
+   "constable": "bell"
+  },
+  "day": {
+   "evening": 1080,
+   "morning": 1740,
+   "start": 1920
+  }
  },
  "rules": [
   {
@@ -146,17 +155,6 @@
    "voice": "Composed, dry and exact; she chooses words like a woman choosing gloves. Polite to the point of chill with strangers, warmer once she respects you.",
    "public": "Edmund\u2019s younger sister. She has run Vale Manor\u2019s household for years and guards its privacy.",
    "home": "manor"
-  },
-  {
-   "id": "rowan",
-   "name": "Rowan Pike",
-   "role": "The groundskeeper",
-   "traits": {},
-   "pronoun": "he",
-   "address": "Mr Pike",
-   "voice": "A plain-spoken countryman: short, blunt, practical, with a gardener\u2019s patience and the odd dour joke.",
-   "public": "The manor\u2019s groundskeeper. He lives among his glasshouses and says little to anyone.",
-   "home": "greenhouse"
   },
   {
    "id": "silas",
@@ -240,17 +238,6 @@
    "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people\u2019s business.",
    "public": "The postmistress. Every letter, parcel and telegram in Bellweather passes over her counter, and she forgets nothing.",
    "home": "post"
-  },
-  {
-   "id": "jonah",
-   "name": "Jonah Reed",
-   "role": "The boathouse keeper",
-   "traits": {},
-   "pronoun": "he",
-   "address": "Mr Reed",
-   "voice": "Slow, weathered and wry; a river man who speaks in the present tense and weighs every word like a stone.",
-   "public": "Keeper of the manor\u2019s boathouse and ferryman when the river is up. He knows the water and keeps his own counsel.",
-   "home": "boathouse"
   },
   {
    "id": "hugo",
@@ -1119,7 +1106,9 @@
    "show": "The doctor's notes say the poison was taken by mouth and death occurred between twenty-four past nine and quarter to ten. Does that timing mean anything to you?",
    "reactions": {
     "ada": "Oh, that poor soul, taken by mouth you say? Dreadful. But I never left my bar all evening, love, so whatever the doctor's found, it's none of my doing."
-   }
+   },
+   "source": "e_iris_exam",
+   "to": null
   },
   {
    "id": "s_medical_iris",
@@ -1136,7 +1125,9 @@
    "text": "Death was from a poison taken by mouth, and it occurred between twenty-four past nine and quarter to ten.",
    "ask": "Doctor, what did you find when you examined Miss Pruett?",
    "show": "Dr Marsh says death was from a poison taken by mouth, occurring between twenty-four past nine and quarter to ten. Does that match what you know?",
-   "confront": "You told me death was from a poison taken by mouth, between twenty-four past nine and quarter to ten. Is that your full assessment?"
+   "confront": "You told me death was from a poison taken by mouth, between twenty-four past nine and quarter to ten. Is that your full assessment?",
+   "source": "e_iris_exam",
+   "to": null
   },
   {
    "id": "s_surface_hugo",
@@ -1149,20 +1140,8 @@
    "ask": "Where were you last night?",
    "surface_checked": "cover",
    "show": "Hugo Vale says he simply sat through dinner at the manor and afterward stayed in the drawing room. Do you know if that's the whole of his evening?",
-   "confront": "You told me you just sat through dinner at the manor and then hung about the drawing room. Is that the whole of it?"
-  },
-  {
-   "id": "s_surface_jonah",
-   "kind": "testimony",
-   "speaker": "jonah",
-   "surface": true,
-   "deceptive": false,
-   "title": "Jonah Reed on the evening",
-   "text": "I were down by the river, minding my own lines and my own thoughts, same as most nights. Weren't nothing to remark on.",
-   "ask": "Where were you last night?",
-   "surface_checked": "honest",
-   "show": "Jonah Reed says he was down by the river with his lines, same as most nights. Do you know if there's anything more to it?",
-   "confront": "You told me you were down by the river minding your lines, same as most nights. Is that the whole of it?"
+   "confront": "You told me you just sat through dinner at the manor and then hung about the drawing room. Is that the whole of it?",
+   "to": null
   },
   {
    "id": "s_surface_vicar",
@@ -1175,7 +1154,8 @@
    "ask": "Where were you last night?",
    "surface_checked": "honest",
    "show": "The Reverend Hale says he sat in the vestry on his sermon, left Miss Pruett to her ledgers, then went to Dr Marsh's for their usual chess game. Does that match what you know?",
-   "confront": "You told me you worked on your sermon, left Miss Pruett to her ledgers, then went for your usual chess with Dr Marsh. Is that the whole of it?"
+   "confront": "You told me you worked on your sermon, left Miss Pruett to her ledgers, then went for your usual chess with Dr Marsh. Is that the whole of it?",
+   "to": null
   },
   {
    "id": "s_surface_edmund",
@@ -1188,7 +1168,8 @@
    "ask": "Where were you last night?",
    "surface_checked": "cover",
    "show": "Edmund Vale says he dined at home, settled some business with Voss, and sat about the house the rest of the evening. Do you know if that's accurate?",
-   "confront": "You told me you dined at home, settled some business with Voss, and sat about the house afterward. Is that the whole of it?"
+   "confront": "You told me you dined at home, settled some business with Voss, and sat about the house afterward. Is that the whole of it?",
+   "to": null
   },
   {
    "id": "s_surface_bell",
@@ -1201,7 +1182,8 @@
    "ask": "Where were you last night?",
    "surface_checked": "honest",
    "show": "Constable Bell says he walked his usual round of the square and looked in on his own house afterward, seeing nothing out of the way. Does that match what you saw?",
-   "confront": "You told me you walked your usual round of the square and then looked in on your own house, nothing out of the way. Is that the whole of it?"
+   "confront": "You told me you walked your usual round of the square and then looked in on your own house, nothing out of the way. Is that the whole of it?",
+   "to": null
   },
   {
    "id": "s_surface_iris",
@@ -1214,7 +1196,8 @@
    "ask": "Where were you last night?",
    "surface_checked": "honest",
    "show": "Dr Marsh says she was at her surgery tidying up and seeing to a bit of chess, an ordinary evening until the telephone rang. Do you know if that's accurate?",
-   "confront": "You told me you were at your surgery, tidying up and playing chess, an ordinary evening until the telephone rang. Is that the whole of it?"
+   "confront": "You told me you were at your surgery, tidying up and playing chess, an ordinary evening until the telephone rang. Is that the whole of it?",
+   "to": null
   },
   {
    "id": "s_surface_ada",
@@ -1227,7 +1210,8 @@
    "ask": "Where were you last night?",
    "surface_checked": "cover",
    "show": "Ada Finch says she never left the bar all evening, busy with the darts crowd right up till closing. Do you know if that's true?",
-   "confront": "You told me you never stirred from behind the bar, rushed with the darts crowd till closing. Is that the whole of it?"
+   "confront": "You told me you never stirred from behind the bar, rushed with the darts crowd till closing. Is that the whole of it?",
+   "to": null
   },
   {
    "id": "s_surface_silas",
@@ -1240,20 +1224,8 @@
    "ask": "Where were you last night?",
    "surface_checked": "honest",
    "show": "Silas Voss says he finished his correspondence in the vestry office, then walked to Vale Manor to dine and discuss business with the family. Does that match what you know?",
-   "confront": "You told me you finished your correspondence at the vestry, then went to Vale Manor to dine and discuss a matter of business. Is that the whole of it?"
-  },
-  {
-   "id": "s_surface_rowan",
-   "kind": "testimony",
-   "speaker": "rowan",
-   "surface": true,
-   "deceptive": false,
-   "title": "Rowan Pike on the evening",
-   "text": "I were about my own business last night, same as any night, and turned in early enough. Nowt to tell.",
-   "ask": "Where were you last night?",
-   "surface_checked": "honest",
-   "show": "Rowan Pike says he was about his own business as usual and turned in early. Do you know anything more about his evening?",
-   "confront": "You told me you were about your own business, same as any night, and turned in early. Is that the whole of it?"
+   "confront": "You told me you finished your correspondence at the vestry, then went to Vale Manor to dine and discuss a matter of business. Is that the whole of it?",
+   "to": null
   },
   {
    "id": "s_surface_clara",
@@ -1266,7 +1238,8 @@
    "ask": "Where were you last night?",
    "surface_checked": "cover",
    "show": "Clara Vale says she was at the manor seeing to dinner, writing letters, and putting the house to rights before going up. Does that match what you know?",
-   "confront": "You told me you saw to the dinner, wrote letters, and put the house to rights before going up. Is that the whole of it?"
+   "confront": "You told me you saw to the dinner, wrote letters, and put the house to rights before going up. Is that the whole of it?",
+   "to": null
   },
   {
    "id": "t_ada",
@@ -1287,7 +1260,8 @@
     "end": 1500
    },
    "show": "Ada Finch says she never left the bar all Thursday night, pulling pints from six till gone one. Do you know if that's true?",
-   "confront": "You told me you never left the bar, pulling pints from six till gone one. Is that the whole of it?"
+   "confront": "You told me you never left the bar, pulling pints from six till gone one. Is that the whole of it?",
+   "to": null
   },
   {
    "id": "t_clara",
@@ -1298,7 +1272,8 @@
    "speaker": "clara",
    "ask": "Where were you last night, Miss Vale?",
    "show": "Clara Vale says they dined at home and her brother had business with Mr Voss that evening. Does that match what you know?",
-   "confront": "You told me you dined at home while your brother had business with Mr Voss. Is that the whole of it?"
+   "confront": "You told me you dined at home while your brother had business with Mr Voss. Is that the whole of it?",
+   "to": null
   },
   {
    "id": "t_silas",
@@ -1309,7 +1284,8 @@
    "speaker": "silas",
    "ask": "Where were you last night, Mr Voss?",
    "show": "Silas Voss says he was engaged on a client's affairs that evening, but won't say whose. Do you know anything more about that?",
-   "confront": "You told me you were engaged on a client's affairs but wouldn't say whose. Is that the whole of it?"
+   "confront": "You told me you were engaged on a client's affairs but wouldn't say whose. Is that the whole of it?",
+   "to": null
   },
   {
    "id": "t_vicar",
@@ -1320,7 +1296,8 @@
    "speaker": "vicar",
    "ask": "Where were you last night, Mr Hale?",
    "show": "The Reverend Hale says he worked on his sermon, then went out as he does Thursdays, leaving Miss Pruett at the ledgers. Does that match what you know?",
-   "confront": "You told me you were at your sermon, then went out as usual, leaving Miss Pruett at the ledgers. Is that the whole of it?"
+   "confront": "You told me you were at your sermon, then went out as usual, leaving Miss Pruett at the ledgers. Is that the whole of it?",
+   "to": null
   },
   {
    "id": "s_iris_chess",
@@ -1351,7 +1328,9 @@
    "confront": "You told me Mr Hale stayed for the whole game and you keep no clock on it. Is that the whole of it?",
    "reactions": {
     "vicar": "Well now, Iris never was one for clocks, and I confess I'm much the same when a game's absorbing \u2014 Thursday's dragged on rather, as it does, and I couldn't put a time to it myself if you pressed me."
-   }
+   },
+   "to": "vicar",
+   "direct": "Dr Marsh says you came round for the Thursday game and stayed until it was finished, with no time given. Is that so?"
   },
   {
    "id": "s_edmund_clara",
@@ -1377,7 +1356,9 @@
    "confront": "You told me your sister was at the table from eight and in the drawing room past eleven, and never stirred. Is that the whole of it?",
    "reactions": {
     "clara": "That is quite correct. My brother kept us all at the table and the drawing room until well past eleven, as I have said, and there is nothing more to add to it."
-   }
+   },
+   "to": "clara",
+   "direct": "Mr Vale says you were at his table from eight and in the drawing room till past eleven, and never stirred. Is that so?"
   },
   {
    "id": "s_hugo_silas",
@@ -1408,7 +1389,9 @@
    "confront": "You told me Voss never stepped out all evening, though you wouldn't give exact hours. Is that the whole of it?",
    "reactions": {
     "silas": "Quite so; the will required careful drafting, and I did not stir from the room. As for hours, festina lente \u2014 I was too occupied with clauses to consult my watch."
-   }
+   },
+   "to": "silas",
+   "direct": "Mr Hugo says you talked at his uncle from the soup through to the last brandy and never stepped out. Is that so?"
   },
   {
    "id": "s_bell_saw",
@@ -1436,7 +1419,10 @@
    "confront": "Constable Bell says he saw a woman in a grey hooded cloak, with a covered basket, cross to the church lane around twenty past nine, and he took her for you. Was that you?",
    "reactions": {
     "clara": "A grey hooded cloak, church lane, twenty past nine \u2014 yes, that would be mine, kept on the passage hook for anyone to take up. I was in the drawing room at the time, so it was evidently not I who wore it."
-   }
+   },
+   "to": "clara",
+   "direct": "Constable Bell says he saw a woman in your grey hooded cloak go up the church lane about twenty past nine with a covered basket, and took her for you. Is that so?",
+   "show": "Constable Bell says that around twenty past nine he saw a woman in a grey hooded cloak, who he took for Miss Vale, crossing to the church lane. Does that match what you saw?"
   },
   {
    "id": "b_edmund_door",
@@ -1452,7 +1438,9 @@
    "confront": "You glanced toward the hall and shut the door rather than say what your family did at your table on Thursday. Is there something you're not telling me?",
    "reactions": {
     "edmund": "That's the whole of it. My table, my house, my business \u2014 I'll not have a stranger poking into what my family says over dinner."
-   }
+   },
+   "to": "edmund",
+   "direct": "You stood in your doorway, said only that you dined and went to bed, glanced toward the hall, and shut the door on me. Is there more you'd care to tell me?"
   },
   {
    "id": "d_clara_note",
@@ -1468,7 +1456,9 @@
    "show": "A crumpled note found in the manor hall basket asks someone called E. to say nothing about the dinner, Mr Voss, or the will, signed C. Do you know anything about this?",
    "reactions": {
     "clara": "Yes, I wrote that. A family dislikes gossip about a will, Inspector, and I see no crime in asking my brother to hold his tongue."
-   }
+   },
+   "to": "clara",
+   "direct": "You wrote this note asking E. to say nothing about last night, the dinner, Mr Voss, or the will. Why did you need it kept quiet?"
   },
   {
    "id": "i_menu_card",
@@ -1484,7 +1474,8 @@
    "show": "A dinner menu card found in a breast pocket has pencilled times noting Voss's continued presence right through to half past eleven. Do you know anything about this card?",
    "reactions": {
     "hugo": "Ha \u2014 caught red-handed being frightfully bored, that's all. Poor old Voss did go on rather, didn't he? I only scribbled it to stop myself screaming, not because anything sinister was happening."
-   }
+   },
+   "to": null
   },
   {
    "id": "i_dora_keys",
@@ -1496,7 +1487,9 @@
     "i_tin"
    ],
    "unlock": "Constable Bell keeps Miss Pruett's effects under lock and puts the bitter dregs down to cordial gone off. Once you show him the hidden strychnine tin with its purple-stained spoon, he agrees this was no natural fit and hands you the key ring taken from her coat.",
-   "show": "Constable Bell handed over a key ring taken from Miss Pruett's coat, including a small brass key stamped for registered mail. Do you know anything about these keys?"
+   "show": "Constable Bell handed over a key ring taken from Miss Pruett's coat, including a small brass key stamped for registered mail. Do you know anything about these keys?",
+   "to": "dora",
+   "direct": "This key ring, with your church key, latchkey, and Post Office key, was found in your coat at the vestry. Can you tell me about it?"
   },
   {
    "id": "d_dora_book",
@@ -1518,7 +1511,8 @@
    "show": "A notebook in the registered-mail safe records monthly five-pound payments from A.F., alongside an opened envelope addressed to Mrs Finch at the Rook and Lantern. Do you know anything about these payments?",
    "reactions": {
     "ada": "Oh, that. Well, love, a woman's private letters are her own affair, aren't they \u2014 and paying a bit here and there is hardly a hanging matter, whatever Dorothy made of it."
-   }
+   },
+   "to": null
   },
   {
    "id": "i_flask",
@@ -1526,7 +1520,8 @@
    "title": "The flask by the ledgers",
    "text": "A blue enamel flask stands by the ledgers with a purple rime of blackcurrant dregs inside. They smell sharply bitter. Painted small on the base are the letters 'R & L'.",
    "at": "vestry",
-   "show": "A blue enamel flask by the ledgers holds a sharply bitter purple residue and is marked 'R & L'. Do you know anything about this flask?"
+   "show": "A blue enamel flask by the ledgers holds a sharply bitter purple residue and is marked 'R & L'. Do you know anything about this flask?",
+   "to": null
   },
   {
    "id": "i_tin",
@@ -1555,7 +1550,8 @@
    "show": "A tin of strychnine rat powder was found in a bundled cloak behind the ale barrels, with a purple-stained teaspoon pressed into it that matches a ring in the shelf dust. Do you know anything about this?",
    "reactions": {
     "ada": "That's just the rat powder we keep for the cellar, love, everyone knows mice get into the barrels. As for the spoon, I couldn't tell you how that got left in there, honest."
-   }
+   },
+   "to": null
   },
   {
    "id": "b_clara_grate",
@@ -1572,7 +1568,9 @@
    "confront": "You were kneeling at the grate with the poker on a mild morning, and the room smelled of burnt paper. What were you burning?",
    "reactions": {
     "clara": "You are, rather. A woman may tidy her own grate on a mild morning without it being made a matter for the police, surely."
-   }
+   },
+   "to": "clara",
+   "direct": "I found you kneeling at the grate with a poker on a mild morning, the room smelling of burnt paper, and you quickly put the poker down and drew the screen across. What were you burning?"
   },
   {
    "id": "d_charred_letter",
@@ -1588,7 +1586,9 @@
    "show": "A scrap of burnt letter paper found behind the fire-screen is from a lending firm, naming Mr E. Vale over an outstanding twelve hundred pounds with proceedings threatened. Do you know anything about this?",
    "reactions": {
     "clara": "My brother's affairs, and none of yours nor the village's. I burned it because Edmund would not wish his troubles read out over every counter in the parish, and I still don't."
-   }
+   },
+   "to": "edmund",
+   "direct": "This burnt letter from Gribble & Stone demands \u00a31,200 outstanding from you, dated the 14th of September. Can you tell me about this debt?"
   },
   {
    "id": "r_scorebook",
@@ -1605,7 +1605,8 @@
     "vicar": "Ah \u2014 forty-one moves, was it, I always did play too long into the endgame. Iris and I simply enjoy our chess without watching the hour, and I fear the ink got smudged in the pushing about of things afterward.",
     "iris": "Yes, we played our usual Thursday game, and I'm afraid I did smear the initials myself before tidying the mantel \u2014 I'd rather the village not chatter about how late the vicar sits in my surgery, that's the whole of it."
    },
-   "show": "There's a chess score-book on the surgery mantel, its last game begun at nine and finished at half past ten, with two sets of initials smeared away before the moves. Can you tell me who was playing that game?"
+   "show": "There's a chess score-book on the surgery mantel, its last game begun at nine and finished at half past ten, with two sets of initials smeared away before the moves. Can you tell me who was playing that game?",
+   "to": null
   },
   {
    "id": "i_cloak",
@@ -1627,7 +1628,9 @@
    "show": "A grey hooded cloak was found bundled behind the ale barrels, damp at the hem, with a purple splash on the cuff and a collar tape reading 'C. VALE'. Do you know how it came to be there?",
    "reactions": {
     "ada": "That old grey cloak? Miss Vale must've left it hanging in our passage some time, and heaven knows how a splash got on it, love \u2014 I certainly never wore the thing."
-   }
+   },
+   "to": "clara",
+   "direct": "This grey hooded cloak, marked 'C. VALE' inside the collar, was found behind the ale barrels with a damp hem and a purple splash on the cuff. Can you explain that?"
   },
   {
    "id": "s_bell_recant",
@@ -1656,7 +1659,9 @@
    "confront": "You're now saying the woman you saw was short and quick, coming from the inn yard, and that it was Mrs Finch, not Miss Vale. Are you certain of that?",
    "reactions": {
     "ada": "Now, now, love, a man can mistake a shape in the dark easy enough, and I told you plain I never left my bar all night. Whatever Arthur thinks he saw, it wasn't me stuffing anything behind any barrels."
-   }
+   },
+   "to": "ada",
+   "direct": "Constable Bell now says the woman he saw in that cloak was short, round and quick, out of the inn yard, and he believes it was you. Is that so?"
   },
   {
    "id": "b_hugo_pocket",
@@ -1677,7 +1682,9 @@
    "confront": "Every time dinner comes up, you pat your breast pocket, then stop and laugh when I look at it. What's in there?",
    "reactions": {
     "hugo": "This? Oh, just \u2014 er \u2014 fishing tackle receipts, frightfully thrilling stuff. Nothing to do with dinner at all, I promise you, I'm just a chap who likes his pocket tidy."
-   }
+   },
+   "to": "hugo",
+   "direct": "Each time dinner comes up, your hand goes to your breast pocket, and you stop and laugh too loudly when you catch me looking. What is it you're carrying there?"
   },
   {
    "id": "s_sermon_notes",
@@ -1689,7 +1696,8 @@
    "show": "Sermon sheets on the vestry desk are written in a thin, spidery hand with looped descenders and a crossed seven, with a note to himself signed T.H. Do you know anything about these sheets?",
    "reactions": {
     "vicar": "Ah yes, my little reminder to myself about the Tertullian \u2014 one does talk to oneself rather, in sermon-writing, T.H. to T.H. as it were, no mystery in that at all."
-   }
+   },
+   "to": null
   },
   {
    "id": "s_tin_sealed",
@@ -1705,7 +1713,8 @@
    "show": "A sealed tin of strychnine rat powder sits untouched on the inn cellar shelf, beside a paler ring in the dust much wider than the tin itself. Do you know what usually stood in that wider ring?",
    "reactions": {
     "ada": "Oh, that? That's just the spare, love, seal's not even broke on it \u2014 I always keep one by in case we run short. Rats in a cellar, what can you do, you can't leave the shelf bare. Wider ring in the dust? Lor', I couldn't tell you, I'm not one for staring at dust of an evening."
-   }
+   },
+   "to": null
   },
   {
    "id": "a_hooks_bare",
@@ -1721,7 +1730,8 @@
    "show": "One hook in the inn passage, marked for an item left at the Harvest Supper, is empty, with gravel grains on the flagstones leading toward the cellar door. Do you know what was on that hook?",
    "reactions": {
     "ada": "That's Miss Vale's old grey cloak, love, left over from the Harvest Supper \u2014 I keep meaning to send it round to her. Gravel? Must've come off someone's boots, we get all sorts traipsing through of an evening. I never touched it myself, I was behind the bar the whole time, as I said."
-   }
+   },
+   "to": null
   },
   {
    "id": "a_boathouse_hook",
@@ -1733,7 +1743,9 @@
    "show": "The boathouse key is missing from its hook in the manor hall, and a chalked note says 'Gone fishing,' though one breakfast place remains untouched. Do you know where that key or its owner might be?",
    "reactions": {
     "hugo": "Ha, guilty as charged \u2014 thought I'd rather face a pike than another word about codicils, so I scarpered before anyone could pin me down over toast. Slate's not lying, that's my hand, my rotten spelling and all. Nothing sinister, just a chap avoiding the third degree over kippers."
-   }
+   },
+   "to": "hugo",
+   "direct": "The Boathouse key is gone from its hook, and you left word on the slate that you'd gone fishing and not to wait luncheon. Where did you go?"
   },
   {
    "id": "s_secret",
@@ -1746,7 +1758,9 @@
    ],
    "unlock": "once you have inside the registered-mail safe, you know what to ask",
    "at": "post",
-   "show": "A letter sent to Ada through a Liverpool envelope tells her that her husband is alive and living there, and that she's no widow. Did you know anything about this?"
+   "show": "A letter sent to Ada through a Liverpool envelope tells her that her husband is alive and living there, and that she's no widow. Did you know anything about this?",
+   "to": "ada",
+   "direct": "This letter tells you your husband is alive in Liverpool, though you've let everyone believe you're a widow. Is that true?"
   }
  ],
  "premise": {
@@ -1772,7 +1786,16 @@
  "id": "mk-live-20260927-152509",
  "answer": {
   "method": "poison",
-  "motive": "blackmail"
+  "motive": "blackmail",
+  "methods": [
+   "poison"
+  ],
+  "motives": [
+   "blackmail",
+   "money",
+   "secret"
+  ],
+  "accepted_v": 1
  },
  "synopsis": "Dorothy Pruett was found dead at St. Alden\u2019s vestry.",
  "loose_ends_checked": true,
@@ -1842,29 +1865,43 @@
   "jonah": "Calm and unhurried, tending the boathouse as any ordinary morning."
  },
  "reviewed": [
+  "a_boathouse_hook|direct",
   "a_boathouse_hook|reactions|hugo",
   "a_hooks_bare|reactions|ada",
+  "b_clara_grate|direct",
   "b_clara_grate|reactions|clara",
+  "b_edmund_door|direct",
   "b_edmund_door|reactions|edmund",
+  "b_hugo_pocket|direct",
   "b_hugo_pocket|reactions|hugo",
+  "d_charred_letter|direct",
   "d_charred_letter|reactions|clara",
+  "d_clara_note|direct",
   "d_clara_note|reactions|clara",
   "d_dora_book|reactions|ada",
+  "i_cloak|direct",
   "i_cloak|reactions|ada",
+  "i_dora_keys|direct",
   "i_menu_card|reactions|hugo",
   "i_tin|reactions|ada",
   "r_scorebook|reactions|iris",
   "r_scorebook|reactions|vicar",
+  "s_bell_recant|direct",
   "s_bell_recant|reactions|ada",
+  "s_bell_saw|direct",
   "s_bell_saw|reactions|clara",
+  "s_edmund_clara|direct",
   "s_edmund_clara|reactions|clara",
   "s_hugo_silas|concede|i_menu_card",
+  "s_hugo_silas|direct",
   "s_hugo_silas|reactions|silas",
   "s_iris_chess|concede|r_scorebook",
+  "s_iris_chess|direct",
   "s_iris_chess|reactions|vicar",
   "s_medical_iris|text",
   "s_medical|reactions|ada",
   "s_medical|text",
+  "s_secret|direct",
   "s_secret|text",
   "s_sermon_notes|reactions|vicar",
   "s_surface_ada|text",

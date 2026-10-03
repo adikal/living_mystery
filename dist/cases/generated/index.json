@@ -1,42 +1,50 @@
 [
  {
-  "id": "mk-bw-inn",
-  "file": "mk-bw-inn.json",
-  "title": "The Back Parlour",
-  "blurb": "Edmund Vale collapsed and died in the back parlour of the Rook & Lantern. Depth 6, 22 clues, 4 suspects.",
+  "id": "mk-live-20261002-235614",
+  "file": "mk-live-20261002-235614.json",
+  "title": "Paste Pearls at the Pump",
+  "solveDepth": 5,
+  "blurb": "Hugo Vale was found dead at the village square. Depth 5, 27 clues, 4 suspects.",
+  "generated": "20261002-235614",
+  "difficulty": {
+   "level": "medium",
+   "score": 7.5
+  }
+ },
+ {
+  "id": "mk-live-20261002-225824",
+  "file": "mk-live-20261002-225824.json",
+  "title": "Death at the Post Office",
+  "solveDepth": 5,
+  "blurb": "Edmund Vale was found dead at the post office. Depth 5, 38 clues, 4 suspects.",
+  "generated": "20261002-225824",
+  "difficulty": {
+   "level": "hard",
+   "score": 8.0
+  }
+ },
+ {
+  "id": "mk-live-20261002-224855",
+  "file": "mk-live-20261002-224855.json",
+  "title": "Death at Vale Manor",
+  "solveDepth": 5,
+  "blurb": "Clara Vale was found dead at Vale Manor. Depth 5, 28 clues, 4 suspects.",
+  "generated": "20261002-224855",
+  "difficulty": {
+   "level": "medium",
+   "score": 7.75
+  }
+ },
+ {
+  "id": "mk-live-20261002-222517",
+  "file": "mk-live-20261002-222517.json",
+  "title": "Sealing Wax and Steel",
   "solveDepth": 6,
-  "source": "tools/refine-c/runs/20260926-004007/bw-inn/final-case.json"
- },
- {
-  "id": "mk-bw-ledger",
-  "file": "mk-bw-ledger.json",
-  "title": "The Study Door",
-  "blurb": "Edmund Vale is found dead in his study at Vale Manor. Depth 4, 27 clues, 4 suspects.",
-  "solveDepth": 4,
-  "source": "tools/refine-c/runs/20260926-002910/bw-ledger/final-case.json"
- },
- {
-  "id": "mk-bw-letter",
-  "file": "mk-bw-letter.json",
-  "title": "The Half-Burned Letter",
-  "blurb": "Edmund Vale was found dead in his study at Vale Manor. Depth 6, 25 clues, 4 suspects.",
-  "solveDepth": 6,
-  "source": "tools/refine-c/runs/20260926-004007/bw-letter/final-case.json"
- },
- {
-  "id": "mk-bw-pair",
-  "file": "mk-bw-pair.json",
-  "title": "The Greenhouse Steps",
-  "blurb": "Edmund Vale was found at the foot of the greenhouse steps. Depth 6, 27 clues, 4 suspects.",
-  "solveDepth": 6,
-  "source": "tools/refine-c/runs/20260926-002910/bw-pair/final-case.json"
- },
- {
-  "id": "mk-bw-poison",
-  "file": "mk-bw-poison.json",
-  "title": "A Supper at Vale Manor",
-  "blurb": "Edmund Vale died in the night, after supper at Vale Manor. Depth 7, 28 clues, 4 suspects.",
-  "solveDepth": 7,
-  "source": "tools/refine-c/runs/20260926-004007/bw-poison/final-case.json"
+  "blurb": "The Reverend Thomas Hale was found dead at Bellweather Halt. Depth 6, 29 clues, 4 suspects.",
+  "generated": "20261002-222517",
+  "difficulty": {
+   "level": "medium",
+   "score": 7.25
+  }
  }
 ]

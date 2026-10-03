@@ -62,6 +62,10 @@ These paths are relative to the repository root. The report build checks their e
 | `tools/refine-c/publish.py` | Selects certified cases, adds questions and evening accounts, publishes to `dist/cases/generated/` | Mystery kernel note (docs/mystery-kernel.md) |
 | `tools/mk-certify.mjs` | Command-line certification with the JS kernel (used by the harness and parity check) | Mystery kernel note (docs/mystery-kernel.md) |
 | `docs/visual-world.md` | The visible village: design, plan and the layout as built | Technical report (index) |
+| `tools/refine-c/repair_history.py` | One-off repair of cases published before the history-only rule (typed morning events, backing) | Technical report (generation) |
+| `tools/refine-c/difficulty.py` | Difficulty features, model, targets and fitting | docs/difficulty.md |
+| `tools/refine-c/batch.py` | Generate several cases in parallel and report how they came out | docs/difficulty.md |
+| `tools/e2e_dialogue.mjs` | Ask every character a standard question set with the real AI; report fallbacks | Technical report (generation) |
 | `server/case_oracle.py` | Z3 case oracle: feasibility, per-candidate satisfiability with unsat cores, alternative stories; publish gate | Technical report (generation) |
 | `tools/refine-c/premise.py` | Premise deck: victim, culprit, suspects, method, motive, scene and shape with rotation and seed checks | Technical report (generation) |
 | `tools/refine-c/enrich.py` | Publish-time enrichment: answer, loose ends, everyday knowledge, moods, review against the true history | Technical report (generation) |
@@ -147,6 +151,9 @@ For a research or external-review snapshot, associate a report edition with a re
 | 0.15 | 2026-09-27 | Generation in the game: one generator button, a local generator server with streamed progress and a collapsed spoiler view; published cases gain the doctor's examination, evening accounts for everyone, observable traits, spoken lines and reactions for showing evidence; mistakes conceded apart from lies; free-text access to all earned accounts with a guarded third attempt; stationary people; progressive hints; debug logs in `logs/` and a Flag-an-issue button. 178 JS + 14 Python tests. |
 | 0.16 | 2026-09-27 | Motive/means/opportunity certification and accusation; Z3 case oracle as a publish gate and source of alternative stories; premise deck for variety; ten-place, eleven-person village with new art; everyday knowledge, moods, loose ends and concessions; one case kept in reserve |
 | 0.17 | 2026-09-27 | The visible village: map, scene, full-height conversation, Talk panel, inventory with clue art and drag-to-show, Clue Board with every villager, opening and tour; clue art library and detective portrait |
+| 0.18 | 2026-10-02 | The history is the only source of facts: account backing certified in both kernels; typed discovery and examination; roles from the setting; publishing adds only wording; replies from the history |
+| 0.19 | 2026-10-03 | Difficulty (computed, and generated to); the newcomer; 50 clue pictures with keys chosen at publish |
+| 0.20 | 2026-10-03 | Evening and morning accounts for everyone involved; question routing; fact-checker rules; end-to-end tests |
 
 ### Forensic milestone source map
 

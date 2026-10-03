@@ -60,7 +60,16 @@
     "b": "greenhouse",
     "minutes": 6
    }
-  ]
+  ],
+  "roles": {
+   "examiner": "iris",
+   "constable": "bell"
+  },
+  "day": {
+   "evening": 1080,
+   "morning": 1740,
+   "start": 1920
+  }
  },
  "rules": [
   {
@@ -513,6 +522,12 @@
    "because": [
     "a_rowan_tidy"
    ]
+  },
+  {
+   "id": "a_bell_knew_s_loose_bell_s_vestry_cupboard",
+   "agent": "bell",
+   "mode": "knows",
+   "content": "Bell knew, from his routine duty of holding spare keys to several village buildings, that he kept the spare key to the vestry cupboard for emergencies while Voss was away."
   }
  ],
  "events": [
@@ -824,7 +839,9 @@
    "show": "The doctor's notes put the fatal dose between ten to nine and half past nine, with death itself around twenty to one. Does that match what you know of his movements that evening?",
    "reactions": {
     "silas": "A precise window, I see. I was at my desk in the vestry that whole evening, as Constable Bell will confirm \u2014 whatever befell Mr Vale, it did not involve me."
-   }
+   },
+   "source": "e_examine",
+   "to": null
   },
   {
    "id": "s_medical_iris",
@@ -841,7 +858,9 @@
    "text": "He died around twenty to one, but the poison was taken by mouth some hours before that, between ten to nine and half past nine \u2014 the body doesn't lie about these things, even if the household does.",
    "ask": "Doctor, what did you find when you examined Edmund?",
    "show": "Dr Marsh tells me the poison was taken by mouth sometime between ten to nine and half past nine, though he didn't die until around twenty to one. Does that fit with what you saw that evening?",
-   "confront": "You told me the poison was taken between ten to nine and half past nine, with death coming later, near twenty to one. Is there more you can tell me about that window?"
+   "confront": "You told me the poison was taken between ten to nine and half past nine, with death coming later, near twenty to one. Is there more you can tell me about that window?",
+   "source": "e_examine",
+   "to": null
   },
   {
    "id": "s_surface_bell",
@@ -854,7 +873,8 @@
    "ask": "Where were you last night?",
    "show": "Constable Bell says he walked his usual rounds all the way through and noticed nothing out of the ordinary. Can you tell me if that squares with what you saw?",
    "confront": "You told me you walked your rounds same as every night and saw nothing out of the ordinary. Is that truly all there was to it?",
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "to": null
   },
   {
    "id": "s_surface_iris",
@@ -867,7 +887,8 @@
    "ask": "Where were you last night?",
    "show": "Dr Marsh says she was called out to see to a patient's injury and then went straight home, but won't say who sent for her. Do you know who that patient might have been?",
    "confront": "You said you were called out to a patient's injury and then went straight home, without naming who it was. Will you tell me who that patient was?",
-   "surface_checked": "honest"
+   "surface_checked": "honest",
+   "to": null
   },
   {
    "id": "s_surface_ada",
@@ -880,7 +901,8 @@
    "ask": "Where were you last night?",
    "show": "Mrs Finch says she was busy behind the bar all evening, but mentions a quiet word about some business she won't discuss. Do you know what that business might have been?",
    "confront": "You said you were run off your feet behind the bar, but you also mentioned a quiet word about some business you'd rather keep to yourself. What was that about?",
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "to": null
   },
   {
    "id": "s_surface_silas",
@@ -893,7 +915,8 @@
    "ask": "Where were you last night?",
    "show": "Mr Voss says he stayed at the vestry working through papers by lamplight and saw no one all evening. Does that match what you know of his movements?",
    "confront": "You told me you stayed at the vestry with your papers and saw no one and nothing of note. Is there anything you'd like to add to that?",
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "to": null
   },
   {
    "id": "s_surface_rowan",
@@ -906,7 +929,8 @@
    "ask": "Where were you last night?",
    "show": "Mr Pike says he spent most of the evening in the greenhouse tending the plants, cut his hand, sent for the doctor, and carried on working. Does that fit with what you saw of him?",
    "confront": "You said you were in the greenhouse most of the evening, cut your hand, sent for the doctor, and got on with your work. Is that the whole of it?",
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "to": null
   },
   {
    "id": "s_surface_clara",
@@ -919,7 +943,8 @@
    "ask": "Where were you last night?",
    "show": "Miss Vale says she looked in on Mrs Finch at the inn on a small matter, then came straight home to bed. Can you confirm whether that's what happened?",
    "confront": "You told me you looked in on Mrs Finch on a small matter and then came straight home to bed. Is there more to that visit than you've said?",
-   "surface_checked": "honest"
+   "surface_checked": "honest",
+   "to": null
   },
   {
    "id": "s_iris_rowan",
@@ -952,7 +977,9 @@
    },
    "reactions": {
     "rowan": "That's right. Cut my hand bad on the glass, didn't move off that stool till she was done. Nothing more to it."
-   }
+   },
+   "to": "rowan",
+   "direct": "You told me you were called to the greenhouse at twenty to nine and left at twenty to ten, giving eleven stitches to a hand cut on glass. Is that the whole of it?"
   },
   {
    "id": "s_ada_clara",
@@ -984,7 +1011,9 @@
    },
    "reactions": {
     "clara": "I've nothing to add to that. Mrs Finch keeps her word, and I'll keep mine \u2014 my business at the inn is my own."
-   }
+   },
+   "to": "clara",
+   "direct": "You said someone sat in your back parlour over an account from twenty to nine until ten but wouldn't give a name. Is that the whole of it?"
   },
   {
    "id": "s_bell_ada",
@@ -1024,7 +1053,8 @@
    "speaker": "clara",
    "ask": "Where were you last night, Miss Vale?",
    "show": "Miss Vale says the three of them dined together, then she had an errand in the village before coming home to bed. Do you know anything more about that errand?",
-   "confront": "You told me you dined with the others, ran an errand in the village, and went straight home to bed. Is there anything more you care to tell me about that errand?"
+   "confront": "You told me you dined with the others, ran an errand in the village, and went straight home to bed. Is there anything more you care to tell me about that errand?",
+   "to": null
   },
   {
    "id": "t_rowan",
@@ -1035,7 +1065,8 @@
    "speaker": "rowan",
    "ask": "Where were you last night, Mr Pike?",
    "show": "Mr Pike says he was working in the greenhouse, cut his hand, had the doctor called, and then went to bed. Does that match what you know of his evening?",
-   "confront": "You said you were working in the greenhouse, cut your hand, had the doctor come, then went to bed. Is there anything you left out of that?"
+   "confront": "You said you were working in the greenhouse, cut your hand, had the doctor come, then went to bed. Is there anything you left out of that?",
+   "to": null
   },
   {
    "id": "t_silas",
@@ -1046,7 +1077,8 @@
    "speaker": "silas",
    "ask": "Where were you last night, Mr Voss?",
    "show": "Mr Voss says he dined at the manor at Mr Vale's invitation, then returned to his office to work on correspondence until late. Can you confirm that's how his evening went?",
-   "confront": "You told me you dined at the manor, then worked on correspondence at your office until late, calling it a quiet evening. Is that truly all there was to it?"
+   "confront": "You told me you dined at the manor, then worked on correspondence at your office until late, calling it a quiet evening. Is that truly all there was to it?",
+   "to": null
   },
   {
    "id": "t_ada",
@@ -1057,7 +1089,8 @@
    "speaker": "ada",
    "ask": "Where were you last night, Mrs Finch?",
    "show": "Mrs Finch says she was busy behind the bar all evening as usual and won't speak to who came and went. Do you know anything about her comings and goings that night?",
-   "confront": "You said you were run off your feet behind the bar and that who came and went was not yours to tell. Will you tell me now who came and went?"
+   "confront": "You said you were run off your feet behind the bar and that who came and went was not yours to tell. Will you tell me now who came and went?",
+   "to": null
   },
   {
    "id": "s_body",
@@ -1065,7 +1098,8 @@
    "title": "The body",
    "text": "Edmund Vale lies in his bed, the sheets disordered. A basin beside him has been used. In the study below, a brandy glass stands empty beside the decanter.",
    "at": "manor",
-   "show": "In Edmund Vale's bedroom the sheets are disordered and a used basin sits beside him, while downstairs an empty brandy glass stands by the decanter. Do you know if he took a brandy in the study that evening?"
+   "show": "In Edmund Vale's bedroom the sheets are disordered and a used basin sits beside him, while downstairs an empty brandy glass stands by the decanter. Do you know if he took a brandy in the study that evening?",
+   "to": null
   },
   {
    "id": "s_slate",
@@ -1081,7 +1115,8 @@
    "reactions": {
     "ada": "Oh, that's just my chalk, love, I go through slates like nobody's business. As for what's rubbed off, well, a tally's a tally once it's settled, I don't leave old debts sitting about for all to gawp at."
    },
-   "show": "I noticed the Rook's slate has been rubbed clean in one place, leaving only the word 'settled' at the end of a smeared line. Do you know what that entry said, or who rubbed it out?"
+   "show": "I noticed the Rook's slate has been rubbed clean in one place, leaving only the word 'settled' at the end of a smeared line. Do you know what that entry said, or who rubbed it out?",
+   "to": null
   },
   {
    "id": "s_bell_rounds",
@@ -1127,7 +1162,9 @@
    "reactions": {
     "silas": "That letter is unsent, and unsent letters prove nothing but a man's temper before he has seen the books explained. Edmund and I would have gone through the figures together, had he lived to do so."
    },
-   "show": "I found an unsent letter of Mr Vale's to some London auditors, saying the ledger sums entered by his solicitor don't match the bank's figures, some fourteen hundred pounds unaccounted over two years. Do you know anything about this?"
+   "show": "I found an unsent letter of Mr Vale's to some London auditors, saying the ledger sums entered by his solicitor don't match the bank's figures, some fourteen hundred pounds unaccounted over two years. Do you know anything about this?",
+   "to": "silas",
+   "direct": "Edmund wrote to his auditors saying your entries don't match the bank's figures, some fourteen hundred pounds unaccounted for, and that he meant to have the ledger examined. Can you explain that?"
   },
   {
    "id": "s_vestry_cupboard",
@@ -1147,7 +1184,9 @@
    "reactions": {
     "silas": "The card is quite correct, I hold the key, as my duties require. A little spilled powder is hardly remarkable in a cupboard opened and shut a hundred times a year."
    },
-   "show": "I noticed the rat powder tin in the vestry cupboard sitting with its lid crooked, and powder dusted along the shelf edge. Do you know who might have been into that tin?"
+   "show": "I noticed the rat powder tin in the vestry cupboard sitting with its lid crooked, and powder dusted along the shelf edge. Do you know who might have been into that tin?",
+   "to": "silas",
+   "direct": "The rat powder tin in your cupboard has its lid pressed on crooked, with powder dusted on the shelf edge, and the card names you as keyholder. Can you account for that?"
   },
   {
    "id": "b_clara_pocket",
@@ -1164,7 +1203,9 @@
    "reactions": {
     "clara": "It is a private matter, nothing that concerns Edmund's death. I'd rather not discuss it further, if you don't mind."
    },
-   "show": "I saw Miss Vale snatch a folded paper from the hall table and push it into her cardigan pocket, keeping her hand over it and looking away whenever last night was mentioned. Do you know what that paper might be?"
+   "show": "I saw Miss Vale snatch a folded paper from the hall table and push it into her cardigan pocket, keeping her hand over it and looking away whenever last night was mentioned. Do you know what that paper might be?",
+   "to": "clara",
+   "direct": "You picked up a folded paper and pushed it into your pocket, keeping your hand over it and looking away when I mentioned last night. What is it?"
   },
   {
    "id": "d_receipt",
@@ -1181,7 +1222,9 @@
    "reactions": {
     "ada": "That's my hand, right enough, I wrote it out in the parlour when Miss Vale came to settle up. She asked me to say nothing of it, and I've tried to keep my word, but there it is now.",
     "clara": "Yes. I went to settle the account myself, quietly, so my brother need not be troubled with it. I had hoped it might stay a private matter, that's all."
-   }
+   },
+   "to": "clara",
+   "direct": "This receipt shows you paid eighteen pounds four shillings to settle the Vale Manor account at the Rook. Can you tell me about this?"
   },
   {
    "id": "s_greenhouse_stool",
@@ -1197,7 +1240,8 @@
    "show": "Under the sacking in the greenhouse there's a stool with dried blood on the seat, a bloodied pane above the bench, and snipped suture thread and a bandage wrapper swept in nearby. Can you tell me what happened here?",
    "reactions": {
     "rowan": "Cut my hand on the pane, doctor stitched me up right there. I shoved the mess under the bench so I could get on with the potting, didn't think it'd matter to anyone."
-   }
+   },
+   "to": null
   },
   {
    "id": "s_parlour_glove",
@@ -1214,7 +1258,9 @@
    "reactions": {
     "ada": "That'll be Miss Vale's, she was sat right there with me settling her account. Must've slipped down without either of us noticing, gloves do that.",
     "clara": "Yes, that is mine. I must have left it behind when I called at the inn on a private matter, nothing more."
-   }
+   },
+   "to": "clara",
+   "direct": "I found a grey kid glove worked with your initials, 'C.V.', tucked into the settle in Mrs Finch's back parlour. Can you tell me how it came to be there?"
   },
   {
    "id": "x_bare_nail",
@@ -1230,7 +1276,8 @@
    "show": "Behind the crooked licence frame at the inn there's a nail and a clean pale rectangle too wide for the frame, with a stub of chalk on the shelf below. Do you know what used to hang there?",
    "reactions": {
     "ada": "That old slate's just resting under the counter, I moved it to hang the licence proper, it was crooked for weeks. No mystery in a bit of chalk and a clean patch of wall, love."
-   }
+   },
+   "to": null
   },
   {
    "id": "x_sacking",
@@ -1246,7 +1293,8 @@
    "show": "The greenhouse floor has been swept and there's broken glass by the door, while fresh sacking under the potting bench bulges over something with legs, its corner stiff and rust-brown. Do you know what's under that sacking?",
    "reactions": {
     "rowan": "That's the stool I cut myself on, and the mess from the stitching. Shoved it under the bench so I could sweep up and finish the repotting before frost got the seedlings."
-   }
+   },
+   "to": null
   },
   {
    "id": "b_ada_thumb",
@@ -1263,7 +1311,9 @@
    "reactions": {
     "ada": "Oh, that's just chalk, I'm forever rubbing out old tallies, comes off on everything. The licence was hanging crooked so I straightened things up a bit, that's all it is, nothing more to it."
    },
-   "show": "I noticed Mrs Finch kept rubbing chalk from her thumb onto her apron, and her eyes kept going to that crooked licence behind the bar, near a clean pale mark on the wall. Do you know what that's about?"
+   "show": "I noticed Mrs Finch kept rubbing chalk from her thumb onto her apron, and her eyes kept going to that crooked licence behind the bar, near a clean pale mark on the wall. Do you know what that's about?",
+   "to": "ada",
+   "direct": "You keep rubbing your chalk-grey thumb on your apron and glancing at the crooked licence frame with the clean mark on the wall. What's that about?"
   },
   {
    "id": "t_rowan_pots",
@@ -1275,7 +1325,9 @@
    "show": "In the greenhouse, empty pots are stacked to close off the space under the potting bench, with one stack toppled and the seedling tray only half finished. Can you tell me why that space was closed off?",
    "reactions": {
     "rowan": "Aye, that's my doing. Stacked 'em there to clear the floor for the repotting, nothing more to it than that."
-   }
+   },
+   "to": "rowan",
+   "direct": "You'd stacked clay pots along the bench to close off the space beneath it, but one stack toppled, and your seedling tray was left only half done. Were you working here, and did something interrupt you?"
   },
   {
    "id": "s_loose_bell_s_vestry_cupboard",
@@ -1291,7 +1343,11 @@
    "ask": "Constable, I see you hold a duplicate key to this cupboard\u2014why is that?",
    "deceptive": false,
    "show": "Constable Bell says he's held a spare key to the vestry cupboard for years, just old habit. Do you know if that's true?",
-   "confront": "You told me you've held the spare vestry cupboard key for years, just old habit. Is that the whole of it?"
+   "confront": "You told me you've held the spare vestry cupboard key for years, just old habit. Is that the whole of it?",
+   "because": [
+    "a_bell_knew_s_loose_bell_s_vestry_cupboard"
+   ],
+   "to": null
   },
   {
    "id": "s_secret",
@@ -1303,7 +1359,10 @@
     "s_audit_letter"
    ],
    "unlock": "once you have draft letter in the study desk, you know what to ask",
-   "at": "vestry"
+   "at": "vestry",
+   "show": "There's a half-crossed-out ledger page in Mr Voss's hand speaking of money transferred to himself from the timber account, to be repaid before any audit, and saying Mr Vale must not see the bank figures. Can you explain this?",
+   "to": "silas",
+   "direct": "I found this torn ledger page in the vestry desk, written in your hand, about moving timber account funds to yourself and hiding the figures from Mr Vale. Can you explain it?"
   }
  ],
  "id": "mk-live-20260927-122514",
@@ -1311,21 +1370,33 @@
  "synopsis": "Edmund Vale died in the night, after supper at Vale Manor.",
  "answer": {
   "method": "poison",
-  "motive": "money"
+  "motive": "money",
+  "methods": [
+   "poison"
+  ],
+  "motives": [
+   "money"
+  ],
+  "accepted_v": 1
  },
  "reviewed": [
   "b_ada_thumb|confront",
+  "b_ada_thumb|direct",
   "b_ada_thumb|reactions|ada",
   "b_clara_pocket|confront",
+  "b_clara_pocket|direct",
   "b_clara_pocket|reactions|clara",
   "b_clara_pocket|show",
+  "d_receipt|direct",
   "d_receipt|reactions|ada",
   "d_receipt|reactions|clara",
   "d_receipt|show",
   "s_ada_clara|concede|s_parlour_glove",
   "s_ada_clara|confront",
+  "s_ada_clara|direct",
   "s_ada_clara|reactions|clara",
   "s_ada_clara|show",
+  "s_audit_letter|direct",
   "s_audit_letter|reactions|silas",
   "s_audit_letter|show",
   "s_bell_ada|confront",
@@ -1340,6 +1411,7 @@
   "s_iris_rowan|concede|s_greenhouse_stool",
   "s_iris_rowan|concede|t_rowan",
   "s_iris_rowan|confront",
+  "s_iris_rowan|direct",
   "s_iris_rowan|reactions|rowan",
   "s_iris_rowan|show",
   "s_loose_bell_s_vestry_cupboard|text",
@@ -1349,9 +1421,11 @@
   "s_medical|reactions|silas",
   "s_medical|show",
   "s_medical|text",
+  "s_parlour_glove|direct",
   "s_parlour_glove|reactions|ada",
   "s_parlour_glove|reactions|clara",
   "s_parlour_glove|show",
+  "s_secret|direct",
   "s_secret|text",
   "s_slate|reactions|ada",
   "s_slate|show",
@@ -1373,11 +1447,13 @@
   "s_surface_silas|confront",
   "s_surface_silas|show",
   "s_surface_silas|text",
+  "s_vestry_cupboard|direct",
   "s_vestry_cupboard|reactions|silas",
   "t_ada|confront",
   "t_ada|show",
   "t_clara|confront",
   "t_clara|show",
+  "t_rowan_pots|direct",
   "t_rowan_pots|reactions|rowan",
   "t_rowan_pots|show",
   "t_rowan|confront",

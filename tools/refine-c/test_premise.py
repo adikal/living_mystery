@@ -24,13 +24,17 @@ class Deck(unittest.TestCase):
              'method': 'drown', 'motive': 'blackmail', 'place': 'mill', 'shape': 'two_liars'}
         case = {'victim': 'dora', 'question': {'truth': 'h', 'crime': {'event': 'e', 'place': 'mill'},
                 'candidates': [{'id': 'h', 'facts': {'actor': 'hugo'}}] + [{'id': a, 'facts': {'actor': a}} for a in ('ada', 'clara', 'jonah')]},
-                'events': [{'id': 'e', 'agent': 'hugo', 'method': 'drown', 'causedBy': 'a2'}, {'id': 'd', 'type': 'death', 'agent': 'dora'}],
+                'events': [{'id': 'e', 'agent': 'hugo', 'method': 'drown', 'causedBy': 'a2'}, {'id': 'd', 'type': 'death', 'agent': 'dora', 'start': 1500, 'end': 1505},
+                           {'id': 'f', 'type': 'discovery', 'agent': 'jonah', 'start': 1800, 'end': 1805},
+                           {'id': 'x', 'type': 'examination', 'agent': 'iris', 'start': 1830, 'end': 1850}],
                 'attitudes': [{'id': 'a2', 'because': ['a1']}, {'id': 'a1', 'motive': 'blackmail'}]}
         self.assertEqual(P.seed_errors(case, p), [])
         case['events'][0]['method'] = 'poison'
         case['question']['candidates'].pop()
         errs = P.seed_errors(case, p)
         self.assertTrue(any('method' in e for e in errs)); self.assertTrue(any('candidates' in e for e in errs))
+        case['events'] = [e for e in case['events'] if e.get('type') != 'examination']
+        self.assertTrue(any('examination' in e for e in P.seed_errors(case, p)), 'the examination is required')
 
 
 if __name__ == '__main__':

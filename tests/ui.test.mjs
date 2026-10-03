@@ -419,7 +419,7 @@ test('In-room disclosure groups objects into sections and hides gated leads unti
 });
 
 test('A generated kernel case plays in the Bellweather UI: case suspects, how and why pickers, pillar status, hidden leads, case topics',()=>{
- const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-bw-pair.json',import.meta.url),'utf8'));
+ const records=JSON.parse(readFileSync(new URL('../dist/cases/archive/mk-bw-pair.json',import.meta.url),'utf8'));
  const ui=adapter(null,{llmActive:()=>false});
  ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
  assert.equal(ui.run('session.world.caseId'),'mk-bw-pair');
@@ -440,7 +440,7 @@ test('A generated kernel case plays in the Bellweather UI: case suspects, how an
 });
 
 test('Every UI mode and inspector tab renders for a generated kernel case, before and after play',()=>{
- const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-bw-poison.json',import.meta.url),'utf8'));
+ const records=JSON.parse(readFileSync(new URL('../dist/cases/archive/mk-bw-poison.json',import.meta.url),'utf8'));
  const ui=adapter(null,{llmActive:()=>false});
  ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
  const surface=records.signs.find(s=>s.kind!=='testimony'&&!(s.requires||[]).length);
@@ -477,17 +477,17 @@ function genStub(records){
 }
 
 test('The chooser offers one generator, the shipped cases and the original — no old generators',async()=>{
- const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-bw-pair.json',import.meta.url),'utf8'));
+ const records=JSON.parse(readFileSync(new URL('../dist/cases/archive/mk-bw-pair.json',import.meta.url),'utf8'));
  const stub=genStub(records),ui=adapter(null,{llmActive:()=>false,fetch:stub.fetch});
  ui.click('choose-case');await new Promise(r=>setTimeout(r,5));
  const html=ui.node('#modal').innerHTML;
- assert.equal((html.match(/data-do="generate-new"/g)||[]).length,1,'exactly one generate button');
+ assert.deepEqual([...html.matchAll(/data-do="generate-new" data-level="(\w+)"/g)].map(m=>m[1]),['easy','medium','hard'],'one generator, one button per difficulty');
  assert.doesNotMatch(html,/generate-ai|generate-deep|generate-case|validated case|with AI/i);
  assert.match(html,/The Greenhouse Steps/);assert.match(html,/data-do="start-case"/);
 });
 
 test('Generation shows high-level progress with the spoiler collapsed, full detail inside it, and plays the result',async()=>{
- const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-bw-pair.json',import.meta.url),'utf8'));
+ const records=JSON.parse(readFileSync(new URL('../dist/cases/archive/mk-bw-pair.json',import.meta.url),'utf8'));
  const stub=genStub(records),ui=adapter(null,{llmActive:()=>false,fetch:stub.fetch});
  ui.click('generate-new');await new Promise(r=>setTimeout(r,10));
  // progress updates are written into the open panel (inside #modal in a real DOM)
@@ -513,7 +513,7 @@ test('Generation reports a missing generator server clearly',async()=>{
 });
 
 test('Right panel is Talk, Evidence, Hints; the victim is on the Clue Board; new evidence is boxed in the chat and added to the Evidence tab',()=>{
- const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-bw-pair.json',import.meta.url),'utf8'));
+ const records=JSON.parse(readFileSync(new URL('../dist/cases/archive/mk-bw-pair.json',import.meta.url),'utf8'));
  const ui=adapter(null,{llmActive:()=>false});
  ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test')`);
  const app=ui.node('#app').innerHTML,tabs=app.slice(app.indexOf('Notebook views'));
@@ -658,4 +658,38 @@ test('A reply that becomes evidence appears once in the conversation, as the evi
  assert.equal(recorded,1,'the account is shown as one evidence card');
  const text=records.signs.find(x=>x.id==='s_surface_bell').text.slice(0,30);
  assert.equal(html.split(text).length-1,1,'and not repeated as a plain bubble');
+});
+
+test('Restart reloads a generated case from wherever the case list says it now is (shipped or generated here)',async()=>{
+ const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-235614.json',import.meta.url),'utf8'));
+ const asked=[];const json=(o,ok=true)=>Promise.resolve({ok,status:ok?200:404,json:async()=>o});
+ const fetch=async url=>{asked.push(url);
+  if(url.endsWith('cases/generated/index.json'))return json([{id:records.id,file:`${records.id}.json`,title:'T'}]);
+  if(url.endsWith('cases/generated/live/index.json'))return json([]);
+  if(url.endsWith(`cases/generated/${records.id}.json`))return json(records);
+  return json({},false);};
+ const ui=adapter(null,{llmActive:()=>false,fetch});
+ ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'T')`);
+ ui.click('restart');await new Promise(r=>setTimeout(r,20));
+ assert.ok(asked.some(u=>u.endsWith(`cases/generated/${records.id}.json`)),asked.join(' '));
+ assert.ok(!asked.some(u=>u.includes(`live/${records.id}`)),'not the old live path');
+ assert.equal(ui.run('session.world.caseId'),records.id);
+});
+
+test('The case menu: three generate buttons in one row, and a difficulty filter over the case list',async()=>{
+ const json=o=>Promise.resolve({ok:true,status:200,json:async()=>o});
+ const list=[{id:'a',file:'a.json',title:'Alpha',difficulty:{level:'easy',score:3}},{id:'b',file:'b.json',title:'Beta',difficulty:{level:'hard',score:11}},
+   {id:'c',file:'c.json',title:'Gamma',difficulty:{level:'medium',score:7}}];
+ const fetch=async url=>url.endsWith('cases/generated/index.json')?json(list):url.endsWith('live/index.json')?json([]):json({error:'no_job'});
+ const ui=adapter(null,{llmActive:()=>false,fetch});
+ ui.click('choose-case');await new Promise(r=>setTimeout(r,5));
+ const html=ui.node('#modal').innerHTML;
+ assert.match(html,/<div class="generate-choice"[^>]*>(<button[^>]*data-do="generate-new"[^>]*>.*?<\/button>){3}<\/div>/,'the three buttons sit together in one group');
+ assert.match(html,/<select id="case-filter">/);
+ for(const t of ['Alpha','Beta','Gamma'])assert.match(html,new RegExp(t));
+ ui.run(`document.querySelector=(s=>s==='#case-list'?globalThis.__list??(globalThis.__list={innerHTML:''}):null)`);
+ ui.change({id:'case-filter',value:'hard'});
+ const shown=ui.run('globalThis.__list.innerHTML');
+ assert.match(shown,/Beta/);assert.doesNotMatch(shown,/Alpha|Gamma/);
+ ui.change({id:'case-filter',value:'easy'});assert.match(ui.run('globalThis.__list.innerHTML'),/Alpha/);
 });

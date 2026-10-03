@@ -217,3 +217,32 @@ requires Python, JavaScript and Z3 to agree.
 **Publish-time content.** Everyday knowledge, moods, loose-end accounts and concessions carry no claims and are checked
 not to mention hidden clues or lies; every written line is then reviewed against the true history and faulty lines are
 dropped. Independent steps run in parallel.
+
+
+## 10.17 The history is the only source of facts
+
+Facts enter a case only through generation, where they are certified. Every account must be **backed** by the true
+history: an event its speaker took part in, being at that place at that time, a claim about themselves, or something
+they knew (a 'knows' attitude cited as the account's reason). Both kernels compute this (`account_backing`); the publish
+gate rejects any unbacked account. Generation must write the body's **discovery** and the **examination** as typed
+events, the examination by the setting's examiner after the discovery and before the investigation begins. Roles and the
+day's boundaries come from the setting, so no code names a person. Publishing adds only wording: questions, evening
+summaries of a person's own events, the examination's notes and account (worded from the examination event), lines and
+reactions. In play, a clue that comes from someone's own doing draws their own account; replies for anyone else are worked
+out from the history (elsewhere at that time) or a single neutral line, never a guess. The fact-checker sees all of a
+character's accounts, so a reply contradicting any of them is rejected.
+
+Three further rules follow from the same principle. **Nobody is in a case without a history:** people the history never
+mentions are removed at publish, and every suspect must have an evening. **No account, no facts:** when the history gives
+a person nothing on a question, the game says one neutral line and the model may only decline or ask; implied facts
+("on my rounds", "I gave my word") are rejected, and a character asks what the detective means at most once in a row.
+**The answer is what the evidence supports:** method and motive categories overlap (a quarrel over a secret about to
+come out), so at publish a reviewer reads only the evidence the player can find and lists every category it fairly
+supports; the accusation accepts any of them, and a wrong reason names the motive evidence to read again.
+
+**What people can say.** Each person's evening is written from their evening events and their morning from their own
+morning events (never evidence, always the discovery and examination); a reviewer that knows who everyone is marks each
+honest or a cover story and gives its reason, and an innocent's account that is not honest is rewritten with it. Seed
+drafts that fail are repaired, not redrafted, with every rule broken so far listed. End to end, fresh cases certify,
+solve, rate at their target difficulty, and about 96% of replies to a standard question set come from the model
+(`tools/e2e_dialogue.mjs`).

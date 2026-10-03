@@ -647,6 +647,26 @@ clue, and the plain answer.
 - `certify` reports `pillars` {opportunity, means, motive} with depths and requires means and motive to be reachable
   (`certify(case, false)` skips that for intermediate generation steps). `pillarSignsFor(case, A, actor, held)` gives a
   person's means and motive evidence among the held signs; the accusation uses it.
+- **The history is the only source of facts.** Each account is backed by the history (`account_backing`: a source
+  event with the speaker, being present at that place and time, a claim about themselves, or a 'knows' attitude cited in
+  'because'); unbacked accounts fail certification at publish. Generation writes the discovery and examination as typed
+  events by the setting's roles; publishing only words them. In play, a clue from someone's own doing (same source event)
+  draws their own account; other replies are worked out from the history, with one neutral line when nothing applies.
+  People the history never mentions are not in the case, and everyone it involves has an evening (`premise.involved`,
+  one definition for the cast and the generation rule).
+- **What people can say.** Each person has an evening summary (from their evening events only) and, if they did
+  something this morning, a morning summary (from their own morning events that are not evidence, plus the discovery
+  and the examination). Both are claimless, backed by the speaker's own events, and marked honest or a cover story by a
+  reviewer that gives its reason; an innocent's account that is not honest is rewritten with that reason, then dropped.
+  "Last night" questions never give the morning summary; every other account has its own question or comes with
+  "anything else". A question already answered is answered "As I told you: …", or with what was admitted once a story
+  has fallen.
+- **The fact-checker** compares a reply with the selected account and everything the character can say (their true
+  accounts, and the stories they tell). It allows restating any of them, what an account plainly implies, and, with
+  nothing to go on, saying "I don't know" or asking back; it rejects invented facts, names nobody has mentioned (role
+  words and a shown clue's title and subject count as mentions), and contradictions of their own accounts. It knows the
+  game time, so "quarter to seven" is this morning. The accusation accepts every method and motive the held
+  evidence fairly supports (`answer.methods`, `answer.motives`).
 - Motive evidence must connect the culprit and the victim (a relation with the victim on either side); a secret about
   the culprit alone is not a motive. `enrich.add_motive_link` adds one true, deeper clue when a case lacks the link.
 - `server/case_oracle.py` is an independent Z3 check; `publish.gate` requires Python, JavaScript and Z3 to agree.

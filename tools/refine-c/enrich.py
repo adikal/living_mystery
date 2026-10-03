@@ -19,6 +19,19 @@ def truth_actor(case):
     return next(h for h in q['candidates'] if h['id'] == q['truth'])['facts']['actor']
 
 
+SETTING = json.load(open(os.path.join(HERE, 'settings', 'bellweather.json')))
+
+
+def role(case, name):
+    """The person holding a role (examiner, constable): from the case's setting, else the shared setting."""
+    pid = ((case.get('setting') or {}).get('roles') or SETTING.get('roles') or {}).get(name)
+    return pid if any(p['id'] == pid for p in case.get('people', [])) else None
+
+
+def day(case, key):
+    return ((case.get('setting') or {}).get('day') or SETTING.get('day') or {}).get(key)
+
+
 def victim_of(case):
     """The dead person: the case's stated victim, else the subject of the death event, else the setting's."""
     if case.get('victim'):
@@ -26,7 +39,7 @@ def victim_of(case):
     death = next((e for e in case['events'] if e.get('type') == 'death' or e.get('kind') == 'death'), None)
     if death and death.get('agent'):
         return death['agent']
-    return 'edmund'
+    return SETTING.get('victim')
 
 
 def crime_event(case):
@@ -73,83 +86,11 @@ def _public_sign(x):
     return {k: x[k] for k in ('id', 'kind', 'title', 'at', 'speaker', 'about', 'text') if x.get(k)}
 
 
-LOOSE = """You check a finished 1920s village mystery for LOOSE ENDS. You get the true history and a list of (person, clue)
-pairs: each clue mentions that person (by name or role) although they took no part in what produced it. For each pair,
-decide whether the case explains why the clue mentions them (the true history or their role makes it obvious). If not,
-write what that person would plainly say if the detective asked about it: 1-2 sentences in their voice, true to the
-history, adding only harmless everyday detail (where a thing is kept, why they have it). It must not say where anyone
-was or what anyone did last night, name anyone as guilty, give any clock time or number, or reveal anything about the crime.
-Return {"loose_ends": [{"person": "<id>", "clue": "<clue id>", "explained": true|false,
-"question": "<the detective's short question about it>", "answer": "<their reply, only if unexplained>"}]}"""
-
-ROLE_WORDS = {'bell': ['constable'], 'iris': ['doctor'], 'vicar': ['vicar', 'rector', 'parson'], 'dora': ['postmistress'],
-              'jonah': ['boatman', 'boathouse keeper', 'ferryman'], 'rowan': ['groundskeeper', 'gardener'], 'ada': ['innkeeper', 'landlady'],
-              'silas': ['solicitor'], 'hugo': ['nephew'], 'clara': []}
-
-
-def mentions(case, x):
-    """People a clue's text names (full name, address, surname or role) - computed, not guessed."""
-    text = ' ' + str(x.get('text', '')) + ' ' + str(x.get('title', '')) + ' '
-    out = set()
-    for p in case['people']:
-        forms = [p['name'], p.get('address') or ''] + ROLE_WORDS.get(p['id'], [])
-        sur = p['name'].split()[-1]
-        if sur not in {q['name'].split()[-1] for q in case['people'] if q['id'] != p['id']}:
-            forms.append(sur)
-        if any(f and re.search(rf"\b{re.escape(f)}\b", text, re.I) for f in forms):
-            out.add(p['id'])
-    return out
-
-
-def add_loose_ends(case):
-    """A physical clue that names an innocent who took no part in producing it must be explained. Code finds those
-    (person, clue) pairs; the model says whether the case explains them and, if not, writes the person's plain answer,
-    available once the clue is held. Claimless, so certification is unchanged (the gate re-checks)."""
-    from refine import llm_json, CRITIC_MODEL
-    if case.get('loose_ends_checked'):
-        return 0
-    people = {p['id']: p for p in case['people']}
-    victim, culprit = victim_of(case), truth_actor(case)
-    evs = {e['id']: e for e in case['events']}
-    pairs = []
-    for x in case['signs']:
-        if x['kind'] == 'testimony':
-            continue
-        src = evs.get(x.get('source')) or {}
-        took_part = {src.get('agent'), *src.get('others', []), x.get('about')}
-        for pid in mentions(case, x) - took_part - {victim, culprit}:
-            if pid in people:
-                pairs.append((pid, x))
-    case['loose_ends_checked'] = True
-    if not pairs:
-        return 0
-    item = {'history': _history(case), 'people': [{'id': p['id'], 'name': p['name'], 'voice': p.get('voice')} for p in case['people']],
-            'pairs': [{'person': pid, 'name': people[pid]['name'], 'clue': _public_sign(x)} for pid, x in pairs]}
-    out = llm_json(LOOSE, json.dumps(item), 3000, model=CRITIC_MODEL).get('loose_ends') or []
-    signs = {x['id']: x for x in case['signs']}
-    wanted = {(pid, x['id']) for pid, x in pairs}
-    n = 0
-    for le in out if isinstance(out, list) else []:
-        pid, clue, ans = le.get('person'), le.get('clue'), str(le.get('answer') or '').strip()
-        if le.get('explained') or (pid, clue) not in wanted or not ans or re.search(r'\d', ans) or len(ans.split()) > 60 \
-                or re.search(r'\b(last night|yesterday|this morning|evening|went|was at|stepped|left the)\b', ans, re.I):
-            continue
-        sid = f"s_loose_{pid}_{clue}"[:60]
-        if sid in signs:
-            continue
-        import publish
-        with publish.SIGNS: case['signs'].append({'id': sid, 'kind': 'testimony', 'speaker': pid, 'loose_end': True, 'requires': [clue],
-                              'unlock': f"once you have {signs[clue].get('title', 'that')}, you can ask {people[pid]['name']} about it",
-                              'title': f"{people[pid]['name']} on {str(signs[clue].get('title', 'it')).lower()}", 'text': ans,
-                              'ask': str(le.get('question') or '').strip()[:140] or None, 'deceptive': False})
-        n += 1
-    return n
-
-
 REVIEW = """You review text written for a 1920s village mystery game against the TRUE history of the night. Each item is a
 line the game will show or a character will say. Flag an item only for a concrete fault:
 - it contradicts the true history (wrong time of death, wrong person, wrong place, an event that did not happen),
-- it names a person wrongly (e.g. calls the victim by another person's name),
+- it names a person wrongly (e.g. calls the victim by another person's name) or gets a relationship wrong (calls a
+  sister a wife: 'people' says who everyone is),
 - an innocent character confesses to something they did not do, or the culprit confesses to the crime,
 - it reveals who the culprit is where the item is not itself proof.
 Characters may lie where the item says 'lie': true, and accounts may be honestly mistaken: repeating, quoting or
@@ -164,17 +105,21 @@ def review_publish(case):
     victim = victim_of(case)
     items = {}
     for x in case['signs']:
-        if x.get('medical') or x.get('surface') or x.get('loose_end') or x.get('motive_link') or x.get('secret'):
+        if x.get('medical') or x.get('surface') or x.get('morning'):
             items[f"{x['id']}|text"] = {'text': x['text'], 'speaker': x.get('speaker'), 'lie': bool(x.get('deceptive'))}
         for pid, t in (x.get('reactions') or {}).items():
             items[f"{x['id']}|reactions|{pid}"] = {'text': t, 'speaker': pid, 'shown': _public_sign(x)}
+        if x.get('direct'):
+            items[f"{x['id']}|direct"] = {'text': x['direct'], 'said_by': 'detective', 'said_to': x.get('to'), 'about': _public_sign(x),
+                                          'check': "said TO 'said_to'; a fault if the clue and history do not connect this person to it"}
         for n, t in (x.get('concede') or {}).items():
             items[f"{x['id']}|concede|{n}"] = {'text': t, 'speaker': x.get('speaker')}
     todo = {k: v for k, v in items.items() if k not in set(case.get('reviewed', []))}
     if not todo:
         return {}
     ctx = {'victim': victim, 'culprit': truth_actor(case), 'history': _history(case),
-           'people': [{'id': p['id'], 'name': p['name']} for p in case['people']]}
+           'people': [{'id': p['id'], 'name': p['name'], 'who': next((q.get('public') for q in SETTING.get('people', []) if q['id'] == p['id']), '')}
+                      for p in case['people']]}
     problems = {}
     keys = list(todo)
     for i in range(0, len(keys), 40):
@@ -188,16 +133,16 @@ def review_publish(case):
         x = signs.get(sid)
         if not x:
             continue
-        if field in ('show', 'confront'):
+        if field in ('show', 'confront', 'direct'):
             x.pop(field, None)
+            if field == 'direct':
+                x.pop('to', None)     # a fresh 'to' and line on the next pass
         elif field == 'reactions':
             (x.get('reactions') or {}).pop(rest[0], None)
         elif field == 'concede':
             (x.get('concede') or {}).pop(rest[0], None)
         elif field == 'text' and x.get('medical'):
             x['medical_v'] = 0          # rewritten on the next publish
-        elif field == 'text' and x.get('loose_end'):
-            case['signs'] = [y for y in case['signs'] if y['id'] != sid]
     case['reviewed'] = sorted(set(case.get('reviewed', [])) | (set(todo) - set(problems)))
     return problems
 
@@ -309,143 +254,95 @@ def add_moods(case):
     return len(case['moods'])
 
 
-LINK = """In a finished 1920s village mystery the player can learn the culprit's secret, but nothing yet tells them why the
-culprit would kill THIS victim. Using the true history and the attitudes, write ONE piece of evidence the player can find
-that shows how the victim was a threat to the culprit (they knew the secret, meant to expose it, demanded money, stood in
-the way...). It must be TRUE to the history, add no new event, and must not name the culprit as the killer.
-Choose either a TESTIMONY (a person, not the culprit or victim, who knew: what they plainly say, 1-3 sentences in their
-voice) or a DOCUMENT (a letter, note or diary entry the victim left, found at a place; 1-3 sentences, quoted).
-Return {"kind": "testimony"|"document", "speaker": "<person id, testimony only>", "place": "<place id, document only>",
-"title": "<short title>", "text": "...", "rel": "<snake_case relation from the victim to the culprit, e.g. meant_to_expose>",
-"ask": "<the detective's short question for a testimony>"}"""
 
 
-def add_motive_link(case):
-    """If the motive evidence never connects the culprit to the victim, add one true sign that does: a relation from the
-    victim to the culprit, reachable only after the existing motive evidence (so the case does not get easier)."""
-    from refine import llm_json, CRITIC_MODEL, certify, claim_of
-    victim, culprit = victim_of(case), truth_actor(case)
-    rep = certify(case)
-    if rep.get('ok') or not any('MOTIVE' in e for e in rep.get('errors', [])):
+ACCEPT = """A player of a 1920s village mystery must name HOW the victim died and WHY the culprit did it, choosing from fixed
+lists, going only by the evidence they find. You get that evidence (the clues that establish means and motive, and the
+doctor's findings) and the two lists. Score EVERY id in each list from 0 to 3 for how well THIS evidence supports it:
+3 = a careful reader would name it; 2 = a fair reading; 1 = possible but a stretch; 0 = not supported. Judge only by the
+evidence, not by what you guess the author intended. Return {"methods": {"<id>": n, ...}, "motives": {"<id>": n, ...}}."""
+ACCEPTED_V = 3
+
+
+def add_accepted(case):
+    """answer.methods / answer.motives: the true answer plus every answer the player's evidence supports as well as it
+    supports the truth (scored by a reviewer that sees only the evidence), so a case is never lost on overlapping
+    categories, and never won on a stretch. Wording of what the evidence says; adds no fact."""
+    ans = case.get('answer') or {}
+    if ans.get('accepted_v') == ACCEPTED_V:
         return 0
-    A = rep['A']
-    raw = [sid for sid in A['understood'] if (claim_of(A['signs'][sid]) or {}).get('kind') == 'relation'
-           and (claim_of(A['signs'][sid]) or {}).get('a') == culprit and A['truthval'].get(sid)]
-    if not raw:
-        return 0
-    anchor = max(raw, key=lambda x: A['eff'][x])        # the deepest existing motive clue
-    people = {p['id']: p for p in case['people']}
-    item = {'history': _history(case), 'victim': victim, 'culprit': culprit,
-            'attitudes': [f"{a['agent']} {a['mode']}: {a['content']}" for a in case['attitudes'] if a['agent'] in (victim, culprit)],
-            'culprit_secret_clue': A['signs'][anchor].get('text'),
-            'people': [{'id': p['id'], 'name': p['name'], 'voice': p.get('voice')} for p in case['people'] if p['id'] not in (victim, culprit)],
-            'places': [p['id'] for p in case['setting']['places']]}
-    for _ in range(2):
-        out = llm_json(LINK, json.dumps(item), 1500, model=CRITIC_MODEL)
-        kind, rel, text = out.get('kind'), re.sub(r'[^a-z_]', '', str(out.get('rel') or '').lower()), str(out.get('text') or '').strip()
-        if kind not in ('testimony', 'document') or not rel or not text or re.search(r'\d', text) or len(text.split()) > 80:
-            continue
-        if kind == 'testimony' and out.get('speaker') not in people or out.get('speaker') in (victim, culprit):
-            if kind == 'testimony':
-                continue
-        if kind == 'document' and out.get('place') not in {p['id'] for p in case['setting']['places']}:
-            continue
-        sid = 's_motive_link'
-        sign = {'id': sid, 'kind': kind, 'title': str(out.get('title') or 'What the victim knew')[:60], 'text': text,
-                'requires': [anchor], 'motive_link': True,
-                'unlock': f"once you know {str(A['signs'][anchor].get('title') or 'the secret').lower()}, you know what to look for",
-                'claim': {'kind': 'relation', 'a': victim, 'rel': rel, 'b': culprit}}
-        if kind == 'testimony':
-            sign.update(speaker=out['speaker'], ask=str(out.get('ask') or '').strip()[:140] or None)
-        else:
-            sign['at'] = out['place']
-        trial = json.loads(json.dumps(case))
-        trial['relations'] = trial.get('relations', []) + [{'a': victim, 'rel': rel, 'b': culprit}]
-        trial['signs'].append(sign)
-        r2 = certify(trial)
-        if r2.get('ok') and r2['solve_depth'] >= (rep.get('solve_depth') or 0):
-            case['relations'], case['signs'] = trial['relations'], trial['signs']
-            return 1
-    return 0
-
-
-SECRET = """In a finished 1920s village mystery, decide whether the player can learn the SUBSTANCE of the culprit's motive
-from the clues (what the secret actually is: e.g. "her husband is alive", "he forged the will", "the oak was sold from
-the boy's trust" - not merely that money changed hands or that someone was threatened). If they can, return
-{"discoverable": true, "by": "<clue id>"}. If not, write ONE true clue that reveals it, found only after the given anchor
-clue: a TESTIMONY from someone who knew (not the culprit or the victim; 1-3 sentences in their voice) or a DOCUMENT
-(letter, note, register entry; 1-3 quoted sentences) at a place. True to the history, no new events, no clock times or
-numbers, and it must not say who killed anyone. Return {"discoverable": false, "kind": "testimony"|"document",
-"speaker": "<person id>", "place": "<place id>", "title": "...", "text": "...", "ask": "<the detective's question>"}"""
-
-
-def add_secret_clue(case):
-    """The culprit's secret itself must be discoverable in play, not only in the ending. If no clue reveals it, add a
-    true, claimless clue reachable after the deepest motive clue (so certification and depth are unchanged)."""
-    from refine import llm_json, CRITIC_MODEL, certify
-    if case.get('secret_checked'):
-        return 0
-    victim, culprit = victim_of(case), truth_actor(case)
-    rep = certify(case)
-    if not rep.get('ok'):
-        return 0
-    A, crime = rep['A'], crime_event(case)
-    atts = {a['id']: a for a in case.get('attitudes', [])}
-    chain, todo = [], [crime.get('causedBy')]
-    while todo:
-        a = atts.get(todo.pop())
-        if a and a not in chain:
-            chain.append(a); todo += list(a.get('because') or [])
-    chain += [a for a in case['attitudes'] if a['agent'] == culprit and a['mode'] in ('knows', 'fears') and a not in chain]
-    motive = rep['pillar_signs']['motive']
-    anchor = max(motive, key=lambda x: A['eff'][x]) if motive else None
-    people = {p['id']: p for p in case['people']}
-    places = {p['id'] for p in case['setting']['places']}
-    item = {'history': _history(case), 'culprit': culprit, 'victim': victim,
-            'culprit_reasons': [f"{a['agent']} {a['mode']}: {a['content']}" for a in chain],
-            'victim_reasons': [f"{a['mode']}: {a['content']}" for a in case['attitudes'] if a['agent'] == victim],
-            'clues': [_public_sign(x) for x in case['signs']], 'anchor': anchor,
-            'people': [{'id': p['id'], 'name': p['name'], 'voice': p.get('voice')} for p in case['people'] if p['id'] not in (victim, culprit)],
-            'places': sorted(places)}
-    def ask(extra=''):
-        for _ in range(2):
-            o = llm_json(SECRET + extra, json.dumps(item), 5000, model=(CRITIC_MODEL if _ == 0 else __import__("refine").MODEL))
-            while isinstance(o, dict) and 'discoverable' not in o and len(o) == 1 and isinstance(next(iter(o.values())), dict):
-                o = next(iter(o.values()))
-            if isinstance(o, dict) and ('discoverable' in o or o.get('kind')):
-                o.setdefault('discoverable', False)
-                return o
-        return {}
-    out = ask()
-    # the model's "yes" is checked by code: the clue it cites must share the secret's key words
-    names = {w.lower() for p in case['people'] for w in p['name'].split()}
-    STOPW = {'about', 'their', 'there', 'which', 'would', 'could', 'before', 'after', 'tonight', 'every', 'being', 'truth', 'secret'}
-    key = {w for a in chain if a['mode'] in ('knows', 'fears', 'believes') for w in re.findall(r'[a-z]{5,}', a['content'].lower())
-           if w not in names and w not in STOPW}
+    from refine import analyse, pillar_signs, llm_json, CRITIC_MODEL
+    A = analyse(case)
+    P = pillar_signs(case, A)
     signs = {x['id']: x for x in case['signs']}
-    cited = signs.get(out.get('by')) if out.get('discoverable') is True else None
-    shown = cited and len(key & set(re.findall(r'[a-z]{5,}', (cited.get('text', '') + ' ' + cited.get('title', '')).lower()))) >= 2
-    if out.get('discoverable') is True and not shown:
-        out = ask('\nA reviewer found that no clue states the substance of the secret: set discoverable false and write the clue.')
-    import os
-    if os.environ.get('DEBUG_SECRET'): print('  key', sorted(key), 'cited', out.get('by') if cited else None, 'shown', shown, 'out', str(out)[:200])
-    case['secret_checked'] = True
-    if shown or out.get('discoverable') is True or not anchor:
-        return 0
-    kind, text = out.get('kind'), str(out.get('text') or '').strip()
-    if kind not in ('testimony', 'document') or len(text.split()) < 8 or re.search(r'\d|placeholder|lorem', text, re.I) or len(text.split()) > 80:
-        return 0
-    sign = {'id': 's_secret', 'kind': kind, 'title': str(out.get('title') or 'The secret')[:60], 'text': text, 'secret': True,
-            'requires': [anchor], 'unlock': f"once you have {str(A['signs'][anchor].get('title') or 'that').lower()}, you know what to ask"}
-    if kind == 'testimony':
-        if out.get('speaker') not in people or out.get('speaker') in (victim, culprit):
-            return 0
-        sign.update(speaker=out['speaker'], ask=str(out.get('ask') or '').strip()[:140] or None)
-    else:
-        if out.get('place') not in places:
-            return 0
-        sign['at'] = out['place']
-    import publish
-    with publish.SIGNS:
-        case['signs'].append(sign)
+    show = lambda ids: [signs[i]['text'] for i in ids if i in signs]
+    item = {'means_evidence': show(P['means']), 'motive_evidence': show(P['motive']),
+            'doctor': show([x['id'] for x in case['signs'] if x.get('medical')]),
+            'METHOD': TYPES['methods'], 'MOTIVE': TYPES['motives']}
+    out = llm_json(ACCEPT, json.dumps(item), 800, model=CRITIC_MODEL)
+
+    def pick(key, ids, truth):
+        scores = {k: v for k, v in (out.get(key) or {}).items() if k in ids and isinstance(v, (int, float))}
+        bar = max(2, scores.get(truth, 0))           # as well supported as the truth, and at least a fair reading
+        return sorted({truth, *[k for k, v in scores.items() if v >= bar]} - {None})
+    ans['methods'] = pick('methods', METHOD_IDS, ans.get('method'))
+    ans['motives'] = pick('motives', MOTIVE_IDS, ans.get('motive'))
+    ans['accepted_scores'] = {k: out.get(k) for k in ('methods', 'motives')}
+    ans['accepted_v'] = ACCEPTED_V
+    case['answer'] = ans
     return 1
+
+
+ART = """Each clue in a 1920s village mystery game is shown with a small painted picture from a fixed library. For each clue,
+choose the ONE library picture that shows what the clue is or is about (the object a player would picture), or null if
+none fits well. Choose by meaning, not by a shared word: "the doctor's notes" is case notes, not a letter; "the surgery
+door" is a door. A clue about a body, a wound, a mark on a person, or a scene with no particular object gets null.
+Return {"art": {"<clue id>": "<library id>" | null}}."""
+
+
+def add_art(case):
+    """x['art']: the library picture for each object clue (presentation only; never a fact). Code checks every key."""
+    lib = {o['id']: o['label'] for o in SETTING.get('objects', [])}
+    todo = [x for x in case['signs'] if x['kind'] not in ('testimony', 'behavior') and 'art' not in x]
+    if not todo or not lib:
+        return 0
+    from refine import llm_json, CRITIC_MODEL
+    item = {'library': lib, 'clues': [{'id': x['id'], 'kind': x['kind'], 'title': x.get('title'), 'text': str(x.get('text', ''))[:300]}
+                                      for x in todo]}
+    out = _unwrap(llm_json(ART, json.dumps(item), 3000, model=CRITIC_MODEL), 'art')
+    n = 0
+    for x in todo:
+        key = out.get(x['id']) if isinstance(out, dict) else None
+        if x['id'] in (out or {}):
+            x['art'] = key if key in lib else None     # an unknown key is no picture: the game falls back to the clue's kind
+            n += 1
+    return n
+
+
+UNLOCK = """In a 1920s village mystery game, several leads open at the same moment (the same thing unlocks them, in the same
+place). Each has its own line, and they all start the same way. Rewrite them as ONE opening sentence said once (what
+opens), and for each lead one short sentence of what the detective then finds or hears, without repeating the opening.
+Keep every fact; add none. Return {"lead": "<opening sentence>", "lines": {"<id>": "<sentence>"}}."""
+
+
+def add_unlock_groups(case):
+    """Leads that open together (same requirements, same place) share one opening line: x['unlock_lead'] is said once,
+    x['unlock'] is each lead's own line (the original stays in 'unlock_full'). Wording only."""
+    from collections import defaultdict
+    from refine import llm_json, CRITIC_MODEL
+    groups = defaultdict(list)
+    for x in case['signs']:
+        if x.get('unlock') and x.get('requires') and 'unlock_lead' not in x:
+            groups[(tuple(sorted(x['requires'])), x.get('at'))].append(x)
+    n = 0
+    for xs in groups.values():
+        if len(xs) < 2:
+            continue
+        out = llm_json(UNLOCK, json.dumps({x['id']: x['unlock'] for x in xs}), 800, model=CRITIC_MODEL)
+        lead, lines = str(out.get('lead') or '').strip(), out.get('lines') or {}
+        if not lead or not all(str(lines.get(x['id']) or '').strip() for x in xs):
+            continue                                   # keep the separate lines rather than a partial rewrite
+        for x in xs:
+            x['unlock_full'], x['unlock_lead'], x['unlock'] = x['unlock'], lead, str(lines[x['id']]).strip()
+        n += 1
+    return n

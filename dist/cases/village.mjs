@@ -114,8 +114,27 @@ export const BW_PEOPLE = {
       humour: 'flippant, sometimes cruel', with_outsiders: 'instantly familiar', warms_to: 'anyone who laughs at his jokes',
       bristles_at: 'being treated as a boy or a sponger', when_lying: 'jokes harder and talks faster',
       samples: ['Frightfully dull down here, old thing. Present company excepted, naturally.', 'Ask me anything. I\u2019m an open book. Mostly pictures, I grant you.', 'Uncle and I got on famously, as long as we were in different counties.']}},
+  vera: {name: 'Vera Lacey', initials: 'VL', pronoun: 'she', address: 'Mrs Lacey', role: 'A newcomer, lodging at the Rook', color: '#6b5b95', home: 'inn',
+    public: 'A widow down from London three weeks ago, lodging in the Rook\u2019s back bedroom. Says she is sketching old churches for a book, and asks a great many questions.',
+    voice: 'Low, amused and worldly: a London polish over something harder. Answers a question with a question and watches your face while you answer.',
+    sheet: {temperament: 'watchful, wry, self-possessed', habits: '"my dear"; keeps a sketchbook on her knee; turns her wedding ring when she is thinking',
+      pet_subject: 'old churches, London theatres and other people\u2019s stories', humour: 'dry and teasing',
+      with_outsiders: 'perfectly at ease: she is one herself', warms_to: 'people who do not pry', bristles_at: 'questions about her late husband or her past',
+      when_lying: 'grows charming and precise, and turns the conversation to you',
+      samples: ['Everyone in a village knows everything, my dear. The trick is getting them to say it to a stranger.', 'I draw churches. They keep still and they never ask where one is from.', 'You have a policeman\u2019s way of listening. I find it rather restful.']}},
 };
 
-// Victims exclude the constable (he hears the accusation) and the doctor (she examines the body).
-export const BW_NOT_VICTIM = new Set(['bell', 'iris']);
-export const BW_NOT_CULPRIT = new Set(['bell', 'iris']);
+// Roles the case machinery relies on: who examines a body, who hears the accusation (and briefs the detective).
+// Code reads these roles; it never names a person.
+// Cases published before each case named its own victim assume this one (the setting's original story).
+export const BW_DEFAULT_VICTIM = 'edmund';
+export const BW_ROLES = {examiner: 'iris', constable: 'bell'};
+// What people call each other besides their names (for spotting who a clue mentions).
+export const BW_ROLE_WORDS = {bell: ['constable'], iris: ['doctor'], vicar: ['vicar', 'rector', 'parson'], dora: ['postmistress'],
+  jonah: ['boatman', 'boathouse keeper', 'ferryman'], rowan: ['groundskeeper', 'gardener'], ada: ['innkeeper', 'landlady'],
+  silas: ['solicitor'], hugo: ['nephew'], vera: ['newcomer', 'lodger', 'widow'], clara: [], edmund: ['squire']};
+// The holders of those roles are neither victim nor culprit.
+export const BW_NOT_VICTIM = new Set(Object.values(BW_ROLES));
+export const BW_NOT_CULPRIT = new Set(Object.values(BW_ROLES));
+// The day: the night's story runs from evening into morning; the investigation starts at START.
+export const BW_DAY = {evening: 1080, morning: 1740, start: 1920};

@@ -240,7 +240,7 @@ with `tools/art/generate.py` (Bedrock Stability, reviewed on contact sheets).
 - **Premise deck** (`tools/refine-c/premise.py`): code draws the victim, culprit, four suspects, method, motive, scene and
   case shape, favouring what was used least recently (`runs/premise-history.json`). The seed is rejected unless it
   honours the draw.
-- **Village** (`dist/cases/village.mjs`): 10 places with walking times and 11 people with public identities and
+- **Village** (`dist/cases/village.mjs`): 10 places with walking times and 12 people with public identities and
   character sheets; the generator's setting file is extracted from it. The Last Bell keeps its own data (`dist/case.mjs`).
 - **Certification** requires motive, means and opportunity to be reachable. A case is published only when the Python
   kernel, the JavaScript kernel and the Z3 oracle (`server/case_oracle.py`) all certify it and agree (`publish.gate`).

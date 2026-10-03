@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.17 · 27 September 2026**
+**Living technical report · Edition 0.20 · 3 October 2026**
 
 ### Abstract
 
@@ -150,6 +150,28 @@ Bellweather setting with the original cast, map and art, the generator produced 
 4–7 (14–24 clues, 27–35 history events, a certified twist, lies and red herrings), which play in the existing game
 through a bridge (`dist/cases/kernel-case.mjs`) including free-text character dialogue grounded in each character's
 memories and beliefs. See `docs/mystery-kernel.md`.
+
+### Edition 0.20: what people can say
+
+Every person in a case has an evening in the history; each says what they did last night and this morning from their own
+events (the culprit may give a cover story), and the questions keep night and morning apart. The fact-checker knows the
+time, lets characters restate their own stories and say when they do not know, and every account is checked to be
+reachable from the Talk menu. Cases are tested end to end: generation, certification, a solved play-through, and every
+character asked a standard set of questions with the real AI. See generation §10.17.
+
+### Edition 0.19: difficulty, a newcomer and more objects
+
+Cases carry a computed difficulty (easy, medium or hard, from the certifier's measures) and can be generated to one;
+the village gains a twelfth person, Mrs Vera Lacey, a newcomer lodging at the Rook; and the clue library grows to 50
+painted objects that the generator knows, with each clue's picture chosen at publish. See docs/difficulty.md and
+docs/visual-world.md.
+
+### Edition 0.18: the history is the only source of facts
+
+Characters can only say what the generated history lets them know: every account is backed by an event they took part in
+or saw, or by something the case records they knew, and both kernels certify it. The examination of the body is part of
+the history, so the doctor remembers it. Publishing no longer adds facts after the story is written, and code names roles,
+not people. See generation §10.17.
 
 ### Edition 0.17: a visible village
 

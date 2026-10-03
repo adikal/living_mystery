@@ -16,9 +16,35 @@ Playtesting reshaped the plan; this is the layout in the game now.
 | Clue Board | every villager with a profile (and the victim), the case against each suspect under Motive, Means and Opportunity with an honest ✓, conflicts between accounts, the night timeline from the case, and the full history |
 | Opening | the case, the cast, where to start, how to investigate, and an optional tour of the layout |
 
-Free-form dialogue is always available in the Talk panel; drag and drop is the way to show evidence (with a keyboard Show button). The detective has a painted portrait; clue art comes from a 30-object library matched by title (`dist/art.mjs`).
+Free-form dialogue is always available in the Talk panel; drag and drop is the way to show evidence (with a keyboard Show button). The detective has a painted portrait; clue art comes from a library of 50 painted objects (see Clue pictures below).mjs`).
 
-Known limits: touch screens have no drag and drop (Show buttons work) and no send button (Enter only); clue art matching is by keyword.
+Known limits: touch screens have no drag and drop (Show buttons work) and no send button (Enter only).
+
+### Choosing a case
+
+The menu offers Easy, Medium and Hard generation in one row, and a difficulty filter over the case list (ratings shown as
+pips and a word). Leads that open together share one opening line written at publish ("The key opens the spare room."),
+then each its own line; leads that open elsewhere are announced in one sentence listing the places.
+
+### Clue pictures
+
+- **The library** (`OBJECT_LIBRARY` in `dist/art.mjs`): 50 painted objects (20 added and 8 redrawn in October 2026), each with a short label. `tools/extract-setting.mjs`
+  copies it into the setting, and the story generator is told which objects have pictures, so it prefers them when they
+  fit (it may still invent others).
+- **Each clue's picture is chosen at publish** (`enrich.add_art`): a model picks the library picture that shows what the
+  clue is, by meaning ("the doctor's notes" are case notes, not a letter), or none; code rejects any key not in the
+  library. A clue with no picture shows the placeholder. Clues published before this are matched by title words, then kind.
+- **Making art** (`tools/art/generate.py --auto <ids>`): objects are drawn from text alone with Stable Image Ultra and the
+  library's look spelled out in the prompt (a style reference made the Style Guide copy the reference's content into every
+  still life); portraits and places keep the style-referenced Style Guide. Three candidates per asset; a vision model scores
+  them for what matters at clue size and the best is packaged only if it passes. Paper objects that carry writing are
+  allowed text in the negative prompt.
+
+### TODO: pictures for invented objects (step 4)
+
+When a published case has an object clue with no fitting library picture, publishing could generate one in the library
+style (the same `--auto` path: text-to-image, vision check, fall back to the placeholder if it fails) and add it to the
+shared library, so variety grows with every case. Not built yet: it costs image calls and about a minute per new object.
 
 ## Why
 
