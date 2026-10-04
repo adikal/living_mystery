@@ -81,8 +81,8 @@ def name(pid):
 
 def at(place):
     """A place name mid-sentence: 'the greenhouse', 'the village square', 'St. Alden’s vestry'."""
-    n = PLACES[place]
-    return 'the ' + n[4:] if n.startswith('The ') else 'the village square' if place == 'square' else n
+    p = next(x for x in SETTING['places'] if x['id'] == place)
+    return p.get('called') or ('the ' + p['name'][4:] if p['name'].startswith('The ') else p['name'])
 
 
 def blurb(p):

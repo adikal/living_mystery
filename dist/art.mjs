@@ -25,9 +25,10 @@ export const OBJECT_LIBRARY=Object.freeze({
   cashbox:'a cash box or strongbox',notebook:'a pocket notebook',door:'a locked door',hook:'an empty hook or peg',sacking:'a bundle in sacking',
   stairs:'a staircase or steps',card:'a printed card or scorecard',timetable:'a railway timetable',suitcase:'a suitcase with luggage labels',
   badge:'a military badge',cigarette_case:'a cigarette case',spectacles:'spectacles',inkwell:'an inkwell and pen',spade:'a garden spade',
-  matchbox:'a box of matches'});
+  matchbox:'a box of matches',
+  mug:'a tea mug or cup',weed:'pond weed or water plants',grate:'a fireplace grate',brush:'a hearth brush or broom',carpet:'a carpet or rug',cassock:'a clergyman’s cassock or robe',shoes:'a pair of shoes',waders:'fishing waders or boots',fishing_line:'a fishing line and float',net:'a fishing net',switchboard:'a telephone switchboard',clock:'a clock',bandage:'a bandage or dressing',forceps:'surgical forceps or instruments',churn:'a milk churn',label:'a luggage or parcel label',bin:'a bin, crate or sack of grit or sand',doorstop:'a cast-iron doorstop or ornament',billhook:'a billhook or hedging blade',cordon:'a rope cordon',mailbag:'a mail sack or post',apron:'an apron',barrow:'a wheelbarrow',wound:'a doctor’s examination or a wound'});
 const OBJECTS=Object.keys(OBJECT_LIBRARY);
-const FILE={cigarette_case:'cigarette-case'};
+const FILE={cigarette_case:'cigarette-case',fishing_line:'fishing-line'};
 const ALIAS={};   // an image that has not come out right can point at the nearest good one until it is redone (tools/art)
 export const OBJECT_ART=Object.freeze(Object.fromEntries(OBJECTS.map(k=>[k,`${root}obj-${FILE[ALIAS[k]??k]??ALIAS[k]??k}.jpg`])));
 const WORDS=[[/\b(examination|post-mortem|case) notes\b|\bnotes (on|for) the (wound|coroner)\b/,'notes'],[/\btelegram/,'telegram'],

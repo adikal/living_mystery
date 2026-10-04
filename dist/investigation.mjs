@@ -37,7 +37,8 @@ export function searchInvestigation(session,runtime,{horizon=180,maxActions=32,m
   if((seen.get(key)??Infinity)<=node.cost)continue;seen.set(key,node.cost);explored++;
   const goal=goalMasks.findIndex(g=>(node.mask&g)===g);
   if(goal!==-1){
-   const travel=node.at==='square'?[]:[{type:'move',to:'square'}],cost=node.cost+runtime.distance(node.at,'square');
+   const post=session.world.npcs[model.CASE.constable]?.location;   // the accusation is heard where the constable is
+   const travel=node.at===post?[]:[{type:'move',to:post}],cost=node.cost+runtime.distance(node.at,post);
    const actions=[...node.actions,...travel,{type:'accuse',suspect:model.CASE.culprit,method:model.CASE.method,motive:model.CASE.motive,evidence:keys.filter(c=>(node.mask&bit(c))!==0)}];
    if(cost<=horizon&&actions.length<=maxActions&&witnesses++<maxWitnesses){
     const trial=structuredClone(session);let failed=null;

@@ -35,7 +35,8 @@ export function autoplay(records, {accuse = null, maxSteps = 400, method = recor
   }
   const result = {session: s, runtime: rt, log, evidence: [...held()]};
   if (accuse) {
-    if (s.world.player.location !== 'square') dispatch(s, {type: 'move', to: 'square'});
+    const post = s.world.npcs[rt.CASE.constable].location;   // the accusation is heard by the constable, where he is
+    if (s.world.player.location !== post) dispatch(s, {type: 'move', to: post});
     for (let i = 0; i < 12 && s.world.npcs.bell.location !== 'square'; i++) dispatch(s, {type: 'wait', minutes: 10});
     dispatch(s, {type: 'accuse', suspect: accuse, method, motive, evidence: [...held()].filter(c => !drop.includes(c))});
     result.verdict = rt.behavior.checkCase(s, {suspect: accuse, method, motive, evidence: [...held()].filter(c => !drop.includes(c))});

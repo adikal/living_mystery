@@ -246,3 +246,12 @@ honest or a cover story and gives its reason, and an innocent's account that is 
 drafts that fail are repaired, not redrafted, with every rule broken so far listed. End to end, fresh cases certify,
 solve, rate at their target difficulty, and about 96% of replies to a standard question set come from the model
 (`tools/e2e_dialogue.mjs`).
+
+**Questions that ask the same thing.** An account's own question ("Where were you last night, Mr Pike?") can reword a
+standard one ("What is your account of last night?"). A model groups such questions per person at publish and marks
+the account `same_as` the question it rewords; in play that question brings the account out, so the menu never offers
+both. Rewriting the questions instead was tried: the rewrites asked about something else or gave the account away.
+
+**What people saw.** Every pair of people at one place at one time in the true history is a candidate sighting; each is
+added and the case certified again, and it is kept only if the solve is unchanged (depth, every thread, the surface
+reading, the false accounts). So a witness can say whom they saw without ever shortcutting the puzzle.

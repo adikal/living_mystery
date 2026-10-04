@@ -25,7 +25,7 @@ const clues = base.world.player.evidence.map(e => e.clue);
 const signs = Object.fromEntries(kc.signs.map(x => [x.id, x]));
 const culprit = kc.question.candidates.find(h => h.id === kc.question.truth).facts.actor;
 
-const FREE = ['Where were you last night?', 'Did anyone see you last night?', 'Who found the body?', 'Are you sure about that?'];
+const FREE = ['Where were you last night?', 'Did anyone see you last night?', 'Did you see anyone about last night?', 'Who found the body?', 'Are you sure about that?'];
 function plan(pid) {
   const menu = (T.CASE.topicsFor?.[pid] ?? T.CASE.topics ?? []).map(([topic, label]) => ({text: label, action: {type: 'ask', person: pid, topic}}));
   const more = menu.some(m => m.action.topic === 'night') ? [{text: 'Is there anything else you remember about last night?', action: {type: 'ask', person: pid, topic: 'more'}}] : [];

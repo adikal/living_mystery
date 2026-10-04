@@ -16,7 +16,7 @@ The model chooses a permitted account and its delivery, or a non-disclosure resp
 
 Player speech becomes an explicitly unverified memory. A character may remember an assertion without endorsing it, tentatively accept it (confidence 0.6), or doubt it (0.2). These create attributed `player_report_*` beliefs with unknown truth, linked to the player's speech. They never overwrite canonical case beliefs. The latest 12 report beliefs remain active; history is preserved. Questions should use `remember_only`, checked by the critic.
 
-A turn records its intent, selected account, exact accepted words, sources, bounded trust change (at most ±0.03 beyond authored case effects), dialogue-state progression and optional explicit ending. Conversation state retains prior disclosures and the latest topic, question and event links. The full perspective/proposal/validation audit lives on the decision event. Speech records the authored reference separately; acquired testimony uses the accepted words.
+A turn records its intent, selected account, exact accepted words, sources, bounded trust change (±0.08 a turn when the model judges the exchange warmer or cooler: courtesy, belief and kept confidences warm; accusations, threats, disbelief and being caught out cool), dialogue-state progression and optional explicit ending. Conversation state retains prior disclosures and the latest topic, question and event links. The full perspective/proposal/validation audit lives on the decision event. Speech records the authored reference separately; acquired testimony uses the accepted words.
 
 Saved event history replays without a model call. Fresh AI runs can differ. Audits are debugging records, not authenticated evidence against local save editing. The omniscient inspector and exported saves contain private information by design.
 
@@ -88,3 +88,14 @@ feedback, including observable menu differences, must not expose hidden facts.
 ## Autonomous life implementation
 
 Configured/generated cases now support persistent ordinary goals, timed activities, delivered social requests, accepted commitments and replanning. `life.mjs` drives scripted policies through shared move/activity constraints; `autonomy-turn.mjs` adds isolated optional model selection of bounded goal sequences. The original case retains its legacy policies. Z3 verification batches up to twelve queries per request under the existing atomic turn boundary. See [the complete implementation and test guide](autonomous-lives.md) for state, budgets, assumptions and limitations.
+
+## Trust and stress (October 2026)
+
+- **Trust** moves ±0.08 a turn in the direction the character's model chooses; the prompt says what warms and cools.
+- **Stress follows the history** (`kernel-case.mjs` `stressFor`): how much of what bears on a person the detective
+  holds (clues about them, naming them, from what they did; clues that defeat their own stories count double), and,
+  for a suspect still standing, how far the evidence has narrowed the field. Someone with a `fears` or `hides` attitude
+  feels it most. It changes after each action as an `emotion` event, so it replays, and the character's prompt sees it.
+- With no account for a question, a character says plainly they have nothing to tell; they ask for clarification only
+  when a question is genuinely ambiguous, never twice running, and never set conditions (authority, a reason): what
+  makes people say more is being shown evidence.

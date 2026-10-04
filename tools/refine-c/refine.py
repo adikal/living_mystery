@@ -14,6 +14,7 @@ import difficulty as DF
 HERE = os.path.dirname(os.path.abspath(__file__))
 MODEL = 'us.anthropic.claude-opus-5-5'          # story steps and seed
 CRITIC_MODEL = 'us.anthropic.claude-sonnet-5'     # plausibility review (short verdicts)
+FAST_MODEL = 'us.anthropic.claude-haiku-4-5-20251001-v1:0'   # small checks (e.g. near-duplicate questions)
 SEED_ROUNDS = 4                                  # draft, then up to three repairs of the best draft
 CANDIDATES = 2                                     # parallel speculative patches per round
 FIXED = None                                       # a fixed setting (e.g. Bellweather): its places, links and cast are locked

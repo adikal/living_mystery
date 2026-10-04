@@ -660,3 +660,18 @@ dialog:has(.opening){max-width:min(920px,calc(100vw - 30px))}
 .generate-choice button small{font-size:.78rem;opacity:.8}
 .case-filter{display:flex;align-items:center;gap:.5em;margin:.2em 0 .7em;font-size:.9rem}
 .case-filter select{font:inherit;padding:.25em .5em}
+
+/* someone shown at the place they are walking to */
+.pin-people .on-way{position:relative;display:inline-flex}
+.pin-people .on-way b{position:absolute;right:-4px;bottom:-4px;font-size:10px;line-height:1;background:#fff;color:#222;border-radius:50%;padding:1px 2px;border:1px solid #888}
+
+/* the village map: someone walking is drawn on the path; someone acting on their own has a pulsing ring and a dot */
+.map-walker{position:absolute;translate:-50% -50%;z-index:3;display:flex;align-items:center;gap:1px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
+.map-walker .walk-arrow{font-size:11px;line-height:1;color:#f3ead7;background:#2b3a42;border:1px solid #8aa1ad;border-radius:8px;padding:0 3px}
+.map-face{position:relative;display:inline-flex;border-radius:50%}
+.pin-people .map-face{margin-left:-6px}.pin-people .map-face:first-child{margin-left:0}
+.map-face.acting{box-shadow:0 0 0 2px #f3ead7;animation:lm-acting 1.1s ease-in-out infinite}
+.map-face .acting-mark{position:absolute;right:-3px;top:-3px;font-size:8px;line-height:1;color:#f3ead7;font-style:normal;text-shadow:0 0 2px #000}
+.legend-acting{font-style:normal;color:#f3ead7;margin-right:3px}
+@keyframes lm-acting{0%,100%{box-shadow:0 0 0 2px #f3ead7,0 0 0 2px rgba(243,234,215,.6)}50%{box-shadow:0 0 0 2px #f3ead7,0 0 0 7px rgba(243,234,215,0)}}
+@media (prefers-reduced-motion:reduce){.map-face.acting{animation:none}}

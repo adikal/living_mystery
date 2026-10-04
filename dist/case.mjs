@@ -1,6 +1,7 @@
 // Authored case data. The inspector can read this; the player projection cannot.
 export const CASE = Object.freeze({
   id: 'last-bell', title: 'The Last Bell', date: '18 November 1932', victim: 'Edmund Vale', victimId: 'edmund',
+  constable: 'bell',   // who hears the accusation (the case's own cast)
   culprit: 'silas', method: 'seal', motive: 'fraud',
   synopsis: 'Edmund Vale, Bellweather’s estate trustee, was found dead in his study last night. Three people had reasons to fear him. By morning, the village has begun to choose its own version of events.',
   truth: 'Silas Voss killed Edmund Vale with his brass document seal at 21:14, after Edmund confronted him over diverted estate payments. Silas removed the seal and later returned it to the vestry. Clara and Rowan were meeting secretly in the greenhouse. Ada saw Silas in a borrowed green coat and assumed it was Rowan; her inn clock was twelve minutes fast.',
@@ -24,7 +25,7 @@ export const CASE = Object.freeze({
 });
 
 export const LOCATIONS = {
-  square: {name:'Village square', short:'The square', glyph:'01', atmosphere:'A village holding its breath', description:'Rain beads on the iron railings. Outside the closed post office, Constable Bell keeps a quiet watch on the roads out of Bellweather. The church bell strikes once, then falls silent.', objects:[], links:{manor:4,inn:3,vestry:4,surgery:3}},
+  square: {name:'Village square', called:'the village square', short:'The square', glyph:'01', atmosphere:'A village holding its breath', description:'Rain beads on the iron railings. Outside the closed post office, Constable Bell keeps a quiet watch on the roads out of Bellweather. The church bell strikes once, then falls silent.', objects:[], links:{manor:4,inn:3,vestry:4,surgery:3}},
   manor: {name:'Vale Manor', short:'The manor', glyph:'02', atmosphere:'The study, the morning after', description:'The study smells of cold ashes and furniture polish. One chair has been knocked askew. Edmund Vale’s unfinished accounts lie beneath the green reading lamp; the constable has left the room undisturbed.', objects:['body','desk','accounts','carpet','folio'], links:{square:4,greenhouse:3}},
   inn: {name:'The Rook & Lantern', short:'The inn', glyph:'03', atmosphere:'Where a story becomes a rumor', description:'The kettle hisses behind the bar. A grandfather clock presides over a room of empty tables, its hands noticeably out of step with your watch. A freshly dried glass stands beside the taps.', objects:['clock'], links:{square:3,greenhouse:6}},
   greenhouse: {name:'The greenhouse', short:'The greenhouse', glyph:'04', atmosphere:'Secrets beneath the glass', description:'Condensation turns the village beyond the glass into a blur. A bench holds gardening gloves and a folded envelope. The frost pump ticks beside a logbook, and a strip of medical gauze rests in a saucer.', objects:['letter','pump'], links:{manor:3,inn:6}},

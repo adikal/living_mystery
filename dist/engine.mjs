@@ -43,3 +43,5 @@ export const scheduleCharacterPlan=(s,...args)=>runtimeFor(s).scheduleCharacterP
 export const dispatch=(s,action)=>{const r=runtimeFor(s);return s.world.caseId?guardedDispatch(r,s,action):r.dispatch(s,action);};
 export const dispatchCharacter=(s,...args)=>{const r=runtimeFor(s);if(!s.world.caseId)return r.dispatchCharacter(s,...args);const trial=structuredClone(s);r.dispatchCharacter(trial,...args);const audit=assessTransition(r,s,trial);if(audit.status!=='allow')throw Error(audit.reason);s.world=trial.world;s.events=trial.events;return s;};
 export const playerView=(s,...args)=>runtimeFor(s).playerView(s,...args);
+
+export {inSentence} from './places.mjs';

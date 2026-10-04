@@ -62,7 +62,8 @@ The user's screenshots are on `~/Desktop` (names contain a narrow no-break space
 | UI | `dist/ui.mjs`, `dist/styles.css` |
 | Generation | `tools/refine-c/premise.py` (premise deck: who, how, why, where; rotation; seed checks), `tools/refine-c/refine.py` (harness, reviewer), `tools/refine-c/publish.py` (`enrich_case` pipeline + `gate`), `tools/refine-c/enrich.py` (answer, loose ends, everyday knowledge, moods, publish review), `server/generator_server.py` |
 | Cases | `dist/cases/generated/*.json` (shipped), `dist/cases/generated/live/` (generated on this machine, gitignored) |
-| Design | `docs/visual-world.md` (next: map, scenes, dialogue, inventory; free-form dialogue is never dropped), `docs/mystery-kernel.md`, `docs/difficulty.md` (case difficulty: features, model, fitting), `docs/architecture.md`, `docs/roadmap.md`, report in `docs/report/`, deck in `docs/deck/` |
+| Shared rules | `dist/cases/questions.mjs` (the standard questions; publishing reads them), `dist/places.mjs` (place names mid-sentence); the constable is `CASE.constable` (a setting role), never a fixed id |
+| Design | `docs/living-village.md` (sightings, the living morning, and the rules found by playing), `docs/visual-world.md` (next: map, scenes, dialogue, inventory; free-form dialogue is never dropped), `docs/mystery-kernel.md`, `docs/difficulty.md` (case difficulty: features, model, fitting), `docs/architecture.md`, `docs/roadmap.md`, report in `docs/report/`, deck in `docs/deck/` |
 
 ## Testing
 
@@ -73,6 +74,9 @@ perl -e 'alarm 150; exec @ARGV' node --test --test-timeout=60000 tests/*.test.mj
 .venv/bin/python tools/refine-c/test_premise.py         # premise deck
 .venv/bin/python tools/refine-c/test_difficulty.py      # difficulty features, model, targets, fitting
 .venv/bin/python tools/refine-c/test_art.py             # clue picture keys
+.venv/bin/python tools/refine-c/test_sightings.py       # sightings are true and solve-neutral
+.venv/bin/python tools/refine-c/test_surface.py         # evening accounts agree with the speaker's own statements
+.venv/bin/python tools/refine-c/test_questions.py       # questions that reword another are marked same_as
 .venv/bin/python tools/refine-c/parity.py               # Python and JS checkers agree on every generated case
 .venv/bin/python scripts/build_report.py --check        # after editing docs/report
 node tools/e2e_dialogue.mjs dist/cases/generated/live/<case>.json   # every character, standard questions, real AI
@@ -96,6 +100,7 @@ the proxy (`prepareCharacterTurn` → `proposeCharacterTurn` → `applyCharacter
 - **Text written for play must not mention clues or lies** (`enrich.clue_nouns`); the culprit's mood never comes from their attitudes.
 - **Bedrock image calls throttle**: `tools/art/generate.py --auto` runs four assets at a time with backoff. Objects are drawn from text (Stable Image Ultra; a style reference makes the Style Guide copy its content); a vision judge picks the candidate.
 - **Accounts and questions**: the evening summary answers "last night", the morning summary (`morning: true`) only "this morning"; every other account is offered by its own question or "anything else". `tests/kernel-case.test.mjs` checks every account is reachable from the menu in every case. With nothing in the history, a character may say they don't know, react or ask, never invent; whereabouts questions use the night account (lies included).
+- **The living village** (docs/living-village.md): sightings are certified solve-neutral at publish (`publish.add_sightings`); in play the morning director (`dist/morning-director.mjs`) plans go/stay/meet/conceal, checked by code (`dist/morning.mjs check`), a line critic, and the kernel (`stillSolvable`) before it is installed; meetings cite only what a person may say; concealed clues and what depends on them leave hints, menus and the scene. Play a case from the command line with `node tools/play.mjs`.
 - **Who is in a case** is one definition (`premise.involved`): the cast at publish and the evening rule at generation both use it. Everyone involved must have an evening in the history.
 - **Retired cases** live in `dist/cases/archive/` (not in the menu); see its README.
 - **Clue pictures**: a library of painted objects (`OBJECT_LIBRARY`, `dist/art.mjs`) that the generator knows; each clue's picture key is chosen at publish (`enrich.add_art`, checked by code). See docs/visual-world.md.

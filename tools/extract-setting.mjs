@@ -21,7 +21,7 @@ const setting = {
   era: 'An English village, 1932',
   summary: 'A small English village: a square, a manor with its greenhouse and boathouse on the river, an inn, the church ' +
     'vestry, a doctor\u2019s surgery, a post office, a railway halt and a disused mill. Someone is dead; the investigation begins the next morning.',
-  places: Object.entries(BW_LOCATIONS).map(([id, p]) => ({id, name: p.name})),
+  places: Object.entries(BW_LOCATIONS).map(([id, p]) => ({id, name: p.name, ...(p.called ? {called: p.called} : {})})),
   links,
   people,
   victim: BW_DEFAULT_VICTIM,

@@ -836,6 +836,246 @@
    "output": "dist/assets/last-bell/obj-ashes.jpg",
    "packaging": "256 px JPEG q80",
    "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [3.0, 9.0, 4.0]: Candidate 2 best shows a single burnt paper with scorched hole; 1 shows two sheets; 3 has confusing layered papers."
+  },
+  {
+   "id": "obj-grate",
+   "kind": "object",
+   "subject": "a small cast-iron fireplace grate with kindling and a few coals, unlit",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a small cast-iron fireplace grate with kindling and a few coals, unlit. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-grate.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [10.0, 3.0, 3.0]: Candidate 1 shows unlit grate perfectly; 2 and 3 show lit fires, contradicting 'unlit' requirement."
+  },
+  {
+   "id": "obj-brush",
+   "kind": "object",
+   "subject": "a hearth brush with a wooden handle and a small brass dustpan",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a hearth brush with a wooden handle and a small brass dustpan. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-brush.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [10.0, 3.0, 3.0]: Candidate 1 shows both brush and dustpan together as required; others show only a brush without the dustpan."
+  },
+  {
+   "id": "obj-mug",
+   "kind": "object",
+   "subject": "a plain white enamel tea mug with a chipped blue rim",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a plain white enamel tea mug with a chipped blue rim. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-mug.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [9.0, 4.0, 8.0]: Candidate 1 shows white enamel mug with blue rim and visible chipping; Candidate 2 has red stains (wrong); Candidate 3 shows correct mug but chipping less visible."
+  },
+  {
+   "id": "obj-weed",
+   "kind": "object",
+   "subject": "a dripping clump of green pond weed and duckweed",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a dripping clump of green pond weed and duckweed. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 2 of 3",
+   "output": "dist/assets/last-bell/obj-weed.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [3.0, 8.0, 3.0]: Candidate 2 best shows a dripping clump of pond weed; 1 and 3 show rooted plants with too much structure rather than a clump."
+  },
+  {
+   "id": "obj-shoes",
+   "kind": "object",
+   "subject": "a pair of grey suede ladies\u2019 shoes with a single strap, side by side",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a pair of grey suede ladies\u2019 shoes with a single strap, side by side. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-shoes.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [9.0, 8.0, 8.0]: All show grey ladies' shoes with straps in painted style; Candidate 1 clearest with block heels, 2 and 3 have period-appropriate styling but slightly less distinct at small size."
+  },
+  {
+   "id": "obj-net",
+   "kind": "object",
+   "subject": "a loose tangle of brown knotted fishing net",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a loose tangle of brown knotted fishing net. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-net.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [4.0, 3.0, 8.0]: Candidate 3 best shows a loose tangled fishing net; 1 looks like a bag, 2 shows rope not net."
+  },
+  {
+   "id": "obj-fishing-line",
+   "kind": "object",
+   "subject": "a coil of fishing line with a red and white cork float and a small hook",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a coil of fishing line with a red and white cork float and a small hook. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 2 of 3",
+   "output": "dist/assets/last-bell/obj-fishing-line.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [8.0, 9.0, 7.0]: All show fishing line with red/white float and hook; Candidate 2 best shows coiled line with clear composition, 1 good but vertical, 3 has extra weight element."
+  },
+  {
+   "id": "obj-carpet",
+   "kind": "object",
+   "subject": "a corner of a faded patterned Turkish carpet, seen from above",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a corner of a faded patterned Turkish carpet, seen from above. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-carpet.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [3.0, 3.0, 10.0]: Candidates 1 and 2 show full carpets, not corners; only Candidate 3 correctly shows a corner of a Turkish carpet from above."
+  },
+  {
+   "id": "obj-bandage",
+   "kind": "object",
+   "subject": "a rolled white cotton bandage, partly unrolled",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a rolled white cotton bandage, partly unrolled. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-bandage.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [8.0, 3.0, 3.0]: Candidate 1 is painted and clearly shows a partly unrolled bandage; 2 and 3 appear photographic rather than painted."
+  },
+  {
+   "id": "obj-clock",
+   "kind": "object",
+   "subject": "a wooden mantel clock with a white face and black hands",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a wooden mantel clock with a white face and black hands. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-clock.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [9.0, 8.0, 4.0]: Candidates 1 and 2 show mantel clocks with white faces and black hands; Candidate 3 shows a tall pendulum clock, not a mantel clock."
+  },
+  {
+   "id": "obj-forceps",
+   "kind": "object",
+   "subject": "a pair of steel surgical forceps lying on a cloth",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a pair of steel surgical forceps lying on a cloth. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-forceps.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [6.0, 4.0, 3.0]: Candidate 1 shows forceps on cloth but looks more like pliers; Candidate 2 shows scissors not forceps; Candidate 3 looks too photographic and cloth appears bloody/disturbing."
+  },
+  {
+   "id": "obj-churn",
+   "kind": "object",
+   "subject": "a tall metal milk churn with a lid",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a tall metal milk churn with a lid. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-churn.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [10.0, 7.0, 10.0]: All show milk churns with lids; candidates 1 and 3 have classic tall churn shape with handles, candidate 2 lacks handles making it less recognizable."
+  },
+  {
+   "id": "obj-bin",
+   "kind": "object",
+   "subject": "a small wooden grit bin with its lid propped open, sand inside",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a small wooden grit bin with its lid propped open, sand inside. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-bin.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [9.0, 9.0, 7.0]: All show painted wooden bins with open lids and sand; 1-2 clearer at small size, 3 shows empty interior."
+  },
+  {
+   "id": "obj-label",
+   "kind": "object",
+   "subject": "a brown paper luggage label with a loop of string, pencilled writing on it",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a brown paper luggage label with a loop of string, pencilled writing on it. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-label.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [3.0, 8.0, 9.0]: Candidate 1 looks photographic; Candidates 2 and 3 are painted luggage labels with string, with 3 showing clearer pencilled writing."
+  },
+  {
+   "id": "obj-doorstop",
+   "kind": "object",
+   "subject": "a heavy cast-iron hound doorstop sitting on its own",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a heavy cast-iron hound doorstop sitting on its own. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-doorstop.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [8.0, 8.0, 3.0]: Candidates 1-2 clearly show cast-iron hound doorstops with painted style; candidate 3 looks like a living dog illustration, not a doorstop object."
+  },
+  {
+   "id": "obj-billhook",
+   "kind": "object",
+   "subject": "a billhook with a curved steel blade and a worn wooden handle",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a billhook with a curved steel blade and a worn wooden handle. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-billhook.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [3.0, 3.0, 9.0]: Candidates 1 and 2 show wrong tools (sickle/scythe), while candidate 3 correctly depicts a billhook with curved blade and worn handle."
+  },
+  {
+   "id": "obj-mailbag",
+   "kind": "object",
+   "subject": "a canvas Post Office mail sack tied at the neck, with a brass tag",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a canvas Post Office mail sack tied at the neck, with a brass tag. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-mailbag.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [10.0, 8.0, 9.0]: All show painted mail sacks with brass tags; Candidate 1 is most clearly recognizable with perfect period detail."
+  },
+  {
+   "id": "obj-apron",
+   "kind": "object",
+   "subject": "a white cotton apron with a front pocket, laid flat",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a white cotton apron with a front pocket, laid flat. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 2 of 3",
+   "output": "dist/assets/last-bell/obj-apron.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [3.0, 8.0, 3.0]: Candidate 2 looks painted and shows a white apron with pocket clearly; 1 and 3 appear photographic rather than painted."
+  },
+  {
+   "id": "obj-cordon",
+   "kind": "object",
+   "subject": "a rope cordon slung between two short wooden posts",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a rope cordon slung between two short wooden posts. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-cordon.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [9.0, 8.0, 7.0]: All show rope cordons between posts; Candidate 1 clearest with draped rope, 2 simpler but effective, 3 has taller posts less matching 'short' description."
+  },
+  {
+   "id": "obj-barrow",
+   "kind": "object",
+   "subject": "an old wooden garden wheelbarrow with a little soil in it",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: an old wooden garden wheelbarrow with a little soil in it. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-barrow.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [9.0, 8.0, 9.0]: All three show painted wooden wheelbarrows with soil, clearly recognizable at small size; minor variations in style and detail."
+  },
+  {
+   "id": "obj-wound",
+   "kind": "object",
+   "subject": "a doctor\u2019s brown leather case open on a table, a stethoscope and a magnifying glass beside it",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a doctor\u2019s brown leather case open on a table, a stethoscope and a magnifying glass beside it. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 3 of 3",
+   "output": "dist/assets/last-bell/obj-wound.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 3, scores [8.0, 4.0, 9.0]: Candidate 1 shows case closed (not open); Candidate 2 shows case closed; Candidate 3 perfectly shows open case with stethoscope and magnifying glass."
+  },
+  {
+   "id": "obj-waders",
+   "kind": "object",
+   "subject": "a pair of tall dark green rubber wading boots standing upright side by side",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a pair of tall dark green rubber wading boots standing upright side by side. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-waders.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [9.0, 8.0, 9.0]: All three show dark green rubber wading boots as painted illustrations, clearly recognizable at small size."
+  },
+  {
+   "id": "obj-switchboard",
+   "kind": "object",
+   "subject": "an old wooden telephone exchange switchboard cabinet: a front panel with rows of small round brass sockets, and plugs on cords hanging below",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: an old wooden telephone exchange switchboard cabinet: a front panel with rows of small round brass sockets, and plugs on cords hanging below. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 2 of 3",
+   "output": "dist/assets/last-bell/obj-switchboard.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 2, scores [7.0, 9.0, 8.0]: All show switchboards with sockets and hanging cords; Candidate 2 best balances clarity, painted style, and period-appropriate details at small size."
+  },
+  {
+   "id": "obj-cassock",
+   "kind": "object",
+   "subject": "a long black clerical vestment robe with a white collar band, on a wooden hanger",
+   "prompt": "A single object, centred and filling most of the frame, isolated on plain parchment: a long black clerical vestment robe with a white collar band, on a wooden hanger. Nothing else in the picture. Vintage storybook illustration painted in muted gouache with fine ink outlines on an aged sepia parchment ground, dusty red, slate grey, olive and brass tones, visible brush texture, soft grey drop shadow, gently worn edges. 1932.",
+   "source": "Stability Image Ultra (stability.stable-image-ultra-v1:1), text only, candidate 1 of 3",
+   "output": "dist/assets/last-bell/obj-cassock.jpg",
+   "packaging": "256 px JPEG q80",
+   "review": "chosen by vision judge (us.anthropic.claude-sonnet-4-5-20250929-v1:0): candidate 1, scores [8.0, 6.0, 8.0]: All show clerical robes with white collars on hangers; 1 and 3 have better painted style, 2 has red tie detail not matching description."
   }
  ]
 }

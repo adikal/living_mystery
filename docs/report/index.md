@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.20 · 3 October 2026**
+**Living technical report · Edition 0.22 · 3 October 2026**
 
 ### Abstract
 
@@ -150,6 +150,24 @@ Bellweather setting with the original cast, map and art, the generator produced 
 4–7 (14–24 clues, 27–35 history events, a certified twist, lies and red herrings), which play in the existing game
 through a bridge (`dist/cases/kernel-case.mjs`) including free-text character dialogue grounded in each character's
 memories and beliefs. See `docs/mystery-kernel.md`.
+
+### Edition 0.22: playing it as a player
+
+Five cases were played end to end, one by the author, and every problem found was fixed as a general rule. Everyone
+starts where the history leaves them, and the detective starts with the constable, who is the setting's role rather
+than a named person. People know what the detective did only if they saw it or were told, worked out from the event log.
+Stress follows the history: how much of what bears on a person the detective holds, and how far the field has narrowed
+on a suspect still standing. Questions that reword another are found at publish and asked through it. Hints follow the
+signs the kernel finds critical to the solution. The play-time Z3 check counts held evidence only once it can be read,
+as the game's kernel does. See docs/living-village.md.
+
+### Edition 0.21: a living village
+
+Witnesses say whom they saw last night, from the true history and only where that cannot shortcut the puzzle. The
+morning moves: a model plans the next half hour over the whole story, and three critics check each plan first (code for
+knowledge, place and time; a model for what is said; the certifying kernel for every concealment, so at least one
+solution always remains). Two cases were played to a correct accusation with culprits hiding evidence along the way.
+See docs/living-village.md.
 
 ### Edition 0.20: what people can say
 

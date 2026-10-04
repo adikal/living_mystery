@@ -105,7 +105,7 @@ def review_publish(case):
     victim = victim_of(case)
     items = {}
     for x in case['signs']:
-        if x.get('medical') or x.get('surface') or x.get('morning'):
+        if x.get('medical') or x.get('surface') or x.get('morning') or x.get('sighting'):
             items[f"{x['id']}|text"] = {'text': x['text'], 'speaker': x.get('speaker'), 'lie': bool(x.get('deceptive'))}
         for pid, t in (x.get('reactions') or {}).items():
             items[f"{x['id']}|reactions|{pid}"] = {'text': t, 'speaker': pid, 'shown': _public_sign(x)}
@@ -296,14 +296,17 @@ def add_accepted(case):
 ART = """Each clue in a 1920s village mystery game is shown with a small painted picture from a fixed library. For each clue,
 choose the ONE library picture that shows what the clue is or is about (the object a player would picture), or null if
 none fits well. Choose by meaning, not by a shared word: "the doctor's notes" is case notes, not a letter; "the surgery
-door" is a door. A clue about a body, a wound, a mark on a person, or a scene with no particular object gets null.
+door" is a door. A clue about a body, a wound or a mark on a person takes the doctor's examination picture if the
+library has one; a place or scene takes the object that best stands for it (a sorting room: a mail sack; the foot of
+the steps: stairs; an empty pocket: the garment). Null only if nothing in the library fits at all.
 Return {"art": {"<clue id>": "<library id>" | null}}."""
 
 
-def add_art(case):
-    """x['art']: the library picture for each object clue (presentation only; never a fact). Code checks every key."""
+def add_art(case, retry_none=False):
+    """x['art']: the library picture for each object clue (presentation only; never a fact). Code checks every key.
+    retry_none: also clues that had no fitting picture before (after the library has grown)."""
     lib = {o['id']: o['label'] for o in SETTING.get('objects', [])}
-    todo = [x for x in case['signs'] if x['kind'] not in ('testimony', 'behavior') and 'art' not in x]
+    todo = [x for x in case['signs'] if x['kind'] not in ('testimony', 'behavior') and ('art' not in x or (retry_none and x['art'] is None))]
     if not todo or not lib:
         return 0
     from refine import llm_json, CRITIC_MODEL

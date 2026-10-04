@@ -599,6 +599,20 @@
    "because": [
     "a_iris_guard"
    ]
+  },
+  {
+   "id": "a_bell_evening",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "He wanted a bit of company and a quiet drink after a long day on his feet.",
+   "strength": 0.6
+  },
+  {
+   "id": "a_dora_evening",
+   "agent": "dora",
+   "mode": "intends",
+   "content": "She wanted to get ahead on her work so the morning round would go smoothly.",
+   "strength": 0.6
   }
  ],
  "events": [
@@ -915,21 +929,93 @@
    "end": 1869,
    "causedBy": "a_iris_discreet",
    "summary": "On her way to the inn, Dr Marsh leaves a folded note with Miss Pruett saying where she can be found."
+  },
+  {
+   "id": "e_bell_evening",
+   "type": "routine",
+   "agent": "bell",
+   "others": [],
+   "place": "inn",
+   "start": 1080,
+   "end": 1380,
+   "causedBy": "a_bell_evening",
+   "summary": "He had a pint of ale by the fire and chatted with the regulars about the state of the roads.",
+   "ordinary": true
+  },
+  {
+   "id": "e_dora_evening",
+   "type": "routine",
+   "agent": "dora",
+   "others": [],
+   "place": "post",
+   "start": 1080,
+   "end": 1380,
+   "causedBy": "a_dora_evening",
+   "summary": "She sat behind the counter sorting and tying up bundles of letters for the next day's post.",
+   "ordinary": true
   }
  ],
  "signs": [
+  {
+   "id": "s_surface_dora",
+   "kind": "testimony",
+   "speaker": "dora",
+   "surface": true,
+   "deceptive": false,
+   "title": "Dorothy Pruett on the evening",
+   "text": "I was behind the counter the whole evening, sorting and tying the letters for the post. Just getting ahead on my work, as I always do, nothing out of the ordinary.",
+   "ask": "Where were you last night?",
+   "agrees_checked": true,
+   "to": null,
+   "show": "Dorothy Pruett says she spent the whole evening behind the counter sorting and tying letters for the post. Do you know if that's true?",
+   "confront": "You told me you were behind the counter the whole evening, just sorting and tying letters for the post. Is that the whole of it?",
+   "surface_checked": "honest"
+  },
+  {
+   "id": "s_surface_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "surface": true,
+   "deceptive": false,
+   "title": "Arthur Bell on the evening",
+   "text": "Had myself a pint by the fire, nothing more to it. Sat with the regulars, talked about the state of the roads, that's the whole of it.",
+   "ask": "Where were you last night?",
+   "agrees_checked": true,
+   "to": null,
+   "show": "Arthur Bell says he had a pint by the fire with the regulars, talking about the state of the roads. Do you know if that's true?",
+   "confront": "You told me you'd just had a pint by the fire with the regulars, talking about the state of the roads. Is that the whole of it?",
+   "surface_checked": "honest"
+  },
+  {
+   "id": "s_surface_hugo",
+   "kind": "testimony",
+   "speaker": "hugo",
+   "surface": true,
+   "deceptive": true,
+   "title": "Hugo Vale on the evening",
+   "text": "Oh, last night? Dull as anything from where I stood - I legged it down to the Rook & Lantern early on to drown my sorrows and that's where I stayed, propping up the bar till they near enough swept me out the door. Wandered back in through the side way so as not to wake the house, and fell straight into bed.",
+   "ask": "Where were you last night?",
+   "agrees_checked": true,
+   "surface_why": "Hugo claims he spent the whole evening drinking at the inn until closing and then returned straight to bed, but in reality he confronted Clara at the manor, pleaded with her, and shoved her down the staircase causing her death before going to the inn; he also conceals removing and hiding his signet ",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Hugo Vale says he spent the whole evening drinking at the Rook & Lantern until closing, then slipped in the side door and went straight to bed. Do you know if that's true?",
+   "confront": "You told me you were at the Rook & Lantern all evening until near closing, then came in the side way and went straight to bed. Is that the whole of it?"
+  },
   {
    "id": "s_morning_rowan",
    "kind": "testimony",
    "speaker": "rowan",
    "morning": true,
-   "deceptive": false,
+   "deceptive": true,
    "title": "Rowan Pike on the morning",
    "text": "I was bringing the morning flowers at six o'clock when I found Clara lying dead at the foot of the stairs. I ran to the surgery at about ten past six to fetch Dr Marsh, and she examined the body at twenty-five past six, when Hugo came down and was told.",
    "ask": "What did you do this morning?",
    "to": null,
    "show": "Rowan Pike says he found Clara dead at the foot of the stairs at six and fetched Dr Marsh at ten past six. Do you know if that's true?",
-   "confront": "You told me you found Clara dead at the foot of the stairs at six and ran for Dr Marsh at ten past six. Is that the whole of it?"
+   "confront": "You told me you found Clara dead at the foot of the stairs at six and ran for Dr Marsh at ten past six. Is that the whole of it?",
+   "surface_why": "Rowan says he was only bringing flowers at six and found the body, omitting that he was actually at the inn drinking the night before and saw Hugo arrive at 23:10, then went home to sleep - he conceals his evening activities and observation of Hugo, which misleadingly implies he has nothing relevant",
+   "surface_checked": "cover"
   },
   {
    "id": "s_morning_iris",
@@ -942,7 +1028,8 @@
    "ask": "What did you do this morning?",
    "to": null,
    "show": "Dr Marsh says Rowan fetched her at ten past six, she examined the body at twenty-five past six, and told Ada, Silas and the vicar before seven. Do you know if that's true?",
-   "confront": "You told me Rowan fetched you at ten past six, that you examined the body at twenty-five past six, and then told Ada, Silas and the vicar before seven. Is that the whole of it?"
+   "confront": "You told me Rowan fetched you at ten past six, that you examined the body at twenty-five past six, and then told Ada, Silas and the vicar before seven. Is that the whole of it?",
+   "surface_checked": "honest"
   },
   {
    "id": "s_morning_vicar",
@@ -1054,7 +1141,8 @@
    "ask": "Doctor, what did you find when you examined Miss Vale?",
    "show": "Dr Marsh told me Clara Vale's death was instant, from a broken neck and skull fracture consistent with a bad fall on the stairs, sometime between ten to eleven and twenty past. Does that match what you understood happened?",
    "confront": "You told me her death was instant, from a fall on the stairs between ten to eleven and twenty past, with no sign of poison or blade. Is there anything you'd add to that?",
-   "to": null
+   "to": null,
+   "same_as": "night"
   },
   {
    "id": "s_surface_rowan",
@@ -1068,7 +1156,8 @@
    "show": "Rowan Pike says he was home all evening, had his supper, saw to the glasshouse, and was asleep well before anything happened at the manor. Do you know if that's true?",
    "confront": "You told me you were home all evening, had your supper, saw to the glasshouse, and were asleep before anything happened at the manor. Is that the whole of it?",
    "to": null,
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "agrees_checked": true
   },
   {
    "id": "s_surface_iris",
@@ -1082,7 +1171,8 @@
    "show": "Dr Marsh says she was at the surgery nursing a feverish child most of the night, not leaving until she was called away this morning. Do you know if that's true?",
    "confront": "You told me you were at the surgery nursing a feverish child all night, and didn't leave until called away this morning. Is that the whole of it?",
    "to": null,
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "agrees_checked": true
   },
   {
    "id": "s_surface_vicar",
@@ -1096,7 +1186,8 @@
    "show": "The Reverend Hale says he was at the surgery sitting with a feverish child through the night, and lost track of the hour. Do you know if that's true?",
    "confront": "You told me you were at the surgery with a feverish child through the night, and lost track of the hour. Is that the whole of it?",
    "to": null,
-   "surface_checked": "honest"
+   "surface_checked": "honest",
+   "agrees_checked": true
   },
   {
    "id": "s_surface_silas",
@@ -1110,7 +1201,8 @@
    "show": "Mr Voss says he was at his office in the vestry working late, kept there by a trunk call from London. Do you know if that's true?",
    "confront": "You told me you were at your office in the vestry working late because of a trunk call from London. Is that the whole of it?",
    "to": null,
-   "surface_checked": "honest"
+   "surface_checked": "honest",
+   "agrees_checked": true
   },
   {
    "id": "s_surface_ada",
@@ -1124,21 +1216,8 @@
    "show": "Mrs Finch says she was behind the bar all evening pulling pints till last orders, then came over faint and had to lie down after. Do you know if that's true?",
    "confront": "You told me you were behind the bar all evening until last orders, then came over faint and lay down in the back parlour. Is that the whole of it?",
    "to": null,
-   "surface_checked": "cover"
-  },
-  {
-   "id": "s_surface_hugo",
-   "kind": "testimony",
-   "speaker": "hugo",
-   "surface": true,
-   "deceptive": true,
-   "title": "Hugo Vale on the evening",
-   "text": "Oh, last night? Nothing thrilling, I promise you - had words with Clara after dinner, same old song, and then I legged it down to the Rook & Lantern to drown my sorrows properly. Stood at that bar till they practically swept me out the door, then wandered back in through the side way so as not to wake the house, and fell straight into bed.",
-   "ask": "Where were you last night?",
-   "show": "Hugo Vale says he spent last night at the Rook & Lantern until they threw him out at closing, then came straight back to bed without seeing anyone. Do you know if that's true?",
-   "confront": "You told me you were at the Rook & Lantern until closing, then came straight back to bed and saw no one worth mentioning. Is that the whole of it?",
-   "to": null,
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "agrees_checked": true
   },
   {
    "id": "s_rowan",
@@ -1171,7 +1250,8 @@
     "ada": "Oh, that's Rowan for you, love, honest as the day's long \u2014 he's right, I never left that bar all evening, rushed off my feet I was. Dreadful night to be busy, as it turned out."
    },
    "to": "ada",
-   "direct": "You told me you had your pint at the Rook from ten until twenty to twelve, and that Mrs Finch never left the bar. Is that the whole of it?"
+   "direct": "You told me you had your pint at the Rook from ten until twenty to twelve, and that Mrs Finch never left the bar. Is that the whole of it?",
+   "same_as": "night"
   },
   {
    "id": "s_ledger",
@@ -1254,7 +1334,8 @@
    },
    "show": "Hugo Vale says he was propping up the bar at the Rook from half past ten, nowhere near the house. Do you know if that's true?",
    "confront": "You told me you were at the Rook from half past ten, nowhere near the house. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "same_as": "night"
   },
   {
    "id": "s_ada",
@@ -1272,7 +1353,8 @@
    "unlock": "Dr Marsh lets you into the back parlour where Mrs Finch is lying down.",
    "show": "Mrs Finch says she was run off her feet at the inn all night, and mentions she'd had words with Miss Vale about the lease only last month. Do you know if that's true?",
    "confront": "You told me you were run off your feet all night, and that you'd had words with Miss Vale about the lease last month. Is there anything you'd add to that?",
-   "to": null
+   "to": null,
+   "same_as": "night"
   },
   {
    "id": "s_ada_correct",
@@ -1319,7 +1401,8 @@
    "ask": "Where were you last night, Mr Voss?",
    "show": "Mr Voss says he was at his desk in the vestry as usual, and that Miss Vale had written to him on Tuesday about altering her will, with him due to call on Thursday. Do you know if that's true?",
    "confront": "You told me you were at your desk in the vestry, and that Miss Vale wrote to you about changing her will, with you due to call Thursday. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "same_as": "night"
   },
   {
    "id": "s_letter",
@@ -1358,7 +1441,8 @@
    "ask": "Where were you last night, Mr Hale?",
    "show": "Reverend Hale says he was at the surgery a good while with the Dobbs boy, and mentions he and Miss Vale didn't always agree about the roof fund. Do you know if that's true?",
    "confront": "You told me you were at the surgery with the Dobbs boy, and that you and Miss Vale didn't always agree about the roof fund. Is there anything you'd add to that?",
-   "to": null
+   "to": null,
+   "same_as": "night"
   },
   {
    "id": "s_ada_mentions_rowan",
@@ -1426,7 +1510,7 @@
     "hugo": "Christ, that's grim viewing, isn't it? Grip marks, you say\u2014well, I never laid a finger on the old girl, not like that. People bruise themselves falling down stairs easy enough, don't they? I shouldn't go reading too much into a mark like that."
    },
    "to": null,
-   "art": null
+   "art": "wound"
   },
   {
    "id": "s_ada_ring",
@@ -1534,7 +1618,8 @@
    },
    "show": "Rowan Pike says he was home potting seedlings in the glasshouse until he turned in, and didn't stir out all night. Do you know if that's true?",
    "confront": "You told me you were home potting seedlings in the glasshouse and never stirred out all night. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "same_as": "night"
   },
   {
    "id": "s_surgery_note",
@@ -1592,6 +1677,28 @@
    "to": "iris",
    "direct": "You left a card on the surgery door saying you'd been called out on urgent enquiries at the post office. Can you tell me what called you away?",
    "art": "door"
+  },
+  {
+   "id": "s_saw_vicar_iris_surgery",
+   "kind": "testimony",
+   "speaker": "vicar",
+   "sighting": true,
+   "source": "e_vicar_surgery",
+   "claim": {
+    "kind": "place",
+    "person": "iris",
+    "place": "surgery",
+    "start": 1340,
+    "end": 1420
+   },
+   "title": "The Reverend Thomas Hale saw Dr Iris Marsh",
+   "text": "Ah, yes, well, now that you mention it, I did see Dr Marsh at her surgery at about twenty-five to eleven.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "iris",
+   "show": "The Reverend Hale says he saw Dr Marsh at her surgery at about twenty-five to eleven. Do you know if that's true?",
+   "confront": "You told me you saw Dr Marsh at her surgery at about twenty-five to eleven. Is that the whole of it?",
+   "direct": "The Reverend Thomas Hale says he saw you at your surgery at about twenty-five to eleven. Is that right?"
   }
  ],
  "premise": {
@@ -1752,6 +1859,8 @@
   "s_rowan|direct",
   "s_rowan|reactions|ada",
   "s_rowan|reactions|hugo",
+  "s_saw_vicar_iris_surgery|direct",
+  "s_saw_vicar_iris_surgery|text",
   "s_surface_ada|text",
   "s_surface_hugo|text",
   "s_surface_iris|text",

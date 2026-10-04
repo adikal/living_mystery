@@ -66,6 +66,11 @@ These paths are relative to the repository root. The report build checks their e
 | `tools/refine-c/difficulty.py` | Difficulty features, model, targets and fitting | docs/difficulty.md |
 | `tools/refine-c/batch.py` | Generate several cases in parallel and report how they came out | docs/difficulty.md |
 | `tools/e2e_dialogue.mjs` | Ask every character a standard question set with the real AI; report fallbacks | Technical report (generation) |
+| `dist/morning.mjs` | The living morning: knowledge, the code critic, execution, news | docs/living-village.md |
+| `dist/morning-director.mjs` | The morning director: context, critics, detached planning | docs/living-village.md |
+| `tools/play.mjs` | Play a case turn by turn from the command line, with the director | docs/living-village.md |
+| `dist/cases/questions.mjs` | The standard questions (one source for the game and for publishing) | docs/living-village.md |
+| `dist/places.mjs` | Place names mid-sentence (uses a place's own phrase from the setting) | docs/living-village.md |
 | `server/case_oracle.py` | Z3 case oracle: feasibility, per-candidate satisfiability with unsat cores, alternative stories; publish gate | Technical report (generation) |
 | `tools/refine-c/premise.py` | Premise deck: victim, culprit, suspects, method, motive, scene and shape with rotation and seed checks | Technical report (generation) |
 | `tools/refine-c/enrich.py` | Publish-time enrichment: answer, loose ends, everyday knowledge, moods, review against the true history | Technical report (generation) |
@@ -154,6 +159,8 @@ For a research or external-review snapshot, associate a report edition with a re
 | 0.18 | 2026-10-02 | The history is the only source of facts: account backing certified in both kernels; typed discovery and examination; roles from the setting; publishing adds only wording; replies from the history |
 | 0.19 | 2026-10-03 | Difficulty (computed, and generated to); the newcomer; 50 clue pictures with keys chosen at publish |
 | 0.20 | 2026-10-03 | Evening and morning accounts for everyone involved; question routing; fact-checker rules; end-to-end tests |
+| 0.21 | 2026-10-03 | Sightings certified solve-neutral; the morning director with code, model and kernel critics; concealment that never leaves the case unsolvable |
+| 0.22 | 2026-10-03 | Fixes from five play-throughs as general rules: start positions from the history; witnessed knowledge; stress from the history; duplicate questions asked through one; hints along the kernel's critical signs; the constable as a setting role; Z3 counts only readable evidence |
 
 ### Forensic milestone source map
 

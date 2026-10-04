@@ -4,7 +4,7 @@
 // tools/extract-setting.mjs turns this into tools/refine-c/settings/bellweather.json for the generator.
 
 export const BW_LOCATIONS = {
-  square: {name: 'Village square', short: 'The square', glyph: '01', atmosphere: 'Where the village meets and talks',
+  square: {name: 'Village square', called: 'the village square', short: 'The square', glyph: '01', atmosphere: 'Where the village meets and talks',
     description: 'Cobbles, a war memorial and the pump. Everyone in Bellweather crosses the square sooner or later.',
     links: {manor: 4, inn: 3, vestry: 4, surgery: 3, post: 2, halt: 6}},
   manor: {name: 'Vale Manor', short: 'The manor', glyph: '02', atmosphere: 'Old money and closed doors',

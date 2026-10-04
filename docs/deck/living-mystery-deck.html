@@ -153,13 +153,13 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
     <rect x="60" y="185" width="125" height="58" rx="12" fill="#fff" stroke="#a78bfa" stroke-width="2"/><text x="122" y="211" text-anchor="middle" font-size="14" font-weight="600">Opus</text><text x="122" y="230" text-anchor="middle" font-size="12" fill="#5a5556">story steps</text>
     <rect x="205" y="185" width="125" height="58" rx="12" fill="#fff" stroke="#a78bfa" stroke-width="2"/><text x="267" y="211" text-anchor="middle" font-size="14" font-weight="600">Sonnet</text><text x="267" y="230" text-anchor="middle" font-size="12" fill="#5a5556">plausibility critic</text>
     <rect x="60" y="263" width="270" height="62" rx="12" fill="#fff" stroke="#059669" stroke-width="2"/><text x="195" y="290" text-anchor="middle" font-size="15" font-weight="700">Kernel checker</text><text x="195" y="311" text-anchor="middle" font-size="12.5" fill="#5a5556">certify every step (parity with JS)</text>
-    <rect x="60" y="345" width="270" height="62" rx="12" fill="#fff" stroke="#d97706" stroke-width="2"/><text x="195" y="372" text-anchor="middle" font-size="15" font-weight="700">Publish</text><text x="195" y="393" text-anchor="middle" font-size="12.5" fill="#5a5556">questions, evening accounts</text>
+    <rect x="60" y="345" width="270" height="62" rx="12" fill="#fff" stroke="#d97706" stroke-width="2"/><text x="195" y="372" text-anchor="middle" font-size="15" font-weight="700">Publish</text><text x="195" y="393" text-anchor="middle" font-size="12.5" fill="#5a5556">wording only · sightings · pictures</text>
     <text x="195" y="452" text-anchor="middle" font-size="13" fill="#9a9596">started from the game · streams progress</text>
     <!-- browser -->
     <rect x="420" y="40" width="600" height="440" rx="16" fill="#fff" stroke="#e5e2dc" stroke-width="2"/>
     <text x="720" y="75" text-anchor="middle" font-size="14" font-weight="700" fill="#2563eb" letter-spacing="2">BROWSER (ZERO-BUILD ES MODULES)</text>
     <rect x="450" y="95" width="540" height="56" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/><text x="720" y="120" text-anchor="middle" font-size="16" font-weight="700">UI adapter</text><text x="720" y="140" text-anchor="middle" font-size="12.5" fill="#5a5556">investigation · reasoning board · inspector (time travel)</text>
-    <rect x="450" y="170" width="265" height="120" rx="12" fill="#fff" stroke="#7c3aed" stroke-width="2"/><text x="582" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#7c3aed">Character turns</text><text x="582" y="222" text-anchor="middle" font-size="12.5" fill="#5a5556">perspective → proposal</text><text x="582" y="241" text-anchor="middle" font-size="12.5" fill="#5a5556">validate → critic → apply</text><text x="582" y="260" text-anchor="middle" font-size="12.5" fill="#5a5556">NPC lives &amp; autonomy</text>
+    <rect x="450" y="170" width="265" height="120" rx="12" fill="#fff" stroke="#7c3aed" stroke-width="2"/><text x="582" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#7c3aed">Character turns</text><text x="582" y="222" text-anchor="middle" font-size="12.5" fill="#5a5556">perspective → proposal</text><text x="582" y="241" text-anchor="middle" font-size="12.5" fill="#5a5556">validate → critic → apply</text><text x="582" y="260" text-anchor="middle" font-size="12.5" fill="#5a5556">morning director &amp; critics</text>
     <rect x="725" y="170" width="265" height="120" rx="12" fill="#fff" stroke="#dc2626" stroke-width="2"/><text x="857" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#dc2626">Admission &amp; Director</text><text x="857" y="222" text-anchor="middle" font-size="12.5" fill="#5a5556">trial turn on a copy</text><text x="857" y="241" text-anchor="middle" font-size="12.5" fill="#5a5556">bounded search + replay</text><text x="857" y="260" text-anchor="middle" font-size="12.5" fill="#5a5556">plan checks (Z3)</text>
     <rect x="450" y="310" width="540" height="64" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/><text x="720" y="337" text-anchor="middle" font-size="16" font-weight="700">Engine + kernel</text><text x="720" y="358" text-anchor="middle" font-size="12.5" fill="#5a5556">commit · event log · replay · knowledge &amp; beliefs · clock · travel</text>
     <rect x="450" y="392" width="265" height="64" rx="12" fill="#fff" stroke="#d97706" stroke-width="2"/><text x="582" y="419" text-anchor="middle" font-size="14.5" font-weight="700">Cases</text><text x="582" y="440" text-anchor="middle" font-size="12" fill="#5a5556">Last Bell · Bellweather · kernel cases</text>
@@ -174,6 +174,77 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
     <path d="M990 286 L1075 286" stroke="#dc2626" stroke-width="2" fill="none" marker-end="url(#aR)"/>
     <text x="1033" y="278" text-anchor="middle" font-size="11.5" fill="#dc2626">proofs</text>
   </svg>
+  <div class="slide-number"></div>
+</div>
+
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-green">THE FULL PICTURE</span><h2>One true history; a model proposes at every layer, critics decide</h2>
+  <p class="sub">From a premise to an accusation, every layer has the same shape: a model does the creative work, then code, a second model and the certifying kernels check it before it counts. The generated history is the only source of facts.</p></div>
+  <svg class="dia fade-in delay-2" viewBox="0 0 1400 560">
+    <defs><marker id="fpArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5a5556"/></marker></defs>
+    <rect x="20" y="20" width="1360" height="44" rx="10" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text x="700" y="48" text-anchor="middle" font-size="16" font-weight="700" fill="#047857">THE TRUE HISTORY · events, attitudes, clues · nothing after generation adds a fact about last night</text>
+    <!-- six stages -->
+    <g font-family="inherit">
+      <rect x="20" y="90" width="210" height="190" rx="14" fill="#fff" stroke="#d97706" stroke-width="2"/>
+      <text x="125" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="#d97706">1 · PREMISE</text>
+      <text x="125" y="146" text-anchor="middle" font-size="13">code draws who, how, why,</text><text x="125" y="164" text-anchor="middle" font-size="13">where and a story shape</text>
+      <text x="125" y="192" text-anchor="middle" font-size="13">avoids recent cases</text><text x="125" y="220" text-anchor="middle" font-size="13">difficulty target</text>
+      <text x="125" y="248" text-anchor="middle" font-size="12" fill="#9a9596">Easy · Medium · Hard</text>
+      <rect x="250" y="90" width="210" height="190" rx="14" fill="#fff" stroke="#a78bfa" stroke-width="2"/>
+      <text x="355" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="#7c3aed">2 · GENERATION</text>
+      <text x="355" y="146" text-anchor="middle" font-size="13">model writes the night,</text><text x="355" y="164" text-anchor="middle" font-size="13">the morning, the clues</text>
+      <text x="355" y="192" text-anchor="middle" font-size="13">then deepens it step by</text><text x="355" y="210" text-anchor="middle" font-size="13">step (Conceal · Fragment ·</text><text x="355" y="228" text-anchor="middle" font-size="13">Mislead) to the target</text>
+      <rect x="480" y="90" width="210" height="190" rx="14" fill="#fff" stroke="#d97706" stroke-width="2"/>
+      <text x="585" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="#d97706">3 · PUBLISH</text>
+      <text x="585" y="146" text-anchor="middle" font-size="13">wording only: evening and</text><text x="585" y="164" text-anchor="middle" font-size="13">morning accounts, lines,</text><text x="585" y="182" text-anchor="middle" font-size="13">reactions, pictures</text>
+      <text x="585" y="210" text-anchor="middle" font-size="13">sightings read from the</text><text x="585" y="228" text-anchor="middle" font-size="13">history; difficulty rated</text>
+      <rect x="710" y="90" width="210" height="190" rx="14" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="815" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="#2563eb">4 · CONVERSATION</text>
+      <text x="815" y="146" text-anchor="middle" font-size="13">free speech in character,</text><text x="815" y="164" text-anchor="middle" font-size="13">answering only from the</text><text x="815" y="182" text-anchor="middle" font-size="13">accounts the person has</text>
+      <text x="815" y="210" text-anchor="middle" font-size="13">lies stay lies; what is</text><text x="815" y="228" text-anchor="middle" font-size="13">admitted is remembered</text>
+      <rect x="940" y="90" width="210" height="190" rx="14" fill="#fff" stroke="#0d9488" stroke-width="2"/>
+      <text x="1045" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="#0d9488">5 · THE MORNING</text>
+      <text x="1045" y="146" text-anchor="middle" font-size="13">a director plans each half</text><text x="1045" y="164" text-anchor="middle" font-size="13">hour over the whole story:</text>
+      <text x="1045" y="192" text-anchor="middle" font-size="13">people go, meet, pass on</text><text x="1045" y="210" text-anchor="middle" font-size="13">news; culprits may hide</text><text x="1045" y="228" text-anchor="middle" font-size="13">their own evidence</text>
+      <rect x="1170" y="90" width="210" height="190" rx="14" fill="#fff" stroke="#dc2626" stroke-width="2"/>
+      <text x="1275" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="#dc2626">6 · ACCUSATION</text>
+      <text x="1275" y="146" text-anchor="middle" font-size="13">who, how and why, shown</text><text x="1275" y="164" text-anchor="middle" font-size="13">with the evidence held</text>
+      <text x="1275" y="192" text-anchor="middle" font-size="13">accepted only if it rules</text><text x="1275" y="210" text-anchor="middle" font-size="13">out everyone else and no</text><text x="1275" y="228" text-anchor="middle" font-size="13">relied-on account is a lie</text>
+    </g>
+    <g stroke="#5a5556" stroke-width="2" marker-end="url(#fpArrow)">
+      <path d="M230 185 L248 185"/><path d="M460 185 L478 185"/><path d="M690 185 L708 185"/><path d="M920 185 L938 185"/><path d="M1150 185 L1168 185"/>
+    </g>
+    <!-- critics under each stage -->
+    <text x="20" y="318" font-size="14" font-weight="700" fill="#5a5556" letter-spacing="2">CHECKED BY</text>
+    <g font-size="12.5">
+      <rect x="20" y="330" width="210" height="96" rx="10" fill="#fffbeb" stroke="#f59e0b"/><text x="125" y="356" text-anchor="middle">code: valid roles, places,</text><text x="125" y="374" text-anchor="middle">an innocent cast, variety</text><text x="125" y="402" text-anchor="middle" fill="#9a9596">no model</text>
+      <rect x="250" y="330" width="210" height="96" rx="10" fill="#f5f3ff" stroke="#a78bfa"/><text x="355" y="356" text-anchor="middle">kernels (Python + JS) certify</text><text x="355" y="374" text-anchor="middle">every step; a model reviews</text><text x="355" y="392" text-anchor="middle">plausibility; Z3 at publish</text><text x="355" y="414" text-anchor="middle" fill="#9a9596">every account backed</text>
+      <rect x="480" y="330" width="210" height="96" rx="10" fill="#fffbeb" stroke="#f59e0b"/><text x="585" y="356" text-anchor="middle">a reviewer against the true</text><text x="585" y="374" text-anchor="middle">history; sightings kept only</text><text x="585" y="392" text-anchor="middle">if the solve is unchanged;</text><text x="585" y="410" text-anchor="middle">three certifiers must agree</text>
+      <rect x="710" y="330" width="210" height="96" rx="10" fill="#eff6ff" stroke="#2563eb"/><text x="815" y="356" text-anchor="middle">code guards: names, times,</text><text x="815" y="374" text-anchor="middle">numbers, deception labels;</text><text x="815" y="392" text-anchor="middle">a fact-checker model that</text><text x="815" y="410" text-anchor="middle">knows the clock and stories</text>
+      <rect x="940" y="330" width="210" height="96" rx="10" fill="#f0fdfa" stroke="#0d9488"/><text x="1045" y="356" text-anchor="middle">code: knowledge, walking</text><text x="1045" y="374" text-anchor="middle">times; a model: what is said;</text><text x="1045" y="392" text-anchor="middle">kernel: still solvable after</text><text x="1045" y="410" text-anchor="middle">anything is hidden</text>
+      <rect x="1170" y="330" width="210" height="96" rx="10" fill="#fef2f2" stroke="#dc2626"/><text x="1275" y="356" text-anchor="middle">the JS kernel decides;</text><text x="1275" y="374" text-anchor="middle">Z3 finds an alternative</text><text x="1275" y="392" text-anchor="middle">story if one survives;</text><text x="1275" y="410" text-anchor="middle">answers scored by evidence</text>
+    </g>
+    <rect x="20" y="452" width="1360" height="86" rx="12" fill="#fafaf9" stroke="#e5e2dc"/>
+    <text x="40" y="482" font-size="14" font-weight="700" fill="#1c1917">Every change is an event with a cause, so the whole game replays exactly.</text>
+    <text x="40" y="506" font-size="13" fill="#5a5556">Models are used for judgement and words (writing, voicing, planning, reviewing); code and solvers are used for truth (who was where, what follows, whether a solution remains).</text>
+    <text x="40" y="526" font-size="13" fill="#5a5556">A model's proposal that fails a check is dropped, never repaired by guesswork: the game falls back to what is certified.</text>
+  </svg>
+  <div class="slide-number"></div>
+</div>
+
+<div class="slide" style="background:var(--bg-warm);">
+  <div class="fade-in delay-1"><span class="tag tag-gold">WHAT IS NEW</span><h2>Eight things this system does that a story generator does not</h2></div>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="card fade-in delay-2" style="padding:18px;"><div class="num">01</div><div class="ct">Certified, not just generated</div><p>Every case is proved fair and solvable by two independent kernels and Z3: exactly one suspect fits, every lie can be broken, motive, means and opportunity can be found.</p></div>
+    <div class="card fade-in delay-2" style="padding:18px;"><div class="num">02</div><div class="ct">Depth by construction</div><p>Three operators peel a mystery layer by layer; code schedules them toward a target depth, and a computed difficulty labels the result.</p></div>
+    <div class="card fade-in delay-3" style="padding:18px;"><div class="num">03</div><div class="ct">One source of facts</div><p>The generated history is the only truth. Every account is backed by something its speaker did, saw or knew; nothing added later invents a fact.</p></div>
+    <div class="card fade-in delay-3" style="padding:18px;"><div class="num">04</div><div class="ct">Free speech, bounded knowledge</div><p>Type anything to anyone. Characters answer in their own voice from what they know; a fact-checker that knows the clock and their stories keeps them honest, or lying only where the story says.</p></div>
+    <div class="card fade-in delay-4" style="padding:18px;"><div class="num">05</div><div class="ct">Witnesses that cannot spoil it</div><p>Who saw whom is read from the history and kept only where the solve is unchanged, so a witness can never shortcut the puzzle.</p></div>
+    <div class="card fade-in delay-4" style="padding:18px;"><div class="num">06</div><div class="ct">A village that reacts</div><p>A model plans the morning over the whole story; people seek each other out, pass on news and hide evidence, each step grounded in what they know and checked first.</p></div>
+    <div class="card fade-in delay-5" style="padding:18px;"><div class="num">07</div><div class="ct">Autonomy that stays solvable</div><p>A culprit may destroy a clue only if the kernel proves the case still certifies without it: drama without ever trapping the player.</p></div>
+    <div class="card fade-in delay-5" style="padding:18px;"><div class="num">08</div><div class="ct">Measured end to end</div><p>Every case is played to a solution by code; every character is asked a standard question set with the real model; every account is proved reachable from the menu.</p></div>
+  </div>
   <div class="slide-number"></div>
 </div>
 
@@ -246,6 +317,32 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
     <div class="card fade-in delay-3" style="padding:24px;"><div class="num">AUTONOMY</div><div class="ct">Bounded plans</div><p>A model may pick a plan from a typed catalogue (move, take, give, conceal, report, correct). It runs detached, never blocking the player, and is dropped if the world changed.</p><div class="note" style="border-color:var(--blue)">agent-plans · autonomy-turn</div></div>
     <div class="card fade-in delay-4" style="padding:24px;"><div class="num">ADMISSION</div><div class="ct">No plan may break the case</div><p>Plans are shape-checked, optionally proved in Z3, and only committed if a validated route to the solution still exists afterwards.</p><div class="note" style="border-color:var(--red)">world-director · admission</div></div>
   </div>
+  <div class="slide-number"></div>
+</div>
+
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-teal">A LIVING VILLAGE</span><h2>The morning moves, and can never trap the player</h2>
+  <p class="sub">Every fifteen game minutes, or as soon as the detective does something that matters (shows a clue, finds one about someone, catches a lie), one model call plans the next half hour for the people it affects. Three critics check the plan before anything happens; the engine runs what survives on the game clock.</p></div>
+  <svg class="dia fade-in delay-2" viewBox="0 0 1400 430">
+    <defs><marker id="mvArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5a5556"/></marker></defs>
+    <rect x="20" y="30" width="300" height="250" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text x="170" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="#7c3aed">DIRECTOR (one model call)</text>
+    <g font-size="13"><text x="40" y="94">sees the whole story:</text><text x="52" y="118">· each person's private history</text><text x="52" y="140">· their fears, wants and stakes</text><text x="52" y="162">· what they told the detective</text><text x="52" y="184">· what they heard or saw today</text><text x="52" y="206">· where the detective has been</text><text x="40" y="238">proposes per person: go · stay ·</text><text x="40" y="258">meet (with words) · conceal</text></g>
+    <g stroke="#5a5556" stroke-width="2" marker-end="url(#mvArrow)"><path d="M320 155 L378 155"/><path d="M820 155 L878 155"/></g>
+    <rect x="380" y="30" width="440" height="250" rx="14" fill="#fff" stroke="#e5e2dc" stroke-width="2"/>
+    <text x="600" y="62" text-anchor="middle" font-size="15" font-weight="700">THREE CRITICS</text>
+    <rect x="400" y="80" width="400" height="56" rx="10" fill="#fffbeb" stroke="#f59e0b"/><text x="416" y="104" font-size="13.5" font-weight="700">Code</text><text x="416" y="124" font-size="12.5" fill="#5a5556">every step rests on what that person knows; real walking times</text>
+    <rect x="400" y="146" width="400" height="56" rx="10" fill="#eff6ff" stroke="#2563eb"/><text x="416" y="170" font-size="13.5" font-weight="700">A model, for what is said</text><text x="416" y="190" font-size="12.5" fill="#5a5556">passes on only what the speaker may say: no new facts</text>
+    <rect x="400" y="212" width="400" height="56" rx="10" fill="#ecfdf5" stroke="#059669"/><text x="416" y="236" font-size="13.5" font-weight="700">The certifying kernel</text><text x="416" y="256" font-size="12.5" fill="#5a5556">a clue may vanish only if the case still certifies without it</text>
+    <rect x="880" y="30" width="500" height="250" rx="14" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+    <text x="1130" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="#0d9488">THE ENGINE RUNS IT</text>
+    <g font-size="13"><text x="900" y="94">· real walking times; replayable events</text><text x="900" y="118">· a meeting happens only if both are there,</text><text x="912" y="138">else it is recorded as missed</text><text x="900" y="162">· listeners remember; bystanders see</text><text x="900" y="186">· nobody hides a clue in front of the detective:</text><text x="912" y="206">they linger, and give up</text><text x="900" y="230">· what is gone leaves the scene, the map,</text><text x="912" y="250">the hints, with all that depended on it</text></g>
+    <rect x="20" y="304" width="1360" height="110" rx="12" fill="#fafaf9" stroke="#e5e2dc"/>
+    <text x="40" y="334" font-size="14" font-weight="700">From a real play-through of “The Millpond Letters”</text>
+    <text x="40" y="360" font-size="13" fill="#5a5556">Questioned at the inn, Mrs Lacey slips away to the post office to remove the scorched note in her hand that links her to the victim.</text>
+    <text x="40" y="382" font-size="13" fill="#5a5556">The kernel had checked first: the case still certifies without it. Earlier Mr Hugo lingered by his IOU while the detective watched, and gave up.</text>
+    <text x="40" y="404" font-size="13" fill="#5a5556">Mrs Finch seeks out her lodger: “The detective's been asking about last night, love…”. The case was solved by another route, as the kernel promised.</text>
+  </svg>
   <div class="slide-number"></div>
 </div>
 
@@ -537,12 +634,12 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
 <div class="slide">
   <div class="fade-in delay-1"><span class="tag tag-green">WHAT IS VERIFIED</span><h2>Guarantees, and how we know</h2></div>
   <div class="grid" style="grid-template-columns:repeat(4,1fr);">
-    <div class="card fade-in delay-2" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--accent);">198</div><div class="ct">JS tests</div><p>engine, characters, kernel, generated-case play, the visible village UI — plus 22 Python (Z3 oracle, servers)</p></div>
+    <div class="card fade-in delay-2" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--accent);">220</div><div class="ct">JS tests</div><p>engine, characters, kernel, generated-case play, the living morning, the UI — plus 23 Python and five generator harnesses</p></div>
     <div class="card fade-in delay-3" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--green);">443</div><div class="ct">cases in parity</div><p>Python and JS checkers agree on every generated case; Z3 agrees on 1,110 depth checks</p></div>
-    <div class="card fade-in delay-4" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--gold);">13</div><div class="ct">playable deep cases</div><p>depth 3–7; the newest five each with a different victim, culprit, method and motive; solved only by the truth</p></div>
+    <div class="card fade-in delay-4" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--gold);">13</div><div class="ct">playable cases</div><p>Easy to Hard, each rated by a computed difficulty; every account reachable from the menu; each solved end to end by code</p></div>
     <div class="card fade-in delay-5" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--blue);">3</div><div class="ct">independent certifiers</div><p>a case is published only when the Python kernel, the JS kernel and Z3 all certify it and agree</p></div>
   </div>
-  <div class="card fade-in delay-6" style="padding:18px 24px;margin-top:6px;"><p style="font-size:15px;"><b style="color:var(--text-primary)">Honest limits.</b> The kernel certifies fair, solvable, deep and misleading — not fun. Villagers keep to their places in generated cases (routines are next), clue art is a shared library matched by keyword, touch screens have no drag and drop, and a case takes about 15 minutes to build (one is kept ready).</p></div>
+  <div class="card fade-in delay-6" style="padding:18px 24px;margin-top:6px;"><p style="font-size:15px;"><b style="color:var(--text-primary)">Honest limits.</b> The kernel certifies fair, solvable, deep and misleading — not fun. The fact-checker and the morning director are models’ judgements: about 96% of replies come from the model, and the director often lets people carry on quietly. A case takes 5–25 minutes to build (one is kept ready); touch screens have no drag and drop.</p></div>
   <div class="slide-number"></div>
 </div>
 
@@ -552,11 +649,11 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
   <p class="sub"><b style="color:var(--text-primary)">North star:</b> an endless supply of Christie-grade mysteries in any setting, with characters who live and talk believably, and an engine that guarantees every case stays fair and solvable however the player behaves.</p></div>
   <div class="grid" style="grid-template-columns:repeat(4,1fr);">
     <div class="card fade-in delay-2" style="padding:20px;"><div class="num">01 · CONTENT</div><div class="ct">Secrets in play</div><p>Every motive discoverable in play, not just at the end; more witness detail, all certified.</p></div>
-    <div class="card fade-in delay-2" style="padding:20px;"><div class="num">02 · LIFE</div><div class="ct">A living village</div><p>Routines and activities for every villager, people moving on the map, culprits who react.</p></div>
+    <div class="card fade-in delay-2" style="padding:20px;"><div class="num">02 · PACE</div><div class="ct">Never stuck</div><p>A nudge when nothing new is reachable, and motive named by the evidence that shows it, not by a category.</p></div>
     <div class="card fade-in delay-3" style="padding:20px;"><div class="num">03 · SPEED</div><div class="ct">Faster to build</div><p>A ready case already hides the wait; next, cut the ~15-minute build without losing depth.</p></div>
     <div class="card fade-in delay-3" style="padding:20px;"><div class="num">04 · LIBRARY</div><div class="ct">Blocks as code</div><p>The block library compiled and tested, with the five design examples as acceptance cases.</p></div>
     <div class="card fade-in delay-4" style="padding:20px;"><div class="num">05 · QUESTIONS</div><div class="ct">Beyond “who”</div><p>Who, how and why are asked now; next, when, identity and “what happened”, with matching accusation forms.</p></div>
-    <div class="card fade-in delay-4" style="padding:20px;"><div class="num">06 · LIVES</div><div class="ct">Culprits who act</div><p>Autonomous plans driven by the case's attitudes — a culprit who fears a witness acts — with the per-turn check back on.</p></div>
+    <div class="card fade-in delay-4" style="padding:20px;"><div class="num">06 · LIVES</div><div class="ct">Richer mornings</div><p>The village now reacts; next, people who come to the detective, lies that spread and are caught, and calibrated difficulty from real plays.</p></div>
     <div class="card fade-in delay-5" style="padding:20px;"><div class="num">07 · WORLDS</div><div class="ct">New settings</div><p>Generated setting ontologies and art, from ocean liners to generation ships.</p></div>
     <div class="card fade-in delay-5" style="padding:20px;"><div class="num">08 · EVALUATION</div><div class="ct">Is it good?</div><p>Blind-solve agents and player studies: does the twist mislead, does the solution satisfy?</p></div>
   </div>

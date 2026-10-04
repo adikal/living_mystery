@@ -50,7 +50,14 @@ def reachable(case):
         for sid, s in signs.items():
             if sid not in got and all(r in got for r in s.get('requires', []) or []):
                 got.add(sid); changed = True
-    # a sign is understood once every sign it needs is understood and every rule it needs is known
+    return understood(case, got)
+
+
+def understood(case, got):
+    """Of the obtained signs `got`, those that can be read: every sign a sign needs is itself read, and every rule it
+    needs is known (common, or taught by an obtained rule sign)."""
+    signs = {s['id']: s for s in case['signs']}
+    got = {sid for sid in got if sid in signs}
     rules = {r['id']: r for r in case.get('rules', [])}
     known = {rid for rid, r in rules.items() if r.get('knowledge') == 'common'}
     known |= {signs[sid].get('rule') for sid in got if signs[sid].get('kind') == 'rule'}

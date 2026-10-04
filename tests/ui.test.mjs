@@ -1,4 +1,5 @@
 import * as autonomy from '../dist/autonomy-turn.mjs';
+import * as morningDirector from '../dist/morning-director.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -24,7 +25,7 @@ function adapter(saved=null,overrides={}){
   // Expose only explicitly imported names, matching browser module scope.
   // Injecting every engine export previously masked missing UI imports.
   const source=readFileSync(new URL('../dist/ui.mjs',import.meta.url),'utf8');
-  const modules={'./autonomy-turn.mjs':autonomy,'./director-turn.mjs':directorTurns,'./character-turn.mjs':characterTurns,'./art.mjs':art,'./engine.mjs':engine,'./inspector.mjs':inspector,'./claims.mjs':claims,'./llm.mjs':llm,'./dialogue-save.mjs':dialogueSave,'./idb-save.mjs':idbSave};
+  const modules={'./autonomy-turn.mjs':autonomy,'./morning-director.mjs':morningDirector,'./director-turn.mjs':directorTurns,'./character-turn.mjs':characterTurns,'./art.mjs':art,'./engine.mjs':engine,'./inspector.mjs':inspector,'./claims.mjs':claims,'./llm.mjs':llm,'./dialogue-save.mjs':dialogueSave,'./idb-save.mjs':idbSave};
   const bindings={};
   for(const match of source.matchAll(/^import \{([^}]+)\} from '([^']+)';$/gm)){
     for(const name of match[1].split(',').map(s=>s.trim())){
@@ -425,7 +426,7 @@ test('A generated kernel case plays in the Bellweather UI: case suspects, how an
  assert.equal(ui.run('session.world.caseId'),'mk-bw-pair');
  assert.ok(ui.run('CASE.kernel'),'the runtime case is the kernel case');
  const surface=records.signs.find(s=>s.kind!=='testimony'&&!(s.requires||[]).length);
- ui.run(`act({type:'move',to:${JSON.stringify(surface.at)}});act({type:'inspect',object:${JSON.stringify(surface.id)}});act({type:'move',to:'square'})`);
+ ui.run(`act({type:'move',to:${JSON.stringify(surface.at)}});act({type:'inspect',object:${JSON.stringify(surface.id)}});if(session.world.player.location!==session.world.npcs[CASE.constable].location)act({type:'move',to:session.world.npcs[CASE.constable].location})`);
  ui.click('accusation');
  const form=ui.node('#modal').innerHTML;
  for(const h of records.question.candidates)assert.match(form,new RegExp(`value="${h.facts.actor}"`),'every candidate is accusable');
@@ -436,7 +437,7 @@ test('A generated kernel case plays in the Bellweather UI: case suspects, how an
  ui.run(`act({type:'move',to:${JSON.stringify(hidden.at)}});actionGroup='inspect';render()`);
  assert.ok(!ui.node('#app').innerHTML.includes(`data-id="${hidden.id}"`),'a gated clue is hidden until earned');
  assert.deepEqual(JSON.parse(ui.run('JSON.stringify(topicsFor("bell"))')).map(([t])=>t),['case','night'],'Bell briefs the detective');
- assert.deepEqual(JSON.parse(ui.run('JSON.stringify(topicsFor("clara"))')).map(([t])=>t),['night']);
+ assert.deepEqual(JSON.parse(ui.run('JSON.stringify(topicsFor("clara"))')).map(([t])=>t),['night',...((records.knowledge||{}).clara?.length?['everyday']:[])]);
 });
 
 test('Every UI mode and inspector tab renders for a generated kernel case, before and after play',()=>{
@@ -692,4 +693,20 @@ test('The case menu: three generate buttons in one row, and a difficulty filter 
  const shown=ui.run('globalThis.__list.innerHTML');
  assert.match(shown,/Beta/);assert.doesNotMatch(shown,/Alpha|Gamma/);
  ui.change({id:'case-filter',value:'easy'});assert.match(ui.run('globalThis.__list.innerHTML'),/Alpha/);
+});
+
+test('The map shows where people really are: someone walking is on the path between the places, and a plan shows as a ring', () => {
+  const records = JSON.parse(readFileSync(new URL('./fixtures/mk-cordial.json', import.meta.url), 'utf8'));
+  const ui = adapter(null, {llmActive: () => false});
+  ui.run(`startGenerated(registerKernelCase(${JSON.stringify(records)}),'Test');mode='game'`);
+  const pinPeople = (html, place) => { const i = html.search(new RegExp(`class="map-pin[^"]*"[^>]*data-id="${place}"`)); const j = html.indexOf('</button>', i); return html.slice(i, j); };
+  const pid = ui.run("Object.keys(session.world.npcs).find(p=>p!=='bell'&&session.world.npcs[p].location!==session.world.player.location)");
+  const home = ui.run(`session.world.npcs['${pid}'].location`), name = ui.run(`PEOPLE['${pid}'].name`);
+  const away = ui.run(`Object.keys(LOCATIONS).find(l=>l!=='${home}'&&l!==session.world.player.location)`);
+  ui.run(`caseTables(session).kernel.startTravel(session,'${pid}','${away}',session.events.at(-1).id,'Morning: go');render()`);
+  let html = ui.node('#app').innerHTML;
+  assert.match(html, new RegExp(`class="map-walker"[^>]*aria-label="${name}, walking to`), 'drawn walking on the path');
+  assert.doesNotMatch(pinPeople(html, home), new RegExp(`data-face="${pid}"`), 'no longer at the place they left');
+  assert.doesNotMatch(pinPeople(html, away), new RegExp(`data-face="${pid}"`), 'not yet at the place they are going');
+  assert.match(html, new RegExp(`class="map-face acting" data-face="${pid}"`), 'walking for a plan of their own: the acting ring');
 });

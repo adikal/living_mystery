@@ -6,7 +6,8 @@
  "places": [
   {
    "id": "square",
-   "name": "Village square"
+   "name": "Village square",
+   "called": "the village square"
   },
   {
    "id": "manor",
@@ -505,6 +506,102 @@
   {
    "id": "matchbox",
    "label": "a box of matches"
+  },
+  {
+   "id": "mug",
+   "label": "a tea mug or cup"
+  },
+  {
+   "id": "weed",
+   "label": "pond weed or water plants"
+  },
+  {
+   "id": "grate",
+   "label": "a fireplace grate"
+  },
+  {
+   "id": "brush",
+   "label": "a hearth brush or broom"
+  },
+  {
+   "id": "carpet",
+   "label": "a carpet or rug"
+  },
+  {
+   "id": "cassock",
+   "label": "a clergyman’s cassock or robe"
+  },
+  {
+   "id": "shoes",
+   "label": "a pair of shoes"
+  },
+  {
+   "id": "waders",
+   "label": "fishing waders or boots"
+  },
+  {
+   "id": "fishing_line",
+   "label": "a fishing line and float"
+  },
+  {
+   "id": "net",
+   "label": "a fishing net"
+  },
+  {
+   "id": "switchboard",
+   "label": "a telephone switchboard"
+  },
+  {
+   "id": "clock",
+   "label": "a clock"
+  },
+  {
+   "id": "bandage",
+   "label": "a bandage or dressing"
+  },
+  {
+   "id": "forceps",
+   "label": "surgical forceps or instruments"
+  },
+  {
+   "id": "churn",
+   "label": "a milk churn"
+  },
+  {
+   "id": "label",
+   "label": "a luggage or parcel label"
+  },
+  {
+   "id": "bin",
+   "label": "a bin, crate or sack of grit or sand"
+  },
+  {
+   "id": "doorstop",
+   "label": "a cast-iron doorstop or ornament"
+  },
+  {
+   "id": "billhook",
+   "label": "a billhook or hedging blade"
+  },
+  {
+   "id": "cordon",
+   "label": "a rope cordon"
+  },
+  {
+   "id": "mailbag",
+   "label": "a mail sack or post"
+  },
+  {
+   "id": "apron",
+   "label": "an apron"
+  },
+  {
+   "id": "barrow",
+   "label": "a wheelbarrow"
+  },
+  {
+   "id": "wound",
+   "label": "a doctor’s examination or a wound"
   }
  ]
 }

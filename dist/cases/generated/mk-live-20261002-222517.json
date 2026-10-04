@@ -617,6 +617,13 @@
     "a_bell_sand",
     "a_bell_churns"
    ]
+  },
+  {
+   "id": "a_bell_evening",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "He wanted some easy company and a bit of relaxation after a long day on his feet.",
+   "strength": 0.6
   }
  ],
  "events": [
@@ -892,9 +899,37 @@
    "end": 1840,
    "causedBy": "a_bell_churns",
    "summary": "Bell rolls the three empty milk churns from the platform's end and bunches them over the sanded boards."
+  },
+  {
+   "id": "e_bell_evening",
+   "type": "routine",
+   "agent": "bell",
+   "others": [],
+   "place": "inn",
+   "start": 1080,
+   "end": 1380,
+   "causedBy": "a_bell_evening",
+   "summary": "He shared a quiet pint and a game of dominoes with a couple of regulars by the fire.",
+   "ordinary": true
   }
  ],
  "signs": [
+  {
+   "id": "s_surface_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "surface": true,
+   "deceptive": true,
+   "title": "Arthur Bell on the evening",
+   "text": "Spent the evening by the fire, nothing more exciting than a pint and a game of dominoes with a couple of the regulars. Quiet night, home to bed after, same as any other.",
+   "ask": "Where were you last night?",
+   "agrees_checked": true,
+   "surface_why": "He claims it was just a quiet evening of pints and dominoes and home to bed 'same as any other' - but he actually discovered the vicar's body, woke Dr Marsh, examined the body and searched the coat, told Ada Finch, locked evidence in his tin, and covered up the bloodstained boards with sand and milk",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Constable Bell says he spent the evening by the fire with a pint and a game of dominoes, then home to bed. Do you know if that's true?",
+   "confront": "You told me you spent the evening playing dominoes by the fire, then went straight home to bed. Is that the whole of it?"
+  },
   {
    "id": "s_morning_iris",
    "kind": "testimony",
@@ -949,7 +984,8 @@
    "surface_checked": "honest",
    "show": "Silas Voss says he stayed at his desk in the vestry until his work was done, then went straight home, speaking to no one of parish business. Do you know if that's true?",
    "confront": "You told me you stayed at your desk until your work was done, then went straight home and spoke to no one of parish business. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "agrees_checked": true
   },
   {
    "id": "s_surface_iris",
@@ -963,7 +999,8 @@
    "show": "Dr Marsh says she spent the latter part of the evening at the Vale house with Miss Vale on a confidential matter, then went straight home to bed. Do you know if that's true?",
    "confront": "You told me you spent the latter part of the evening with Miss Vale on a confidential matter, then went home to bed. Is that the whole of it?",
    "to": null,
-   "surface_checked": "honest"
+   "surface_checked": "honest",
+   "agrees_checked": true
   },
   {
    "id": "s_surface_edmund",
@@ -977,7 +1014,8 @@
    "surface_checked": "cover",
    "show": "Edmund Vale says he was in the taproom at the Rook all evening, keeping to himself until closing. Do you know if that's true?",
    "confront": "You told me you were in the taproom at the Rook all evening, keeping to yourself until closing. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "agrees_checked": true
   },
   {
    "id": "s_surface_clara",
@@ -991,7 +1029,8 @@
    "surface_checked": "honest",
    "show": "Clara Vale says she dined at home with her brother, then sat up a good while with Dr Marsh over a private family matter, never leaving the house. Do you know if that's true?",
    "confront": "You told me you dined with your brother and then sat up with Dr Marsh on a private family matter, never leaving the house. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "agrees_checked": true
   },
   {
    "id": "s_surface_ada",
@@ -1005,7 +1044,8 @@
    "show": "Ada Finch says she was behind her bar all evening pulling pints, and that Dora sat quietly in the back parlour the whole time, as she saw herself. Do you know if that's true?",
    "confront": "You told me you were behind the bar all evening and that you saw Dora sitting quietly in the back parlour the whole time. Is that the whole of it?",
    "to": null,
-   "surface_checked": "cover"
+   "surface_checked": "cover",
+   "agrees_checked": true
   },
   {
    "id": "s_surface_dora",
@@ -1019,7 +1059,8 @@
    "surface_checked": "cover",
    "show": "Dorothy Pruett says she locked up the post office at the usual hour and sat quietly in the parlour all evening, never once stepping outside. Do you know if that's true?",
    "confront": "You told me you locked up the post office and sat quietly in the parlour all evening without stepping outside. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "agrees_checked": true
   },
   {
    "id": "s_medical",
@@ -1084,7 +1125,7 @@
     "dora": "A broken bit of steel with the Post Office mark \u2014 well, that could belong to any manner of implement about the counter. I'm sure I don't know how such a thing came to be in a wound."
    },
    "to": null,
-   "art": null
+   "art": "wound"
   },
   {
    "id": "s_watch",
@@ -1156,7 +1197,8 @@
    },
    "show": "Miss Pruett says she closed the counter at six and spent from half past nine to a quarter past eleven in Mrs Finch's back parlour with her cocoa. Can you confirm that?",
    "confront": "You told me you sat in Mrs Finch's parlour from half past nine to a quarter past eleven with your cocoa. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "same_as": "night"
   },
   {
    "id": "t_ada",
@@ -1169,7 +1211,8 @@
    "ask": "Where were you last night, Mrs Finch?",
    "show": "Mrs Finch says she was behind her bar the whole night, pulling pints and listening to the farmers grumble. Does that match what you saw?",
    "confront": "You told me you were behind your bar the whole night, with nothing to tell. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "same_as": "night"
   },
   {
    "id": "t_edmund",
@@ -1182,7 +1225,8 @@
    "ask": "Where were you last night, Mr Vale?",
    "show": "Mr Vale says he dined at home, then had a glass or two at the Rook, and came home when he pleased. Does that match what you know?",
    "confront": "You told me you dined at home, drank at the Rook, and came home when you pleased. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "same_as": "night"
   },
   {
    "id": "t_clara",
@@ -1195,7 +1239,8 @@
    "ask": "Where were you last night, Miss Vale?",
    "show": "Miss Vale says she dined at eight, then went out on a private errand she won't describe, returning before midnight. Do you know anything of that errand?",
    "confront": "You told me you dined at eight, then went out on a private errand you won't describe, home before midnight. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "same_as": "night"
   },
   {
    "id": "t_ada_cover",
@@ -1291,7 +1336,7 @@
    },
    "to": "iris",
    "direct": "I found your forceps, engraved 'I.M.', wedged in the platform boards with blood on the jaws and a fleck of red wax in the teeth. How did they come to be there?",
-   "art": null
+   "art": "forceps"
   },
   {
    "id": "t_silas_overheard",
@@ -1382,7 +1427,7 @@
    },
    "show": "By the platform bench I found milk churns moved aside to reveal a heap of fresh raked sand, and the fire bucket emptied with wet sand stuck inside. Do you know what happened here?",
    "to": null,
-   "art": null
+   "art": "churn"
   },
   {
    "id": "s_florin",
@@ -1463,7 +1508,8 @@
    "ask": "Where exactly did you find the vicar, Constable?",
    "show": "Constable Bell says he found the body at the foot of the waiting-room steps at twenty past five and fetched Dr Marsh straight away. Does that match what you saw?",
    "confront": "You told me you found him at the foot of the waiting-room steps at twenty past five and fetched Dr Marsh straight off. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "same_as": "t_bell_found"
   },
   {
    "id": "s_steps",
@@ -1477,7 +1523,51 @@
    "unlock": "The constable named the foot of the waiting-room steps, so the detective goes to the Halt to look at exactly that spot.",
    "show": "At the foot of the waiting-room steps the coal-smut dust lies even and undisturbed, with no footprint, scuff, stain, or sign of scrubbing, though further along the platform the dust has been swept about. Can you account for that?",
    "to": null,
-   "art": null
+   "art": "stairs"
+  },
+  {
+   "id": "s_saw_clara_edmund_manor",
+   "kind": "testimony",
+   "speaker": "clara",
+   "sighting": true,
+   "source": "e_dinner",
+   "claim": {
+    "kind": "place",
+    "person": "edmund",
+    "place": "manor",
+    "start": 1140,
+    "end": 1260
+   },
+   "title": "Clara Vale saw Edmund Vale",
+   "text": "I saw Mr Vale at Vale Manor at quarter past seven.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "edmund",
+   "show": "Clara Vale says she saw Mr Vale at Vale Manor at quarter past seven. Do you know if that's true?",
+   "confront": "You told me you saw Mr Vale at Vale Manor at quarter past seven. Is that the whole of it?",
+   "direct": "Clara Vale says she saw you at Vale Manor at quarter past seven. Is that so?"
+  },
+  {
+   "id": "s_saw_clara_iris_surgery",
+   "kind": "testimony",
+   "speaker": "clara",
+   "sighting": true,
+   "source": "e_clara_surgery",
+   "claim": {
+    "kind": "place",
+    "person": "iris",
+    "place": "surgery",
+    "start": 1280,
+    "end": 1430
+   },
+   "title": "Clara Vale saw Dr Iris Marsh",
+   "text": "I saw Dr Marsh at her surgery at twenty-five to ten.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "show": "Clara Vale says she saw Dr Marsh at her surgery at twenty-five to ten. Do you know if that's true?",
+   "confront": "You told me you saw Dr Marsh at her surgery at twenty-five to ten. Is that the whole of it?",
+   "to": "iris",
+   "direct": "Clara Vale says she saw you at your surgery at twenty-five to ten. Is that right?"
   }
  ],
  "premise": {
@@ -1571,6 +1661,10 @@
   "s_morning_bell|text",
   "s_morning_iris|text",
   "s_sand|reactions|bell",
+  "s_saw_clara_edmund_manor|direct",
+  "s_saw_clara_edmund_manor|text",
+  "s_saw_clara_iris_surgery|direct",
+  "s_saw_clara_iris_surgery|text",
   "s_surface_ada|text",
   "s_surface_bell|text",
   "s_surface_clara|text",

@@ -2,6 +2,18 @@
 
 ## Latest (October 2026)
 
+**Played as a player.** Five cases were played end to end and each problem fixed as a general rule: people start where
+the history leaves them; they know what the detective did only if they saw it or were told; stress follows the
+history; a question that rewords another is asked through it; hints follow the kernel's critical signs; the constable
+is a setting role. Next: give every person in a case an evening and a morning in the history (the generator), and run
+history that continues past the start as plans in play rather than before it. See [living-village.md](living-village.md).
+
+**A living village.** People say whom they saw last night (read from the history, certified not to change the solve),
+and the morning moves: a model plans each half hour for the people the investigation affects, checked by code, a model and
+the certifying kernel before anything happens; people seek each other out, pass on what they have heard, and a culprit
+may hide evidence, never leaving the case unsolvable. See [living-village.md](living-village.md).
+
+
 The history is the only source of facts: every account is backed by the history, generation writes the morning (the
 discovery and the examination), everyone involved has an evening, and publishing adds only wording. Cases carry a
 computed difficulty and can be generated to one; the village has a twelfth person (Mrs Vera Lacey) and 50 clue pictures.

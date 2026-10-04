@@ -54,30 +54,98 @@ question the detective says aloud to the named character to hear their account. 
 the topic, and the 'known' clues listed with the item. The question must not reveal or presuppose anything from the
 account itself. Address the character directly; at most 14 words; end with a question mark. Good: "Mrs Finch, what
 did you see in the yard last night?" Bad: "Mrs Finch, what time did Mr Voss leave?" (presupposes the account).
+Each item lists 'already_asked': questions the detective can already put to everyone. Where this account answers
+one of those, it will be asked that way; otherwise ask about this account's own topic.
 Return {"questions": {"<id>": "<question>"}}."""
+# What the detective can ask anyone (kernel-case.mjs topicsFor / followupOptions): account questions must differ from these.
+def _standard_questions():
+    """The questions the game offers everyone, read from the game's own module (dist/cases/questions.mjs)."""
+    url = 'file://' + os.path.join(ROOT, 'dist', 'cases', 'questions.mjs')
+    out = subprocess.run(['node', '--input-type=module', '-e',
+                          f'import({json.dumps(url)}).then(m => console.log(JSON.stringify(m.STANDARD_QUESTIONS)))'],
+                         capture_output=True, text=True, check=True)
+    q = json.loads(out.stdout)
+    q.pop('case', None)                       # the constable's briefing is not an account question
+    q.pop('everyday', None)                   # nor is the plain-facts question (it never brings out an account)
+    return q
+
+
+_STANDARD = _standard_questions()
+STANDARD_TOPICS, STANDARD_QUESTIONS = list(_STANDARD), list(_STANDARD.values())
+SAME = """For each character you get the questions a detective can ask them, with ids. Group the questions that ask for the
+same thing in different words: any question asking where they were or what they did last night asks the same as
+"What is your account of last night?", however it is addressed.
+Questions about different topics, times, people or objects are different, even if they look alike.
+Return {"duplicates": {"<character id>": [["<id>", "<id>", ...], ...]}} listing only groups of two or more."""
 TITLE_WORDS = {'Mr', 'Mrs', 'Miss', 'Dr', 'Doctor', 'Constable', 'I', 'Edmund', 'Vale'}
 
 
 def add_questions(case, synopsis):
+    """A question for every account a person can be asked about (written not to give its content away), then a check
+    for questions that ask the same as a standard question or as another of theirs (`mark_duplicate_questions`)."""
     from refine import llm_json, CRITIC_MODEL
     import re
     signs = {x['id']: x for x in case['signs']}
-    todo = [x for x in case['signs'] if x['kind'] == 'testimony' and not x.get('ask')]
-    if not todo:
-        return 0
     names = {p['id']: p['name'] for p in case['people']}
     def known(x):
         return ' '.join([synopsis, x.get('title', '')] + [signs[r].get('text', '') for r in x.get('requires', []) if r in signs])
-    items = [{'id': x['id'], 'character': names.get(x['speaker'], x['speaker']), 'topic': x.get('title'), 'known': known(x)} for x in todo]
-    out = llm_json(ASK, json.dumps({'premise': synopsis, 'items': items}), 2000, model=CRITIC_MODEL).get('questions', {})
+    todo = [x for x in case['signs'] if x['kind'] == 'testimony' and not x.get('ask')]
     n = 0
-    for x in todo:
-        q = str(out.get(x['id'], '')).strip()
-        caps = [w for w in re.findall(r"[A-Z][a-z]+", q)[1:] if w not in TITLE_WORDS and w not in names.get(x['speaker'], '')]
-        leak = [w for w in caps if w not in known(x)]
-        if q.endswith('?') and 3 <= len(q.split()) <= 16 and not leak:
-            x['ask'] = q; n += 1
+    if todo:
+        items = [{'id': x['id'], 'character': names.get(x['speaker'], x['speaker']), 'topic': x.get('title'), 'known': known(x),
+                  'already_asked': STANDARD_QUESTIONS} for x in todo]
+        out = llm_json(ASK, json.dumps({'premise': synopsis, 'items': items}), 2000, model=CRITIC_MODEL).get('questions', {})
+        for x in todo:
+            q = str(out.get(x['id'], '')).strip()
+            caps = [w for w in re.findall(r"[A-Z][a-z]+", q)[1:] if w not in TITLE_WORDS and w not in names.get(x['speaker'], '')]
+            leak = [w for w in caps if w not in known(x)]
+            if q.endswith('?') and 3 <= len(q.split()) <= 16 and not leak:
+                x['ask'] = q; n += 1
+    mark_duplicate_questions(case)
     return n
+
+
+def mark_duplicate_questions(case):
+    """x['same_as'] = the standard topic ('night', ...) or account id whose question x's question rewords. In play such an
+    account is asked through that question, so the menu never shows two questions that ask the same thing. Rewriting
+    the question instead was tried: the rewrites either asked about something else or gave the account away."""
+    for x in case['signs']:
+        x.pop('same_as', None)
+    for sid, keep in duplicate_questions(case).items():
+        x = next(y for y in case['signs'] if y['id'] == sid)
+        x['same_as'] = keep
+    return sum(1 for x in case['signs'] if x.get('same_as'))
+
+
+def duplicate_questions(case, model=None):
+    from refine import CRITIC_MODEL
+    """{account id: the question it duplicates} for account questions that ask the same as a standard question or as
+    another of the same person's questions (the first of a group is kept). Judged by a fast model, per person."""
+    from refine import llm_json
+    people = {}
+    for x in case['signs']:
+        if x['kind'] == 'testimony' and x.get('ask') and not (x.get('surface') or x.get('morning') or x.get('sighting')):
+            people.setdefault(x['speaker'], []).append(x)
+    if not people:
+        return {}
+    items = {pid: [{'id': f'std{i}', 'question': q} for i, q in enumerate(STANDARD_QUESTIONS)]
+             + [{'id': x['id'], 'question': x['ask']} for x in xs] for pid, xs in people.items()}
+    try:
+        groups = llm_json(SAME, json.dumps(items), 1200, model=model or CRITIC_MODEL).get('duplicates', {})   # the fast model missed most duplicates in trials
+    except Exception:
+        return {}
+    text = {i['id']: i['question'] for pid in items for i in items[pid]}
+    out = {}
+    for pid, gs in (groups or {}).items():
+        for g in gs if isinstance(gs, list) else []:
+            g = [i for i in g if i in text] if isinstance(g, list) else []
+            if len(g) < 2:
+                continue
+            keep = next((i for i in g if i.startswith('std')), g[0])        # a standard question always stays
+            for i in g:
+                if i != keep and not i.startswith('std'):
+                    out[i] = STANDARD_TOPICS[int(keep[3:])] if keep.startswith('std') else keep
+    return out
 
 
 SURFACE = """You write what each person in a 1920s English village mystery says when first asked "Where were you last
@@ -87,13 +155,45 @@ whether they are the culprit. Write 1 to 3 sentences in their voice, about the e
 - An innocent gives a true but vague account that keeps their private secret hidden.
 - No clock times, no numbers, no named witnesses who could confirm it; nothing that would clear or convict anyone.
 - Stay consistent with their events and attitudes; do not mention the investigation's clues.
+- 'tells' is what they also tell the detective when asked more closely. Never contradict it, even where it is untrue (a
+  person keeps to their own story). Do not repeat it either: this is the vaguer first answer, without its details.
+- If 'previous_attempt' is given, it was rejected for the reason stated: write it again without that.
 Return {"accounts": {"<person id>": "<what they say>"}}."""
 
+AGREES = """For each person in a 1920s village mystery you get a short account of their evening and the statements they also
+give the detective ('tells'). Does the account contradict any statement (a different place, leaving when a statement
+says they stayed, a different reason, and so on)? Being vaguer or leaving things out is not a contradiction.
+Return {"verdicts": {"<id>": {"agrees": true | false, "why": "<for a contradiction: what differs>"}}}."""
 
-def add_surface_accounts(case):
+
+def own_statements(case, pid):
+    """What a person tells the detective as soon as asked, in the case's own statements (their claims, true or false). Not
+    what they say only once something is proven (a statement that requires a clue): before that they hold it back."""
+    return [x['text'] for x in case['signs'] if x.get('speaker') == pid and x.get('kind') == 'testimony' and x.get('claim')
+            and not x.get('requires') and not x.get('surface') and not x.get('morning') and not x.get('sighting')]
+
+
+def surface_disagreements(case, signs):
+    """{sign id: why} for evening accounts that contradict their speaker's own statements."""
+    from refine import llm_json, CRITIC_MODEL
+    items = [{'id': x['id'], 'account': x['text'], 'tells': own_statements(case, x['speaker'])} for x in signs]
+    items = [i for i in items if i['tells']]
+    if not items:
+        return {}
+    out = _as_map(llm_json(AGREES, json.dumps(items), 1500, model=CRITIC_MODEL).get('verdicts', {}))
+    bad = {}
+    for i in items:
+        v = out.get(i['id'], {})
+        if isinstance(v, dict) and v.get('agrees') is False:
+            bad[i['id']] = str(v.get('why', ''))[:300]
+    return bad
+
+
+def add_surface_accounts(case, rounds=2):
+    """Each person's first account of the evening: true but vague for an innocent, a vague cover for the culprit, and never
+    against what they themselves tell the detective. One that contradicts their statements is rewritten, else dropped."""
     from refine import llm_json, CRITIC_MODEL
     import re
-    have = {x['speaker'] for x in case['signs'] if x.get('surface')}
     q = case['question']
     truth = next(h for h in q['candidates'] if h['id'] == q['truth'])['facts']['actor']
     people = {p['id']: p for p in case['people']}
@@ -101,20 +201,45 @@ def add_surface_accounts(case):
     # only people the history gives an evening to: a summary of nothing would be a fact the case never recorded
     morning = enrich.day(case, 'morning')
     active = {q for e in case['events'] if e['start'] < morning for q in [e.get('agent'), *e.get('others', [])] if q}
-    todo = [p['id'] for p in case['people'] if p['id'] != victim and p['id'] not in have and p['id'] in active]
-    if not todo:
-        return 0
-    items = [{'id': pid, 'name': people[pid]['name'], 'voice': people[pid].get('voice'), 'culprit': pid == truth,
-              'events': [e.get('summary') for e in case['events'] if (pid == e.get('agent') or pid in e.get('others', [])) and e['start'] < morning],
-              'attitudes': [f"{a['mode']}: {a['content']}" for a in case['attitudes'] if a['agent'] == pid]} for pid in todo]
-    out = llm_json(SURFACE, json.dumps(items), 2500, model=CRITIC_MODEL).get('accounts', {})
+    # accounts already published are checked too (a case published before this check)
+    failed = {}
+    old = [x for x in case['signs'] if x.get('surface') and not x.get('agrees_checked')]
+    for sid, why in surface_disagreements(case, old).items():
+        x = next(y for y in case['signs'] if y['id'] == sid)
+        failed[x['speaker']] = {'text': x['text'], 'rejected_because': why}
+    with SIGNS: case['signs'][:] = [x for x in case['signs'] if not (x.get('surface') and x['speaker'] in failed)]
+    for x in old:
+        if x['speaker'] not in failed:
+            x['agrees_checked'] = True
     n = 0
-    for pid in todo:
-        text = str(out.get(pid, '')).strip()
-        if text and not re.search(r'\d', text) and len(text.split()) <= 70:
-            with SIGNS: case['signs'].insert(0, {'id': f's_surface_{pid}', 'kind': 'testimony', 'speaker': pid, 'surface': True, 'deceptive': pid == truth,
-                                     'title': f"{people[pid]['name']} on the evening", 'text': text, 'ask': 'Where were you last night?'})
-            n += 1
+    for r in range(rounds):
+        have = {x['speaker'] for x in case['signs'] if x.get('surface')}
+        todo = [p['id'] for p in case['people'] if p['id'] != victim and p['id'] not in have and p['id'] in active
+                and p['id'] not in case.get('surface_dropped', [])]
+        if not todo:
+            break
+        items = [{'id': pid, 'name': people[pid]['name'], 'voice': people[pid].get('voice'), 'culprit': pid == truth,
+                  'events': [e.get('summary') for e in case['events'] if (pid == e.get('agent') or pid in e.get('others', [])) and e['start'] < morning],
+                  'attitudes': [f"{a['mode']}: {a['content']}" for a in case['attitudes'] if a['agent'] == pid],
+                  'tells': own_statements(case, pid), **({'previous_attempt': failed[pid]} if pid in failed else {})} for pid in todo]
+        out = llm_json(SURFACE, json.dumps(items), 2500, model=CRITIC_MODEL).get('accounts', {})
+        new = []
+        for pid in todo:
+            text = str(out.get(pid, '')).strip()
+            if text and not re.search(r'\d', text) and len(text.split()) <= 70:
+                x = {'id': f's_surface_{pid}', 'kind': 'testimony', 'speaker': pid, 'surface': True, 'deceptive': pid == truth,
+                     'title': f"{people[pid]['name']} on the evening", 'text': text, 'ask': 'Where were you last night?'}
+                with SIGNS: case['signs'].insert(0, x)
+                new.append(x)
+        bad = surface_disagreements(case, new)
+        failed = {x['speaker']: {'text': x['text'], 'rejected_because': bad[x['id']]} for x in new if x['id'] in bad}
+        with SIGNS: case['signs'][:] = [x for x in case['signs'] if x['id'] not in bad]
+        for x in new:
+            if x['id'] not in bad:
+                x['agrees_checked'] = True
+                n += 1
+        if r == rounds - 1 and failed:
+            case.setdefault('surface_dropped', []).extend(failed)
     return n
 
 
@@ -180,6 +305,111 @@ def add_morning_accounts(case, rounds=3):
         if _ == rounds - 1 and bad:
             case.setdefault('morning_dropped', []).extend(bad)
         n -= len(bad)
+    return n
+
+
+SIGHT = """You write what a person in a 1920s English village mystery says when asked "Did you see anyone last night?",
+about ONE person they saw. You get the speaker's voice, who they saw, where, and roughly when (in words). Write one
+sentence in the speaker's voice saying they saw that person there at about that time, using 'their_pronoun' for
+them. Nothing else: no reason, no opinion, no manner ("slipping in", "bold as you please"), no other person, no digits. Return {"lines": {"<id>": "<sentence>"}}."""
+SIGHTINGS_PER_PERSON = 3
+
+
+def sighting_candidates(case):
+    """(speaker, seen, place, start, end, event) for every pair of people at the same place at overlapping times in the
+    true history, from the evening until the investigation starts (never the crime). Read from the history: facts."""
+    from refine import presence
+    victim, crime = enrich.victim_of(case), case['question']['crime']['event']
+    evening, start = enrich.day(case, 'evening'), enrich.day(case, 'morning')   # last night: the evening to the morning
+    pres = presence(case)
+    people = {p['id'] for p in case['people']}
+    out, seen = [], set()
+    for a in sorted(pres):
+        for b in sorted(pres):
+            if a == b or a == victim or a not in people or b not in people:
+                continue
+            for (s0, e0, pl, ea) in pres[a]:
+                for (s1, e1, pl1, eb) in pres[b]:
+                    lo, hi = max(s0, s1, evening), min(e0, e1, start)
+                    if pl != pl1 or lo >= hi or crime in (ea, eb) or (a, b, pl) in seen:
+                        continue
+                    seen.add((a, b, pl))
+                    out.append((a, b, pl, lo, hi, ea))
+    return out
+
+
+def _solve_shape(case):
+    from refine import certify
+    r = certify(case, require_backing=True)
+    return r['ok'], (r.get('solve_depth'), tuple(sorted((r.get('threads') or {}).items())), tuple(sorted(r.get('surface') or [])),
+                     tuple(r.get('false_signs') or []), r.get('twist'))
+
+
+def add_sightings(case, log=print):
+    """Who saw whom last night, as accounts: read from the history, kept only if the case certifies with the same solve
+    (depth, every thread, the surface reading, the false accounts), worded by a model, checked by code and reviewed.
+    A sighting may never shortcut or break the puzzle."""
+    from refine import llm_json, CRITIC_MODEL
+    import re
+    have = {(x.get('speaker'), (x.get('claim') or {}).get('person')) for x in case['signs'] if x.get('sighting')}
+    ok0, shape0 = _solve_shape(case)
+    if not ok0:
+        return 0
+    names = {p['id']: p['name'] for p in case['people']}
+    truth = enrich.truth_actor(case)
+    # someone lying about their own night does not volunteer where they were (a sighting would say it)
+    liars = {x['speaker'] for x in case['signs'] if x.get('kind') == 'testimony' and x.get('deceptive')}
+    cands = [c for c in sighting_candidates(case) if (c[0], c[1]) not in have and c[0] not in liars]
+    # people of interest first: suspects, then anyone; a speaker gives at most a few
+    suspects = {(h.get('facts') or {}).get('actor') for h in case['question']['candidates']}
+    cands.sort(key=lambda c: (c[1] not in suspects, c[0], c[3]))
+    kept, per = [], {}
+    for a, b, pl, lo, hi, ev in cands:
+        if per.get(a, 0) >= SIGHTINGS_PER_PERSON:
+            continue
+        sid = f's_saw_{a}_{b}_{pl}'
+        sign = {'id': sid, 'kind': 'testimony', 'speaker': a, 'sighting': True, 'source': ev,
+                'claim': {'kind': 'place', 'person': b, 'place': pl, 'start': lo, 'end': hi},
+                'title': f"{names[a]} saw {names[b]}", 'text': '', 'ask': 'Did you see anyone last night?'}
+        case['signs'].append(sign)
+        ok, shape = _solve_shape(case)
+        if ok and shape == shape0:     # solve-neutral: kept
+            kept.append(sign); per[a] = per.get(a, 0) + 1
+        else:
+            case['signs'].remove(sign)
+    if not kept:
+        return 0
+    when = lambda x: spoken_about((x['claim']['start'] + min(x['claim']['end'], x['claim']['start'] + 30)) / 2)
+    setting = {p['id']: p for p in enrich.SETTING.get('people', [])}
+    places = {p['id']: p['name'] for p in enrich.SETTING.get('places', [])}
+    items = [{'id': x['id'], 'speaker': names[x['speaker']], 'voice': setting.get(x['speaker'], {}).get('voice', ''),
+              'saw': setting.get(x['claim']['person'], {}).get('address') or names[x['claim']['person']],
+              'their_pronoun': setting.get(x['claim']['person'], {}).get('pronoun', 'they'),
+              'where': places.get(x['claim']['place'], x['claim']['place']), 'when': when(x)} for x in kept]
+    out = _as_map(llm_json(SIGHT, json.dumps(items), 3000, model=CRITIC_MODEL).get('lines', {}))
+    # another person named in the line: their name as whole words (not 'Lacey' inside 'Mrs Lacey' of the person seen,
+    # or a place named after someone: 'the Rook & Lantern', 'Dr Marsh's surgery')
+    seen_forms = lambda x: ' '.join([names[x['claim']['person']], setting.get(x['claim']['person'], {}).get('address', ''), places.get(x['claim']['place'], '')])
+    def others(x):
+        line = str(out.get(x['id'], ''))
+        for f in seen_forms(x).split():
+            line = re.sub(rf"\b{re.escape(f)}\b", '', line)
+        return [n for pid, n in names.items() if pid not in (x['speaker'], x['claim']['person'])
+                and any(re.search(rf"\b{re.escape(w)}\b", line) for w in n.split() if len(w) > 2 and w not in ('The', 'Reverend'))]
+    n = 0
+    for x in kept:
+        text = str(out.get(x['id']) or '').strip()
+        if not text or re.search(r'\d', text) or len(text.split()) > 40 or others(x):
+            case['signs'].remove(x)      # no wording that passes the checks: no sighting
+            continue
+        x['text'] = text; x['deceptive'] = False
+        n += 1
+    probs = enrich.review_publish(case)
+    bad = {k.split('|')[0] for k in probs if k.endswith('|text')}
+    gone = [x for x in kept if x['id'] in bad]
+    case['signs'] = [x for x in case['signs'] if x not in gone]
+    n -= len(gone)
+    log(f'  sightings: {n} kept of {len(cands)} candidates')
     return n
 
 
@@ -565,6 +795,65 @@ LIVE_BRIEFS = [
 ]
 
 
+EVENINGS = """For each person in a 1920s English village mystery you get who they are, where they live, what they know of their
+own life, and the places in the village. The case's history gives them no evening yesterday. Give each an ordinary
+evening: one place they were (their home or their work, or a public place a person like them would go), and one plain
+sentence of what they did there. Nothing to do with the crime; name nobody else, not even by role ("the innkeeper"); no clock times. Also the plain wish that
+took them there. Return {"evenings": {"<id>": {"place": "<place id>", "summary": "<sentence>", "intent": "<wish>"}}}."""
+
+
+def add_ordinary_evenings(case, log=lambda *a: None):
+    """Everyone in the case has something true to say about last night (premise.evening_errors, the generator's own
+    rule). A case that leaves someone without an evening (made before the rule, or the constable) gets an ordinary one
+    from a model: one event and the intention behind it, at a real place. It is kept only if the case still certifies
+    with the identical solve (depth, every thread, the surface, the false accounts), so it can never touch the puzzle."""
+    from refine import llm_json, CRITIC_MODEL
+    import premise
+    # an ordinary evening names nobody else: not by name, address or role (the innkeeper is a person in the case)
+    def words(q):
+        out = [*str(q.get('name', '')).split(), str(q.get('address', '')).split()[-1] if q.get('address') else '', *(q.get('role_words') or [])]
+        return {w.lower() for w in out if len(w) > 2 and w not in ('The', 'Reverend', 'Thomas')}
+    def names_someone(pid, text):
+        others = set().union(*[words(q) for q in premise.SETTING.get('people', []) if q['id'] != pid]) - words(premise.PEOPLE.get(pid, {}))
+        return any(re.search(r'\b' + re.escape(w) + r'\b', text.lower()) for w in others)
+    for ev in [e for e in case['events'] if e.get('ordinary') and names_someone(e['agent'], e.get('summary', ''))]:
+        with SIGNS:
+            case['events'].remove(ev)
+            case['attitudes'] = [x for x in case['attitudes'] if x['id'] != ev.get('causedBy')]
+            case['signs'][:] = [x for x in case['signs'] if not (x.get('surface') and x.get('speaker') == ev['agent'])]
+    need = sorted({m.split()[1] for m in premise.evening_errors(case)})
+    people = {p['id']: p for p in case['people']}
+    setting = {p['id']: p for p in premise.SETTING.get('people', [])}
+    need = [pid for pid in need if pid in people or pid in setting]
+    if not need:
+        return 0
+    day = case['setting']['day']
+    places = {p['id']: p['name'] for p in case['setting']['places']}
+    items = [{'id': pid, 'name': (people.get(pid) or setting.get(pid, {})).get('name', pid), 'role': setting.get(pid, {}).get('role'),
+              'home': setting.get(pid, {}).get('home'), 'knows_of_own_life': (case.get('knowledge') or {}).get(pid, [])} for pid in need]
+    out = llm_json(EVENINGS, json.dumps({'places': places, 'people': items}), 1500, model=CRITIC_MODEL).get('evenings', {})
+    before, n = _solve_shape(case), 0
+    for pid in need:
+        v = out.get(pid) or {}
+        place, summary, intent = v.get('place'), str(v.get('summary', '')).strip(), str(v.get('intent', '')).strip()
+        if place not in places or not summary or not intent or re.search(r'\d', summary) or names_someone(pid, summary):
+            continue
+        att = {'id': f'a_{pid}_evening', 'agent': pid, 'mode': 'intends', 'content': intent, 'strength': 0.6}
+        ev = {'id': f'e_{pid}_evening', 'type': 'routine', 'agent': pid, 'others': [], 'place': place, 'start': day['evening'],
+              'end': min(day['morning'], day['evening'] + 300), 'causedBy': att['id'], 'summary': summary, 'ordinary': True}
+        with SIGNS:
+            case['attitudes'].append(att); case['events'].append(ev)
+            if pid not in people and pid in setting:
+                case['people'].append({'id': pid, 'name': setting[pid]['name']})
+        if _solve_shape(case) == before:
+            n += 1
+        else:                                   # it would change the puzzle (a new witness, an alibi): not added
+            with SIGNS:
+                case['attitudes'].remove(att); case['events'].remove(ev)
+            log(f'  evening for {pid} at {place} changes the solve: not added')
+    return n
+
+
 def prune_people(case):
     """People the true history never mentions have nothing true to say about the night, so they are not part of the
     case (premise.involved, the same definition the generator's evening rule uses). Returns the ids removed."""
@@ -587,6 +876,7 @@ def enrich_case(case, log=print):
     removed = prune_people(case)                       # nobody the history never mentions is in the case
     if removed:
         log(f'  not in the history, so not in the case: {removed}')
+    add_ordinary_evenings(case, log)                   # everyone in the case has an evening (certified solve-neutral)
     enrich.add_answer(case)                            # the examination wording depends on the method
     enrich.add_accepted(case)                          # every answer the player's evidence fairly supports
     with cf.ThreadPoolExecutor(7) as ex:               # independent: each writes to its own part of the case
@@ -596,6 +886,7 @@ def enrich_case(case, log=print):
     with cf.ThreadPoolExecutor(3) as ex:               # these need the accounts written above
         for f in [ex.submit(mark_surface_truth, case), ex.submit(add_questions, case, case.get('synopsis', '')), ex.submit(add_reactions, case)]:
             f.result()
+    add_sightings(case, log)                           # who saw whom, read from the history, certified solve-neutral
     add_show_lines(case)                               # lines for accounts added above
     enrich.add_art(case)                               # pictures for any clue added above
     enrich.add_unlock_groups(case)                     # leads that open together share one opening line
@@ -685,7 +976,7 @@ CARRY_CASE_KEYS = ('answer', 'reviewed', 'knowledge', 'moods', 'victim', 'premis
 
 def carry_over(case, prev):
     """Keep what publishing already wrote for this exact case: added signs and per-sign lines."""
-    added = [x for x in prev['signs'] if (x.get('surface') or x.get('morning') or x.get('medical'))
+    added = [x for x in prev['signs'] if (x.get('surface') or x.get('morning') or x.get('sighting') or x.get('medical'))
              and not any(y['id'] == x['id'] for y in case['signs'])]
     case['signs'] = added + case['signs']
 

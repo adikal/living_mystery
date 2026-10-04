@@ -12,6 +12,7 @@ import {createKnowledge} from './knowledge.mjs';
 // See schema.mjs for the typed contracts (Model, Kernel, Event, Belief).
 
 import {validateClaim} from './claims.mjs';
+import {inSentence} from './places.mjs';
 // The one stock reply that claims nothing: said when the history gives a person nothing to say on a question.
 export const NEUTRAL_LINE = 'I can’t help you with that.';
 export const VERSION = 1;
@@ -113,7 +114,7 @@ export function createKernel(model) {
     if (a.travel || from === to) return;
     const arrival = s.world.minute + distance(from, to);
     if (!Number.isFinite(arrival)) return;
-    const e = commit(s, { kind: 'movement', title: `${PEOPLE[id].name} sets out for ${LOCATIONS[to].short}`, actor: id, location: from, parents: [cause], data: { from, to, arrival, purpose }, changes: { [`npcs.${id}.location`]: 'transit', [`npcs.${id}.travel`]: { from, to, arrival, cause, purpose } }, playerText: from === s.world.player.location ? `${PEOPLE[id].name} leaves for ${LOCATIONS[to].short}.` : null });
+    const e = commit(s, { kind: 'movement', title: `${PEOPLE[id].name} sets out for ${inSentence(LOCATIONS[to])}`, actor: id, location: from, parents: [cause], data: { from, to, arrival, purpose }, changes: { [`npcs.${id}.location`]: 'transit', [`npcs.${id}.travel`]: { from, to, departed: s.world.minute, arrival, cause, purpose } }, playerText: from === s.world.player.location ? `${PEOPLE[id].name} leaves for ${inSentence(LOCATIONS[to])}.` : null });
     witnessMovement(s, id, 'departure', from, e);
     if (from === s.world.player.location) commit(s, { kind: 'observation', title: `You see ${PEOPLE[id].name} leave`, actor: 'player', parents: [e], changes: { [`player.lastSeen.${id}`]: { location: from, minute: s.world.minute, departed: true } } });
   }
@@ -127,7 +128,7 @@ export function createKernel(model) {
         api.life?.tick(s,id,e);
         if (a.travel && a.travel.arrival <= s.world.minute) {
           const tr = copy(a.travel);
-          const arrival = commit(s, { kind: 'movement', title: `${PEOPLE[id].name} arrives at ${LOCATIONS[tr.to].short}`, actor: id, location: tr.to, parents: [tr.cause, e], changes: { [`npcs.${id}.location`]: tr.to, [`npcs.${id}.travel`]: null }, data: { from: tr.from, to: tr.to }, playerText: s.world.player.location === tr.to ? `${PEOPLE[id].name} arrives from ${LOCATIONS[tr.from].short}.` : null });
+          const arrival = commit(s, { kind: 'movement', title: `${PEOPLE[id].name} arrives at ${inSentence(LOCATIONS[tr.to])}`, actor: id, location: tr.to, parents: [tr.cause, e], changes: { [`npcs.${id}.location`]: tr.to, [`npcs.${id}.travel`]: null }, data: { from: tr.from, to: tr.to }, playerText: s.world.player.location === tr.to ? `${PEOPLE[id].name} arrives from ${inSentence(LOCATIONS[tr.from])}.` : null });
           witnessMovement(s, id, 'arrival', tr.to, arrival);
           notice(s, id, arrival, `${PEOPLE[id].name} is here now.`);
           api.decide(s, id, arrival);
@@ -143,7 +144,11 @@ export function createKernel(model) {
     const d = CLUES[clue], event = nextId(s);
     const testimony=model.testimonyClues?.includes(clue)?s.events.find(e=>e.id===cause)?.data.assertion:null;
     const text=testimony??d.text;
-    commit(s, { kind: 'evidence', title: `Recorded: ${d.title}`, actor: 'player', parents: [cause,s.world.flags.evidenceOrigins?.[clue]], data: { clue, source: source ?? d.source, claims: model.testimonyClues?.includes(clue)?(s.events.find(e=>e.id===cause)?.data.claims??model.evidenceClaims?.[clue]??[]):(model.evidenceClaims?.[clue]??[]) }, changes: { 'player.evidence': [...s.world.player.evidence, { clue, eventId: event, minute: s.world.minute, source: source ?? d.source,...(testimony?{text}:{}) }] }, playerText: `${d.title}\n${text}` });
+    const found = commit(s, { kind: 'evidence', title: `Recorded: ${d.title}`, actor: 'player', parents: [cause,s.world.flags.evidenceOrigins?.[clue]], data: { clue, source: source ?? d.source, claims: model.testimonyClues?.includes(clue)?(s.events.find(e=>e.id===cause)?.data.claims??model.evidenceClaims?.[clue]??[]):(model.evidenceClaims?.[clue]??[]) }, changes: { 'player.evidence': [...s.world.player.evidence, { clue, eventId: event, minute: s.world.minute, source: source ?? d.source,...(testimony?{text}:{}) }] }, playerText: `${d.title}\n${text}` });
+    // people there saw the detective find it (a thing in the room, or their own behaviour); what they were told is in
+    // their own memory already
+    if (!testimony) for (const [id, npc] of Object.entries(s.world.npcs))
+      if (npc.location === s.world.player.location && !npc.travel) remember(s, id, found);
     return true;
   }
   function reject(s, title, text, cause, data = {}) {

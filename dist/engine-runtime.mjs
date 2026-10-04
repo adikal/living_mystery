@@ -6,6 +6,7 @@ import {availablePlans,queuePlan,resumePlan} from './agent-plans.mjs';
 
 import {claimsAt} from './claims.mjs';
 import { createKernel, VERSION, copy, timeLabel } from './kernel.mjs';
+import {inSentence} from './places.mjs';
 
 
 export function createRuntime(ActiveCase) {
@@ -61,7 +62,7 @@ function dispatch(s, action) {
   const releases = ['wait', 'endConversation'].includes(action.type)
     || action.type === 'move' && Boolean(LOCATIONS[action.to]) && action.to !== s.world.player.location
     || action.type === 'inspect' && Boolean(OBJECTS[action.object]) && LOCATIONS[s.world.player.location]?.objects.includes(action.object)
-    || action.type === 'accuse' && K.local(s, 'bell');
+    || action.type === 'accuse' && K.local(s, CASE.constable);
   const next = talking ? action.person : releases ? null : previous;
   if (s.world.status !== 'solved' && previous !== next) {
     const engagement = commit(s, { kind: 'action', title: next ? `You engage ${PEOPLE[next].name} in conversation` : 'You end the conversation', actor: 'player', parents: [start], data: { conversation: next }, changes: { 'player.conversation': next } });
@@ -76,10 +77,10 @@ function dispatch(s, action) {
       const from = s.world.player.location;
       if (from === action.to) { K.reject(s, 'Already at destination', 'You are already here.', start); break; }
       const duration = K.distance(from, action.to);
-      const departure = commit(s, { kind: 'movement', title: `You leave for ${LOCATIONS[action.to].short}`, actor: 'player', location: from, parents: [start], changes: { 'player.location': 'transit' }, data: { from, to: action.to, duration } });
+      const departure = commit(s, { kind: 'movement', title: `You leave for ${placeIn(action.to)}`, actor: 'player', location: from, parents: [start], changes: { 'player.location': 'transit' }, data: { from, to: action.to, duration } });
       K.witnessMovement(s, 'player', 'departure', from, departure);
       K.advance(s, duration, start);
-      const arr = commit(s, { kind: 'arrival', title: `You reach ${LOCATIONS[action.to].name}`, actor: 'player', location: action.to, parents: [start], changes: { 'player.location': action.to, 'player.visited': [...new Set([...s.world.player.visited, action.to])] }, playerText: LOCATIONS[action.to].description });
+      const arr = commit(s, { kind: 'arrival', title: `You reach ${placeIn(action.to)}`, actor: 'player', location: action.to, parents: [start], changes: { 'player.location': action.to, 'player.visited': [...new Set([...s.world.player.visited, action.to])] }, playerText: LOCATIONS[action.to].description });
       K.witnessMovement(s, 'player', 'arrival', action.to, arr);
       for (const id of Object.keys(PEOPLE)) K.notice(s, id, arr, `${PEOPLE[id].name} is here.`);
       B.afterAction?.(s, arr);
@@ -116,10 +117,10 @@ function dispatch(s, action) {
     }
     case 'note': { const value = String(action.text || '').trim().slice(0, 1000); if (value) commit(s, { kind: 'notebook', title: 'You record a hypothesis', actor: 'player', parents: [start], changes: { 'player.notes': [...s.world.player.notes, { text: value, minute: s.world.minute }].slice(-30) } }); break; }
     case 'accuse': {
-      if (!K.local(s, 'bell')) { K.reject(s, 'The constable is not here', 'Bring your case to Constable Bell at the village square.', start); break; }
+      if (!K.local(s, CASE.constable)) { K.reject(s, 'The constable is not here', `Bring your case to ${PEOPLE[CASE.constable].address ?? PEOPLE[CASE.constable].name} at ${placeIn(s.world.npcs[CASE.constable]?.location)}.`, start); break; }
       const result = B.checkCase(s, action);
       if (result.supported) { const ending = { suspect: action.suspect, method: action.method, motive: action.motive, evidence: result.selected, routes: result.routes }; commit(s, { kind: 'resolution', title: 'Bell accepts your case', actor: 'bell', parents: [start, ...result.selected.map((c) => s.world.player.evidence.find((e) => e.clue === c).eventId)], changes: { status: 'solved', ending }, data: { rubric: result.query?'Finite competing explanations':'Authored case evidence requirements', ...(result.query?{forensicQuery:result.query,alternatives:result.alternatives}:{}), ...ending }, playerText: result.feedback ?? CASE.resolutionText ?? 'Bell reads your notes twice, then closes the folder. “The accounts explain why. The records establish when. And the evidence connects Silas to the crime. We have our case.”\n\nBell opens a clean page in his ledger. The investigation has a conclusion supported by evidence, and the village’s favorite rumor has not survived it.' }); }
-      else K.reject(s, 'The accusation is not sufficiently supported', result.feedback ?? 'Bell sets the file down. “I need a connected case: the medical window, reliable whereabouts, and evidence linking the suspect to the act and its motive. Compare the documents with the testimony, and make sure the relevant entries are selected.”', start, { ...(result.status?{assessment:result.status,alternatives:result.alternatives}:{}), selected: result.selected, suspect: action.suspect, method: action.method, motive: action.motive });
+      else K.reject(s, 'The accusation is not sufficiently supported', result.feedback ?? `${PEOPLE[CASE.constable].name.split(' ').at(-1)} sets the file down. “I need a connected case: the medical window, reliable whereabouts, and evidence linking the suspect to the act and its motive. Compare the documents with the testimony, and make sure the relevant entries are selected.”`, start, { speaker: CASE.constable, ...(result.status?{assessment:result.status,alternatives:result.alternatives}:{}), selected: result.selected, suspect: action.suspect, method: action.method, motive: action.motive });
       break;
     }
     case 'look': commit(s, { kind: 'observation', title: 'You look around', actor: 'player', parents: [start], playerText: LOCATIONS[s.world.player.location].description }); break;
@@ -130,6 +131,9 @@ function dispatch(s, action) {
 }
 
 // Called by the validated character pipeline on an isolated session copy.
+// how far one exchange moves a character's trust in the detective (the model judges the direction)
+const TRUST_STEP = .08;
+const placeIn = id => inSentence(LOCATIONS[id]);
 function dispatchCharacter(s,{person,text,proposal,action,audit,useAuthored=false,presented=null,origin=null,queuedPlan=null}){
   if(s.world.status==='solved'||!PEOPLE[person]||!K.local(s,person)||s.world.npcs[person].travel)throw Error('Conversation is no longer available.');
   const command=commit(s,{kind:'command',title:`Speak to ${PEOPLE[person].name}`,actor:'player',data:{action:{type:'converse',person,text},origin:origin?copy(origin):null}});
@@ -163,7 +167,7 @@ function dispatchCharacter(s,{person,text,proposal,action,audit,useAuthored=fals
   const dialogueState={turns:prior.turns+1,lastIntent:proposal.intent,lastPlayerEvent:heard,lastReplyEvent:reply.id,
     topic:proposal.account??prior.topic??null,openQuestion:proposal.intent==='clarify'?reply.data.assertion:null,
     disclosures:[...new Set([...prior.disclosures,...(proposal.account?[proposal.account]:[])])],lastDecision:decision};
-  const delta=useAuthored?0:proposal.trust==='warmer'?.03:proposal.trust==='cooler'?-.03:0;
+  const delta=useAuthored?0:proposal.trust==='warmer'?TRUST_STEP:proposal.trust==='cooler'?-TRUST_STEP:0;
   commit(s,{kind:'relationship',title:`${PEOPLE[person].name} retains this exchange`,actor:person,parents:[decision,reply.id],changes:{[`npcs.${person}.dialogueState`]:dialogueState,[`npcs.${person}.trust`]:Math.max(0,Math.min(1,npc.trust+delta))}});
   if(queuedPlan)scheduleCharacterPlan(s,queuedPlan,decision);
   if(proposal.engagement==='end'&&!useAuthored)dispatch(s,{type:'endConversation'});
@@ -173,7 +177,9 @@ function dispatchCharacter(s,{person,text,proposal,action,audit,useAuthored=fals
 
 function playerView(s) {
   const w = s.world, at = w.player.location;
-  return { minute: w.minute, status: w.status, location: at, scene: LOCATIONS[at], profiles: Object.entries(w.npcs).map(([id,npc])=>({id,...publicPerson(id),metrics:npc.location===at&&!npc.travel?{trust:npc.trust,stress:npc.stress}:null})), people: Object.entries(w.npcs).filter(([, p]) => p.location === at).map(([id]) => ({ id, ...publicPerson(id) })), evidence: w.player.evidence.map((e) => ({ ...e, ...CLUES[e.clue],text:e.text??CLUES[e.clue].text })), pins: copy(w.player.pins), notes: copy(w.player.notes), lastSeen: copy(w.player.lastSeen), transcript: s.events.filter((e) => e.playerText).map((e) => ({ id: e.id, minute: e.minute, kind: e.kind, text: e.playerText, actor: e.actor })), ending: copy(w.ending) };
+  // the scene lists only what is still there (a clue taken away this morning, or expired, is gone)
+  const present = o => (w.flags.evidenceExpiry?.[OBJECTS[o]?.clue] ?? Infinity) >= w.minute;
+  return { minute: w.minute, status: w.status, location: at, scene: LOCATIONS[at] && {...LOCATIONS[at], objects: (LOCATIONS[at].objects || []).filter(present)}, profiles: Object.entries(w.npcs).map(([id,npc])=>({id,...publicPerson(id),metrics:npc.location===at&&!npc.travel?{trust:npc.trust,stress:npc.stress}:null})), people: Object.entries(w.npcs).filter(([, p]) => p.location === at).map(([id]) => ({ id, ...publicPerson(id) })), evidence: w.player.evidence.map((e) => ({ ...e, ...CLUES[e.clue],text:e.text??CLUES[e.clue].text })), pins: copy(w.player.pins), notes: copy(w.player.notes), lastSeen: copy(w.player.lastSeen), transcript: s.events.filter((e) => e.playerText).map((e) => ({ id: e.id, minute: e.minute, kind: e.kind, text: e.playerText, actor: e.actor, speaker: e.data?.speaker })), ending: copy(w.ending) };
 }
 const publicPerson = (id) => ({ name: PEOPLE[id].name, initials: PEOPLE[id].initials, role: PEOPLE[id].role, color: PEOPLE[id].color, public: PEOPLE[id].public });
 

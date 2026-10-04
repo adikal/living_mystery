@@ -111,7 +111,7 @@ test('playtest fixes: a completing clue delivers the account, proof draws a conc
   const has = id => s.world.player.evidence.some(e => e.clue === id);
   // Bell shown the slate gives his account at once (no "Ask me.")
   dispatch(s, {type: 'move', to: 'inn'}); give(s, 'b_ada_thumb', 'x_bare_nail', 's_slate');
-  dispatch(s, {type: 'move', to: 'square'});
+  if (s.world.player.location !== s.world.npcs.bell.location) dispatch(s, {type: 'move', to: s.world.npcs.bell.location});
   dispatch(s, {type: 'present', person: 'bell', clue: 's_slate', tone: 'private'});
   assert.ok(has('s_bell_ada'), 'Bell’s account is delivered by showing the slate');
   assert.doesNotMatch(say('bell'), /Ask me/);
@@ -206,7 +206,13 @@ test('a menu question the history gives nothing to answer is asked, and answered
   const {prepareCharacterTurn, applyCharacterTurn} = await import('../dist/character-turn.mjs');
   const {NEUTRAL_LINE} = await import('../dist/kernel.mjs');
   const kc = JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
-  const s = createSession(1, registerKernelCase(kc)), bell = kc.setting.roles.constable;
+  // a case whose history gives the constable no evening (published cases now give everyone one: build the gap here)
+  const bell = kc.setting.roles.constable, gone = kc.events.filter(e => e.agent === bell && e.ordinary);
+  kc.id += '-no-evening';
+  kc.events = kc.events.filter(e => !gone.includes(e));
+  kc.attitudes = kc.attitudes.filter(a => !gone.some(e => e.causedBy === a.id));
+  kc.signs = kc.signs.filter(x => !(x.surface && x.speaker === bell));
+  const s = createSession(1, registerKernelCase(kc));
   if (s.world.player.location !== s.world.npcs[bell].location) dispatch(s, {type: 'move', to: s.world.npcs[bell].location});
   const {caseTables} = await import('../dist/engine.mjs');
   assert.ok(!caseTables(s).CASE.topicsFor[bell].some(([k]) => k === 'night'), 'the menu does not offer a question the history cannot answer');
@@ -286,6 +292,42 @@ test('every account with no prerequisite can be reached from the Talk menu alone
       const held = new Set(s.world.player.evidence.map(e => e.clue));
       const stuck = kc.signs.filter(x => x.kind === 'testimony' && x.speaker === pid && !(x.requires || []).length && !held.has(x.id));
       assert.deepEqual(stuck.map(x => x.id), [], `${kc.id}: ${pid} has accounts the menu never reaches`);
+    }
+  }
+});
+
+test('"Did you see anyone last night?" gives the sightings one at a time, and no other night question gives them', async () => {
+  const {registerKernelCase, createSession, dispatch, caseTables} = await import('../dist/engine.mjs');
+  const kc = JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-225824.json', import.meta.url), 'utf8'));
+  const s = createSession(1, registerKernelCase(kc)), T = caseTables(s);
+  const pid = kc.signs.find(x => x.sighting).speaker, mine = kc.signs.filter(x => x.sighting && x.speaker === pid).map(x => x.text);
+  assert.ok(T.CASE.topicsFor[pid].some(([t]) => t === 'seen'));
+  if (s.world.player.location !== s.world.npcs[pid].location) dispatch(s, {type: 'move', to: s.world.npcs[pid].location});
+  for (const t of ['night', 'more', 'more']) {
+    dispatch(s, {type: 'ask', person: pid, topic: t});
+    assert.ok(!mine.includes(s.events.findLast(e => e.kind === 'speech' && e.actor === pid).data.assertion), t);
+  }
+  const said = [];
+  for (let i = 0; i < mine.length; i++) { dispatch(s, {type: 'ask', person: pid, topic: 'seen'}); said.push(s.events.findLast(e => e.kind === 'speech' && e.actor === pid).data.assertion); }
+  assert.deepEqual([...said].sort(), [...mine].sort());
+});
+
+test('a hint to ask someone names the question that gives the account it is about, in every published case', async () => {
+  const {registerKernelCase, createSession, dispatch, caseTables} = await import('../dist/engine.mjs');
+  const {readdirSync} = await import('node:fs');
+  const files = ['../dist/cases/generated/', '../dist/cases/generated/live/'].flatMap(d => { try { return readdirSync(new URL(d, import.meta.url)).filter(f => f.startsWith('mk-') && f.endsWith('.json')).map(f => new URL(d + f, import.meta.url)); } catch { return []; } });
+  for (const f of files) {
+    const kc = JSON.parse(readFileSync(f, 'utf8'));
+    const s = createSession(1, registerKernelCase(kc)), T = caseTables(s), B = T.behavior;
+    for (let i = 0; i < 40; i++) {
+      const h = B.hints(s), x = kc.signs.find(y => y.id === h.id);
+      if (!x || x.kind !== 'testimony' || (x.requires || []).length) break;
+      const q = h.levels.at(-1).match(/“([^”]+)”/)?.[1], pid = x.speaker;
+      const menu = [...(T.CASE.topicsFor?.[pid] ?? []), ...B.followupOptions(s, pid)], m = menu.find(([, l]) => l === q);
+      assert.ok(m, `${kc.id}: the hint's question “${q}” is in ${pid}'s menu`);
+      if (s.world.player.location !== s.world.npcs[pid].location) dispatch(s, {type: 'move', to: s.world.npcs[pid].location});
+      for (let k = 0; k < 6 && !s.world.player.evidence.some(e => e.clue === x.id); k++) dispatch(s, {type: 'ask', person: pid, topic: m[0]});
+      assert.ok(s.world.player.evidence.some(e => e.clue === x.id), `${kc.id}: asking “${q}” gives ${x.id}`);
     }
   }
 });
