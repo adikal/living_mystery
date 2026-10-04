@@ -1,0 +1,13 @@
+{
+  "_comment": "Case splits for playtesting. The optimizer may look at training episodes; held-out cases are only scored, so a change must help cases it was not designed on. Add freshly generated cases to both over time.",
+  "train": [
+    "dist/cases/generated/mk-live-20261002-224855.json",
+    "dist/cases/generated/mk-live-20261002-235614.json",
+    "dist/cases/generated/live/mk-live-20261003-130902.json"
+  ],
+  "heldout": [
+    "dist/cases/generated/mk-live-20261002-225824.json",
+    "dist/cases/generated/mk-live-20261002-222517.json",
+    "dist/cases/generated/live/mk-live-20261003-082807.json"
+  ]
+}

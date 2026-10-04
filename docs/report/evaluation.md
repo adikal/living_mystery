@@ -38,6 +38,8 @@ For interactive Z3 checks, run `.venv/bin/python server/director_server.py`, ref
 
 ## 9.3 Proposed evaluation program
 
+Agent playtesting now measures several of these in play (fallbacks, declines, rejected replies, stalls, hint effectiveness), with paired experiments on held-out cases; see [chapter 11](playtest.md). Human studies remain proposed.
+
 A first real-model dataset should cover truthful answers, permitted lies, uncertain observations, evidence-backed revisions, irrelevant questions, injection attempts, unsupported promises and explicit conversation endings. Human annotations should identify allowed disclosures and concrete semantic violations independently of the tested critic. Measure false acceptance and false rejection separately; a critic that rejects every reply is safe only in a narrow and unhelpful sense.
 
 Record acceptance/fallback rates, semantic violation categories, end-to-end latency distributions, request counts and provider-reported usage. Stratify by character, account type and model configuration. Compare scripted baseline, generation without the critic, the current critic pipeline, and plan validation variants. Any ablation that removes safeguards belongs in isolated evaluation runs, not ordinary saves.

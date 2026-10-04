@@ -345,6 +345,48 @@ def _solve_shape(case):
                      tuple(r.get('false_signs') or []), r.get('twist'))
 
 
+def contradictions(case):
+    """Pairs of reachable signs that put one person in two places at overlapping times with neither recorded as
+    defeating the other (the kernels refuse such a case)."""
+    from refine import analyse, claim_of
+    A = analyse(case)
+    placed = sorted(sid for sid in A['understood'] if (claim_of(A['signs'][sid]) or {}).get('kind') == 'place')
+    out = []
+    for i, a in enumerate(placed):
+        for b in placed[i + 1:]:
+            x, y = claim_of(A['signs'][a]), claim_of(A['signs'][b])
+            if x['person'] == y['person'] and x['place'] != y['place'] and x['start'] < y['end'] and y['start'] < x['end'] \
+                    and b not in A['signs'][a].get('defeats', []) and a not in A['signs'][b].get('defeats', []):
+                out.append((a, b, A['truthval'].get(a), A['truthval'].get(b)))
+    return out
+
+
+def record_contradictions(case, log=print):
+    """Make every contradiction the player could see one the case records. A sighting is published only if it changes
+    nothing, so one that would break a lie is dropped; otherwise the true account is recorded as defeating the false one
+    (the history already makes it so). Returns the number of changes; a contradiction between two false accounts is
+    left for the gate to refuse."""
+    n = 0
+    for _ in range(len(case['signs'])):
+        found = contradictions(case)
+        if not found:
+            break
+        a, b, ta, tb = found[0]
+        signs = {x['id']: x for x in case['signs']}
+        sighting = next((x for x in (a, b) if signs[x].get('sighting')), None)
+        if sighting:
+            case['signs'] = [x for x in case['signs'] if x['id'] != sighting]
+            log(f'  dropped sighting {sighting}: it contradicts {b if sighting == a else a}')
+        elif ta != tb:
+            true, false = (a, b) if ta else (b, a)
+            signs[true].setdefault('defeats', []).append(false)
+            log(f'  {true} now defeats {false} (they contradict, and {true} is true)')
+        else:
+            break
+        n += 1
+    return n
+
+
 def add_sightings(case, log=print):
     """Who saw whom last night, as accounts: read from the history, kept only if the case certifies with the same solve
     (depth, every thread, the surface reading, the false accounts), worded by a model, checked by code and reviewed.
@@ -854,6 +896,77 @@ def add_ordinary_evenings(case, log=lambda *a: None):
     return n
 
 
+DECLINES_VERSION = 3   # 2: they close the topic, never suggest a secret or send the detective on; 3: never deny anything
+DECLINES = """For each person in a 1920s English village mystery you get their voice and character. Write four short ways
+(at most 16 words each) in which they would tell the detective that they have nothing to tell on what was asked: they
+cannot say, have nothing to tell about it, or have nothing more to add on it. In their own voice and manner, all four
+different, each plainly closing the subject. They must not suggest they are keeping something back (no "I'd rather not
+say", no "that's private"), and must not send the detective to anyone or anywhere. Each must state no fact at all: no
+place, time, person, event, object or reason that is a fact (not "I was at home", not "ask the vicar"), and no denial
+(not "I saw nothing", not "nobody came by", not "it never crossed my counter"): what they did or did not see is in the
+history, not in a decline.
+Return {"declines": {"<id>": ["...", ...]}}."""
+
+NO_FACT = """For each line, decide whether it states or implies any fact about the world: a place, a time, a person, an event,
+an object, or a reason that is a fact. A denial that something happened, was seen, noticed or recorded ("I saw nothing",
+"nothing passed my counter") states a fact. Saying one cannot say, has nothing to tell or nothing more to add, or a
+feeling, is not a fact.
+Return {"verdicts": {"<id>": [true | false, ...]}} with true where the line states NO fact, in order."""
+
+
+def _field(obj, key):
+    """obj[key], tolerating the shapes models return: the key nested twice ({"verdicts": {"verdicts": ...}}) or its value
+    encoded as a JSON string."""
+    v = obj.get(key) if isinstance(obj, dict) else None
+    while isinstance(v, dict) and set(v) == {key}:
+        v = v[key]
+    if isinstance(v, str) and v.strip()[:1] in '{[':
+        try:
+            v = json.loads(v)
+        except ValueError:
+            pass
+    return v if v is not None else {}
+
+
+def add_declines(case):
+    """case['declines'][pid]: four in-voice ways of saying there is nothing to tell on a question, so a turn the critics
+    rejected ends in character instead of the same stock line for everyone. They close the subject: a decline that hints
+    at a secret makes players press the same person (epoch 1). Wording only: code rejects digits and
+    any name; a model drops any line that states a fact."""
+    from refine import llm_json, CRITIC_MODEL
+    import premise
+    setting = {q['id']: q for q in premise.SETTING.get('people', [])}
+    if case.get('declines_version') != DECLINES_VERSION:
+        case['declines'] = {}                          # written to an older brief: write them again
+    have = case.get('declines') or {}
+    people = [p['id'] for p in case['people'] if p['id'] != enrich.victim_of(case) and p['id'] not in have]
+    roles = (case.get('setting') or {}).get('roles') or {}
+    people += [r for r in roles.values() if r not in people and r not in have]
+    if not people:
+        return 0
+    items = [{'id': pid, 'name': setting.get(pid, {}).get('name', pid), 'voice': setting.get(pid, {}).get('voice'),
+              'role': setting.get(pid, {}).get('role')} for pid in people]
+    out = _field(llm_json(DECLINES, json.dumps(items), 2500, model=CRITIC_MODEL), 'declines')
+    names = {w.lower() for q in setting.values() for w in str(q.get('name', '')).split() + [str(q.get('address', '')).split()[-1] if q.get('address') else '']
+             if len(w) > 2 and w not in ('The', 'Reverend')}
+    clean = {pid: [str(x).strip() for x in (_field(out, pid) or []) if isinstance(x, str) and str(x).strip()
+                   and not re.search(r'\d', x) and len(str(x).split()) <= 16
+                   and not any(re.search(r'\b' + re.escape(w) + r'\b', str(x).lower()) for w in names)] for pid in people}
+    clean = {pid: lines for pid, lines in clean.items() if lines}
+    if not clean:
+        return 0
+    verdicts = _field(llm_json(NO_FACT, json.dumps(clean), 1500, model=CRITIC_MODEL), 'verdicts')
+    case.setdefault('declines', {})
+    case['declines_version'] = DECLINES_VERSION
+    n = 0
+    for pid, lines in clean.items():
+        ok = _field(verdicts, pid) if isinstance(_field(verdicts, pid), list) else []
+        kept = [x for x, v in zip(lines, ok) if v is True or str(v).lower() == 'true']
+        if kept:
+            case['declines'][pid] = kept; n += 1
+    return n
+
+
 def prune_people(case):
     """People the true history never mentions have nothing true to say about the night, so they are not part of the
     case (premise.involved, the same definition the generator's evening rule uses). Returns the ids removed."""
@@ -887,6 +1000,8 @@ def enrich_case(case, log=print):
         for f in [ex.submit(mark_surface_truth, case), ex.submit(add_questions, case, case.get('synopsis', '')), ex.submit(add_reactions, case)]:
             f.result()
     add_sightings(case, log)                           # who saw whom, read from the history, certified solve-neutral
+    record_contradictions(case, log)                   # a contradiction the player can see is one the case records
+    add_declines(case)                                 # in-voice ways to decline, stating no fact
     add_show_lines(case)                               # lines for accounts added above
     enrich.add_art(case)                               # pictures for any clue added above
     enrich.add_unlock_groups(case)                     # leads that open together share one opening line

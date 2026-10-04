@@ -2,6 +2,20 @@
 
 ## Latest (October 2026)
 
+**Playtesting itself** ([self-improvement.md](self-improvement.md)). Built and run for three epochs: agent players with
+profiles (beginner, amateur, pro) play cases through a text interface; a scorecard and a judge score each game; the
+optimizer (an assistant session) proposes general changes as hypotheses with predictions; paired experiments on
+held-out cases decide. Epoch 1 (in-voice declines and a rule against unbacked promises) failed and was reverted in part;
+epoch 2 kept declines that close the subject, the chosen account before a decline, and hints that name whom and then the
+question (hints that helped: 57% → 87%). Next: calibrate players and judge against human play; record the state at each
+character turn so the offline replay is exact; automate an epoch (milestone 6); generator epochs (milestone 7).
+
+**A human play of Sealing Wax and Steel (4 October).** Three general fixes: familiar names a case uses ("Dora") are
+declared in the setting, so a character can name the person properly; the guarded third reply ("I've said more than I
+ought") follows only a fact-checker rejection, not a refused name; a cleared secret is explained by the attitude behind
+that behaviour. And the director's line critic now sees the speaker's private knowledge, so a line that hints at a secret
+arrangement ("just like you asked") is refused before anyone can repeat it to the detective.
+
 **Played as a player.** Five cases were played end to end and each problem fixed as a general rule: people start where
 the history leaves them; they know what the detective did only if they saw it or were told; stress follows the
 history; a question that rewords another is asked through it; hints follow the kernel's critical signs; the constable

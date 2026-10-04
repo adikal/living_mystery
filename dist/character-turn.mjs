@@ -225,9 +225,12 @@ export async function proposeCharacterTurn(ticket,opts={}){
     let violations=[];
     try{
       for(let attempt=0;attempt<3;attempt++){
-        // Third try: the character keeps to what they have already told the detective. Memories that no account
-        // covers are theirs to keep, so they deflect or decline in character instead of revealing them.
-        const guarded=attempt===2&&!ticket.action;
+        // Third try, after the fact-checker has rejected a reply: the character keeps to what they have already told the
+        // detective. Memories that no account covers are theirs to keep, so they deflect or decline in character instead
+        // of revealing them. Not after code checks alone (a name, a number): that reply revealed nothing, and a guarded
+        // "I've said more than I ought" would suggest a secret where there is none.
+        const criticRejected=audit.attempts.some(x=>x.critic&&parseCritic(x.critic.response)?.verdict!=='pass');
+        const guarded=attempt===2&&!ticket.action&&criticRejected;
         if(guarded)violations=[...violations.slice(0,2),'Your previous replies revealed things you have not told the detective (from your memories, not your accounts). Do not reveal them. Reply in character with account null and intent "evade" or "refuse": deflect, decline, or say plainly you have nothing to tell about it, as your attitudes and loyalties suggest. State no fact about any person, place, time or event.'];
         const generation=await call(CHARACTER_PROMPT,{...ticket.context,revisionFeedback:violations},1200,0.85);
         if(controller.signal.aborted)throw Error('cancelled');
@@ -248,7 +251,22 @@ export async function proposeCharacterTurn(ticket,opts={}){
   try{return copy(await Promise.race([run(),timeout,cancelled]));}finally{clearTimeout(timer);opts.signal?.removeEventListener('abort',abort);}
 }
 
-// Last resort when no account fits and the model's reply was rejected: stay non-committal, but about what was asked.
+// The account the model judged fitting, from its latest attempt that chose one the person may give: the critics may
+// reject a reply's wording, but the account itself is published and permitted, the same as the question that asks for it.
+// One already told is not given again (it would answer nothing new).
+function chosenAccount(s,ticket,audit){
+  const told=new Set(s.world.npcs[ticket.person]?.dialogueState?.disclosures??[]);
+  const said=new Set(s.events.filter(e=>e.kind==='speech'&&e.actor===ticket.person&&e.data?.listener==='player').map(e=>e.data.assertion));
+  for(const entry of [...(audit?.attempts??[])].reverse()){
+    const p=normalizeProposal(parseJsonLoose(entry?.generation?.response??'null'),ticket);
+    const account=p&&typeof p==='object'&&ticket.routes[p.account]?ticket.context.accounts.find(a=>a.id===p.account):null;
+    if(account&&!told.has(account.id)&&!said.has(account.statement))return account;
+  }
+  return null;
+}
+
+// Last resort when the model's reply was rejected: the account it chose, written as published; with none, the person
+// declines in their own words.
 export function applyCharacterTurn(s,ticket,result){
   if(exportSession(s)!==ticket.base)throw Error('The world changed while the character was responding. Please try again.');
   if(result.audit.reason==='cancelled')return {cancelled:true};
@@ -265,12 +283,15 @@ export function applyCharacterTurn(s,ticket,result){
     if(!validation.ok||result.audit.status!=='accepted'||!verifiedCritic||!same(generated,p))throw Error('Unvalidated character proposal.');
   }
   const trial=copy(s);
-  // Free text fallback asks for a supported topic; never guesses an accusation or threat.
-  const written=ticket.action?ticket.context.accounts[0]:null;
-  const fallback={intent:written?(written.deceptive?'deceive':'answer'):'clarify',account:written?.id??null,
-    utterance:written?.statement??NEUTRAL_LINE,
+  // a menu question gives its own account; free text the account the model chose, if any; never an accusation or threat
+  const written=ticket.action?ticket.context.accounts[0]:p?null:chosenAccount(s,ticket,result.audit);
+  const route=ticket.action??(written?ticket.routes[written.id]:null);
+  // with nothing written to give, the person declines in their own words (the case's declines), never a shared stock line
+  const decline=caseTables(s).behavior?.declineFor?.(s,ticket.person)??NEUTRAL_LINE;
+  const fallback={intent:written?(written.deceptive?'deceive':'answer'):'refuse',account:written?.id??null,
+    utterance:written?.statement??decline,
     claims:written?.claims??[],sources:written?.sources??[],trust:'unchanged',belief:'remember_only',engagement:'continue',rationale:'The model was unavailable or its proposal did not pass validation.'};
-  dispatchCharacter(trial,{person:ticket.person,text:ticket.text,proposal:p??fallback,action:p?.account?ticket.routes[p.account]:!p?ticket.action:null,audit:result.audit,useAuthored:!p&&Boolean(ticket.action),presented:ticket.action?.type==='present'?ticket.action.clue:null,origin:ticket.action,queuedPlan:p?.plan?ticket.context.character.plans.find(plan=>plan.id===p.plan):null});
+  dispatchCharacter(trial,{person:ticket.person,text:ticket.text,proposal:p??fallback,action:p?.account?ticket.routes[p.account]:!p?route:null,audit:result.audit,useAuthored:!p&&Boolean(route),presented:ticket.action?.type==='present'?ticket.action.clue:null,origin:ticket.action,queuedPlan:p?.plan?ticket.context.character.plans.find(plan=>plan.id===p.plan):null});
   const health=diagnostics(trial);if(!health.ok)throw Error(`Character turn failed integrity checks: ${health.errors[0]}`);
   // Commit atomically after the whole candidate turn passes replay/world checks.
   s.events=trial.events;s.world=trial.world;

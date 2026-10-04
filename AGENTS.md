@@ -63,7 +63,8 @@ The user's screenshots are on `~/Desktop` (names contain a narrow no-break space
 | Generation | `tools/refine-c/premise.py` (premise deck: who, how, why, where; rotation; seed checks), `tools/refine-c/refine.py` (harness, reviewer), `tools/refine-c/publish.py` (`enrich_case` pipeline + `gate`), `tools/refine-c/enrich.py` (answer, loose ends, everyday knowledge, moods, publish review), `server/generator_server.py` |
 | Cases | `dist/cases/generated/*.json` (shipped), `dist/cases/generated/live/` (generated on this machine, gitignored) |
 | Shared rules | `dist/cases/questions.mjs` (the standard questions; publishing reads them), `dist/places.mjs` (place names mid-sentence); the constable is `CASE.constable` (a setting role), never a fixed id |
-| Design | `docs/living-village.md` (sightings, the living morning, and the rules found by playing), `docs/visual-world.md` (next: map, scenes, dialogue, inventory; free-form dialogue is never dropped), `docs/mystery-kernel.md`, `docs/difficulty.md` (case difficulty: features, model, fitting), `docs/architecture.md`, `docs/roadmap.md`, report in `docs/report/`, deck in `docs/deck/` |
+| Playtesting | `tools/playtest/` (`game.mjs` text interface with opaque handles and a private trace; `player.py` agent players with profiles; `run.py` batches, `--plan-from` for paired re-runs; `score.py` scorecard and problem records; `judge.py` rubric judge; `report.py` clusters and paired bootstrap comparisons; `replay.mjs` offline check of a dialogue change; `ledger.jsonl` hypotheses, predictions and results). Method: `docs/self-improvement.md` §6 (observe, explain, predict, design narrowly, test offline, paired experiments one change per arm, conclude) |
+| Design | `docs/self-improvement.md` (agents playtest the game, an optimizer improves it, a gate keeps only general gains; epochs 0–2 played), `docs/living-village.md` (sightings, the living morning, and the rules found by playing), `docs/visual-world.md` (next: map, scenes, dialogue, inventory; free-form dialogue is never dropped), `docs/mystery-kernel.md`, `docs/difficulty.md` (case difficulty: features, model, fitting), `docs/architecture.md`, `docs/roadmap.md`, report in `docs/report/`, deck in `docs/deck/` |
 
 ## Testing
 
@@ -81,6 +82,8 @@ perl -e 'alarm 150; exec @ARGV' node --test --test-timeout=60000 tests/*.test.mj
 .venv/bin/python scripts/build_report.py --check        # after editing docs/report
 node tools/e2e_dialogue.mjs dist/cases/generated/live/<case>.json   # every character, standard questions, real AI
 .venv/bin/python tools/refine-c/batch.py easy medium hard           # generate cases in parallel (one process each)
+.venv/bin/python -W ignore tools/playtest/test_playtest.py   # scorecard and paired comparison
+.venv/bin/python -W ignore tools/refine-c/test_declines.py     # declines: no facts, versioned
 ```
 
 Always use a time limit: a UI test that fails before clearing a polling timer can keep Node alive. Live checks against

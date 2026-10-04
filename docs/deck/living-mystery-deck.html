@@ -634,12 +634,26 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
 <div class="slide">
   <div class="fade-in delay-1"><span class="tag tag-green">WHAT IS VERIFIED</span><h2>Guarantees, and how we know</h2></div>
   <div class="grid" style="grid-template-columns:repeat(4,1fr);">
-    <div class="card fade-in delay-2" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--accent);">220</div><div class="ct">JS tests</div><p>engine, characters, kernel, generated-case play, the living morning, the UI — plus 23 Python and five generator harnesses</p></div>
+    <div class="card fade-in delay-2" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--accent);">259</div><div class="ct">JS tests</div><p>engine, characters, kernel, generated-case play, the living morning, the UI, the playtest interface — plus 25 Python and nine generator harnesses</p></div>
     <div class="card fade-in delay-3" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--green);">443</div><div class="ct">cases in parity</div><p>Python and JS checkers agree on every generated case; Z3 agrees on 1,110 depth checks</p></div>
     <div class="card fade-in delay-4" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--gold);">13</div><div class="ct">playable cases</div><p>Easy to Hard, each rated by a computed difficulty; every account reachable from the menu; each solved end to end by code</p></div>
     <div class="card fade-in delay-5" style="padding:24px;text-align:center;"><div style="font-size:48px;font-weight:800;color:var(--blue);">3</div><div class="ct">independent certifiers</div><p>a case is published only when the Python kernel, the JS kernel and Z3 all certify it and agree</p></div>
   </div>
   <div class="card fade-in delay-6" style="padding:18px 24px;margin-top:6px;"><p style="font-size:15px;"><b style="color:var(--text-primary)">Honest limits.</b> The kernel certifies fair, solvable, deep and misleading — not fun. The fact-checker and the morning director are models’ judgements: about 96% of replies come from the model, and the director often lets people carry on quietly. A case takes 5–25 minutes to build (one is kept ready); touch screens have no drag and drop.</p></div>
+  <div class="slide-number"></div>
+</div>
+
+<!-- 16b. PLAYTESTING ITSELF -->
+<div class="slide">
+  <div class="fade-in delay-1"><span class="tag tag-teal">PLAYTESTING ITSELF</span><h2>Agent players, a judge, and changes tested like experiments</h2>
+  <p class="sub">Agents play cases through a text interface; their games are scored from the event log and judged by a second model. Each change is a hypothesis with a prediction written down first, kept only if paired games on held-out cases support it.</p></div>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="card fade-in delay-2" style="padding:20px;"><div class="num">1 · OBSERVE</div><div class="ct">Play and score</div><p>3 profiles (beginner, amateur, pro) × held-out and training cases; stalls, fallbacks, declines, hint use; a judge rates fun, fairness, frustration.</p></div>
+    <div class="card fade-in delay-3" style="padding:20px;"><div class="num">2 · EXPLAIN · PREDICT</div><div class="ct">A cause, checked in the data</div><p>“Level-1 hints name no one: they help 26% of the time, against 69% when the person is named.” The prediction and what would refute it go in a ledger.</p></div>
+    <div class="card fade-in delay-4" style="padding:20px;"><div class="num">3 · TEST</div><div class="ct">Offline, then paired play</div><p>Tests and an offline replay of recorded questions first; then the same games as the baseline, two seeds, one change per arm.</p></div>
+    <div class="card fade-in delay-5" style="padding:20px;"><div class="num">4 · CONCLUDE</div><div class="ct">Keep or revert</div><p>Epoch 1 failed (solved −44 points) and was reverted in part. Epoch 2 passed: hints that helped 57% → 87%, nothing worse beyond noise but liveliness (−0.3).</p></div>
+  </div>
+  <div class="card fade-in delay-6" style="padding:18px 24px;margin-top:6px;"><p style="font-size:15px;"><b style="color:var(--text-primary)">Honest limits.</b> Players and judge are models, not yet calibrated against people; 18 paired games show only large effects on solve rate; the optimizer is an assistant session and the author approves every change.</p></div>
   <div class="slide-number"></div>
 </div>
 
@@ -655,7 +669,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;font
     <div class="card fade-in delay-4" style="padding:20px;"><div class="num">05 · QUESTIONS</div><div class="ct">Beyond “who”</div><p>Who, how and why are asked now; next, when, identity and “what happened”, with matching accusation forms.</p></div>
     <div class="card fade-in delay-4" style="padding:20px;"><div class="num">06 · LIVES</div><div class="ct">Richer mornings</div><p>The village now reacts; next, people who come to the detective, lies that spread and are caught, and calibrated difficulty from real plays.</p></div>
     <div class="card fade-in delay-5" style="padding:20px;"><div class="num">07 · WORLDS</div><div class="ct">New settings</div><p>Generated setting ontologies and art, from ocean liners to generation ships.</p></div>
-    <div class="card fade-in delay-5" style="padding:20px;"><div class="num">08 · EVALUATION</div><div class="ct">Is it good?</div><p>Blind-solve agents and player studies: does the twist mislead, does the solution satisfy?</p></div>
+    <div class="card fade-in delay-5" style="padding:20px;"><div class="num">08 · EVALUATION</div><div class="ct">Is it good?</div><p>Agent playtests now run; next, calibrate them against human players and automate an epoch.</p></div>
   </div>
   <div class="slide-number"></div>
 </div>

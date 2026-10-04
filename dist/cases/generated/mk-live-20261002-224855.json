@@ -1862,6 +1862,8 @@
   "s_saw_vicar_iris_surgery|direct",
   "s_saw_vicar_iris_surgery|text",
   "s_surface_ada|text",
+  "s_surface_bell|text",
+  "s_surface_dora|text",
   "s_surface_hugo|text",
   "s_surface_iris|text",
   "s_surface_rowan|text",
@@ -1885,5 +1887,56 @@
    "herrings_other": 0,
    "lenient_motives": 0
   }
- }
+ },
+ "declines": {
+  "hugo": [
+   "Ha, no, nothing there, honestly\u2014my mind's a total blank on that one.",
+   "Can't help you there, old sport, there's just nothing to say.",
+   "Search me! Nothing's coming up, not a single thing to add.",
+   "Nope, drawing a complete blank\u2014that's all I've got, I'm afraid."
+  ],
+  "ada": [
+   "Oh love, I've nothing for you there, not a scrap, truly.",
+   "Can't help you on that one, I'm afraid, nothing to tell.",
+   "Haven't got a thing to add there, love, and that's the truth.",
+   "Nothing more from me on that, I'm sorry to say, dear."
+  ],
+  "silas": [
+   "I have nothing to offer on that matter, I'm afraid. Nil.",
+   "There is simply nothing further I can tell you there.",
+   "On that point, I have no information to furnish, none at all.",
+   "I regret I can add nothing whatsoever on that score."
+  ],
+  "vicar": [
+   "Ah, I'm afraid I have nothing at all to tell you there.",
+   "There's simply nothing more I can offer on that, I'm sorry.",
+   "I find I have nothing to say on that particular matter.",
+   "No, truly, nothing comes to me there, nothing at all."
+  ],
+  "iris": [
+   "I have nothing to report on that.",
+   "No findings there. Nothing further to add.",
+   "I can't tell you anything on that point.",
+   "Nothing to offer there, I'm afraid. That's all."
+  ],
+  "rowan": [
+   "Nowt to tell you there.",
+   "Can't help you on that one. Nothing.",
+   "Nothing there, that's the plain truth of it.",
+   "No, nothing more to say on that."
+  ],
+  "bell": [
+   "Nothing to report there.",
+   "Can't tell you anything on that, I'm afraid.",
+   "Nothing further from me on that score.",
+   "No, nothing to add there. That's it."
+  ],
+  "dora": [
+   "I have nothing to tell you on that matter, none at all.",
+   "There is nothing further for me to say on that point.",
+   "I'm afraid I can offer nothing whatsoever there.",
+   "Nothing to add on that score, and that is final."
+  ]
+ },
+ "declines_version": 3
 }

@@ -1944,5 +1944,68 @@
    "herrings_other": 0,
    "lenient_motives": 1
   }
- }
+ },
+ "declines": {
+  "clara": [
+   "I'm afraid that is simply not a matter I can speak to at all.",
+   "There is nothing in that question I am able to answer for you.",
+   "I have no answer to give you there, I'm sorry to say.",
+   "That is quite beyond anything I can tell you, Inspector."
+  ],
+  "ada": [
+   "Oh love, I've got nothing at all for you on that one, sorry.",
+   "Can't help you there, dearie, not a thing comes to mind.",
+   "That's a blank with me, love, nothing I can offer you there.",
+   "Haven't a word to give you on that, I'm afraid, truly."
+  ],
+  "jonah": [
+   "Nothing in me on that. Not a thing to give you.",
+   "Can't put a word to that one. Empty, same as the river at low tide.",
+   "I've nothing there. Weighed it, and there's nothing to weigh.",
+   "That one's dry ground for me. No answer in it."
+  ],
+  "silas": [
+   "On that point I have nothing whatsoever to offer, I'm afraid.",
+   "Nihil habeo, Inspector; there is simply nothing for me to add.",
+   "I regret I can furnish no answer to that question at all.",
+   "That matter yields nothing from me; I have no answer to give."
+  ],
+  "iris": [
+   "I have nothing to report on that question, I'm afraid.",
+   "That's outside what I can tell you; I have no answer there.",
+   "I can offer nothing further on that particular point.",
+   "Nothing to add there; that's simply not something I can answer."
+  ],
+  "rowan": [
+   "Nothing there. That's the end of it, far as I'm concerned.",
+   "Can't give you a thing on that one, and that's that.",
+   "No answer in me for that. Nothing more to say.",
+   "That one's empty ground. Nothing growing there, so to speak."
+  ],
+  "bell": [
+   "Nothing to report there. That's all I've got, and that's final.",
+   "Can't give you an answer on that one. Nothing more to it.",
+   "That's a blank, far as I'm concerned. Nothing further to say.",
+   "No answer in me on that one. Leave it there."
+  ],
+  "edmund": [
+   "I've nothing to tell you on that, and there's an end to it!",
+   "That's simply not something I can answer, so leave it be.",
+   "Nothing there from me, man. That's my final word on it.",
+   "I can give you no answer on that matter whatsoever."
+  ],
+  "vicar": [
+   "I'm afraid I have nothing at all to offer on that question.",
+   "That particular matter leaves me quite without an answer to give you.",
+   "I find I have nothing further to say on that, I'm sorry.",
+   "There is simply no answer in me for that one, I fear."
+  ],
+  "dora": [
+   "I have nothing to report on that matter, and that is final.",
+   "That question yields nothing from me; there's simply no answer to record.",
+   "Nothing further to add there, I'm afraid; that's quite complete.",
+   "I can offer no answer on that point whatsoever, Inspector."
+  ]
+ },
+ "declines_version": 3
 }

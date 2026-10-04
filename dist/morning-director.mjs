@@ -26,7 +26,7 @@ Nobody hides anything in front of the detective or the constable. People react o
 
 Return ONLY JSON: {"agendas": {"<person id>": [steps]}, "why": "<one short line>"}.`;
 
-export const LINE_CRITIC = `You check what people say to each other in a village mystery. Each item gives the speaker, whom they speak to, what they say, and the knowledge it rests on: all of it is what the speaker knows, and telling it to someone who has not heard it yet is the point (that is how news travels). Reject an item if it states a fact not in that knowledge, claims to know something the speaker could not know, or tells a lie better than the speaker's own story. Repeating, paraphrasing, guessing aloud, worrying, or asking are fine. Return ONLY JSON: {"verdicts": {"<id>": {"ok": true|false, "why": "<short>"}}}.`;
+export const LINE_CRITIC = `You check what people say to each other in a village mystery. Each item gives the speaker, whom they speak to, what they say, and the knowledge it rests on: all of it is what the speaker knows, and telling it to someone who has not heard it yet is the point (that is how news travels). Reject an item if it states a fact not in that knowledge, claims to know something the speaker could not know, or tells a lie better than the speaker's own story. Each item also lists what the speaker knows privately (their secrets, their reasons, what they did and arranged): reject an item that reveals or hints at any of it, even to a confidant, because whatever is said is passed on. Repeating, paraphrasing, guessing aloud, worrying, or asking are fine. Return ONLY JSON: {"verdicts": {"<id>": {"ok": true|false, "why": "<short>"}}}.`;
 
 const arr = v => Array.isArray(v) ? v : [];
 
@@ -90,7 +90,10 @@ export async function criticise(s, proposal, {lineCritic}) {
   const items = {};
   for (const [pid, steps] of Object.entries(plan)) for (const [i, x] of steps.entries()) if (x.kind === 'meet') {
     const k = Morning.knowledge(s, kc, pid, ctx.people, ctx.places), all = [...k.private, ...k.sayable];
-    items[`${pid}:${i}`] = {speaker: ctx.people[pid].name, says: x.say, to: ctx.people[x.with].name, knowledge: x.because.map(c => all.find(y => y.id === c)?.text).filter(Boolean)};
+    items[`${pid}:${i}`] = {speaker: ctx.people[pid].name, says: x.say, to: ctx.people[x.with].name, knowledge: x.because.map(c => all.find(y => y.id === c)?.text).filter(Boolean),
+      // what they must not let slip (a meeting cites only what they may say; the code critic refused any other): the hearer
+      // may repeat the line to anyone, the detective included
+      private: k.private.map(y => y.text)};
   }
   if (Object.keys(items).length) {
     const verdicts = (await lineCritic(items))?.verdicts ?? {};

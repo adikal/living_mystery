@@ -2348,5 +2348,68 @@
  },
  "morning_dropped": [
   "s_morning_rowan"
- ]
+ ],
+ "declines": {
+  "clara": [
+   "I'm afraid that is simply not a thing I can tell you.",
+   "There is nothing in that question I am able to answer.",
+   "I have nothing whatsoever to offer on that particular point.",
+   "That matter is quite closed, so far as I can speak to it."
+  ],
+  "hugo": [
+   "Ha, no, can't help you there, honestly, that's a blank page.",
+   "Search me, I've got absolutely nothing on that one, truly.",
+   "Not a sausage, I'm afraid, nothing to give you there.",
+   "Drawing a total blank there, old thing, nothing comes to mind."
+  ],
+  "jonah": [
+   "Nothing there. The water keeps that, not me.",
+   "Can't give you a word on that. Not one.",
+   "That's a stone I've got no answer under.",
+   "Nothing to weigh there. I'll not pretend otherwise."
+  ],
+  "rowan": [
+   "Nothing to say on that. That's the end of it.",
+   "Can't help you there. Nothing more to it.",
+   "That's all I've got, which is nothing at all.",
+   "Nowt to tell on that score, and that's that."
+  ],
+  "silas": [
+   "On that point, I regret I have nothing whatsoever to furnish.",
+   "Nihil habeo, as it were; I can offer no answer there.",
+   "That inquiry, I'm afraid, admits of no response from me.",
+   "I have no further material to supply on that question."
+  ],
+  "ada": [
+   "Oh, love, I've got nothing for you on that one, honestly.",
+   "Can't help you there, dearie, that's a blank with me.",
+   "Nothing comes to mind on that, not a scrap, love.",
+   "That's one I can't fill in for you, I'm afraid."
+  ],
+  "iris": [
+   "I have nothing to report on that matter.",
+   "That falls outside what I'm able to tell you.",
+   "No findings there; I have nothing further to add.",
+   "I can't offer anything on that particular question."
+  ],
+  "bell": [
+   "Nothing to tell on that. That's it.",
+   "Can't help you there. Nothing more to say.",
+   "That's a blank, far as I'm concerned.",
+   "No answer in me on that one."
+  ],
+  "vicar": [
+   "I'm afraid that particular question leaves me quite without an answer to give.",
+   "On that score I find I have nothing at all to offer you.",
+   "That, I'm sorry to say, is simply beyond what I can tell you.",
+   "I have searched my thoughts and find nothing further to say there."
+  ],
+  "dora": [
+   "I have nothing to report on that matter, and that's final.",
+   "That question, I'm afraid, yields nothing from me whatsoever.",
+   "There is simply nothing further I can note on that point.",
+   "I can offer no entry at all on that particular matter."
+  ]
+ },
+ "declines_version": 3
 }

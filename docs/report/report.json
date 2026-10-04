@@ -1,8 +1,8 @@
 {
   "title": "Living Mystery",
   "subtitle": "A deterministic substrate for believable characters and investigable worlds",
-  "edition": "0.6",
-  "date": "2026-09-12",
+  "edition": "0.23",
+  "date": "2026-10-04",
   "chapters": [
     [
       "index",
@@ -49,8 +49,12 @@
       "10. Procedural generation"
     ],
     [
+      "playtest",
+      "11. Self-improvement by playtesting"
+    ],
+    [
       "reference",
-      "11. References & maintenance"
+      "12. References & maintenance"
     ]
   ]
 }

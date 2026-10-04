@@ -327,8 +327,9 @@ export function makeKernelCase(records) {
     }
 
     // Progressive hints: the next thing the player can do, told gently first (level 1), then more plainly.
-    function hints(s) {
-      if (s.world.status === 'solved') return {id: 'solved', levels: ['The case is closed. Open the inspector to see everything that happened that night.']};
+    // What the player can do next, best first: the evidence they can reach now, ordered toward what the solution still
+    // needs (shared by the hints and the constable's briefing).
+    function ranked(s) {
       const have = held(s);
       const gone = goneSet(s), kcNow = gone.size ? {...kc, signs: kc.signs.filter(x => !gone.has(x.id))} : kc;
       const A = analyse(kcNow), depth = id => A.eff[id] ?? 99;
@@ -349,6 +350,11 @@ export function makeKernelCase(records) {
       if (!missing.length) solutionPath(kcNow, A, gone, st.remaining).forEach(walk);
       const next = kc.signs.filter(x => !have.has(x.id) && earned(s, x.id))
         .sort((a, b) => (toward.has(b.id) ? 1 : 0) - (toward.has(a.id) ? 1 : 0) || depth(a.id) - depth(b.id) || (claimOf(b) ? 1 : 0) - (claimOf(a) ? 1 : 0));
+      return {next, toward, missing, misled, st};
+    }
+    function hints(s) {
+      if (s.world.status === 'solved') return {id: 'solved', levels: ['The case is closed. Open the inspector to see everything that happened that night.']};
+      const {next, toward, missing, misled, st} = ranked(s);
       const x = missing.length && !next.some(n => toward.has(n.id)) ? null : next[0];
       const lead = PEOPLE[st.lead]?.name;
       if (misled && x && toward.has(x.id)) {
@@ -392,10 +398,13 @@ export function makeKernelCase(records) {
         const want = x.sighting ? 'seen' : x.morning ? 'morning' : null;
         const topic = (want ? menu.find(([t]) => t === want) : menu.find(([t]) => t === x.id) ?? menu.find(([t]) => t === 'more') ?? menu.find(([t]) => t === 'night'))?.[1]
           ?? Q.night;
+        // Level 1 names whom (playtests: an unnamed "someone" helped a quarter of the time, a name two thirds); level 2 the
+        // question itself, which is one of the options shown when the player is with them.
+        const at = LOCATIONS[where] ? ` at ${place(where)}` : '';
         return {id: x.id, levels: [
-          prereq ? `Something you found may loosen someone's tongue.` : `Someone has more to tell you than they have said so far.`,
-          `${who}${LOCATIONS[where] ? ` (now at ${place(where)})` : ''} is worth talking to${prereq ? ` now that you have ${String(prereq.title || 'that').toLowerCase()}` : ''}.`,
-          `Ask ${who}: “${topic}”`]};
+          `${who}${at} has more to tell you than they have said so far${prereq ? `, now that you have ${String(prereq.title || 'that').toLowerCase()}` : ''}.`,
+          `Ask ${who}: “${topic}”`,
+          `Ask ${who}${at}: “${topic}” (one of the questions you can choose when you are with them).`]};
       }
       if (arr(s.world.flags.lockedObjects).includes(x.id))
         return {id: x.id, levels: ['What you have found points somewhere you have not looked yet.', `Go to ${place(x.at)}.`,
@@ -497,21 +506,23 @@ export function makeKernelCase(records) {
       K.advance(s, 3, cause);
     }
 
-    // Bell's briefing uses only the case frame and navigation: the premise, who is under suspicion, and where
-    // there is something to examine or someone willing to talk. It never states evidence.
+    // The constable's briefing: the premise, how many people are in question, one person to talk to and one place to
+    // look (the first of each on the way forward), and what to bring back. Bite-sized for a newcomer; it never states
+    // evidence. Asked again later, the pointers move on with the investigation.
     function briefing(s) {
-      const names = suspects.map(p => PEOPLE[p].name);
-      const open = new Set(s.world.flags.lockedObjects || []);
-      const gone = goneSet(s);
-      const places = [...new Set(kc.signs.filter(x => x.kind !== 'testimony' && !open.has(x.id) && !gone.has(x.id) && !K.has(s, x.id)).map(x => x.at))]
-        .filter(pl => LOCATIONS[pl]).map(pl => LOCATIONS[pl].name);
-      const talkers = [...new Set(kc.signs.filter(x => x.kind === 'testimony' && !K.has(s, x.id) && earned(s, x.id)).map(x => x.speaker))]
-        .filter(p => PEOPLE[p] && p !== constable).map(p => PEOPLE[p].name);
-      return [CASE.synopsis,
-        `The people with reason or chance to be near him last night are ${names.slice(0, -1).join(', ')} and ${names.at(-1)}.`,
-        places.length ? `There is something worth examining at ${places.slice(0, 4).join(', ')}.` : 'You have examined everything I know of.',
-        talkers.length ? `${talkers.slice(0, 4).join(', ')} may be willing to talk.` : '',
-        'Bring me a case where everyone else is ruled out, and where nothing you rely on turns out to be a lie.'].filter(Boolean).join(' ');
+      const {next} = ranked(s), where = pid => s.world.npcs[pid]?.travel?.to ?? s.world.npcs[pid]?.location;
+      const talk = next.find(x => x.kind === 'testimony' && PEOPLE[x.speaker] && x.speaker !== constable && LOCATIONS[where(x.speaker)]);
+      const look = next.find(x => x.kind !== 'testimony' && LOCATIONS[x.at] && x.at !== (talk && where(talk.speaker)))
+        ?? next.find(x => x.kind !== 'testimony' && LOCATIONS[x.at]);
+      // where to find them, unless it is their own home (the map shows who is where)
+      const atHome = talk && where(talk.speaker) === BW_PEOPLE[talk.speaker]?.home;
+      const who = talk && `${PEOPLE[talk.speaker].address ?? PEOPLE[talk.speaker].name}${atHome ? '' : ` at ${inSentence(LOCATIONS[where(talk.speaker)])}`}`;
+      const at = look && inSentence(LOCATIONS[look.at]);
+      const start = who && at ? `I'd start by talking to ${who}, and have a look round ${at}.`
+        : who ? `I'd start by talking to ${who}.` : at ? `I'd start by having a look round ${at}.` : 'You have seen everything I know of; go over what you hold.';
+      const count = ['', 'One person', 'Two people', 'Three people', 'Four people', 'Five people', 'Six people'][suspects.length] ?? `${suspects.length} people`;
+      return [CASE.synopsis, `${count} had reason or chance to be near ${BW_PEOPLE[victim]?.pronoun === 'she' ? 'her' : 'him'} last night.`, start,
+        'When you can show who did it, how and why, bring it to me.'].filter(Boolean).join(' ');
     }
 
     // ---- Showing evidence ------------------------------------------------------------------------------------
@@ -572,6 +583,16 @@ export function makeKernelCase(records) {
       return NEUTRAL;
     }
 
+    // Why this person did the thing a cleared behaviour shows: the attitude the history gives as the cause of that
+    // behaviour's own event (or of the events it stems from), never another of their secrets.
+    function innocentReason(pid, behaviour) {
+      const x = signs[behaviour], byId = Object.fromEntries(kc.events.map(e => [e.id, e]));
+      const mine = id => arr(kc.attitudes).find(a => a.id === id && a.agent === pid);
+      for (let e = byId[x?.source], seen = new Set(); e && !seen.has(e.id); seen.add(e.id), e = byId[e.causedBy])
+        if (mine(e.causedBy)) return mine(e.causedBy);
+      return arr(x?.because).map(mine).find(Boolean) ?? null;
+    }
+
     function present(s, pid, clue, tone, cause) {
       if (!K.local(s, pid) || !K.has(s, clue)) { K.reject(s, 'Presentation unavailable', 'Discover the clue and find the person first.', cause); return; }
       const line = presentLine(s, pid, clue);
@@ -594,7 +615,6 @@ export function makeKernelCase(records) {
         && x.source && x.source === signs[clue].source);
       // the culprit shown something that breaks the account that placed them elsewhere
       const alibiBroken = pid === truthActor && arr(signs[clue].defeats).some(d => claimOf(signs[d])?.person === pid);
-      const secret = attitudesOf(pid).find(a => ['fears', 'wants', 'feels'].includes(a.mode) && !kc.events.some(e => e.causedBy === a.id && e.id === kc.question.crime.event));
       const written = signs[clue].reactions?.[pid];   // written for this person when the case was generated
       let text, intent = 'Respond to evidence';
       if (caught) {
@@ -606,7 +626,8 @@ export function makeKernelCase(records) {
         K.believe(s, pid, `mk_conceded_${caught.id}`, `My account (${caught.title || caught.id}) has been shown to be untrue: ${text}`, .99, 'observation', heard, true);
         K.believe(s, pid, `mk_admitted_${caught.id}`, text, .99, 'observation', heard, true);   // the words, for references back
       } else if (cleared) {
-        text = written || `So you know. Yes. ${secret ? reason(secret) : 'I had a private reason.'} It is nothing to do with ${victimAddr}'s death, and I would thank you to keep it quiet.`;
+        const why = innocentReason(pid, cleared.id);
+        text = written || `So you know. Yes. ${why ? reason(why) : 'I had a private reason.'} It is nothing to do with ${victimAddr}'s death, and I would thank you to keep it quiet.`;
         intent = 'Admit an innocent secret';
         K.believe(s, pid, `mk_explained_${cleared.id}`, `The detective knows the innocent reason for my behaviour: ${text}`, .99, 'observation', heard, true);
       } else if (own && !(pid === truthActor && arr(signs[clue].defeats).length)) {
@@ -755,7 +776,16 @@ export function makeKernelCase(records) {
     // Free-text questions may draw on every account this person can give now (the buttons still offer them one at a
     // time), so "did you see Voss?" can be answered from the account about Voss.
     const freeTextTopics = (s, pid) => [...(everyday(pid) ? ['everyday'] : []), ...(Morning.news(s, pid, PEOPLE).length ? ['news'] : []), ...accounts(s, pid).map(x => x.id)];
-    return {morningCtx, seedSession, afterAction, decide, canAsk, ask, present, presentLine, checkCase, caseStatus, pillarsHeld, followupOptions, freeTextTopics, hints, parseCommand, reconcileKnowledge() {},
+    // How this person declines when they have nothing to tell (published, in their voice, stating no fact): the next one
+    // after the last they used, so the same words do not come back at once. The stock line only if the case has none.
+    function declineFor(s, pid) {
+      const lines = arr(kc.declines?.[pid]);
+      if (!lines.length) return NEUTRAL;
+      const used = s.events.filter(e => e.kind === 'speech' && e.actor === pid && lines.includes(e.data?.assertion)).length;
+      return lines[used % lines.length];
+    }
+    const isDecline = (pid, text) => text === NEUTRAL || arr(kc.declines?.[pid]).includes(text);
+    return {morningCtx, seedSession, afterAction, decide, canAsk, ask, present, presentLine, checkCase, caseStatus, pillarsHeld, followupOptions, freeTextTopics, hints, declineFor, isDecline, innocentReason, parseCommand, reconcileKnowledge() {},
       commandLabel: a => `${a.type} ${a.person ?? a.object ?? a.to ?? ''}`, caseHealth: () => []};
   }
   return {CASE, LOCATIONS, PEOPLE, CLUES, OBJECTS, model, baseWorld, createBehavior, SUSPECTS: suspects,

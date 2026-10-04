@@ -138,3 +138,16 @@ test('a concealment the kernel refused is not offered to the director again', as
   Morning.install(caseTables(s).kernel, s, {}, s.events.at(-1).id, {solvable: {[`${owner}:${needed.id}`]: 'the case needs it'}}, []);
   assert.ok(!Morning.concealable(s, kc, owner).includes(needed.id));
 });
+
+test('the line critic is shown what the speaker must not let slip: their private knowledge, beside what the line rests on', async () => {
+  const {s, a, b} = questioned();
+  const ka = Morning.knowledge(s, s.world.caseRecords, a, caseTables(s).behavior.morningCtx.people, caseTables(s).behavior.morningCtx.places);
+  assert.ok(ka.private.length, 'the speaker has private knowledge in this case');
+  let seen = null;
+  const proposal = {agendas: {[a]: [{kind: 'meet', with: b, place: s.world.npcs[b].location, say: 'They asked me where I was.', because: [ka.sayable[0].id]}]}};
+  await criticise(s, proposal, {lineCritic: async items => { seen = items; return {verdicts: {}}; }});
+  const item = seen?.[`${a}:0`];
+  if (!item) return assert.fail('the meeting reached the line critic');
+  assert.deepEqual(item.private, ka.private.map(y => y.text));
+  assert.deepEqual(item.knowledge, [ka.sayable[0].text]);
+});

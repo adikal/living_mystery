@@ -3,7 +3,7 @@ step adds no fact, and every case must still pass publish.gate before it is writ
 
     .venv/bin/python tools/refine-c/backfill.py sightings [--dry-run] [files...]
 
-Steps: evenings, questions, surface, sightings, morning, reactions, lines, art, unlock, accepted. One process per case (the Z3 checks are not
+Steps: contradictions, declines, evenings, questions, surface, sightings, morning, reactions, lines, art, unlock, accepted. One process per case (the Z3 checks are not
 thread-safe); with no files, every case in dist/cases/generated and its live/ folder.
 """
 import concurrent.futures as cf
@@ -20,7 +20,7 @@ sys.path.insert(0, HERE)
 def steps():
     import enrich
     import publish
-    return {'evenings': lambda c: (publish.add_ordinary_evenings(c), publish.add_surface_accounts(c), publish.mark_surface_truth(c))[0], 'questions': publish.mark_duplicate_questions, 'surface': lambda c: (publish.add_surface_accounts(c), publish.mark_surface_truth(c))[0], 'sightings': lambda c: publish.add_sightings(c, log=lambda *a: None),
+    return {'contradictions': lambda c: publish.record_contradictions(c, log=print), 'declines': publish.add_declines, 'evenings': lambda c: (publish.add_ordinary_evenings(c), publish.add_surface_accounts(c), publish.mark_surface_truth(c))[0], 'questions': publish.mark_duplicate_questions, 'surface': lambda c: (publish.add_surface_accounts(c), publish.mark_surface_truth(c))[0], 'sightings': lambda c: publish.add_sightings(c, log=lambda *a: None),
             'morning': publish.add_morning_accounts, 'reactions': publish.add_reactions, 'lines': publish.add_show_lines,
             'art': lambda c: enrich.add_art(c, retry_none=True), 'unlock': enrich.add_unlock_groups, 'accepted': enrich.add_accepted}
 

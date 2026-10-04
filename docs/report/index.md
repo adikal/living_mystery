@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.22 · 3 October 2026**
+**Living technical report · Edition 0.23 · 4 October 2026**
 
 ### Abstract
 
@@ -150,6 +150,10 @@ Bellweather setting with the original cast, map and art, the generator produced 
 4–7 (14–24 clues, 27–35 history events, a certified twist, lies and red herrings), which play in the existing game
 through a bridge (`dist/cases/kernel-case.mjs`) including free-text character dialogue grounded in each character's
 memories and beliefs. See `docs/mystery-kernel.md`.
+
+### Edition 0.23: playtesting itself
+
+Agent players with profiles play cases through a text interface; the games are scored from the event log and judged by a separate model; changes are proposed as hypotheses with registered predictions and kept only if paired experiments on held-out cases support them. Three epochs have run: one change failed and was reverted, and the kept changes raised the share of hints that help from 57% to 87%. See [chapter 11](playtest.md).
 
 ### Edition 0.22: playing it as a player
 

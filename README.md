@@ -103,9 +103,21 @@ npm run cases:verify -- 17 clockwork
 
 See [Director setup and scenarios](docs/director-testing.md).
 
+## Playtesting with agents
+
+Agent players play cases through a text interface; their games are scored, judged and compared before and after a
+change, on held-out cases. See [docs/self-improvement.md](docs/self-improvement.md) for the method and results.
+
+```sh
+.venv/bin/python tools/playtest/run.py --batch e0-heldout --split heldout --parallel 9   # play (needs the proxy on :8787)
+.venv/bin/python tools/playtest/score.py tools/playtest/runs/e0-heldout
+.venv/bin/python tools/playtest/judge.py tools/playtest/runs/e0-heldout
+.venv/bin/python tools/playtest/report.py tools/playtest/runs/e1-heldout --baseline tools/playtest/runs/e0-heldout
+```
+
 ## Technical documentation
 
-Read the [living technical report](dist/report/index.html), or its [continuous / print edition](dist/report/complete.html). With the game server running, open `/report/`. Edition 0.6 contains twelve linked chapters and eleven SVG diagrams, with implemented behavior, experimental guarantees and proposed extensions labeled separately.
+Read the [living technical report](dist/report/index.html), or its [continuous / print edition](dist/report/complete.html). With the game server running, open `/report/`. Edition 0.23 contains thirteen linked chapters and twelve SVG diagrams, with implemented behavior, experimental guarantees and proposed extensions labeled separately.
 
 - [Architecture](docs/architecture.md): engine, case, knowledge and admission boundaries.
 - [Forensic model](docs/forensic-model.md): typed sources, finite explanations, structural routes and certification limits.
@@ -143,7 +155,7 @@ npm test
 npm run docs:check
 ```
 
-The latest implementation run passed **192 JavaScript tests and 10 Python tests**, including real Z3 checks with zero skips. Without `.venv`/Z3, real-solver JavaScript tests skip; a green suite alone does not imply solver coverage. Model tests use mocked responses. Browser layout, live model quality and human puzzle quality need separate evaluation.
+The latest implementation run passed **259 JavaScript tests and 25 Python tests**, including real Z3 checks with zero skips. Without `.venv`/Z3, real-solver JavaScript tests skip; a green suite alone does not imply solver coverage. Model tests use mocked responses. Browser layout, live model quality and human puzzle quality need separate evaluation.
 
 The forensic domain assumes one killer, listed methods/motives, reliable forensic records and a study encounter. Route replay proves a bounded successful investigation under current scheduling, not universal freedom from dead ends. No ASP, Lean certificate export, general solver-derived cognition, arbitrary new-cast/map generation, resource economy or spatial playable client is implemented. Confidence values are authored scores, not calibrated probabilities.
 

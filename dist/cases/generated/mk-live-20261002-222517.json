@@ -1694,5 +1694,50 @@
    "herrings_other": 0,
    "lenient_motives": 1
   }
- }
+ },
+ "declines": {
+  "dora": [
+   "I'm afraid I can't help you there, and that's the end of it.",
+   "There's nothing in my memory to furnish on that score, Inspector.",
+   "I have no further particulars to offer; the matter rests closed.",
+   "Nothing to add on that point, and I shan't be inventing any."
+  ],
+  "ada": [
+   "Ooh, love, I've nothing for you there, truly I haven't.",
+   "Can't help you on that one, duck, not a scrap to tell.",
+   "That's a blank for me, love, nothing more comes to mind.",
+   "I've nothing to add there, really, so there's an end of it."
+  ],
+  "clara": [
+   "I have nothing to offer you on that subject.",
+   "That is a matter on which I cannot assist you.",
+   "There is nothing further I can tell you about it.",
+   "I'm afraid that closes the subject, for I have nothing to add."
+  ],
+  "edmund": [
+   "Can't help you there, and that's the end of it, man.",
+   "Nothing to tell on that score, so let's leave it be.",
+   "I've nothing more to say on the matter, full stop.",
+   "That's all I have for you there, which is to say nothing."
+  ],
+  "iris": [
+   "I have nothing to report on that particular matter.",
+   "There's nothing further I can tell you about it.",
+   "That falls outside what I can offer you, I'm afraid.",
+   "No findings to give you there; the subject's closed."
+  ],
+  "bell": [
+   "Nothing to tell on that. Leave it there.",
+   "Can't help you there. That's that.",
+   "No more to say on it. Matter's closed.",
+   "Nothing further from me on that one."
+  ],
+  "silas": [
+   "I have nothing to offer you on that subject, I'm afraid.",
+   "That matter yields nothing further from me; res ipsa, as it stands.",
+   "I can furnish no particulars on that point whatsoever.",
+   "There is nothing more to add; the matter is, for me, concluded."
+  ]
+ },
+ "declines_version": 3
 }

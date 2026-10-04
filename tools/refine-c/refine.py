@@ -451,6 +451,16 @@ def certify(case, require_pillars=True, require_backing=False):
         good = [d for d in dfs if d['id'] in A['understood'] and A['eff'][d['id']] > A['eff'].get(sid, 0) and A['truthval'].get(d['id'], True)]
         if not good:
             errs.append(f"false sign {sid} has no reachable, true defeater deeper than it")
+    # a contradiction the player can see is one the case records: two reachable signs that put one person in two places
+    # at overlapping times must have one defeating the other
+    placed = sorted(sid for sid in A['understood'] if (claim_of(A['signs'][sid]) or {}).get('kind') == 'place')
+    for i, a in enumerate(placed):
+        for b in placed[i + 1:]:
+            x, y = claim_of(A['signs'][a]), claim_of(A['signs'][b])
+            if x['person'] != y['person'] or x['place'] == y['place'] or not (x['start'] < y['end'] and y['start'] < x['end']):
+                continue
+            if b not in A['signs'][a].get('defeats', []) and a not in A['signs'][b].get('defeats', []):
+                errs.append(f"{a} and {b} put {x['person']} in two places at once, but neither is recorded as defeating the other")
     for sid, s in A['signs'].items():
         if sid in A['truthval']:
             continue

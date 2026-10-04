@@ -129,8 +129,9 @@ export const BW_PEOPLE = {
 // Cases published before each case named its own victim assume this one (the setting's original story).
 export const BW_DEFAULT_VICTIM = 'edmund';
 export const BW_ROLES = {examiner: 'iris', constable: 'bell'};
-// What people call each other besides their names (for spotting who a clue mentions).
-export const BW_ROLE_WORDS = {bell: ['constable'], iris: ['doctor'], vicar: ['vicar', 'rector', 'parson'], dora: ['postmistress'],
+// What people call each other besides their full names: roles and familiar names (for spotting who a clue or a reply
+// mentions; a familiar name used in a case's text must be listed here, or replies naming the person are refused).
+export const BW_ROLE_WORDS = {bell: ['constable'], iris: ['doctor'], vicar: ['vicar', 'rector', 'parson'], dora: ['postmistress', 'Dora'],
   jonah: ['boatman', 'boathouse keeper', 'ferryman'], rowan: ['groundskeeper', 'gardener'], ada: ['innkeeper', 'landlady'],
   silas: ['solicitor'], hugo: ['nephew'], vera: ['newcomer', 'lodger', 'widow'], clara: [], edmund: ['squire']};
 // The holders of those roles are neither victim nor culprit.

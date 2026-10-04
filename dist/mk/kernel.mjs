@@ -348,6 +348,16 @@ export function certify(c, requirePillars = true, requireBacking = false) {
       && A.eff[d.id] > (A.eff[sid] ?? 0) && (A.truthval[d.id] ?? true));
     if (!good.length) errs.push(`false sign ${sid} has no reachable, true defeater deeper than it`);
   }
+  // a contradiction the player can see is one the case records: two reachable signs that put one person in two places
+  // at overlapping times must have one defeating the other (otherwise the player, holding both, sees a lie broken that
+  // the game does not count)
+  const placed = [...A.understood].filter(sid => claimOf(A.signs[sid])?.kind === 'place').sort();
+  for (const [i, a] of placed.entries()) for (const b of placed.slice(i + 1)) {
+    const x = claimOf(A.signs[a]), y = claimOf(A.signs[b]);
+    if (x.person !== y.person || x.place === y.place || !(x.start < y.end && y.start < x.end)) continue;
+    if (!arr(A.signs[a].defeats).includes(b) && !arr(A.signs[b].defeats).includes(a))
+      errs.push(`${a} and ${b} put ${x.person} in two places at once, but neither is recorded as defeating the other`);
+  }
   const full = survivors(c, A);
   if (!sameArr(full, [q.truth])) errs.push(`answer not unique from all reachable evidence: survivors ${JSON.stringify(full)}`);
   if (errs.length) return { ok: false, errors: errs, A };
