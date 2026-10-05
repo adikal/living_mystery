@@ -10,7 +10,7 @@ export const BW_LOCATIONS = {
   manor: {name: 'Vale Manor', short: 'The manor', glyph: '02', atmosphere: 'Old money and closed doors',
     description: 'A grey stone house above the village: panelled study, long dining room, servants\u2019 stair.',
     links: {square: 4, greenhouse: 3, boathouse: 6}},
-  inn: {name: 'The Rook & Lantern', short: 'The inn', glyph: '03', atmosphere: 'Where a story becomes a rumour',
+  inn: {name: 'The Rook & Lantern', short: 'The inn', familiar: ['the Rook'], glyph: '03', atmosphere: 'Where a story becomes a rumour',
     description: 'Low beams, a long bar, a back parlour for private business, and a slate for every tab in the village.',
     links: {square: 3, greenhouse: 6, post: 3}},
   greenhouse: {name: 'The greenhouse', short: 'The greenhouse', glyph: '04', atmosphere: 'Glass, heat and patience',

@@ -1,162 +1,120 @@
 # Living Mystery
 
-A text-first mystery game in a simulated town. Characters have beliefs, memories, daily goals and inspectable histories. A deterministic engine owns world changes; optional language models choose bounded responses and activities; symbolic checks constrain represented actions and explanations.
+A detective game in an English village in 1932, where every case is new, every character can be questioned in your
+own words, and the village goes about its morning while you investigate. Language models write the cases, voice the
+characters and decide what people do; a certifying engine makes sure that, whatever they produce, **the case stays
+fair: there is always a way to the one true answer, and nothing anyone says breaks the true history.**
 
-The prototype includes the original **The Last Bell**, three authored Bellweather configurations, and a seeded generator over the same cast and map. Generated cases vary culprit, method, motive, time, misdirection and investigative structure. This is a bounded procedural domain, not arbitrary mystery generation.
+The research behind it is called **SleuthCraft**: certified living mysteries with solver-checked language models.
+
+## What is different
+
+Most games that use language models let the model invent freely and hope it stays consistent. In a mystery that
+fails quickly: a character contradicts an earlier answer, a clue points nowhere, or the case becomes unsolvable.
+Living Mystery is built the other way round.
+
+| Idea | What it means in play |
+| --- | --- |
+| **One true history** | Each case is a history of events, motives and clues. It is the only source of facts; everything shown to the player is checked against it. |
+| **A model proposes, critics decide** | At every layer (writing the case, wording it, a character's reply, what the village does) a model proposes and a bank of critics decides: plain code for what can be checked mechanically, a second model for commonsense and wording, and a certifying kernel, cross-checked by the Z3 solver, for the case remaining solvable with a unique answer. |
+| **Cases certified before you play** | A generated case is published only if it is solvable, its answer is unique, and it has real depth: lies and misdirection that the evidence later defeats. Difficulty is computed from the case's structure. |
+| **Characters who speak freely, from what they know** | You can ask anyone anything. They answer in their own voice, but only from what they know; they lie only where the case says they lie, and a lie can always be broken by evidence. |
+| **A living village that cannot trap you** | Each half hour a director plans what people do: they seek each other out, pass on what they heard, and a culprit may hide evidence, but only if the case can still be solved without it. |
+| **A game that improves by playing itself** | Agent players with player profiles play the cases; their games are scored, judged and turned into experiments with registered predictions, and a bug track checks every recorded game against the true history. |
+
+## How it works
+
+```
+ before play                                     during play
+ ┌─────────┐  ┌────────────┐  ┌────────────┐     ┌──────────────┐  ┌───────────────┐  ┌───────────────────┐
+ │ Premise │→ │ Generation │→ │ Publishing │  →  │ Conversation │  │ Living morning│  │ Accusation, hints │
+ └────┬────┘  └─────┬──────┘  └─────┬──────┘     └──────┬───────┘  └───────┬───────┘  └─────────┬─────────┘
+      │ a model proposes; code, a second model and the certifying kernel (with Z3) decide, at every layer │
+      └──────────────────────────────┴─────────────── one true history ───────────────┴─────────────────┘
+```
+
+The [living technical report](dist/report/index.html) explains each layer; [docs/architecture.md](docs/architecture.md)
+gives the engine contracts.
 
 ## Play
 
 ```sh
-python3 server/static_server.py      # serves dist/ with no-cache headers
-# Keep the server running; open http://127.0.0.1:8000
+python3 server/static_server.py          # the game, at http://127.0.0.1:8000
 ```
 
-Scripted play requires only the static server. It makes no LLM requests. The clock advances through player actions rather than wall time. Node.js 20 or newer also supports terminal play: `node cli.mjs`, or `node cli.mjs bellweather-02` for a configured case.
-
-Open the game menu → **Choose a case configuration** to select an authored case or generate one. Export your current investigation first if you want to retain it: starting a case replaces the active browser save. Generated IDs preserve their parameters for reload; simulation seeds and generation seeds serve different purposes.
-
-## What is implemented
-
-| Area | Current behavior |
-| --- | --- |
-| Investigation | Explicit scripted questions, contextual follow-ups, evidence presentation, a player-built Reasoning board and final accusations |
-| Player UX | Clear scene transitions, five recent entries in chronological order, paged history, local-person highlights and reusable Done-marked options |
-| Ordinary lives | Six configured-case NPCs pursue timed work, errands and rest; invitations and appointments require real encounters; failed plans expire or retry |
-| Knowledge | Beliefs retain sources and revisions. Configured live updates require registered support rules; attributed testimony is distinct from established fact |
-| Crime history | Configured prehistories execute travel, possession, the fatal action, observations, evidence production and report delivery before play begins |
-| Forensic reasoning | Configured accusations test selected acquired evidence against competing suspect/method/motive explanations in a finite time domain |
-| Generation | `trace`, `cleanup` and `clockwork` structures; typed source checks and a separately replayed witness for every declared solution route |
-| Inspector | World and character perspectives, event timeline, beliefs, memories, daily-life state, causal sources, trace audits and separately revealed missed opportunities |
-| Persistence | Event replay, save integrity checks, Reasoning board annotations and accepted dialogue/audits restore without new model calls |
-| Artwork | Packaged portraits, locations and selected artifacts; no runtime image generation |
-
-The original Last Bell retains its richer legacy case policies and authored accusation rubric. Newly created configured/generated cases use the autonomous-life and forensic contracts. Older histories are not rewritten to invent the new typed occurrences; start a new case to test full crime-history certification.
-
-## Try the latest features without AI
-
-1. Choose **Generate a cleanup investigation**. Compare the discarded cloth with the laboratory record, or follow the surviving physical-evidence route.
-2. Choose **Generate a clock-dependent investigation**. Calibrate the clocked watch, or use the independently timed record.
-3. Submit a partial evidence bundle to Bell, then add support. He distinguishes ambiguity, contradiction, internally inconsistent records and a supported explanation. Feedback names only selected acquired records.
-4. Wait, visit other locations and inspect **Daily life**. Characters work, rest and attempt appointments while mystery-related policies retain priority when selecting new plans.
-5. Export and reload mid-investigation; scrub the inspector timeline to compare earlier beliefs and activities with the present.
-
-See [forensic contracts and testing](docs/forensic-model.md) and [autonomous lives](docs/autonomous-lives.md).
-
-## Optional AI characters
-
-Install `boto3` in the proxy's Python environment, configure AWS credentials with Bedrock access, and run:
+That is enough for scripted play with the original case, *The Last Bell*, and the shipped generated cases; it makes no
+model requests. For AI characters, the living morning and case generation, run the local servers as well (they need
+AWS credentials with Bedrock access, and a Python environment with the solver):
 
 ```sh
-python3 server/llm_proxy.py
+python3 -m venv .venv && .venv/bin/pip install -r server/requirements-solver.txt boto3
+.venv/bin/python server/llm_proxy.py          # characters and director     :8787
+.venv/bin/python server/director_server.py    # Z3 checks                   :8788
+.venv/bin/python server/generator_server.py   # new cases (several minutes) :8789
 ```
 
-Serve the game at `http://127.0.0.1:8000` or `http://localhost:8000`. In **AI characters**, configure `http://127.0.0.1:8787` and enable the single character-reasoning toggle. Restart the proxy after its code changes.
+In the game: choose a case from the menu, or **✨ Generate a new deep case**. Talk to people with the listed questions
+or in your own words, examine what you find, show it to people, and take your case to the constable. The notebook's
+**Hints** tab gives one nudge at a time. **Menu → 🐞 Flag an issue** saves a note and the game state to `logs/game.log`.
 
-AI interprets free-text questions, selects available accounts and intents, and generates natural replies. A separate semantic critic and engine validation precede atomic commitment. Authored accounts still bound consequential disclosures; characters may lie or be mistaken. Conversation generation/criticism has a combined 30-second budget. A critic is not a formal guarantee about prose.
+## Improving the game by playing it
 
-In configured/generated cases, the same toggle also enables at most one additional NPC activity-selection request per player turn: a five-second request selecting one to three available goals, with a twenty-simulated-minute cooldown per NPC. The model receives that NPC's perspective. Deterministic execution, commitment checks and fallback remain in the engine; there are no model calls on every simulation tick.
+`tools/playtest/` runs the game through a text interface for agent players (beginner, amateur and pro profiles) and
+treats every change as an experiment: a cause checked in the data, a prediction written down first, a cheap offline
+check, then paired games on held-out cases. A separate bug track checks every recorded game with invariant detectors
+and a correctness judge, and each finding is reproduced and confirmed before it counts.
 
-Disabling AI gives immediate scripted dialogue and deterministic life choices. Inspector decision audits preserve proposals, checks and fallbacks. See [the character contract](docs/character-turns.md) for details.
+What it has found so far ([details](docs/self-improvement.md)):
 
-The proxy is loopback-only with explicit Origin, Host and request-header checks. Set `LM_ALLOWED_ORIGINS` for another local game origin. These development restrictions are not authentication against local programs; do not treat the proxy as a public service.
-
-## Generate new cases
-
-The case chooser has one generator: **✨ Generate a new deep case**. It needs the local generator server and AWS
-credentials that can call Bedrock (Opus writes the story, Sonnet reviews each step):
-
-```
-.venv/bin/python server/generator_server.py        # http://127.0.0.1:8789
-```
-
-A case takes several minutes. The progress window shows the high-level state; a collapsed **Spoiler** section shows
-the cast with their secrets, the hidden history, and every layer the generator added, for testing. Finished cases are
-saved in `dist/cases/generated/live/` (not committed) and appear in the chooser alongside the shipped examples.
-
-In play, the notebook's **Hints** tab gives one nudge at a time for the next useful step, becoming more specific only
-when you ask for more.
-
-## Debug logs
-
-The game, generator and proxy write to `logs/` (not committed): `game.log` (browser events, dialogue audits, errors),
-`generator.log` and `proxy.log`. In the game, **Menu → 🐞 Flag an issue** saves a note with a snapshot of the current
-state to `game.log`.
-
-## Optional World Director / Z3
-
-Z3 is independent of AI and requires no model credentials:
+- **Hints** that name whom to see and the question to ask: hints that lead to their clue rose from 57% to 87%.
+- **Six general bugs**, found from the agents' own games and fixed, from hints that quoted the wrong question to
+  sightings that broke an alibi without the case counting it.
+- **Dead ends**: on the same recorded questions, turns that leave the player with nothing fell from 28% to 7%.
+- **Changes it rejected**: two changes that looked like improvements made the game worse in paired play.
 
 ```sh
-python3 -m venv .venv
-.venv/bin/pip install -r server/requirements-solver.txt
-.venv/bin/python server/director_server.py
-```
-
-In the game menu choose **World Director → Enable Z3 turn checks**. The service independently checks represented physical plans, typed crime history in new configured sessions, and alternative-explanation exclusion for accepted accusations. The client verifies at most 96 queries in batches of twelve within one ten-second turn deadline. Timeout, unavailable and unknown results do not count as certification.
-
-Configured local belief, plan and investigation admission remains active when Z3 is off. The synchronous browser generator performs local finite checks; it does not claim Z3 certification at creation. For reproducible offline certification with Node and the solver installed:
-
-```sh
-npm run cases:verify -- 17 cleanup
-npm run cases:verify -- 17 clockwork
-```
-
-See [Director setup and scenarios](docs/director-testing.md).
-
-## Playtesting with agents
-
-Agent players play cases through a text interface; their games are scored, judged and compared before and after a
-change, on held-out cases. See [docs/self-improvement.md](docs/self-improvement.md) for the method and results.
-
-```sh
-.venv/bin/python tools/playtest/run.py --batch e0-heldout --split heldout --parallel 9   # play (needs the proxy on :8787)
-.venv/bin/python tools/playtest/score.py tools/playtest/runs/e0-heldout
-.venv/bin/python tools/playtest/judge.py tools/playtest/runs/e0-heldout
+.venv/bin/python tools/playtest/run.py --batch e0-heldout --split heldout --parallel 9    # play
+.venv/bin/python tools/playtest/score.py tools/playtest/runs/e0-heldout                   # scorecard
+.venv/bin/python tools/playtest/judge.py tools/playtest/runs/e0-heldout                   # judged experience
 .venv/bin/python tools/playtest/report.py tools/playtest/runs/e1-heldout --baseline tools/playtest/runs/e0-heldout
+node tools/playtest/bugs.mjs --out bugs.json tools/playtest/runs/e*/                      # bug detectors
+.venv/bin/python tools/playtest/correctness.py tools/playtest/runs/e0-heldout             # correctness judge
 ```
 
-## Technical documentation
+## Documentation
 
-Read the [living technical report](dist/report/index.html), or its [continuous / print edition](dist/report/complete.html). With the game server running, open `/report/`. Edition 0.23 contains thirteen linked chapters and twelve SVG diagrams, with implemented behavior, experimental guarantees and proposed extensions labeled separately.
-
-- [Architecture](docs/architecture.md): engine, case, knowledge and admission boundaries.
-- [Forensic model](docs/forensic-model.md): typed sources, finite explanations, structural routes and certification limits.
-- [Autonomous lives](docs/autonomous-lives.md): goals, meetings, model budgets and replanning.
-- [Case configurations](docs/case-configurations.md): assembly, generation and replayed investigation witnesses.
-- [Symbolic design](docs/symbolic-reasoning.md): shared representation, Z3 and future multi-logic extensions.
-- [Roadmap](docs/roadmap.md): remaining work toward broader procedural worlds.
-- [Artwork design](docs/art-direction.md): consistency, reuse and future generation-cost controls.
-
-Edit the [report sources](docs/report/index.md), then run `npm run docs:build` and `npm run docs:check`. The [authoring guide](docs/report/README.md) describes the workflow. Building documentation makes no model requests and changes no game saves.
+- [Technical report](dist/report/index.html) (edition 0.24; [continuous edition](dist/report/complete.html)): the
+  connected argument, with diagrams; sources in [docs/report/](docs/report/index.md).
+- [Self-improvement by playtesting](docs/self-improvement.md): the method, the tools and every result.
+- [The living village](docs/living-village.md): sightings, the morning director and the rules found by playing.
+- [Mystery kernel](docs/mystery-kernel.md): the history's four record types, certification and refinement.
+- [Character turns](docs/character-turns.md): how a free-text reply is proposed, checked and committed.
+- [Architecture](docs/architecture.md) and [roadmap](docs/roadmap.md).
+- [AGENTS.md](AGENTS.md): where things are and how to test them, for anyone (or any agent) changing the code.
 
 ## Code map
 
-| Modules | Responsibility |
+| Where | What |
 | --- | --- |
-| `kernel.mjs`, `knowledge.mjs` | Events, reversible state, replay, belief lifecycle and injected support validation |
-| `engine.mjs`, `engine-runtime.mjs` | Session-specific case selection, runtime assembly and command routing |
-| `cases/last-bell.mjs`, `case.mjs` | Original case behavior and data |
-| `cases/bellweather*.mjs`, `cases/investigative-structures.mjs` | Configured case assembly, public lives, specs and structural variation |
-| `modules/` | Misdirection, correction, private-secret and concealment modules |
-| `life.mjs`, `autonomy-turn.mjs` | Deterministic goals/appointments and optional bounded model selection |
-| `character-turn.mjs`, `llm.mjs`, `dialogue-save.mjs` | Conversation orchestration, transport/legacy realization support and saved audits |
-| `actions.mjs`, `agent-plans.mjs`, `symbolic.mjs` | Shared physical vocabulary, queued execution and solver-neutral constraints |
-| `forensics.mjs`, `casegen.mjs` | Typed provenance, explanation queries, finite grading and generation gates |
-| `admission.mjs`, `investigation.mjs`, `world-director.mjs`, `director-turn.mjs` | Candidate checks, route search, plan admission and optional transactional Z3 |
-| `claims.mjs`, `inspector.mjs`, `ui.mjs`, `styles.css` | Player claims, debugger projections and browser interface |
+| `dist/kernel.mjs`, `dist/engine.mjs`, `dist/engine-runtime.mjs` | Event log, replay, saves and action routing |
+| `dist/mk/kernel.mjs`, `server/case_oracle.py` | The certifying kernel (reachability, elimination, depth) and the Z3 cross-check |
+| `dist/cases/kernel-case.mjs`, `dist/cases/village.mjs` | A generated case in play (accounts, evidence, hints, the constable) and the village setting |
+| `dist/character-turn.mjs` | Free-text conversation: the character's perspective, code checks, the fact-checker and fallbacks |
+| `dist/morning.mjs`, `dist/morning-director.mjs` | The living morning and its director with code, model and kernel critics |
+| `dist/ui.mjs`, `dist/styles.css` | The browser interface |
+| `tools/refine-c/` | Case generation (`premise.py`, `refine.py`) and publishing (`publish.py`, `enrich.py`) |
+| `tools/playtest/` | Agent playtesting, scoring, judging, experiments and the bug track |
 
-JavaScript modules above live under `dist/`. Python adapters live under `server/`; `tools/validate-case.mjs` provides offline certification, and `tools/debug-session.mjs` inspects exported sessions.
-
-## Validation and limits
+## Tests and limits
 
 ```sh
-npm test
-.venv/bin/python -m unittest discover -s tests -p 'test_*.py'
+npm test                                         # 281 JavaScript tests
+.venv/bin/python -m pytest tests/ -q             # 25 Python tests
+(cd tools/refine-c && ../../.venv/bin/python parity.py)   # the Python and JS kernels agree on 443 cases
 npm run docs:check
 ```
 
-The latest implementation run passed **259 JavaScript tests and 25 Python tests**, including real Z3 checks with zero skips. Without `.venv`/Z3, real-solver JavaScript tests skip; a green suite alone does not imply solver coverage. Model tests use mocked responses. Browser layout, live model quality and human puzzle quality need separate evaluation.
-
-The forensic domain assumes one killer, listed methods/motives, reliable forensic records and a study encounter. Route replay proves a bounded successful investigation under current scheduling, not universal freedom from dead ends. No ASP, Lean certificate export, general solver-derived cognition, arbitrary new-cast/map generation, resource economy or spatial playable client is implemented. Confidence values are authored scores, not calibrated probabilities.
-
-The local client, source, inspector and saves expose hidden truth. The engine is the authority for gameplay transitions, not an adversarial security boundary. New AI runs may differ; recorded history replays without calling either external service.
+The guarantees are about the records: solvability, a unique answer, depth, and that what characters say agrees with
+the history as far as the critics can tell. The fact-checker is a model, so a reply can still slip through; hints and
+difficulty are measured on agent players, not yet calibrated against people. Generating a case takes several minutes.
+The local client, its saves and the inspector expose the hidden truth; the servers are for local use only.

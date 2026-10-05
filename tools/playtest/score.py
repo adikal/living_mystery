@@ -81,6 +81,7 @@ def score(ep):
         'narrowed_before_first_hint': (remaining[0] - remaining[first_hint]) if first_hint is not None else (remaining[0] - remaining[-1]),
         'hints_that_helped': round(len(helped) / len(hint_steps), 2) if hint_steps else None,
         'hint_level_needed': round(st_mean([t['hint']['level'] for i, t in enumerate(trace) if i in helped]), 2) if helped else None,
+        'first_progress': points[0] if points else None,   # actions before the first new evidence
         'progress_steps': len(points), 'longest_stall': max([b - a + 1 for a, b in st], default=0), 'stalls': len(st),
         'loops': len(loops(steps)),
         'refused_actions': sum(1 for t in trace if t.get('error')),
@@ -88,6 +89,7 @@ def score(ep):
         'character_rejections': sum(c['rejected'] for c in chars),
         'neutral_replies': sum(1 for c in chars if c.get('neutral')),
         'pressed_after_decline': pressed_after_decline(trace),
+        'refused_inconsistent': sum(1 for t in trace if (t.get('accusation') or {}).get('status') == 'inconsistent'),
         'witnessed_village_per_hour': round(witnessed / hours, 2),
         'suspects_left_at_end': remaining[-1], 'held_at_end': trace[-1].get('held', 0),
         'exceptions': sum(1 for t in trace if t.get('exception')),
@@ -103,6 +105,15 @@ def problems(ep, trace, steps, st, hint_steps=(), helped=()):
         out.append({'kind': 'stall', 'layer': 'hints' if any(t.get('hint') for t in trace[a:b + 1]) else 'generation',
                     'step': a, 'evidence': f'{b - a + 1} actions without learning anything; last hint {trace[b].get("hint_now")}',
                     'actions': [_key(s['action']) for s in steps[a:b + 1]][-6:]})
+    for i, t in enumerate(trace):
+        acc, c = t.get('accusation') or {}, t.get('character') or {}
+        if acc.get('status') == 'inconsistent':
+            # everything the player holds rules out everyone: a lie they could not see through, or one the case does not count
+            out.append({'kind': 'evidence_rules_out_everyone', 'layer': 'generation', 'step': i,
+                        'evidence': f"accused {acc.get('suspect')}: the held evidence rules out every suspect"})
+        if c.get('by') == 'fallback' and c.get('reasons') and all('wrong_or_new_name' in r for r in c['reasons']):
+            out.append({'kind': 'name_refused', 'layer': 'dialogue', 'step': i,
+                        'evidence': f"every reply of {c.get('person')} was refused for naming someone: {c.get('text', '')[:120]}"})
     for i in hint_steps:
         if i not in helped:
             out.append({'kind': 'hint_no_help', 'layer': 'hints', 'step': i,

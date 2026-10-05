@@ -4,6 +4,7 @@
 // the person asked), and at each sampled question the real pipeline answers it on a copy of that state.
 //
 //   node tools/playtest/replay.mjs --root <checkout> --sample 80 --out /tmp/replay-A.json tools/playtest/runs/e1-*/*__*.json
+//   node tools/playtest/replay.mjs --targets turns.json ...   # re-ask given turns ([{file, step}]), e.g. flagged by bugs.mjs
 //
 // The same --sample and --seed give the same questions for every checkout, so two versions can be compared turn by turn.
 // Outcome per question: 'ai' (a reply passed the critics), 'account' (all rejected; a published account was given),
@@ -20,6 +21,7 @@ function args(argv) {
     else if (a === '--seed') o.seed = Number(argv[++i]);
     else if (a === '--parallel') o.parallel = Number(argv[++i]);
     else if (a === '--out') o.out = argv[++i];
+    else if (a === '--targets') o.targets = JSON.parse(readFileSync(argv[++i], 'utf8'));   // [{file, step}]: re-ask these turns
     else o.files.push(a);
   }
   return o;
@@ -47,7 +49,9 @@ async function main() {
   const {NEUTRAL_LINE} = await import(join(o.root, 'dist/kernel.mjs'));
   const {prepareCharacterTurn, proposeCharacterTurn, applyCharacterTurn} = await import(join(o.root, 'dist/character-turn.mjs'));
   const episodes = o.files.map(f => JSON.parse(readFileSync(f, 'utf8')));
-  const targets = pick(episodes, o.sample, o.seed);
+  const targets = o.targets
+    ? o.targets.map(x => ({e: o.files.findIndex(f => resolve(f) === resolve(x.file)), i: x.step})).filter(x => x.e >= 0 && episodes[x.e].report.trace[x.i]?.character)
+    : pick(episodes, o.sample, o.seed);
   const byEpisode = Map.groupBy(targets, t => t.e);
 
   // rebuild each episode's states at its sampled questions (no model calls), then answer them in parallel

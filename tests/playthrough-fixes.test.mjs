@@ -58,3 +58,26 @@ test('an innocent secret is explained by the attitude behind that behaviour', ()
   const why = T.behavior.innocentReason('ada', 'b_ada_cash');
   assert.match(why.content, /owes the vicar/);
 });
+
+// From the bug detectors over recorded playtests: replies refused because the name check did not know a familiar form of
+// a place ("the Rook"), or did not know that the examiner, like the constable, is known to everyone after a death.
+test('a keeper is in play once any form of their place is mentioned, and the setting roles always are', () => {
+  const {s} = session();
+  goTo(s, 'edmund');
+  const t = prepareCharacterTurn(s, {person: 'edmund', text: 'What time did they close the Rook last night?', action: null});
+  const keeper = validateCharacterProposal(t, reply(null, 'Ask Mrs Finch, old thing; I was in my cups.', 'refuse'));
+  assert.ok(keeper.ok || !/wrong_or_new_name/.test(keeper.reason), keeper.reason);
+  const examiner = validateCharacterProposal(t, reply(null, 'Dr Marsh would know better than I, dear fellow.', 'refuse'));
+  assert.ok(examiner.ok || !/wrong_or_new_name/.test(examiner.reason), examiner.reason);
+  const stranger = validateCharacterProposal(t, reply(null, 'Mr Voss was there, I think.', 'refuse'));
+  assert.ok(!stranger.ok && /wrong_or_new_name/.test(stranger.reason), 'someone not in play is still refused');
+});
+
+test('a reply word for word the same as one the person already gave is refused', () => {
+  const {s} = session();
+  goTo(s, 'ada');
+  const t = prepareCharacterTurn(s, {person: 'ada', text: 'Anything else?', action: null});
+  t.context.character.history = [{speaker: 'ada', text: '“I keep myself to myself, love.”'}];
+  const v = validateCharacterProposal(t, reply(null, 'I keep myself to myself, love.', 'refuse'));
+  assert.ok(!v.ok && /repeated_reply/.test(v.reason), v.reason);
+});

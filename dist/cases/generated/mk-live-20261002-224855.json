@@ -957,6 +957,37 @@
  ],
  "signs": [
   {
+   "id": "s_surface_vicar",
+   "kind": "testimony",
+   "speaker": "vicar",
+   "surface": true,
+   "deceptive": false,
+   "title": "The Reverend Thomas Hale on the evening",
+   "text": "Oh - last night, yes. I sat up with a poor sick little one who needed watching, over at the surgery, and didn't stir from the bedside till it was time to totter home and rest myself.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 2,
+   "surface_checked": "honest",
+   "to": null,
+   "show": "The Reverend Thomas Hale says he sat up all night at the surgery watching over a sick child before going home to rest. Do you know if that's true?",
+   "confront": "You told me you sat up all night at the surgery with a sick child before going home to rest. Is that the whole of it?"
+  },
+  {
+   "id": "s_surface_hugo",
+   "kind": "testimony",
+   "speaker": "hugo",
+   "surface": true,
+   "deceptive": true,
+   "title": "Hugo Vale on the evening",
+   "text": "Ghastly business, this. I was down at the Rook, propping up the bar and making dreary small talk with whoever would stand me a drink, then wandered back late and straight up to bed - nothing more thrilling than that, I'm afraid.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 2,
+   "surface_why": "He omits dinner with Clara, her threat to cut him from the will, their confrontation on the landing, and that he pushed her down the staircase before going to the inn; he falsely implies his evening was uneventful and only involved drinking at the Rook.",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Hugo Vale says he spent the evening at the Rook making small talk with whoever stood him a drink, then went straight up to bed. Do you know if that's true?",
+   "confront": "You told me you were at the Rook making small talk, then went straight up to bed. Is that the whole of it?"
+  },
+  {
    "id": "s_surface_dora",
    "kind": "testimony",
    "speaker": "dora",
@@ -965,7 +996,7 @@
    "title": "Dorothy Pruett on the evening",
    "text": "I was behind the counter the whole evening, sorting and tying the letters for the post. Just getting ahead on my work, as I always do, nothing out of the ordinary.",
    "ask": "Where were you last night?",
-   "agrees_checked": true,
+   "agrees_checked": 2,
    "to": null,
    "show": "Dorothy Pruett says she spent the whole evening behind the counter sorting and tying letters for the post. Do you know if that's true?",
    "confront": "You told me you were behind the counter the whole evening, just sorting and tying letters for the post. Is that the whole of it?",
@@ -980,27 +1011,11 @@
    "title": "Arthur Bell on the evening",
    "text": "Had myself a pint by the fire, nothing more to it. Sat with the regulars, talked about the state of the roads, that's the whole of it.",
    "ask": "Where were you last night?",
-   "agrees_checked": true,
+   "agrees_checked": 2,
    "to": null,
    "show": "Arthur Bell says he had a pint by the fire with the regulars, talking about the state of the roads. Do you know if that's true?",
    "confront": "You told me you'd just had a pint by the fire with the regulars, talking about the state of the roads. Is that the whole of it?",
    "surface_checked": "honest"
-  },
-  {
-   "id": "s_surface_hugo",
-   "kind": "testimony",
-   "speaker": "hugo",
-   "surface": true,
-   "deceptive": true,
-   "title": "Hugo Vale on the evening",
-   "text": "Oh, last night? Dull as anything from where I stood - I legged it down to the Rook & Lantern early on to drown my sorrows and that's where I stayed, propping up the bar till they near enough swept me out the door. Wandered back in through the side way so as not to wake the house, and fell straight into bed.",
-   "ask": "Where were you last night?",
-   "agrees_checked": true,
-   "surface_why": "Hugo claims he spent the whole evening drinking at the inn until closing and then returned straight to bed, but in reality he confronted Clara at the manor, pleaded with her, and shoved her down the staircase causing her death before going to the inn; he also conceals removing and hiding his signet ",
-   "surface_checked": "cover",
-   "to": null,
-   "show": "Hugo Vale says he spent the whole evening drinking at the Rook & Lantern until closing, then slipped in the side door and went straight to bed. Do you know if that's true?",
-   "confront": "You told me you were at the Rook & Lantern all evening until near closing, then came in the side way and went straight to bed. Is that the whole of it?"
   },
   {
    "id": "s_morning_rowan",
@@ -1157,7 +1172,7 @@
    "confront": "You told me you were home all evening, had your supper, saw to the glasshouse, and were asleep before anything happened at the manor. Is that the whole of it?",
    "to": null,
    "surface_checked": "cover",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_surface_iris",
@@ -1172,22 +1187,7 @@
    "confront": "You told me you were at the surgery nursing a feverish child all night, and didn't leave until called away this morning. Is that the whole of it?",
    "to": null,
    "surface_checked": "cover",
-   "agrees_checked": true
-  },
-  {
-   "id": "s_surface_vicar",
-   "kind": "testimony",
-   "speaker": "vicar",
-   "surface": true,
-   "deceptive": false,
-   "title": "The Reverend Thomas Hale on the evening",
-   "text": "I spent the evening at the surgery, sitting with a poor sick child who needed watching through the night, and I did not stir from there until it was time to go home and rest myself.",
-   "ask": "Where were you last night?",
-   "show": "The Reverend Hale says he was at the surgery sitting with a feverish child through the night, and lost track of the hour. Do you know if that's true?",
-   "confront": "You told me you were at the surgery with a feverish child through the night, and lost track of the hour. Is that the whole of it?",
-   "to": null,
-   "surface_checked": "honest",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_surface_silas",
@@ -1202,7 +1202,7 @@
    "confront": "You told me you were at your office in the vestry working late because of a trunk call from London. Is that the whole of it?",
    "to": null,
    "surface_checked": "honest",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_surface_ada",
@@ -1217,7 +1217,7 @@
    "confront": "You told me you were behind the bar all evening until last orders, then came over faint and lay down in the back parlour. Is that the whole of it?",
    "to": null,
    "surface_checked": "cover",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_rowan",

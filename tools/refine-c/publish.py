@@ -155,6 +155,7 @@ whether they are the culprit. Write 1 to 3 sentences in their voice, about the e
 - An innocent gives a true but vague account that keeps their private secret hidden.
 - No clock times, no numbers, no named witnesses who could confirm it; nothing that would clear or convict anyone.
 - Stay consistent with their events and attitudes; do not mention the investigation's clues.
+- 'who' says who everyone is (role, family, description): refer to people only as that allows.
 - 'tells' is what they also tell the detective when asked more closely. Never contradict it, even where it is untrue (a
   person keeps to their own story). Do not repeat it either: this is the vaguer first answer, without its details.
 - If 'previous_attempt' is given, it was rejected for the reason stated: write it again without that.
@@ -162,7 +163,8 @@ Return {"accounts": {"<person id>": "<what they say>"}}."""
 
 AGREES = """For each person in a 1920s village mystery you get a short account of their evening and the statements they also
 give the detective ('tells'). Does the account contradict any statement (a different place, leaving when a statement
-says they stayed, a different reason, and so on)? Being vaguer or leaving things out is not a contradiction.
+says they stayed, a different reason, and so on), or misstate who someone is ('who' gives each person's role and
+description: calling a sister a wife is a contradiction)? Being vaguer or leaving things out is not a contradiction.
 Return {"verdicts": {"<id>": {"agrees": true | false, "why": "<for a contradiction: what differs>"}}}."""
 
 
@@ -173,11 +175,21 @@ def own_statements(case, pid):
             and not x.get('requires') and not x.get('surface') and not x.get('morning') and not x.get('sighting')]
 
 
+SURFACE_CHECK = 2   # 2: accounts are also checked for who people are (kinship, roles)
+
+
+def who_is_who(case):
+    """Each person in the case as the setting describes them: name, role and public description (kinship lives there)."""
+    setting = {p['id']: p for p in enrich.SETTING.get('people', [])}
+    return [{'id': p['id'], 'name': setting.get(p['id'], {}).get('name', p.get('name')), 'role': setting.get(p['id'], {}).get('role'),
+             'description': setting.get(p['id'], {}).get('public')} for p in case['people']]
+
+
 def surface_disagreements(case, signs):
     """{sign id: why} for evening accounts that contradict their speaker's own statements."""
     from refine import llm_json, CRITIC_MODEL
-    items = [{'id': x['id'], 'account': x['text'], 'tells': own_statements(case, x['speaker'])} for x in signs]
-    items = [i for i in items if i['tells']]
+    items = [{'id': x['id'], 'speaker': x['speaker'], 'account': x['text'], 'tells': own_statements(case, x['speaker']), 'who': who_is_who(case)}
+             for x in signs]
     if not items:
         return {}
     out = _as_map(llm_json(AGREES, json.dumps(items), 1500, model=CRITIC_MODEL).get('verdicts', {}))
@@ -203,14 +215,14 @@ def add_surface_accounts(case, rounds=2):
     active = {q for e in case['events'] if e['start'] < morning for q in [e.get('agent'), *e.get('others', [])] if q}
     # accounts already published are checked too (a case published before this check)
     failed = {}
-    old = [x for x in case['signs'] if x.get('surface') and not x.get('agrees_checked')]
+    old = [x for x in case['signs'] if x.get('surface') and x.get('agrees_checked') != SURFACE_CHECK]
     for sid, why in surface_disagreements(case, old).items():
         x = next(y for y in case['signs'] if y['id'] == sid)
         failed[x['speaker']] = {'text': x['text'], 'rejected_because': why}
     with SIGNS: case['signs'][:] = [x for x in case['signs'] if not (x.get('surface') and x['speaker'] in failed)]
     for x in old:
         if x['speaker'] not in failed:
-            x['agrees_checked'] = True
+            x['agrees_checked'] = SURFACE_CHECK
     n = 0
     for r in range(rounds):
         have = {x['speaker'] for x in case['signs'] if x.get('surface')}
@@ -221,7 +233,7 @@ def add_surface_accounts(case, rounds=2):
         items = [{'id': pid, 'name': people[pid]['name'], 'voice': people[pid].get('voice'), 'culprit': pid == truth,
                   'events': [e.get('summary') for e in case['events'] if (pid == e.get('agent') or pid in e.get('others', [])) and e['start'] < morning],
                   'attitudes': [f"{a['mode']}: {a['content']}" for a in case['attitudes'] if a['agent'] == pid],
-                  'tells': own_statements(case, pid), **({'previous_attempt': failed[pid]} if pid in failed else {})} for pid in todo]
+                  'tells': own_statements(case, pid), 'who': who_is_who(case), **({'previous_attempt': failed[pid]} if pid in failed else {})} for pid in todo]
         out = llm_json(SURFACE, json.dumps(items), 2500, model=CRITIC_MODEL).get('accounts', {})
         new = []
         for pid in todo:
@@ -236,7 +248,7 @@ def add_surface_accounts(case, rounds=2):
         with SIGNS: case['signs'][:] = [x for x in case['signs'] if x['id'] not in bad]
         for x in new:
             if x['id'] not in bad:
-                x['agrees_checked'] = True
+                x['agrees_checked'] = SURFACE_CHECK
                 n += 1
         if r == rounds - 1 and failed:
             case.setdefault('surface_dropped', []).extend(failed)

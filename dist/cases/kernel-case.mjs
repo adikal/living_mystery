@@ -385,6 +385,40 @@ export function makeKernelCase(records) {
       }
       return pathCache.get(key);
     }
+    // How the player gets testimony x now: one or two listed questions (an account often follows the person's evening
+    // account), else a held item that draws it when shown; each tried on a throwaway copy of the game with the player
+    // beside the speaker, likeliest first. Cached per game state.
+    // the cache belongs to each session (event ids are counted per session, so they say nothing across sessions)
+    const routes = new WeakMap();
+    function routeTo(s, x) {
+      const mine = routes.get(s) ?? new Map(), key = `${s.events.length}:${s.events.at(-1)?.id}:${x.id}`;
+      routes.set(s, mine);
+      if (!mine.has(key)) { if (mine.size > 200) mine.clear(); mine.set(key, findRoute(s, x)); }
+      return mine.get(key);
+    }
+    function findRoute(s, x) {
+      const pid = x.speaker, likely = [x.sighting ? 'seen' : x.morning ? 'morning' : x.id, 'more', 'night'];
+      const beside = s0 => {
+        const t = structuredClone(s0), w = t.world;
+        w.npcs[pid].location = w.npcs[pid].travel?.to ?? w.npcs[pid].location; w.npcs[pid].travel = null;
+        w.player.location = w.npcs[pid].location;
+        return t;
+      };
+      const menu = t => [...(CASE.topicsFor?.[pid] ?? []), ...followupOptions(t, pid)]
+        .sort(([a], [b]) => (likely.indexOf(a) + 1 || 99) - (likely.indexOf(b) + 1 || 99));
+      const after = (t, act) => { const c = structuredClone(t); try { act(c); } catch { return null; } return c; };
+      const got = t => t?.world.player.evidence.some(e => e.clue === x.id);
+      const start = beside(s), cause = s.events.at(-1)?.id;
+      for (const [a, la] of menu(start)) {
+        const one = after(start, t => ask(t, pid, a, cause));
+        if (got(one)) return {ask: [la]};
+        if (!one) continue;
+        for (const [b, lb] of menu(one)) if (got(after(one, t => ask(t, pid, b, one.events.at(-1)?.id)))) return {ask: [la, lb]};
+      }
+      const shown = [...held(s)].find(clue => CLUES[clue] && got(after(start, t => present(t, pid, clue, 'private', cause))));
+      return shown ? {show: CLUES[shown].title} : null;
+    }
+
     function hintText(s, x) {
       const here = s.world.player.location;
       const kindWord = k => ({trace: 'a mark or trace', document: 'a document', record: 'a record', item: 'an object', behavior: 'someone behaving oddly',
@@ -393,18 +427,15 @@ export function makeKernelCase(records) {
       if (x.kind === 'testimony') {
         const who = PEOPLE[x.speaker]?.name ?? 'someone', where = s.world.npcs[x.speaker]?.location;
         const prereq = arr(x.requires).map(r => signs[r]).find(Boolean);
-        // the question that actually gives this account: its own, the sightings or morning question, else "last night"
-        const menu = [...(CASE.topicsFor?.[x.speaker] ?? []), ...followupOptions(s, x.speaker)];
-        const want = x.sighting ? 'seen' : x.morning ? 'morning' : null;
-        const topic = (want ? menu.find(([t]) => t === want) : menu.find(([t]) => t === x.id) ?? menu.find(([t]) => t === 'more') ?? menu.find(([t]) => t === 'night'))?.[1]
-          ?? Q.night;
-        // Level 1 names whom (playtests: an unnamed "someone" helped a quarter of the time, a name two thirds); level 2 the
-        // question itself, which is one of the options shown when the player is with them.
+        // Level 1 names whom (playtests: an unnamed "someone" helped a quarter of the time, a name two thirds); level 2
+        // the action that gives this account, found by trying it: a listed question, else an item to show them.
         const at = LOCATIONS[where] ? ` at ${place(where)}` : '';
-        return {id: x.id, levels: [
-          `${who}${at} has more to tell you than they have said so far${prereq ? `, now that you have ${String(prereq.title || 'that').toLowerCase()}` : ''}.`,
-          `Ask ${who}: “${topic}”`,
-          `Ask ${who}${at}: “${topic}” (one of the questions you can choose when you are with them).`]};
+        const route = routeTo(s, x), first = `${who}${at} has more to tell you than they have said so far${prereq ? `, now that you have ${String(prereq.title || 'that').toLowerCase()}` : ''}.`;
+        if (route?.show) return {id: x.id, levels: [first, `Show ${who} ${lower(route.show)}.`,
+          `Show ${who}${at} ${lower(route.show)} (drag it from your inventory onto them).`]};
+        const asks = (route?.ask ?? [Q.night]).map(q => `“${q}”`).join(', then ');
+        return {id: x.id, levels: [first, `Ask ${who}: ${asks}`,
+          `Ask ${who}${at}: ${asks} (${route?.ask?.length > 1 ? 'questions' : 'one of the questions'} you can choose when you are with them).`]};
       }
       if (arr(s.world.flags.lockedObjects).includes(x.id))
         return {id: x.id, levels: ['What you have found points somewhere you have not looked yet.', `Go to ${place(x.at)}.`,
@@ -715,7 +746,7 @@ export function makeKernelCase(records) {
         status = 'ambiguous';
       } else if (!pillars.means) { feedback = `“You have shown me ${name} could have been there. Now show me how: what put the means in ${his} hands?”`; status = 'no_means'; }
       else if (!pillars.motive) { feedback = `“You have shown me ${name} could have done it, and how. But why would ${he}? Find me the reason.”`; status = 'no_motive'; }
-      else if (!howOk) { feedback = '“Your evidence does not bear out that it was done that way. Look again at how he died.”'; status = 'wrong_method'; }
+      else if (!howOk) { feedback = `“Your evidence does not bear out that it was done that way. Look again at how ${BW_PEOPLE[victim]?.pronoun === 'she' ? 'she' : 'he'} died.”`; status = 'wrong_method'; }
       else if (!whyOk) { feedback = `“The evidence you hold points to a different reason. Read ${st.motive.map(id => `‘${signs[id]?.title}’`).join(' and ')} again.”`; status = 'wrong_motive'; }
       else if (pid !== truthActor) { feedback = '“It hangs together on paper, but something you rely on has not been tested. Check every account against the evidence before I charge anyone.”'; status = 'untested'; }
       const supported = status === 'supported';

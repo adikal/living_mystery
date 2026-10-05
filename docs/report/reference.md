@@ -162,6 +162,7 @@ For a research or external-review snapshot, associate a report edition with a re
 | 0.21 | 2026-10-03 | Sightings certified solve-neutral; the morning director with code, model and kernel critics; concealment that never leaves the case unsolvable |
 | 0.22 | 2026-10-03 | Fixes from five play-throughs as general rules: start positions from the history; witnessed knowledge; stress from the history; duplicate questions asked through one; hints along the kernel's critical signs; the constable as a setting role; Z3 counts only readable evidence |
 | 0.23 | 2026-10-04 | Self-improvement by playtesting: agent players through a text interface, scorecard, judge, paired held-out experiments, offline replay and a ledger of hypotheses; epochs 0–2 (declines that close the subject, the chosen account before a decline, hints that name whom and then the question) |
+| 0.24 | 2026-10-05 | Bug track (detectors, correctness judge, investigation; six general bugs fixed), epoch 3 on fresh cases, dead ends and blocked replies across versions; a contradiction law in both kernels |
 
 ### Forensic milestone source map
 

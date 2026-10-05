@@ -13,7 +13,7 @@ import random
 import statistics as st
 from collections import defaultdict
 
-METRICS = ['solved', 'correct', 'actions', 'hints', 'hints_that_helped', 'longest_stall', 'loops', 'character_fallbacks', 'neutral_replies', 'pressed_after_decline',
+METRICS = ['solved', 'correct', 'actions', 'first_progress', 'hints', 'hints_that_helped', 'longest_stall', 'loops', 'character_fallbacks', 'neutral_replies', 'pressed_after_decline', 'refused_inconsistent',
            'character_rejections', 'refused_actions', 'wrong_accusations', 'witnessed_village_per_hour', 'exceptions']
 JUDGED = ['challenge', 'frustration', 'confusion', 'character_quality', 'fairness', 'liveliness', 'fun']
 

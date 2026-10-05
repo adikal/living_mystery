@@ -1,9 +1,8 @@
 # Playtesting itself: a self-improvement loop for the game
 
-Status: **milestones 1–5 built** (October 2026): the text interface, player agents, scorecard, judge and report are in
-`tools/playtest/`; epochs 0–2 have been played (ledger: `tools/playtest/ledger.jsonl`). Epoch 1 failed the gate and was
-reverted in part; epoch 2 (2 seeds, three cumulative arms) passed it: on held-out cases hints that helped rose from 57%
-to 87%, with no guardrail lower beyond noise except judged liveliness (−0.3).
+Status: **milestones 1–5 built, plus a bug track** (October 2026): the text interface, player agents, scorecard, judge
+and report are in `tools/playtest/`, with invariant detectors (`bugs.mjs`) and a correctness judge (`correctness.py`)
+for bugs. Epochs 0–3 have been played (ledger: `tools/playtest/ledger.jsonl`); results in section 12.
 
 ```
 .venv/bin/python tools/playtest/run.py --batch e0-train --split train      # play (cases in tools/playtest/cases.json)
@@ -12,6 +11,9 @@ to 87%, with no guardrail lower beyond noise except judged liveliness (−0.3).
 .venv/bin/python tools/playtest/report.py tools/playtest/runs/e1-heldout --baseline tools/playtest/runs/e0-heldout
 .venv/bin/python tools/playtest/run.py --batch e1-heldout --plan-from e0-heldout   # the same episodes after a change
 node tools/playtest/replay.mjs --root <checkout> --sample 80 tools/playtest/runs/e1-*/*__*.json   # offline check
+node tools/playtest/replay.mjs --targets turns.json ...                    # re-ask given turns ([{file, step}])
+node tools/playtest/bugs.mjs --out bugs.json tools/playtest/runs/e*/      # bug detectors, ranked by severity
+.venv/bin/python tools/playtest/correctness.py tools/playtest/runs/<batch>   # correctness judge
 ```
 
 Models: players `claude-sonnet-4-5`, judge `claude-sonnet-5`, characters through the game's proxy, the optimizer an
@@ -277,6 +279,39 @@ profiles; training cases are three others. Intervals are bootstrap 90% intervals
 | 2A | declines alone (2 seeds) | back to baseline | rejections per turn back to 0.58 (promise rule was the cause); players pressed the same person more after a decline (+0.72 of next 5 actions, 0.28 to 1.11) | superseded by 2B |
 | 2B | A + the chosen account given as written + declines that close the subject | declines down a third, less pressing | turns ending in a decline 8.4% → 6.7%; pressing −0.39 (−0.94 to 0.14) | kept (no metric differs from baseline beyond noise) |
 | 2C | B + hints that name whom, then the question | more hints help | hints that helped +35 points (19 to 53), fun +0.5 (0.1 to 0.9); against baseline 57% → 87% | accepted |
+| 3 (fresh held-out cases, 3 seeds, 27 pairs) | A: fixes from the author's play (briefing, contradiction law, guarded third attempt only after a fact-checker rejection, line critic sees private knowledge) | first evidence sooner; fewer refused accusations | fairness +0.41 [0, +0.85]; declines +1.15 per game [+0.33, +2.0] | kept as fixes |
+| 3 | C: hints name the action that gives the account (scripted check: 13 of 36 hints were wrong) | more hints help | no change (0.00) | kept as a fix |
+| 3 | D: a plain "nothing to tell" third attempt after code checks | fewer declines | declines −0.56 (n.s.); pressing after a decline +0.75 [+0.20, +1.38] | rejected |
+
+### The bug track
+
+Tuning experiments found few bugs, while the author found five in two plays. The signals were often in the agents'
+data, but players read anomalies as clues, the judge saw only the first 9,000 characters and was asked about the
+experience, and clustering by frequency buried single serious faults. The bug track is separate from tuning: a fix needs
+a test that reproduces the fault, a general fix, all tests and parity, and a sweep of all cases, but no measured
+effect. It runs over games already recorded:
+
+1. **Detectors** (`bugs.mjs`): invariants checked against the case as it was played: an accusation refused while the
+   held evidence contains an unrecorded contradiction; a hint followed that does not give its clue; every attempt
+   refused by the name check; the same words three times; a hint shown three times without its clue; a static scan
+   for contradictions between reachable accounts. Ranked by severity, then by games.
+2. **Correctness judge** (`correctness.py`): a model reads the full transcript, the game's internals at each turn and
+   the true records, and lists only breaches of eight written rules of the game.
+3. **Investigation**: each top finding is reproduced (`replay.mjs --targets`), traced to its cause and confirmed against
+   the records; many of the judge's 382 raw findings did not survive.
+
+Six general bugs found this way in 156 games and fixed: hints that quoted the wrong question; sightings that broke an
+alibi without the case counting it; a name check that did not know "the Rook" or that the examiner is known to all;
+spoken times compared by spelling; evening accounts that misstated kinship; the same words three times. Of the five bugs
+the author found by hand, the agents' data contained two.
+
+### Dead ends and blocked replies
+
+The same 120 recorded questions put to three versions: turns that leave the player with nothing 28% (before the loop)
+→ 9% (after epoch 2) → 7% (now), a difference of −22 points [−28, −15]; rejected attempts per question 1.32 → 1.18
+(−11%, not significant); replies written freely by the model 72% → 74% (no change). On 106 turns the correctness judge
+called unfair refusals, re-asking them after the fixes changed nothing: most are the fact-checker refusing a fact no
+account gives, which is what keeps characters from solving the case early.
 
 Open after epoch 2: judged liveliness 0.33 lower than baseline (−0.67 to −0.06); rejected replies per turn 0.65 against
 0.59 (not significant). Neither the players nor the judge has yet been calibrated against human play; with 18 pairs, only

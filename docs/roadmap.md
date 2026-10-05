@@ -10,6 +10,12 @@ epoch 2 kept declines that close the subject, the chosen account before a declin
 question (hints that helped: 57% → 87%). Next: calibrate players and judge against human play; record the state at each
 character turn so the offline replay is exact; automate an epoch (milestone 6); generator epochs (milestone 7).
 
+**A bug track and epoch 3 (5 October).** Invariant detectors and a correctness judge over every recorded game found
+six general bugs, all fixed with tests (hint routes, unrecorded contradictions, place forms and setting roles in the name
+check, spoken times, kinship in evening accounts, verbatim repeats). Epoch 3 on fresh cases rejected one change and kept
+two as fixes. Next: a tester profile that reports anomalies instead of playing around them; calibration against human
+play; a fact-checker that can tell a harmless true detail from one that matters to the solution.
+
 **A human play of Sealing Wax and Steel (4 October).** Three general fixes: familiar names a case uses ("Dora") are
 declared in the setting, so a character can name the person properly; the guarded third reply ("I've said more than I
 ought") follows only a fact-checker rejection, not a refused name; a cleared secret is explained by the attitude behind

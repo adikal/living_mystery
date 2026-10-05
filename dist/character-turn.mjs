@@ -2,7 +2,7 @@
 import {CASE,PEOPLE,LOCATIONS,copy,dispatch,dispatchCharacter,exportSession,diagnostics,followupOptions,characterPlans,caseTables} from './engine.mjs';
 import {llmActive,llmConfig,parseCritic,parseJsonLoose} from './llm.mjs';
 import {NEUTRAL_LINE} from './kernel.mjs';
-import {BW_ROLE_WORDS} from './cases/village.mjs';
+import {BW_ROLE_WORDS, BW_PEOPLE} from './cases/village.mjs';
 // The complete roster of people and places; given to the critic to check that a
 // reply never names someone/somewhere outside the story or by a wrong name.
 // Per case: generated cases have their own cast and places.
@@ -55,7 +55,10 @@ function perspective(s,id){
     // Own beliefs only, with the inspector's truth labels deliberately removed.
   const beliefs=npc.beliefs.map(({key,text,confidence,sourceType,sourceId})=>({key,text,confidence,sourceType,sourceId}));
   return {id,name:p.name,pronoun:p.pronoun,address:p.address,voice:p.voice,role:p.role,public:p.public,...(p.sheet?{sheet:p.sheet}:{}),...(p.today?{today:p.today}:{}),personality:p.traits,values:p.values,goals:p.goals,relationships:{...copy(p.relationships),player:{...p.relationships.player,trust:npc.trust}},
-    roster:Object.entries(PEOPLE).map(([qid,q])=>({name:q.name,address:q.address,pronoun:q.pronoun,role:q.role,public:q.public,homeName:LOCATIONS[q.home]?.name,calledBy:BW_ROLE_WORDS[qid]??[]})),
+    // every form a person can be known by; the setting's roles (constable, examiner) are known to everyone after a death
+    roster:Object.entries(PEOPLE).map(([qid,q])=>({name:q.name,address:q.address,pronoun:q.pronoun,role:q.role,public:q.public,
+      homeName:LOCATIONS[BW_PEOPLE[qid]?.home??q.home]?.name,homeForms:placeForms(LOCATIONS[BW_PEOPLE[qid]?.home??q.home]),calledBy:BW_ROLE_WORDS[qid]??[],
+      ...(Object.values(caseTables(s).behavior?.morningCtx?.roles??{}).includes(qid)?{inPlay:true}:{})})),
     victim:caseTables(s).CASE.victim,
     mood:{trust:npc.trust,stress:npc.stress},location:LOCATIONS[npc.location]?.name,minute:s.world.minute,
     beliefs,memories,didToday:didToday(s,id),plans:characterPlans(s,id),conversation:copy(npc.dialogueState??{turns:0}),
@@ -119,15 +122,35 @@ function clockContext(s){
   return {now:`${hm(s.world.minute)} on the morning after the death`,...(morning?{thisMorningFrom:`${hm(morning)} (earlier times are last night)`}:{})};
 }
 const HOURS='one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve';
-const CLOCK=new RegExp(`\\b(midnight|midday|noon|(?:${HOURS}) o['’]clock|(?:half|quarter|(?:twenty-five|twenty|ten|five|twenty five)) (?:past|to) (?:${HOURS})|(?:${HOURS})(?:-| )(?:thirty|fifteen|forty-five))\\b`,'gi');
-const clockPhrases=t=>[...String(t).toLowerCase().replace(/’/g,"'").matchAll(CLOCK)].map(m=>m[1].replace(/\s+/g,' '));
+const CLOCK=new RegExp(`\\b(midnight|midday|noon|(?:${HOURS}) o['’]clock|(?:half|quarter|(?:twenty-five|twenty|ten|five|twenty five)) (?:past|to) (?:${HOURS})|(?:${HOURS})(?:-| )(?:thirty|fifteen|forty-five)|half (?:${HOURS}))\\b`,'gi');
+// spellings agree: "half-past eleven" is "half past eleven"
+const clockText=t=>String(t).toLowerCase().replace(/’/g,"'").replace(/\b(half|quarter|five|ten|twenty|twenty-five)-(past|to)\b/g,'$1 $2')
+  .replace(new RegExp(`\\b(past|to)-(${HOURS})\\b`,'g'),'$1 $2');
+const clockPhrases=t=>[...clockText(t).matchAll(CLOCK)].map(m=>m[1].replace(/\s+/g,' '));
+// The time a phrase names, as minutes on a twelve-hour dial (so "half past eleven", "eleven-thirty", "23:30" and
+// "11.30" are one time): a spoken time and a figure agree whatever the spelling.
+const HOUR=Object.fromEntries(HOURS.split('|').map((h,i)=>[h,(i+1)%12]));
+const BY={five:5,ten:10,quarter:15,twenty:20,'twenty-five':25,'twenty five':25,half:30};
+function dialMinutes(phrase){
+  const x=phrase.replace(/\s+/g,' ');
+  if(/^(midnight|midday|noon)$/.test(x))return 0;
+  let m=x.match(/^(\w+) o'clock$/);if(m)return HOUR[m[1]]*60;
+  m=x.match(/^(.+) (past|to) (\w+)$/);if(m){const h=HOUR[m[3]]*60,d=BY[m[1]];return ((m[2]==='past'?h+d:h-d)+720)%720;}
+  m=x.match(/^half (\w+)$/);if(m)return HOUR[m[1]]*60+30;   // "half nine": half past nine
+  m=x.match(/^(\w+)[- ](thirty|fifteen|forty-five)$/);if(m)return HOUR[m[1]]*60+{thirty:30,fifteen:15,'forty-five':45}[m[2]];
+  return null;
+}
+const figures=t=>[...String(t).matchAll(/\b([01]?\d|2[0-3])[:.]([0-5]\d)\b/g)].map(m=>(Number(m[1])%12)*60+Number(m[2]));
+const timesIn=t=>new Set([...clockPhrases(t).map(dialMinutes),...figures(t)].filter(v=>v!=null));
+// Every way a place is spoken of: its name, short form, the form used mid-sentence, and familiar names ("the Rook").
+const placeForms=l=>l?[...new Set([l.name,l.short,l.called,...(l.familiar??[])].filter(Boolean).map(f=>f.replace(/^the /i,'')).filter(f=>f.length>2))]:[];
 // Every person the reply names must already be in play: in the account, the question, the evidence shown, or the
 // conversation so far (the speaker and the victim always are). Catches a wrong name for the right person.
 function nameGuard(ticket,utterance){
   const ctx=ticket.context;
   const allowed=[ctx.player.utterance,ctx.player.presented?.description??'',ctx.player.presented?.title??'',...(ctx.player.presented?.concerns??[]),...ctx.accounts.map(a=>a.statement),
     ...(ctx.character.history??[]).map(h=>h.text??''),ctx.character.name,ctx.victim??CASE.victim??''].join(' \n ').toLowerCase();
-  for(const q of (ctx.character.roster??[]).filter(q=>q.address!=='Constable Bell')){   // the constable is always in play
+  for(const q of (ctx.character.roster??[]).filter(q=>!q.inPlay)){   // the setting's roles are always in play
     const parts=String(q.name).replace(/^(Dr|The Reverend) /,'').split(' '),surname=parts.at(-1),first=parts[0];
     const forms=[q.name,q.address].filter(Boolean);
     const said=forms.some(f=>new RegExp(`\\b${f.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}\\b`,'i').test(utterance));
@@ -135,7 +158,7 @@ function nameGuard(ticket,utterance){
     // ... or by what people call them ('the doctor's notes' puts Dr Marsh in play)
     const known=[surname,first,q.role?.replace(/^The /,''),...(q.calledBy??[])].filter(w=>w&&w.length>2).some(w=>new RegExp(`\\b${w.toLowerCase()}\\b`).test(allowed));
     // who runs which place is public: once the question, evidence or account mentions the inn, naming its keeper is fine
-    const homeNamed=q.homeName&&[q.homeName,q.homeName.replace(/^The /,'')].some(h=>h.length>3&&allowed.includes(h.toLowerCase()));
+    const homeNamed=(q.homeForms??[]).some(h=>new RegExp(`\\b${h.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}\\b`).test(allowed));
     if(said&&!known&&!homeNamed&&!forms.some(f=>allowed.includes(f.toLowerCase())))
       return `wrong_or_new_name: the reply names ${q.address??q.name}, who is not in your account, the question or the conversation. Name only people your account or the detective mentions.`;
   }
@@ -187,6 +210,10 @@ export function validateCharacterProposal(ticket,p){
   const hist=ticket.context.character?.history??[],lastOwn=hist.at(-1)?.speaker===ticket.person?hist.at(-1):hist.at(-2)?.speaker===ticket.person?hist.at(-2):null;
   const asks=t=>/\?\s*["”’]?\s*$/.test(String(t??''));
   if(lastOwn&&hist.at(-1)?.speaker!==ticket.person&&asks(lastOwn.text)&&asks(p.utterance)&&p.intent==='clarify')return fail('You already asked the detective what they meant. Do not ask again: answer with an available account, or evade, or refuse, in one or two sentences.');
+  // the same words again, word for word, answer nothing new (playtests: one refusal given three times running)
+  const plainText=t=>String(t??'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+  if((ticket.context.character?.history??[]).some(h=>h.speaker===ticket.person&&plainText(h.text)===plainText(p.utterance)))
+    return fail('repeated_reply: you said exactly this to the detective before. Answer what they ask now, in different words; if you have nothing new to tell, say so briefly in other words.');
   const names=nameGuard(ticket,p.utterance);
   if(names)return fail(names);
   // Numbers not in the permitted account are never new evidence from a model.
@@ -197,9 +224,9 @@ export function validateCharacterProposal(ticket,p){
   if(numbers(p.utterance).some(n=>!acctNums.has(n)))return fail('changed_numbers');
   // Spoken clock times ("near midnight", "half past nine") are claims too: each must come from the account.
   // times the account gives, or that the detective has already said (question, shown evidence, conversation so far)
-  const ctx=ticket.context,said=clockPhrases(p.utterance),allowed=new Set(clockPhrases([account?.statement??'',ctx.player?.utterance??'',
-    ctx.player?.presented?.description??'',...(ctx.character?.history??[]).map(h=>h.text??'')].join(' \n ')));
-  const extra=said.filter(x=>!allowed.has(x));
+  const ctx=ticket.context,said=clockPhrases(p.utterance),allowed=timesIn([account?.statement??'',ctx.player?.utterance??'',
+    ctx.player?.presented?.description??'',...(ctx.character?.history??[]).map(h=>h.text??'')].join(' \n '));
+  const extra=said.filter(x=>!allowed.has(dialMinutes(x)));
   if(extra.length)return fail(`invented_time: "${extra[0]}" is not in your account; give only the times your account gives, or none`);
   return {ok:true,account};
 }

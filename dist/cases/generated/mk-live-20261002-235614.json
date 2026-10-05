@@ -1089,6 +1089,22 @@
  ],
  "signs": [
   {
+   "id": "s_surface_clara",
+   "kind": "testimony",
+   "speaker": "clara",
+   "surface": true,
+   "deceptive": true,
+   "title": "Clara Vale on the evening",
+   "text": "I did the household accounts, saw the house locked up as I always do, and went up to bed in good time. There is nothing more to tell of it.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 2,
+   "surface_why": "She omits dining with Hugo, striking him with the doorstop and taking the pawn ticket, washing the doorstop and burning the ticket, and arranging a false alibi with Rowan \u2014 she claims the evening ended simply with accounts and bed, which falsely implies no such events occurred.",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Clara Vale says she did the household accounts, saw the house locked up, and went up to bed in good time. Do you know if that's true?",
+   "confront": "You told me you did the accounts, locked up the house, and went straight to bed. Is that the whole of it?"
+  },
+  {
    "id": "s_surface_bell",
    "kind": "testimony",
    "speaker": "bell",
@@ -1097,7 +1113,7 @@
    "title": "Arthur Bell on the evening",
    "text": "Spent the evening by the fire with a pint, passing the time on the week's small doings. Nothing much to tell, just a quiet night before I turned in.",
    "ask": "Where were you last night?",
-   "agrees_checked": true,
+   "agrees_checked": 2,
    "surface_checked": "honest",
    "to": null,
    "show": "Arthur Bell says he spent a quiet evening by the fire with a pint, chatting about the week's small doings before turning in. Do you know if that's true?",
@@ -1112,7 +1128,7 @@
    "title": "The Reverend Thomas Hale on the evening",
    "text": "Oh, I was at the church, trimming the candles and setting the hymn books to rights for Sunday - these small tasks do take longer than one expects. A quiet, unremarkable evening, I'm afraid, until I retired.",
    "ask": "Where were you last night?",
-   "agrees_checked": true,
+   "agrees_checked": 2,
    "surface_checked": "honest",
    "to": null,
    "show": "The Reverend Thomas Hale says he spent the evening at the church trimming candles and tidying hymn books until he retired. Do you know if that's true?",
@@ -1127,7 +1143,7 @@
    "title": "Edmund Vale on the evening",
    "text": "I was in the study seeing to the estate's ledgers and correspondence by lamplight, as I do most evenings. Kept at it until I was good and ready for bed, and that was that.",
    "ask": "Where were you last night?",
-   "agrees_checked": true,
+   "agrees_checked": 2,
    "surface_checked": "honest",
    "to": null,
    "show": "Edmund Vale says he was in the study seeing to the estate's ledgers and correspondence by lamplight until he went to bed. Do you know if that's true?",
@@ -1142,7 +1158,7 @@
    "title": "Dorothy Pruett on the evening",
    "text": "I kept to my usual evening routine, seeing to the post office business before locking up, and then went straight home. I spoke to no one of any consequence and retired at a reasonable hour, as I always do.",
    "ask": "Where were you last night?",
-   "agrees_checked": true,
+   "agrees_checked": 2,
    "surface_checked": "honest",
    "to": null,
    "show": "Dorothy Pruett says she locked up the post office and went straight home, speaking to no one of consequence. Do you know if that's true?",
@@ -1231,7 +1247,7 @@
    "show": "Rowan Pike says he was in the greenhouse all night stoking the boiler, and that Mrs Vale sat with him a good while. Can you confirm that?",
    "confront": "You said you were in the greenhouse all night stoking the boiler, and that Mrs Vale sat with you a good while. Is that so?",
    "surface_checked": "cover",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_surface_iris",
@@ -1246,7 +1262,7 @@
    "show": "Dr Marsh says she was at the surgery writing notes, then called to the inn for a scald, then home to bed. Does that match what you saw of her?",
    "confront": "You told me you were at the surgery, then called to the inn for a scald, then home to write up your daybook and sleep. Is that the whole of it?",
    "surface_checked": "honest",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_surface_silas",
@@ -1261,7 +1277,7 @@
    "show": "Mr Voss says he was at his desk in the vestry office, then put through a call to London before locking up and walking home. Can you confirm that?",
    "confront": "You said you were at your desk in the vestry office, put through a call to London, then locked up and walked home. Is that so?",
    "surface_checked": "cover",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_surface_jonah",
@@ -1276,7 +1292,7 @@
    "to": null,
    "show": "Jonah Reed says he was in the taproom watching Ada tend her scald, then walked home along the river path. Does that match what you saw?",
    "confront": "You told me you were in the taproom watching Mrs Finch see to her scald, then walked home along the river path. Is that the whole of it?",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_surface_ada",
@@ -1291,22 +1307,7 @@
    "show": "Mrs Finch says she was run off her feet in the taproom till closing, then straight to bed with her scald, till she went out for the post office in the dark. Can you confirm that?",
    "confront": "You told me you were busy in the taproom till closing, then straight to bed with your scald, until you went out for the post office in the dark. Is that so?",
    "surface_checked": "cover",
-   "agrees_checked": true
-  },
-  {
-   "id": "s_surface_clara",
-   "kind": "testimony",
-   "speaker": "clara",
-   "surface": true,
-   "deceptive": true,
-   "title": "Clara Vale on the evening",
-   "text": "I did the household accounts, saw the house locked up by half past ten as I always do, and went up to bed. I did not go out again, and there is nothing more to tell of it.",
-   "ask": "Where were you last night?",
-   "to": null,
-   "show": "Miss Vale says she did the household accounts, saw the house locked by half past ten, then went to the greenhouse to speak with Rowan about the frost before bed. Does that match what you saw?",
-   "confront": "You said you did the household accounts, had the house locked by half past ten, then went to the greenhouse to speak with Rowan before going up to bed. Is that so?",
-   "surface_checked": "cover",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_iris_test",

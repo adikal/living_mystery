@@ -1183,6 +1183,38 @@
  ],
  "signs": [
   {
+   "id": "s_surface_rowan",
+   "kind": "testimony",
+   "speaker": "rowan",
+   "surface": true,
+   "deceptive": true,
+   "title": "Rowan Pike on the evening",
+   "text": "Cut my hand bad on some glass, so I went and had the doctor see to it and sat resting there a good while before heading home to bed. Nothing more to it than that.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 2,
+   "surface_why": "He claims his evening was just the cut hand, the doctor, and resting before bed, but he omits (and thus conceals) that he was out delivering Reed's saw and overheard Edmund confronting Reed, and he says 'nothing more to it than that' while actually at dawn he deliberately destroyed evidence (swept u",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Rowan Pike says he cut his hand on glass and had the doctor see to it, then rested there before heading home to bed. Do you know if that's true?",
+   "confront": "You told me you cut your hand on glass, had the doctor tend it, then rested there before going home to bed. Is that the whole of it?"
+  },
+  {
+   "id": "s_surface_hugo",
+   "kind": "testimony",
+   "speaker": "hugo",
+   "surface": true,
+   "deceptive": true,
+   "title": "Hugo Vale on the evening",
+   "text": "Spent the evening at the inn passing the time with cards and the usual chatter, nothing worth telling really, then wandered back and turned in. Honestly, dullest night I've had since I got here.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 2,
+   "surface_why": "He describes an unremarkable night of cards and chatter with 'nothing worth telling,' but he omits that he pocketed his signed tally card instead of turning it in to Ada - a deliberate, concealed act that the bland account falsely implies didn't happen.",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Hugo Vale says he spent the evening at the inn playing cards and chatting, then wandered back and turned in. Do you know if that's true?",
+   "confront": "You told me you spent the evening at the inn with cards and chatter, then wandered back and turned in. Is that the whole of it?"
+  },
+  {
    "id": "s_surface_bell",
    "kind": "testimony",
    "speaker": "bell",
@@ -1191,7 +1223,7 @@
    "title": "Arthur Bell on the evening",
    "text": "Spent the evening by the fire at the Rook & Lantern, nursing a pint with a few of the neighbours. Nothing more to it than that - a man likes a bit of quiet company after a long day. Turned in once the pint was done.",
    "ask": "Where were you last night?",
-   "agrees_checked": true,
+   "agrees_checked": 2,
    "to": null,
    "show": "Arthur Bell says he spent the evening by the fire at the Rook & Lantern, nursing a pint with the neighbours before turning in. Do you know if that's true?",
    "confront": "You told me you spent the evening by the fire at the Rook & Lantern, nursing a pint, before turning in. Is that the whole of it?",
@@ -1206,7 +1238,7 @@
    "title": "Ada Finch on the evening",
    "text": "Oh, love, Thursday means the whist drive at the Rook & Lantern, and I was busy with it the whole evening - pouring tea, chivvying the tables along, and nipping down to the cellar more times than I care to count. Between the players and the gossip I hardly had a moment to call my own, but it was a lovely full house, if I say so myself.",
    "ask": "Where were you last night?",
-   "agrees_checked": true,
+   "agrees_checked": 2,
    "surface_checked": "honest",
    "to": null,
    "show": "Ada Finch says she spent the whole of Thursday evening at the whist drive at the Rook & Lantern, pouring tea and seeing to the cellar. Do you know if that's true?",
@@ -1352,7 +1384,7 @@
    "confront": "You told me you were at the whist drive until late and only found out about the office the next morning. Is that the whole of it?",
    "to": null,
    "surface_checked": "honest",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_surface_vicar",
@@ -1367,7 +1399,7 @@
    "show": "The Reverend Hale says he spent the evening in the vestry going over the Harvest Festival accounts, and saw to a few small matters after. Can you confirm that's how he spent the evening?",
    "confront": "You told me you were in the vestry over the Harvest accounts, then saw to a few small matters after. Is that the whole of it?",
    "to": null,
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_surface_iris",
@@ -1382,7 +1414,7 @@
    "confront": "You told me you attended a patient's injury that evening and watched over them some while after, but wouldn't say who. Can you tell me now?",
    "to": null,
    "surface_checked": "honest",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_surface_silas",
@@ -1397,22 +1429,7 @@
    "show": "Mr Voss says he played some whist at the inn, then went to the vestry to see to papers for a quiet evening. Can you confirm he was there?",
    "confront": "You told me you played whist, then went to the vestry to see to some papers for a quiet evening. Is that the whole of it?",
    "to": null,
-   "agrees_checked": true
-  },
-  {
-   "id": "s_surface_rowan",
-   "kind": "testimony",
-   "speaker": "rowan",
-   "surface": true,
-   "deceptive": true,
-   "title": "Rowan Pike on the evening",
-   "text": "I was up at the doctor's getting this hand stitched\u2014cut it bad on my own billhook while pruning\u2014and sat resting there a fair while before I went home to bed.",
-   "ask": "Where were you last night?",
-   "show": "Rowan Pike says he caught his hand on his own billhook while pruning, and spent the rest of the evening getting it seen to. Do you know anything of this?",
-   "confront": "You told me you cut your hand on your own billhook while pruning, and spent the evening getting it seen to. Is that the whole of it?",
-   "to": null,
-   "surface_checked": "cover",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_surface_jonah",
@@ -1427,22 +1444,7 @@
    "confront": "You told me you never left the boathouse all evening, just sitting with your thoughts by the stove. Is that the whole of it?",
    "to": null,
    "surface_checked": "cover",
-   "agrees_checked": true
-  },
-  {
-   "id": "s_surface_hugo",
-   "kind": "testimony",
-   "speaker": "hugo",
-   "surface": true,
-   "deceptive": true,
-   "title": "Hugo Vale on the evening",
-   "text": "Oh, nothing thrilling, I'm afraid\u2014I was propping up the bar at the inn for a quiet drink, nattering with whoever was about, and then I toddled home to bed. Dull as you like, honestly.",
-   "ask": "Where were you last night?",
-   "show": "Hugo Vale says he had a quiet drink at the inn and skipped the cards that night. Can you confirm that's how he spent the evening?",
-   "confront": "You told me you had a quiet drink at the inn and didn't fancy the cards. Is that the whole of it?",
-   "to": null,
-   "surface_checked": "cover",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_surface_clara",
@@ -1457,7 +1459,7 @@
    "confront": "You told me you were going over Harvest accounts with the vicar, then came straight home to bed. Is that the whole of it?",
    "to": null,
    "surface_checked": "cover",
-   "agrees_checked": true
+   "agrees_checked": 2
   },
   {
    "id": "s_ada_hugo",

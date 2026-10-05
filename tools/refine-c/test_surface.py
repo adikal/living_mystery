@@ -63,5 +63,25 @@ class Surface(unittest.TestCase):
         self.assertEqual(seen, [])
 
 
+
+
+class WhoIsWho(unittest.TestCase):
+    """The evening-account check is told who everyone is, so 'my wife' for a sister fails; older checks are redone."""
+    def test_who_is_given_and_old_checks_redone(self):
+        import json as _json, publish as P, refine as R
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'dist', 'cases', 'generated', 'mk-live-20261002-235614.json')
+        case = _json.load(open(path))
+        x = next(s for s in case['signs'] if s.get('surface'))
+        x['agrees_checked'] = True                       # an older version of the check
+        seen, saved = [], R.llm_json
+        R.llm_json = lambda system, prompt, *a, **k: (seen.append(_json.loads(prompt)) or {'verdicts': {}})
+        try:
+            P.surface_disagreements(case, [x])
+        finally:
+            R.llm_json = saved
+        self.assertTrue(seen and all(i.get('who') for i in seen[0]), 'each item carries who everyone is')
+        self.assertNotEqual(x.get('agrees_checked'), P.SURFACE_CHECK)
+
+
 if __name__ == '__main__':
     unittest.main()

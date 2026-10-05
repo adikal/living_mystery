@@ -167,11 +167,14 @@ export class PlaytestGame {
         this.advice = {time: timeLabel(w.minute), speaker: 'Hint', text: h.levels[this.hint.level - 1]};
         return null;
       }
-      case 'accuse':
+      case 'accuse': {
         if (!presentPerson(T.CASE.constable)) return `The accusation is heard by ${T.PEOPLE[T.CASE.constable].name}, who is at ${inSentence(T.LOCATIONS[w.npcs[T.CASE.constable].location])}.`;
-        dispatch(s, {type: 'accuse', suspect: a.suspect, method: a.method, motive: a.motive});
-        p.accusation = {suspect: a.suspect, method: a.method, motive: a.motive, accepted: this.s.world.status === 'solved'};
+        const charge = {type: 'accuse', suspect: a.suspect, method: a.method, motive: a.motive};
+        const verdict = T.behavior.checkCase(s, charge);   // pure: why the constable accepts or refuses, for the scorer
+        dispatch(s, charge);
+        p.accusation = {suspect: a.suspect, method: a.method, motive: a.motive, accepted: this.s.world.status === 'solved', status: verdict?.status ?? null};
         return null;
+      }
       case 'ask': case 'say': case 'show': {
         if (!presentPerson(a.person)) return `${T.PEOPLE[a.person]?.name ?? 'That person'} is not here.`;
         let action = null, text = a.text;

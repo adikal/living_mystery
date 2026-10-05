@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.23 · 4 October 2026**
+**Living technical report · Edition 0.24 · 5 October 2026**
 
 ### Abstract
 
@@ -150,6 +150,10 @@ Bellweather setting with the original cast, map and art, the generator produced 
 4–7 (14–24 clues, 27–35 history events, a certified twist, lies and red herrings), which play in the existing game
 through a bridge (`dist/cases/kernel-case.mjs`) including free-text character dialogue grounded in each character's
 memories and beliefs. See `docs/mystery-kernel.md`.
+
+### Edition 0.24: a bug track, and a fourth epoch
+
+A bug track checks every recorded game with invariant detectors and a correctness judge that sees the true records; six general bugs were found from the agents' games and fixed. A fourth epoch on fresh cases rejected one change and kept two as fixes. Turns that leave the player with nothing fell from 28% to 7%. See [chapter 11](playtest.md).
 
 ### Edition 0.23: playtesting itself
 
