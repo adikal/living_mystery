@@ -21,6 +21,17 @@ const K = createKernel(ActiveCase.model);
 K.life=createLife(K);
 K.runPending=(s,id,cause)=>resumePlan(K,s,id,cause);
 const B = ActiveCase.createBehavior(K);
+
+// What is examinable at a location now: the clues placed there, minus any 'watch a person' clue whose subject has
+// moved on, plus any such clue whose subject is currently here. A behaviour about someone is a way of watching them,
+// so it travels with them rather than sitting in a room they have left.
+function objectsAt(world, loc) {
+  const here = (id) => { const f = OBJECTS[id]?.follows; return f ? world.npcs[f]?.location === loc : true; };
+  const base = (LOCATIONS[loc]?.objects || []).filter(here);
+  const arrived = Object.keys(OBJECTS).filter(id => OBJECTS[id].follows && world.npcs[OBJECTS[id].follows]?.location === loc
+    && !(LOCATIONS[loc]?.objects || []).includes(id));
+  return [...base, ...arrived];
+}
 K.afterTransfer=B.afterTransfer;
 K.decide = (s,id,cause)=>{if(!resumePlan(K,s,id,cause))B.decide(s,id,cause);}; // inject the NPC decision policy into the kernel's clock
 
@@ -61,7 +72,7 @@ function dispatch(s, action) {
     : action.type === 'present' && K.local(s, action.person) && K.has(s, action.clue);
   const releases = ['wait', 'endConversation'].includes(action.type)
     || action.type === 'move' && Boolean(LOCATIONS[action.to]) && action.to !== s.world.player.location
-    || action.type === 'inspect' && Boolean(OBJECTS[action.object]) && LOCATIONS[s.world.player.location]?.objects.includes(action.object)
+    || action.type === 'inspect' && Boolean(OBJECTS[action.object]) && objectsAt(s.world, s.world.player.location).includes(action.object)
     || action.type === 'accuse' && K.local(s, CASE.constable);
   const next = talking ? action.person : releases ? null : previous;
   if (s.world.status !== 'solved' && previous !== next) {
@@ -88,7 +99,7 @@ function dispatch(s, action) {
     }
     case 'inspect': {
       const obj = OBJECTS[action.object], at = s.world.player.location;
-      if (!obj || !LOCATIONS[at]?.objects.includes(action.object) || s.world.flags.lockedObjects?.includes(action.object) || (s.world.flags.evidenceExpiry?.[obj?.clue]??Infinity)<s.world.minute || action.object==='seal'&&CASE.id!=='last-bell'&&s.world.objects.weapon!==at) { K.reject(s, 'Object outside your reach', 'That object is not here. Choose something in your current surroundings.', start); break; }
+      if (!obj || !objectsAt(s.world, at).includes(action.object) || s.world.flags.lockedObjects?.includes(action.object) || (s.world.flags.evidenceExpiry?.[obj?.clue]??Infinity)<s.world.minute || action.object==='seal'&&CASE.id!=='last-bell'&&s.world.objects.weapon!==at) { K.reject(s, 'Object outside your reach', 'That object is not here. Choose something in your current surroundings.', start); break; }
       const inspected = commit(s, { kind: 'action', title: `You inspect ${obj.label.toLowerCase()}`, actor: 'player', parents: [start], data: { object: action.object } });
       if (CASE.id==='last-bell' && action.object === 'folio' && s.world.objects.folio !== 'manor') commit(s, { kind: 'observation', title: 'The red folio is missing', actor: 'player', parents: [inspected], playerText: 'A clean rectangle in the dust marks where the red folio lay. It has been moved. The estate solicitor keeps related files at the vestry.' });
       else if (CASE.id==='last-bell' && action.object === 'drawer' && s.world.objects.folio !== 'drawer') commit(s, { kind: 'observation', title: 'Routine deeds in the drawer', actor: 'player', parents: [inspected], playerText: 'The drawer contains routine parish deeds. The red estate folio is not here.' });
@@ -179,9 +190,9 @@ function playerView(s) {
   const w = s.world, at = w.player.location;
   // the scene lists only what is still there (a clue taken away this morning, or expired, is gone)
   const present = o => (w.flags.evidenceExpiry?.[OBJECTS[o]?.clue] ?? Infinity) >= w.minute;
-  return { minute: w.minute, status: w.status, location: at, scene: LOCATIONS[at] && {...LOCATIONS[at], objects: (LOCATIONS[at].objects || []).filter(present)}, profiles: Object.entries(w.npcs).map(([id,npc])=>({id,...publicPerson(id),metrics:npc.location===at&&!npc.travel?{trust:npc.trust,stress:npc.stress}:null})), people: Object.entries(w.npcs).filter(([, p]) => p.location === at).map(([id]) => ({ id, ...publicPerson(id) })), evidence: w.player.evidence.map((e) => ({ ...e, ...CLUES[e.clue],text:e.text??CLUES[e.clue].text })), pins: copy(w.player.pins), notes: copy(w.player.notes), lastSeen: copy(w.player.lastSeen), transcript: s.events.filter((e) => e.playerText).map((e) => ({ id: e.id, minute: e.minute, kind: e.kind, text: e.playerText, actor: e.actor, speaker: e.data?.speaker })), ending: copy(w.ending) };
+  return { minute: w.minute, status: w.status, location: at, scene: LOCATIONS[at] && {...LOCATIONS[at], objects: objectsAt(w, at).filter(present)}, profiles: Object.entries(w.npcs).map(([id,npc])=>({id,...publicPerson(id),metrics:npc.location===at&&!npc.travel?{trust:npc.trust,stress:npc.stress}:null})), people: Object.entries(w.npcs).filter(([, p]) => p.location === at).map(([id]) => ({ id, ...publicPerson(id) })), evidence: w.player.evidence.map((e) => ({ ...e, ...CLUES[e.clue],text:e.text??CLUES[e.clue].text })), pins: copy(w.player.pins), notes: copy(w.player.notes), lastSeen: copy(w.player.lastSeen), transcript: s.events.filter((e) => e.playerText).map((e) => ({ id: e.id, minute: e.minute, kind: e.kind, text: e.playerText, actor: e.actor, speaker: e.data?.speaker })), ending: copy(w.ending) };
 }
 const publicPerson = (id) => ({ name: PEOPLE[id].name, initials: PEOPLE[id].initials, role: PEOPLE[id].role, color: PEOPLE[id].color, public: PEOPLE[id].public });
 
-return {CASE,LOCATIONS,PEOPLE,CLUES,OBJECTS,gates:ActiveCase.model.gates,SUSPECTS,PILLARS,baseWorld,commit,distance,worldAt,diagnostics,exportSession,importSession,parseCommand,followupOptions,playerClaims,checkCase,caseHealth,characterPlans,scheduleCharacterPlan,createSession,dispatch,dispatchCharacter,playerView,publicPerson,kernel:K,behavior:B};
+return {CASE,LOCATIONS,PEOPLE,CLUES,OBJECTS,objectsAt,gates:ActiveCase.model.gates,SUSPECTS,PILLARS,baseWorld,commit,distance,worldAt,diagnostics,exportSession,importSession,parseCommand,followupOptions,playerClaims,checkCase,caseHealth,characterPlans,scheduleCharacterPlan,createSession,dispatch,dispatchCharacter,playerView,publicPerson,kernel:K,behavior:B};
 }

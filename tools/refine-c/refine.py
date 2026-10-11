@@ -10,6 +10,9 @@ import argparse, concurrent.futures as cf, copy, datetime, json, os, re, sys, ti
 import boto3
 from botocore.config import Config
 import difficulty as DF
+from migrate import public_knowledge
+from claims import (CLAIMS_VERSION, PREDICATES, CULPRIT_PREDICATES, History, claim_errors, claim_of, consistent, defeat_free_sets,
+                    instance_claims, record_errors, relation_reader, survivors_of, travel_table, truth_of, victim_of, actor_of)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MODEL = 'us.anthropic.claude-opus-5-5'          # story steps and seed
@@ -18,28 +21,12 @@ FAST_MODEL = 'us.anthropic.claude-haiku-4-5-20251001-v1:0'   # small checks (e.g
 SEED_ROUNDS = 4                                  # draft, then up to three repairs of the best draft
 CANDIDATES = 2                                     # parallel speculative patches per round
 FIXED = None                                       # a fixed setting (e.g. Bellweather): its places, links and cast are locked
-CLAIM_KINDS = {'place', 'time', 'trait', 'relation', 'possession', 'fact'}
-SIGN_KINDS = {'trace', 'testimony', 'document', 'record', 'behavior', 'item', 'rule', 'observation', 'absence'}
+# 'public' signs are what everyone in the setting knows: the player holds them from the start.
+SIGN_KINDS = {'trace', 'testimony', 'document', 'record', 'behavior', 'item', 'rule', 'observation', 'absence', 'public'}
 
 # ----------------------------------------------------------------------------------------------------
 # World model helpers
 # ----------------------------------------------------------------------------------------------------
-
-def travel_table(case):
-    places = [p['id'] for p in case['setting']['places']]
-    INF = 10 ** 9
-    d = {a: {b: (0 if a == b else INF) for b in places} for a in places}
-    for e in case['setting'].get('links', []):
-        a, b, m = e['a'], e['b'], e['minutes']
-        if a in d and b in d:
-            d[a][b] = min(d[a][b], m); d[b][a] = min(d[b][a], m)
-    for k in places:
-        for i in places:
-            for j in places:
-                if d[i][k] + d[k][j] < d[i][j]:
-                    d[i][j] = d[i][k] + d[k][j]
-    return d
-
 
 def presence(case):
     """True presence intervals per person, from events (agent + others)."""
@@ -60,93 +47,9 @@ def people(case):
 def hyp_map(case):
     return {h['id']: h for h in case['question']['candidates']}
 
-# ----------------------------------------------------------------------------------------------------
-# Sign semantics: computed by code, never declared by the LLM
-# ----------------------------------------------------------------------------------------------------
-
-def claim_of(sign):
-    c = sign.get('claim')
-    return c if isinstance(c, dict) and c.get('kind') in CLAIM_KINDS else None
-
-
-def actor_of(h):
-    return (h.get('facts') or {}).get('actor')
-
-
-def eliminates(case, claim, h, window):
-    """Does this (trusted) claim rule out hypothesis h? window = current crime window (start, end)."""
-    ppl, k = people(case), claim['kind']
-    actor = actor_of(h)
-    if k == 'trait':
-        if not actor or actor not in ppl:
-            return False
-        return str(ppl[actor].get('traits', {}).get(claim['trait'])) != str(claim['value'])
-    if k == 'relation' and claim.get('a'):
-        return False  # a fact about a named person (e.g. a motive); it establishes, it does not eliminate
-    if k == 'possession' and claim.get('person'):
-        return False
-    if k == 'relation':
-        rels = case.get('relations', [])
-        if not actor:
-            return False
-        return not any(r['a'] == actor and r['rel'] == claim['rel'] and (not claim.get('b') or r.get('b') == claim['b']) for r in rels)
-    if k == 'possession':
-        if not actor:
-            return False
-        return not any(p['person'] == actor and p['item'] == claim['item'] for p in case.get('possession', []))
-    if k == 'fact':
-        facts = h.get('facts') or {}
-        return claim['key'] in facts and str(facts[claim['key']]) != str(claim['value'])
-    return False  # place/time are handled jointly by opportunity()
-
-
-def opportunity_eliminated(case, place_claims, window, h, tt):
-    """Place claims are alibis: the actor could not reach the crime scene at any minute in the window."""
-    actor = actor_of(h)
-    crime_place = case['question']['crime']['place']
-    if not actor:
-        return False
-    ws, we = window
-    if ws > we:
-        return True
-    blocked = []
-    for c in place_claims:
-        if c.get('person') != actor:
-            continue
-        if c['place'] == crime_place:
-            continue
-        gap = tt.get(c['place'], {}).get(crime_place, 0)
-        blocked.append((c['start'] - gap, c['end'] + gap))
-    # is every minute of [ws, we] blocked?
-    t = ws
-    for s, e in sorted(blocked):
-        if s > t:
-            break
-        t = max(t, e + 1)
-        if t > we:
-            return True
-    return t > we
-
-
-def claim_true(case, claim, tt):
-    """Truth value of a claim in the true history (used to detect lies and staged signs)."""
-    truth = hyp_map(case)[case['question']['truth']]
-    k = claim['kind']
-    if k == 'place':
-        pres = presence(case).get(claim['person'], [])
-        s, e = claim['start'], claim['end']
-        there = any(ps < e and pe > s and pl == claim['place'] for ps, pe, pl, _ in pres)
-        elsewhere = any(ps < e and pe > s and pl != claim['place'] for ps, pe, pl, _ in pres)
-        return there and not elsewhere
-    if k == 'time':
-        crime = next((ev for ev in case['events'] if ev['id'] == case['question']['crime']['event']), None)
-        return bool(crime) and claim['start'] <= crime['start'] and crime['end'] <= claim['end']
-    if k == 'relation' and claim.get('a'):
-        return any(r['a'] == claim['a'] and r['rel'] == claim['rel'] and (not claim.get('b') or r.get('b') == claim['b'])
-                   for r in case.get('relations', []))
-    if k == 'possession' and claim.get('person'):
-        return any(p['person'] == claim['person'] and p['item'] == claim['item'] for p in case.get('possession', []))
-    return not eliminates(case, claim, truth, tuple(case['question']['crime']['window']))
+def claim_true(case, claim, tt=None):
+    """Truth of a claim in the true history: True, False, or None (undetermined)."""
+    return truth_of(case, History(case, tt), claim)
 
 # ----------------------------------------------------------------------------------------------------
 # Access, reading, trust, depth
@@ -201,34 +104,22 @@ def analyse(case):
                 eff[sid] = (max([depth[sid]] + ds) + 1) if needs else depth[sid]
                 changed = True
     understood = set(eff)
-    truthval = {sid: claim_true(case, claim_of(signs[sid]), tt) for sid in signs if claim_of(signs[sid])}
-    return dict(tt=tt, signs=signs, depth=depth, eff=eff, reachable=reachable, understood=understood,
+    H = History(case, tt)
+    truthval = {sid: truth_of(case, H, claim_of(signs[sid])) for sid in signs if claim_of(signs[sid])}
+    return dict(tt=tt, H=H, signs=signs, depth=depth, eff=eff, reachable=reachable, understood=understood,
                 truthval=truthval, rules_known=known_rule_depth)
 
 
+def trusted_claims(A, visible):
+    """The trusted claims among the visible signs: those no visible sign defeats, as [(sid, claim), ...]."""
+    defeated = {d for sid in visible for d in A['signs'][sid].get('defeats', [])}
+    return [(sid, claim_of(A['signs'][sid])) for sid in sorted(visible) if sid not in defeated and claim_of(A['signs'][sid])]
+
+
 def survivors(case, A, max_depth=None, exclude=frozenset()):
-    """Hypotheses surviving every understood, trusted claim with effective depth <= max_depth."""
-    signs, eff = A['signs'], A['eff']
-    visible = {sid for sid in A['understood'] if sid not in exclude and (max_depth is None or eff[sid] <= max_depth)}
-    defeated = set()
-    for sid in visible:
-        for d in signs[sid].get('defeats', []):
-            defeated.add(d)
-    trusted = [signs[sid] for sid in visible if sid not in defeated and claim_of(signs[sid])]
-    window = list(case['question']['crime']['window'])
-    for s in trusted:
-        c = claim_of(s)
-        if c['kind'] == 'time':
-            window = [max(window[0], c['start']), min(window[1], c['end'])]
-    places = [claim_of(s) for s in trusted if claim_of(s)['kind'] == 'place']
-    out = []
-    for h in case['question']['candidates']:
-        if opportunity_eliminated(case, places, tuple(window), h, A['tt']):
-            continue
-        if any(eliminates(case, claim_of(s), h, tuple(window)) for s in trusted if claim_of(s)['kind'] not in ('place', 'time')):
-            continue
-        out.append(h['id'])
-    return out
+    """Candidates consistent with every understood, trusted claim with effective depth <= max_depth."""
+    visible = [sid for sid in A['understood'] if sid not in exclude and (max_depth is None or A['eff'][sid] <= max_depth)]
+    return survivors_of(case, trusted_claims(A, visible), A['tt'])
 
 
 def closure_dependent(case, root):
@@ -264,7 +155,7 @@ def critical_signs(case, A, thread, depth):
     """Signs whose removal (with everything depending on them) makes this thread deeper or unsolvable."""
     out = []
     for sid in A['understood']:
-        if A['eff'][sid] > depth:
+        if A['eff'][sid] > depth or A['signs'][sid].get('kind') == 'public':
             continue
         d = thread_depths(case, A, closure_dependent(case, sid)).get(thread)
         if d is None or d > depth:
@@ -286,10 +177,10 @@ def account_backing(case, sign):
     c = claim_of(sign)
     if not c:
         return 'own_events' if any(part(e) for e in case['events']) else None
-    if c['kind'] == 'place':
+    if c['pred'] == 'wasAt':
         if c.get('person') == sp:
             return 'self'
-        if any(part(e) and e['place'] == c['place'] and e['start'] < c['end'] and e['end'] > c['start'] for e in case['events']):
+        if any(part(e) and e['place'] == c['place'] and e['start'] <= c['to'] and e['end'] >= c['from'] for e in case['events']):
             return 'witnessed'
     return None
 
@@ -300,37 +191,49 @@ def unbacked_accounts(case):
 
 def pillar_signs(case, A):
     """Motive and means evidence for the true culprit: understood, true signs that establish (not eliminate).
-    motive: a relation claim whose subject is the culprit (or a fact keyed 'motive');
-    means:  a possession or trait claim the culprit satisfies (named, or anonymous and true of the culprit)."""
+    motive: a related claim whose subject is the culprit, linked to the victim (or a crimeFact keyed 'motive');
+    means:  a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies."""
     q = case['question']
     ta = actor_of(hyp_map(case)[q['truth']])
     return pillar_signs_for(case, A, ta)
 
 
 def pillar_signs_for(case, A, actor, held=None):
-    ppl = people(case)
-    motive, means = [], []
-    victim = case.get('victim') or next((e.get('agent') for e in case['events'] if e.get('type') == 'death' and e.get('agent')), None)
+    victim, read, motive, means = victim_of(case), relation_reader(case), [], []
+    linked = lambda a, b: not victim or victim in (a, b)
     for sid, s_ in A['signs'].items():
-        if sid not in A['understood'] or not A['truthval'].get(sid) or (held is not None and sid not in held):
+        # what everyone knows is not evidence against anyone: only clues count
+        if sid not in A['understood'] or A['truthval'].get(sid) is not True or s_.get('kind') == 'public' or (held is not None and sid not in held):
             continue
         c = claim_of(s_)
-        if not c:
+        if not c or c.get('when') == 'never' or c.get('not'):
             continue
-        if (c['kind'] == 'relation' and c.get('a') == actor) or (c['kind'] == 'relation' and victim and c.get('a') == victim and c.get('b') == actor) \
-                or (c['kind'] == 'fact' and c.get('key') == 'motive' and c.get('person', actor) == actor):
+        # culprit predicates count for the actor if the actor satisfies them in the history
+        satisfied = lambda: truth_of(case, A['H'], c, actor) is True
+        p = c['pred']
+        if p == 'related':
+            a, _, b = read(c['a'], c['rel'], c['b'])
+            if (a == actor or (b == actor and a == victim)) and linked(a, b):
+                motive.append(sid)
+        elif p == 'culpritRelated':
+            a, _, b = read(actor, c['rel'], c['b'])
+            if linked(a, b) and satisfied():
+                motive.append(sid)
+        elif p == 'crimeFact' and c['key'] == 'motive':
             motive.append(sid)
-        elif c['kind'] == 'possession' and (c.get('person') == actor or (not c.get('person') and
-                any(p['person'] == actor and p['item'] == c['item'] for p in case.get('possession', [])))):
+        elif p in ('had', 'hasTrait') and c['person'] == actor:
             means.append(sid)
-        elif c['kind'] == 'trait' and actor in ppl and str(ppl[actor].get('traits', {}).get(c['trait'])) == str(c['value']):
+        elif p in ('culpritHad', 'culpritTrait') and satisfied():
             means.append(sid)
-    # a motive is a reason to kill THIS victim: at least one motive sign must connect the culprit and the victim
-    # (older cases with no recorded victim count any relation about the culprit)
-    if victim:
-        linked = lambda x: (claim_of(A['signs'][x]) or {}).get('kind') != 'relation' or victim in ((claim_of(A['signs'][x]) or {}).get('a'), (claim_of(A['signs'][x]) or {}).get('b'))
-        motive = [x for x in motive if linked(x)]
     return {'motive': sorted(motive), 'means': sorted(means)}
+
+
+def _describe(key):
+    key = re.sub(r'^at:', 'the whereabouts of ', key)
+    key = re.sub(r'^holder:', 'who had ', key)
+    key = re.sub(r'^has:([^:]+):', r"\1's access to ", key)
+    key = re.sub(r'^crime$', "the crime's minute and facts", key)
+    return re.sub(r'^trait:', 'the trait ', re.sub(r'^rel:', 'the relation ', key))
 
 
 # ----------------------------------------------------------------------------------------------------
@@ -338,6 +241,8 @@ def pillar_signs_for(case, A, actor, held=None):
 # ----------------------------------------------------------------------------------------------------
 
 def certify(case, require_pillars=True, require_backing=False):
+    if case.get('claims_version') != CLAIMS_VERSION:
+        return {'ok': False, 'errors': [f"claims version {case.get('claims_version', 1)}: migrate the case to version {CLAIMS_VERSION} (tools/refine-c/migrate.py)"]}
     errs, A = [], None
     ids = [x['id'] for k in ('people', 'objects', 'attitudes', 'events', 'signs', 'rules') for x in case.get(k, [])]
     dup = {i for i in ids if ids.count(i) > 1}
@@ -393,21 +298,26 @@ def certify(case, require_pillars=True, require_backing=False):
             errs.append(f"sign {s['id']}: has 'requires' but no 'unlock' text saying why, in the world, those must come first")
         if s.get('needs') and not str(s.get('reading', '')).strip():
             errs.append(f"sign {s['id']}: has 'needs' but no 'reading' text saying how the other clue or rule makes sense of it")
-        c = s.get('claim')
-        if c is not None and claim_of(s) is None:
-            errs.append(f"sign {s['id']}: claim kind must be one of {sorted(CLAIM_KINDS)}")
-        if claim_of(s) and claim_of(s)['kind'] == 'place' and (c.get('person') not in ppl or c.get('place') not in places):
-            errs.append(f"sign {s['id']}: place claim needs a known person and place")
+        if s.get('claim') is not None and claim_of(s) is None:
+            errs.append(f"sign {s['id']}: a claim's pred must be one of {_js(sorted(PREDICATES))}")
+        elif claim_of(s):
+            errs += claim_errors(case, s['id'], claim_of(s))
+        if s.get('kind') == 'public' and (s.get('requires') or s.get('needs') or not claim_of(s)):
+            errs.append(f"public sign {s['id']}: what everyone knows has a claim and no 'requires' or 'needs'")
         if s.get('kind') == 'testimony' and s.get('speaker') not in ppl:
             errs.append(f"sign {s['id']}: testimony needs a known speaker")
+        for d in s.get('defeats', []):
+            if (signs.get(d) or {}).get('kind') == 'public':
+                errs.append(f"sign {s['id']} defeats {d}, but what everyone knows cannot be overturned")
+    errs += record_errors(case)
     # spoken times must match the timeline; a trace lies where its source event happened
     times = set()
     for e in case['events']:
         times |= {e['start'] % 1440, e['end'] % 1440}
     for s_ in case['signs']:
         c_ = s_.get('claim') or {}
-        for k_ in ('start', 'end'):
-            if isinstance(c_.get(k_), (int, float)):
+        for k_ in ('from', 'to'):
+            if isinstance(c_.get(k_), (int, float)) and not isinstance(c_.get(k_), bool):
                 times.add(int(c_[k_]) % 1440)
     for s_ in case['signs']:
         if s_.get('kind') in ('testimony', 'behavior'):
@@ -434,11 +344,17 @@ def certify(case, require_pillars=True, require_backing=False):
     if crime.get('agent') != actor_of(hyps[q['truth']]):
         errs.append('the crime event agent is not the true culprit')
     A = analyse(case)
-    # false signs must be lies/mistakes/staging, justified, and defeated deeper
+    # every claim is decided by the history; false ones are lies/mistakes (with the speaker's reason) or staging (a
+    # deliberate source), defeated deeper
     for sid, tv in A['truthval'].items():
-        if tv:
+        if tv is None:
+            errs.append(f"the history does not decide the claim of {sid} ({_js(claim_of(A['signs'][sid]))}): add the events that settle it, or change the claim")
+        if tv is None or tv:
             continue
         s = A['signs'][sid]
+        if s['kind'] == 'public':
+            errs.append(f"public sign {sid} is false, but what everyone knows must be true")
+            continue
         if s['kind'] == 'testimony':
             sp = s['speaker']
             if not any(a['agent'] == sp for a in case['attitudes'] if a['id'] in s.get('because', [])):
@@ -451,19 +367,17 @@ def certify(case, require_pillars=True, require_backing=False):
         good = [d for d in dfs if d['id'] in A['understood'] and A['eff'][d['id']] > A['eff'].get(sid, 0) and A['truthval'].get(d['id'], True)]
         if not good:
             errs.append(f"false sign {sid} has no reachable, true defeater deeper than it")
-    # a contradiction the player can see is one the case records: two reachable signs that put one person in two places
-    # at overlapping times must have one defeating the other
-    placed = sorted(sid for sid in A['understood'] if (claim_of(A['signs'][sid]) or {}).get('kind') == 'place')
-    for i, a in enumerate(placed):
-        for b in placed[i + 1:]:
-            x, y = claim_of(A['signs'][a]), claim_of(A['signs'][b])
-            if x['person'] != y['person'] or x['place'] == y['place'] or not (x['start'] < y['end'] and y['start'] < x['end']):
-                continue
-            if b not in A['signs'][a].get('defeats', []) and a not in A['signs'][b].get('defeats', []):
-                errs.append(f"{a} and {b} put {x['person']} in two places at once, but neither is recorded as defeating the other")
-    for sid, s in A['signs'].items():
-        if sid in A['truthval']:
-            continue
+    # consistency: claims the player can hold together that cannot all be true must include a defeat, so whatever the
+    # player holds, what they trust is consistent (docs/claims.md section 5)
+    # public knowledge is always held, so what it defeats is never trusted
+    defeats = {x['id']: x.get('defeats', []) for x in case['signs']}
+    overturned = {d for x in case['signs'] if x.get('kind') == 'public' for d in x.get('defeats', [])}
+    readable = [(sid, claim_of(A['signs'][sid])) for sid in sorted(A['understood']) if claim_of(A['signs'][sid]) and sid not in overturned]
+    for key, ids in instance_claims(case, readable).items():
+        for subset in defeat_free_sets(ids, defeats):
+            if not consistent(case, [x for x in readable if x[0] in subset], A['tt']):
+                errs.append(f"{', '.join(subset)} cannot all be true ({_describe(key)}), but none of them defeats another: record which is false, and let the true one defeat it")
+                break
     full = survivors(case, A)
     if full != [q['truth']]:
         errs.append(f"answer not unique from all reachable evidence: survivors {full}")
@@ -472,28 +386,26 @@ def certify(case, require_pillars=True, require_backing=False):
     maxd = max(A['eff'].values()) if A['eff'] else 0
     solve = next((d for d in range(maxd + 1) if survivors(case, A, d) == [q['truth']]), None)
     surface = survivors(case, A, 0)
-    key = [sid for sid in A['understood'] if claim_of(A['signs'][sid]) and A['truthval'].get(sid)
-           and survivors(case, A, None, closure_dependent(case, sid)) != [q['truth']]]
+    key = [sid for sid in A['understood'] if claim_of(A['signs'][sid]) and A['truthval'].get(sid) is True
+           and A['signs'][sid].get('kind') != 'public' and survivors(case, A, None, closure_dependent(case, sid)) != [q['truth']]]
     innocent_actors = {actor_of(h) for h in q['candidates'] if h['id'] != q['truth']}
     herrings = [s['id'] for s in case['signs'] if s['kind'] == 'behavior' and s.get('about') in innocent_actors
                 and any(e in A['understood'] and A['eff'][e] > A['eff'].get(s['id'], 0) for e in s.get('explainedBy', []))]
     threads = thread_depths(case, A)
     ta = actor_of(hyps[q['truth']])
-    innocents = [h for h in q['candidates'] if h['id'] != q['truth']]
     def ok_sign(sid):
-        return sid in A['understood'] and A['truthval'].get(sid)
+        return sid in A['understood'] and A['truthval'].get(sid) is True and A['signs'][sid].get('kind') != 'public'
+    read = relation_reader(case)
     motive = sorted(sid for sid, s_ in A['signs'].items() if ok_sign(sid) and claim_of(s_) and
-                    ((claim_of(s_)['kind'] == 'relation' and claim_of(s_).get('a') == ta) or
-                     (claim_of(s_)['kind'] == 'fact' and claim_of(s_).get('key') == 'motive')))
-    means = sorted(sid for sid, s_ in A['signs'].items() if ok_sign(sid) and claim_of(s_) and
-                   claim_of(s_)['kind'] in ('trait', 'possession', 'relation') and not claim_of(s_).get('a') and not claim_of(s_).get('person')
-                   and any(eliminates(case, claim_of(s_), h, tuple(q['crime']['window'])) for h in innocents))
+                    ((claim_of(s_)['pred'] == 'related' and claim_of(s_).get('when') != 'never' and read(claim_of(s_)['a'], claim_of(s_)['rel'], claim_of(s_)['b'])[0] == ta) or
+                     (claim_of(s_)['pred'] == 'crimeFact' and claim_of(s_)['key'] == 'motive' and not claim_of(s_).get('not'))))
+    means = sorted(sid for sid, s_ in A['signs'].items() if ok_sign(sid) and claim_of(s_) and claim_of(s_)['pred'] in CULPRIT_PREDICATES and not claim_of(s_).get('not'))
     pil = pillar_signs(case, A)
     pd = {k: (min(A['eff'][x] for x in v) if v else None) for k, v in pil.items()}
     if require_pillars and not pil['motive']:
-        errs.append("no reachable, true evidence of the culprit's MOTIVE (a relation claim with a = the culprit)")
+        errs.append("no reachable, true evidence of the culprit's MOTIVE (a related claim with a = the culprit, linked to the victim)")
     if require_pillars and not pil['means']:
-        errs.append("no reachable, true evidence of the culprit's MEANS (a possession or trait claim the culprit satisfies)")
+        errs.append("no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)")
     if errs:
         return {'ok': False, 'errors': errs, 'A': A}
     unbacked = unbacked_accounts(case)
@@ -506,7 +418,11 @@ def certify(case, require_pillars=True, require_backing=False):
             'motive': motive, 'means': means, 'pillars': pillars, 'pillar_signs': pil, 'unbacked': unbacked,
             'mmo_depth': max(v for v in pillars.values() if v is not None),
             'twist': q['truth'] not in surface, 'key': sorted(key), 'herrings': herrings,
-            'false_signs': sorted(k for k, v in A['truthval'].items() if not v)}
+            'false_signs': sorted(k for k, v in A['truthval'].items() if v is False)}
+
+
+def _js(v):
+    return json.dumps(v, separators=(',', ':'), ensure_ascii=False)
 
 # ----------------------------------------------------------------------------------------------------
 # LLM
@@ -583,51 +499,69 @@ SCHEMA = """CASE SCHEMA (all times are integer minutes; 1320 = 22:00; values pas
 {
  "setting": {"name","era","summary","places":[{"id","name"}],"links":[{"a","b","minutes"}]},
  "rules": [{"id","text","knowledge":"common"|"acquirable"}],      // acquirable rules must be taught by a sign of kind "rule"
- "people": [{"id","name","role","traits":{"<trait>":"<value>"}}],   // traits are what trait-claims test (handed, height, skill ...)
- "objects": [{"id","name","desc"}],
- "relations": [{"a","rel","b"}],                                    // e.g. owes, loves, rival_of, employed_by
- "possession": [{"person","item"}],                                 // who had access to an item (a key, a poison, a tool)
- "question": {"text","candidates":[{"id","label","facts":{"actor":"<person id>", "...":"..."}}],"truth":"<candidate id>",
-              "crime":{"event":"<event id>","place":"<place id>","window":[start,end]}},
+ "people": [{"id","name","role","traits":{"<trait>":"<value>"}}],   // traits when the night began (handed, foot size ...)
+ "objects": [{"id","name","desc","supply":true?}],                   // every item a claim or holding names; supply: a stock
+                                                                     // many may have (vestry paper, the surgery's morphine)
+ "vocabulary": {"relations":[{"rel","inverse"?}]},                   // every relation name used; inverse: its converse name
+ "relations": [{"a","rel","b"}],                                     // true when the night began: owes, blackmailing, heir_of
+ "holdings": [{"person","item"}],                                    // who had what when the night began
+ "question": {"text","candidates":[{"id","label","facts":{"actor":"<person id>","method":"...","motive":"..."}}],
+              "truth":"<candidate id>","crime":{"event":"<event id>","place":"<place id>","window":[start,end]}},
  "attitudes": [{"id","agent","mode":"believes|knows|wants|fears|intends|feels","content","because":[attitude ids]}],
- "events": [{"id","type","agent","others":[person ids],"place","start","end","causedBy":"<attitude id of the agent>"|"nature","summary"}],
+ "events": [{"id","type","agent","others":[person ids],"place","start","end","causedBy":"<attitude id of the agent>"|"nature","summary",
+             "effects":[{"take":item} | {"give":item,"to":person} | {"lose":item} | {"relate":rel,"to":person} | {"trait":trait,"value":v}],
+             "facts":{...}}],                                        // the crime event's facts: the true candidate's (method, motive)
  "signs": [{
-   "id","kind":"trace|testimony|document|record|behavior|item|rule|observation|absence",
+   "id","kind":"trace|testimony|document|record|behavior|item|rule|observation|absence|public",
    "title","text",                          // what the player sees; neutral, never announces its own meaning
    "at":"<place id>",
    "requires":[sign ids],                   // ACCESS: signs/items/favours the player must already have to find this
    "unlock":"...",                          // REQUIRED with requires: the in-world reason (the key opens it; she trusts you once you show X)
    "needs":[sign ids or rule ids],          // READING: what is needed to understand it (a second clue, a rule)
    "reading":"...",                         // REQUIRED with needs: how the other clue or rule makes sense of this one
-   "claim": {                               // the proposition it carries, in exactly ONE of these kinds (omit for none):
-      "kind":"place","person","place","start","end"      // the person was at the place for that span (an alibi-type fact)
-      "kind":"time","start","end"                         // the crime happened within this span
-      "kind":"trait","trait","value"                     // the culprit has this trait
-      "kind":"relation","rel","b"                        // the culprit stands in this relation (to b)
-      "kind":"relation","a","rel","b"                    // a named person stands in this relation: a world fact (motive)
-      "kind":"possession","person","item"                // a named person had access to an item: a world fact
-      "kind":"possession","item"                         // the culprit had access to this item
-      "kind":"fact","key","value"                        // a fact about the answer (method, motive, what happened)
-   },
+   "claim": {"pred": ..., ...},             // the ONE proposition it carries (omit for none); see CLAIMS below
    "speaker":"<person id>","because":[attitude ids],   // testimony only; 'because' explains why a false testimony is false
    "ask":"...",                             // testimony only: the natural question the detective asks to hear it (no answer in it)
    "source":"<event id>",                   // the event that produced it (required for staged or planted physical signs)
    "defeats":[sign ids],                    // this sign overturns those (a lie, a staged scene)
-   "about":"<person id>","explainedBy":[sign ids]   // behavior signs: whom it concerns and which deeper signs explain it
+   "about":"<person id>","explainedBy":[sign ids],  // behavior: whom it concerns, and the deeper signs that explain it
+   "watch":true   // ONLY on a behavior that is the person's live manner the detective sees by watching them (a look, a
+                  // gesture, a thing on them). Its text is that manner, NEVER naming a place: it is watched wherever
+                  // they are now, and they may have moved. Omit 'watch' for a reaction about someone, or an object left
+                  // behind (a trunk, a letter under the till): those have a fixed place and keep it in their text.
  }]
 }
-The kernel CODE computes eliminations: place claims are alibis (the person could not reach the crime place in the crime
-window); time claims narrow the window; trait/relation/possession claims rule out candidates whose actor lacks them; fact
-claims rule out candidates whose facts differ. A claim is FALSE if it contradicts the true history; false signs must be
-lies/mistakes (testimony, with 'because') or staged (a deliberate source event), and must be defeated by a deeper true sign."""
+CLAIMS (from, to: minutes, both included; when: throughout (default) | sometime | never; not: true negates):
+  {"pred":"wasAt","person","place","from","to","when"?}     // whereabouts (an alibi when it keeps them from the scene)
+  {"pred":"nobodyAt","place","from","to"}                    // no one was there
+  {"pred":"had","person","item","from"?,"to"?,"when"?}        // a named person had an item
+  {"pred":"onlyHad","item","people":[...],"from"?,"to"?}      // no one else had it (e.g. only two keys exist)
+  {"pred":"related","a","rel","b","when"?}                   // a named person stands in a relation (a motive)
+  {"pred":"hasTrait","person","trait","value","from"?,"to"?,"when"?}   // a named person's trait
+  {"pred":"crimeBetween","from","to"}                        // the crime happened in this span
+  {"pred":"crimeFact","key","value","not"?}                  // a fact of the crime: method, motive, ...
+  {"pred":"culpritHad","item","not"?,"from"?,"to"?}           // whoever did it had the item (at the crime, or in the span)
+  {"pred":"culpritRelated","rel","b","not"?}                 // whoever did it stands in the relation
+  {"pred":"culpritTrait","trait","value","not"?}             // whoever did it has the trait
+The kernel CODE computes what follows, from what the PLAYER KNOWS: the claims of the clues they hold and trust, and the
+public signs (kind "public": what everyone in the village knows, held from the start; no requires or needs). A culprit
+claim rules a candidate out only when other claims the player has say the candidate lacks it: "whoever did it had vestry
+paper" clears no one until a sign says who had vestry paper (e.g. a public sign {"pred":"onlyHad",...}). A whereabouts
+claim is an alibi when, with the walking times, the person could not have been at the scene at any minute the claims
+allow for the crime. Truth is computed from the events: a person is where their events put them, stays put between
+events at the same place, and may be anywhere they can reach between events at different places; a claim over minutes
+the events leave open is UNDECIDED and refused, so add the events that settle it. Holdings, relations and traits change
+only through event effects. A claim is FALSE if it contradicts the history; false signs must be lies/mistakes (testimony,
+with 'because') or staged (a deliberate source event), and must be defeated by a deeper true sign. Claims the player
+could hold together that cannot all be true must include a defeat (the true one defeats the false one)."""
 
 PRINCIPLES = """You are the story engine of a mystery generator. Code controls where the case gets harder and checks every step;
 you decide how and why, as a novelist would. Rules you must follow:
 - Every complication has a cause: someone did something for a reason (an event caused by an attitude), or nature did.
 - Signs are neutral: their text never names the culprit or announces what they prove.
-- Never declare what a sign eliminates; write a claim in the fixed kinds and let the code compute its consequences.
+- Never declare what a sign eliminates; write a claim with the fixed predicates and let the code compute its consequences.
 - Every person a sign names or implicates (holds a key, was seen, owns an item) must be explained somewhere in the case
-  (an attitude, event, possession or another sign); never leave an innocent looking guilty for a reason the case never resolves.
+  (an attitude, event, holding or another sign); never leave an innocent looking guilty for a reason the case never resolves.
 - An 'unlock' must be a real in-world reason the detective would go and look: the prerequisite must point to the new
   sign's place or person (a name, a key, a mention), not merely precede it.
 - Keep times, places and travel physically consistent. People are at events you add; add events for new whereabouts.
@@ -653,15 +587,19 @@ SEED_TRIVIAL = """- A TRIVIAL SURFACE: 2 or 3 signs with no 'requires' and no 'n
 SEED_RICH = """- A FIRST-LAYER CASE (later steps will deepen it; keep each part simple and certain):
   1. ONE DECEPTION on the surface that points away from the culprit: a false testimony (with 'because' = the speaker's
      attitude: love, fear, debt) or a staged physical sign (with 'source' = the deliberate staging event). It must rule
-     the true culprit out on the surface (e.g. a false alibi: a place claim putting them elsewhere for the whole window).
+     the true culprit out on the surface (e.g. a false alibi: a wasAt claim putting them elsewhere for the whole window).
   2. ITS DEFEATER one step deeper: a TRUE sign with 'requires' one item or sign the player can get, listing the
      deception in 'defeats'.
-  3. A MOTIVE sign (claim {"kind":"relation","a":<culprit>,"rel":...,"b":<the victim>} with the matching 'relations' entry) and a
-     MEANS sign (a culprit-centric possession or trait claim that only the culprit satisfies among the candidates, with
-     the matching 'possession' entry or trait), each on the surface or one step deep.
+  3. A MOTIVE sign (claim {"pred":"related","a":<culprit>,"rel":...,"b":<the victim>} with the matching 'relations' entry)
+     and a MEANS sign (a culpritHad or culpritTrait claim the culprit satisfies, with the matching holding or trait, and
+     public signs that say who else had it or what the others' traits are, so that it rules out the other candidates),
+     each on the surface or one step deep.
   4. A RED HERRING: a surface 'behavior' sign about an innocent candidate (no claim), caused by an innocent secret, with
-     a deeper sign that explains it in 'explainedBy'.
-  5. Alibi signs (place claims) that, together with the above, leave exactly the truth once everything is found.
+     a deeper sign that explains it in 'explainedBy'. If it is the person's own manner (a look, a gesture, something on
+     them), set "watch":true and name no place in its text (it is watched wherever they are); if it is an object they
+     left, omit 'watch' and it keeps its place.
+  5. Alibi signs (wasAt claims) that, together with the above, leave exactly the truth once everything is found.
+  6. A public sign giving the crime window ({"pred":"crimeBetween"}): when it happened is known to everyone.
 - A few domain rules for the setting (common or acquirable)."""
 SEED_SURFACE_TEXT = SEED_TRIVIAL   # simple and quick; variety comes from the premise deck, depth from the steps
 
@@ -713,15 +651,18 @@ def step_prompt(case, report, target, mode, preferred, feedback=None):
     elif mode == 'implicate':
         need = [n for n, v in (('MOTIVE', report.get('motive')), ('MEANS', report.get('means'))) if not v]
         task = (f"IMPLICATE STEP. The culprit '{target}' is currently identified only by elimination. Add positive evidence: "
-                f"{' and '.join(need)}. MOTIVE = a TRUE sign whose claim is a relation fact connecting the culprit and the VICTIM "
-                f"{{\"kind\":\"relation\",\"a\":\"{target}\",\"rel\":\"...\",\"b\":\"...\"}} (add the matching entry to 'relations'). "
-                "MEANS = a TRUE culprit-centric claim that only the culprit satisfies among the candidates: {\"kind\":\"possession\",\"item\"} "
-                "(add the 'possession' entry) or {\"kind\":\"trait\",\"trait\",\"value\"}. Other candidates may have motives too, but not the means. "
+                f"{' and '.join(need)}. MOTIVE = a TRUE sign whose claim is a relation connecting the culprit and the VICTIM "
+                f"{{\"pred\":\"related\",\"a\":\"{target}\",\"rel\":\"...\",\"b\":\"...\"}} (add the matching entry to 'relations' and the name to 'vocabulary'). "
+                "MEANS = a TRUE culprit claim the culprit satisfies: {\"pred\":\"culpritHad\",\"item\"} (add the 'holdings' entry or the effect that gives it) "
+                "or {\"pred\":\"culpritTrait\",\"trait\",\"value\"}; it rules out others only with claims saying who else had the item or what their "
+                "traits are (public signs, or clues). Other candidates may have motives too, but not the means. "
                 "Do not put it on the surface: hide it (Conceal) or make it need another clue (Fragment), justified by someone's reason.")
     elif mode == 'herring':
         task = (f"RED HERRING STEP. Give innocent candidate '{target}' a suspicious visible behaviour (kind 'behavior', about "
                 f"'{target}', on the surface) caused by an innocent secret (an attitude and, if needed, an event), and a deeper "
-                "sign that explains it innocently (list it in 'explainedBy'). The behaviour sign carries no claim.")
+                "sign that explains it innocently (list it in 'explainedBy'). The behaviour sign carries no claim. If it is "
+                f"'{target}'s own manner (a look, a gesture, something on them), set \"watch\":true and name no place in its "
+                "text (it is watched wherever they are); if it is an object they left behind, omit 'watch' and keep its place.")
     elif mode == 'pillar':
         pil = report.get('pillar_signs') or {}
         key = 'means' if target in (pil.get('means') or []) else 'motive'
@@ -751,7 +692,7 @@ TASK: {task}
 Return a PATCH as one JSON object:
 {{"story":"one or two sentences: who acts, why, and what it leaves behind",
   "operator":"Conceal|Fragment|Mislead","blocks":["..."],
-  "add":{{"people":[],"objects":[],"relations":[],"possession":[],"rules":[],"attitudes":[],"events":[],"signs":[]}},
+  "add":{{"people":[],"objects":[],"vocabulary":{{"relations":[]}},"relations":[],"holdings":[],"rules":[],"attitudes":[],"events":[],"signs":[]}},
   "modify":{{"signs":{{"<id>":{{"requires":[],"needs":[],"text":"...","title":"...","claim":{{}}}}}},"events":{{"<id>":{{}}}}}},
   "remove":["<sign id, only the target, only if you split it>"]}}
 {('This case uses a FIXED setting: do not add people or places; new objects and documents are fine (prefer ones with pictures: ' + ', '.join(o['label'] for o in FIXED.get('objects', [])) + '). ' if FIXED else '')}Rules for the patch: the patch MUST add at least one event or attitude (the story beat that causes the change);
@@ -792,7 +733,7 @@ def critic(case, patch):
     ctx = {'setting': case['setting'].get('summary'), 'question': case['question'].get('text'),
            'truth': hyp_map(case)[case['question']['truth']].get('label'),
            'people': [{k: p.get(k) for k in ('id', 'name', 'role', 'traits')} for p in case['people']],
-           'relations': case.get('relations', []), 'possession': case.get('possession', []),
+           'relations': case.get('relations', []), 'holdings': case.get('holdings', []),
            'attitudes': case['attitudes'], 'events': case['events'],
            'signs_touched': [compact_sign(x) for x in case['signs'] if x['id'] in ids],
            'other_signs': [compact_sign(x) for x in case['signs'] if x['id'] not in ids]}
@@ -810,8 +751,25 @@ def critic(case, patch):
         return True, [f'critic unavailable: {e}'], {'error': str(e)}
 
 
+def normalise(case):
+    """Every draft is a claims-version-2 case, every relation name it uses is in its vocabulary (an inverse it does not
+    declare is simply another relation), and it holds as public signs what the game shows everyone."""
+    if not isinstance(case, dict):
+        return case
+    case['claims_version'] = CLAIMS_VERSION
+    vocab = case.setdefault('vocabulary', {}).setdefault('relations', [])
+    known = {n for r in vocab for n in (r.get('rel'), r.get('inverse')) if n}
+    used = [r.get('rel') for r in case.get('relations') or []] + [f.get('relate') for e in case.get('events') or [] for f in e.get('effects') or []] \
+        + [(x.get('claim') or {}).get('rel') for x in case.get('signs') or [] if isinstance(x.get('claim'), dict)]
+    vocab += [{'rel': r} for r in dict.fromkeys(u for u in used if isinstance(u, str) and u and u not in known)]
+    if isinstance(case.get('signs'), list) and isinstance(case.get('people'), list) and (case.get('question') or {}).get('crime'):
+        public_knowledge(case)    # what the game shows everyone: the crime window, the traits clues test
+    return case
+
+
 def lock_setting(case):
     """Fixed setting by construction: places and links are the setting's; cast identity fields are the setting's."""
+    case = normalise(case)
     if not FIXED:
         return case
     case['setting'] = {**case.get('setting', {}), 'places': FIXED['places'], 'links': FIXED['links'], 'name': FIXED['name'],
@@ -870,9 +828,11 @@ def setting_errors(case):
 def apply_patch(case, patch, target):
     c = copy.deepcopy(case)
     add = patch.get('add') or {}
-    for k in ('people', 'objects', 'relations', 'possession', 'rules', 'attitudes', 'events', 'signs'):
+    for k in ('people', 'objects', 'relations', 'holdings', 'rules', 'attitudes', 'events', 'signs'):
         c.setdefault(k, [])
         c[k].extend(add.get(k) or [])
+    for r in (add.get('vocabulary') or {}).get('relations') or []:
+        c.setdefault('vocabulary', {}).setdefault('relations', []).append(r)
     mods = patch.get('modify') or {}
     for group in ('signs', 'events', 'people'):
         idx = {x['id']: x for x in c.get(group, [])}
@@ -888,7 +848,7 @@ def apply_patch(case, patch, target):
             for f in ('requires', 'needs', 'defeats', 'explainedBy'):
                 if r in s.get(f, []):
                     raise ValueError(f'removed {r} is still referenced by {s["id"]}.{f}')
-    return c
+    return normalise(c)
 
 # ----------------------------------------------------------------------------------------------------
 # Scheduler (code)
@@ -961,7 +921,8 @@ def settling_signs(case, report, target):
             else:
                 actor = actor_of(hyp_map(case)[thread])
                 bearing = [sid for sid in A['understood'] if A['eff'][sid] <= d and claim_of(A['signs'][sid]) and A['truthval'].get(sid)
-                           and (claim_of(A['signs'][sid]).get('person') == actor or claim_of(A['signs'][sid])['kind'] in ('trait', 'possession', 'relation', 'fact', 'time'))]
+                           and (actor in (claim_of(A['signs'][sid]).get('person'), claim_of(A['signs'][sid]).get('a'))
+                                or claim_of(A['signs'][sid])['pred'] in ('culpritHad', 'culpritRelated', 'culpritTrait', 'crimeFact', 'crimeBetween', 'onlyHad', 'nobodyAt'))]
             return {'thread': thread, 'depth': d, 'signs': sorted(set(crit) | set(bearing))}
     return {'thread': None, 'depth': A['eff'].get(target), 'signs': [target]}
 
@@ -993,8 +954,8 @@ def step_laws(case, report, new, rep, patch, mode, target, thread, tdepth):
         law.append('no story beat: every refinement must add the event or attitude that causes it (who did what, and why)')
     if mode == 'implicate' and len([x for x in (rep.get('motive'), rep.get('means')) if x]) <= \
             len([x for x in (report.get('motive'), report.get('means')) if x]):
-        law.append('no new positive evidence: add a TRUE motive (relation fact with a = the culprit) or means '
-                   '(culprit-centric possession/trait that rules out another candidate) sign that is reachable and readable')
+        law.append('no new positive evidence: add a TRUE motive (a related claim with a = the culprit) or means '
+                   '(a culpritHad or culpritTrait claim the culprit satisfies) sign that is reachable and readable')
     if mode == 'herring' and not rep['herrings']:
         law.append(f"no surface behaviour sign about '{target}' with a deeper explainedBy sign was found")
     if mode == 'pillar':
@@ -1025,9 +986,9 @@ def metrics_of(rep):
 def case_added(before, after):
     """Records present in `after` but not in `before` (by id), per group: what one iteration added to the story."""
     out = {}
-    for group in ('people', 'objects', 'attitudes', 'events', 'signs', 'rules', 'relations', 'possession'):
-        old = {json.dumps(x, sort_keys=True) if group in ('relations', 'possession') else x.get('id') for x in (before or {}).get(group, [])}
-        new = [x for x in after.get(group, []) if (json.dumps(x, sort_keys=True) if group in ('relations', 'possession') else x.get('id')) not in old]
+    for group in ('people', 'objects', 'attitudes', 'events', 'signs', 'rules', 'relations', 'holdings'):
+        old = {json.dumps(x, sort_keys=True) if group in ('relations', 'holdings') else x.get('id') for x in (before or {}).get(group, [])}
+        new = [x for x in after.get(group, []) if (json.dumps(x, sort_keys=True) if group in ('relations', 'holdings') else x.get('id')) not in old]
         if new:
             out[group] = new
     return out

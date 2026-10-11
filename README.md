@@ -97,8 +97,10 @@ node tools/playtest/bugs.mjs --out bugs.json tools/playtest/runs/e*/            
 
 ## Documentation
 
-- [Technical report](dist/report/index.html) (edition 0.25; [continuous edition](dist/report/complete.html)): the
+- [Technical report](dist/report/index.html) (edition 0.26; [continuous edition](dist/report/complete.html)): the
   connected argument, with diagrams; sources in [docs/report/](docs/report/index.md).
+- [Claims](docs/claims.md): the language of clues (eleven predicates over facts that change with events), how a claim's
+  truth is computed in the history, and why reasoning from what the player knows is sound and complete.
 - [A worked example](dist/report/worked-example.html) ([source](docs/report/worked-example.md)): one case's records, and how the kernel, Z3 and the model critics reason over them, at design time and at run time.
 - [Self-improvement by playtesting](docs/self-improvement.md): the method, the tools and every result.
 - [The living village](docs/living-village.md): sightings, the morning director and the rules found by playing.
@@ -112,7 +114,8 @@ node tools/playtest/bugs.mjs --out bugs.json tools/playtest/runs/e*/            
 | Where | What |
 | --- | --- |
 | `dist/kernel.mjs`, `dist/engine.mjs`, `dist/engine-runtime.mjs` | Event log, replay, saves and action routing |
-| `dist/mk/kernel.mjs`, `server/case_oracle.py` | The certifying kernel (reachability, elimination, depth) and the Z3 cross-check |
+| `dist/mk/kernel.mjs`, `dist/mk/claims.mjs`, `server/case_oracle.py` | The certifying kernel (reachability, depth, certification), the claim semantics it uses (truth in the history, elimination from what the player knows), and the Z3 reference it must agree with |
+| `tools/refine-c/claims.py`, `tools/refine-c/migrate.py` | The Python twin of the claim semantics, and the migration of older cases to the current claims version |
 | `dist/cases/kernel-case.mjs`, `dist/cases/village.mjs` | A generated case in play (accounts, evidence, hints, the constable) and the village setting |
 | `dist/character-turn.mjs` | Free-text conversation: the character's perspective, code checks, the fact-checker and fallbacks |
 | `dist/morning.mjs`, `dist/morning-director.mjs` | The living morning and its director with code, model and kernel critics |

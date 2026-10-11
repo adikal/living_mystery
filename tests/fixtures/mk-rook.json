@@ -24,11 +24,11 @@
    },
    {
     "id": "vestry",
-    "name": "St. Alden\u2019s vestry"
+    "name": "St. Alden’s vestry"
    },
    {
     "id": "surgery",
-    "name": "Dr Marsh\u2019s surgery"
+    "name": "Dr Marsh’s surgery"
    },
    {
     "id": "halt",
@@ -153,7 +153,7 @@
    "pronoun": "he",
    "address": "Mr Reed",
    "voice": "Slow, weathered and wry; a river man who speaks in the present tense and weighs every word like a stone.",
-   "public": "Keeper of the manor\u2019s boathouse and ferryman when the river is up. He knows the water and keeps his own counsel.",
+   "public": "Keeper of the manor’s boathouse and ferryman when the river is up. He knows the water and keeps his own counsel.",
    "home": "boathouse"
   },
   {
@@ -181,7 +181,7 @@
    "pronoun": "she",
    "address": "Miss Vale",
    "voice": "Composed, dry and exact; she chooses words like a woman choosing gloves. Polite to the point of chill with strangers, warmer once she respects you.",
-   "public": "Edmund\u2019s younger sister. She has run Vale Manor\u2019s household for years and guards its privacy.",
+   "public": "Edmund’s younger sister. She has run Vale Manor’s household for years and guards its privacy.",
    "home": "manor"
   },
   {
@@ -195,7 +195,7 @@
    "pronoun": "he",
    "address": "Mr Hugo",
    "voice": "Quick, flippant and charming, full of London slang; hides nerves behind jokes and talks a little too fast.",
-   "public": "Edmund\u2019s nephew, down from London by train. Charming, restless and plainly bored by the country.",
+   "public": "Edmund’s nephew, down from London by train. Charming, restless and plainly bored by the country.",
    "home": "manor"
   },
   {
@@ -220,7 +220,7 @@
    "pronoun": "she",
    "address": "Mrs Finch",
    "voice": "Warm, chatty and colloquial; calls people \"love\", runs on a little, and enjoys a bit of news more than she should.",
-   "public": "Proprietor of the Rook & Lantern. She knows everyone\u2019s habits and most of their business.",
+   "public": "Proprietor of the Rook & Lantern. She knows everyone’s habits and most of their business.",
    "home": "inn"
   },
   {
@@ -241,8 +241,8 @@
    "traits": {},
    "pronoun": "he",
    "address": "Mr Hale",
-   "voice": "Gentle and rambling, with a scholar\u2019s digressions and a surprising steel when conscience is touched.",
-   "public": "Vicar of St. Alden\u2019s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
+   "voice": "Gentle and rambling, with a scholar’s digressions and a surprising steel when conscience is touched.",
+   "public": "Vicar of St. Alden’s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
    "home": "vestry"
   },
   {
@@ -251,8 +251,8 @@
    "role": "The groundskeeper",
    "pronoun": "he",
    "address": "Mr Pike",
-   "voice": "A plain-spoken countryman: short, blunt, practical, with a gardener\u2019s patience and the odd dour joke.",
-   "public": "The manor\u2019s groundskeeper. He lives among his glasshouses and says little to anyone.",
+   "voice": "A plain-spoken countryman: short, blunt, practical, with a gardener’s patience and the odd dour joke.",
+   "public": "The manor’s groundskeeper. He lives among his glasshouses and says little to anyone.",
    "home": "greenhouse",
    "traits": {}
   },
@@ -273,7 +273,7 @@
    "role": "The postmistress",
    "pronoun": "she",
    "address": "Miss Pruett",
-   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people\u2019s business.",
+   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people’s business.",
    "public": "The postmistress. Every letter, parcel and telegram in Bellweather passes over her counter, and she forgets nothing.",
    "home": "post",
    "traits": {}
@@ -308,7 +308,8 @@
   {
    "id": "backkey",
    "name": "Back-stair key",
-   "desc": "Mortice key to the inn's yard door at the foot of the back stairs."
+   "desc": "Mortice key to the inn's yard door at the foot of the back stairs.",
+   "supply": true
   },
   {
    "id": "hem",
@@ -361,40 +362,6 @@
    "a": "jonah",
    "rel": "meant_to_expose",
    "b": "edmund"
-  }
- ],
- "possession": [
-  {
-   "person": "jonah",
-   "item": "watch"
-  },
-  {
-   "person": "edmund",
-   "item": "ledger"
-  },
-  {
-   "person": "silas",
-   "item": "lease"
-  },
-  {
-   "person": "ada",
-   "item": "pillow"
-  },
-  {
-   "person": "clara",
-   "item": "draught"
-  },
-  {
-   "person": "edmund",
-   "item": "backkey"
-  },
-  {
-   "person": "ada",
-   "item": "backkey"
-  },
-  {
-   "person": "ada",
-   "item": "broom"
   }
  ],
  "question": {
@@ -842,8 +809,10 @@
    "start": 1298,
    "end": 1305,
    "causedBy": "a_edmund_kill",
-   "method": "smother",
-   "summary": "Edmund presses the bolster over Jonah's face until he stops moving."
+   "summary": "Edmund presses the bolster over Jonah's face until he stops moving.",
+   "facts": {
+    "method": "smother"
+   }
   },
   {
    "id": "e_death",
@@ -1087,7 +1056,7 @@
    "surface": true,
    "deceptive": false,
    "title": "The Reverend Thomas Hale on the evening",
-   "text": "I was in the vestry a good while, wrestling with Sunday's sermon\u2014it does not want to come easily this week. I heard a little through the door, as one does in a small building, but it is not mine to repeat.",
+   "text": "I was in the vestry a good while, wrestling with Sunday's sermon—it does not want to come easily this week. I heard a little through the door, as one does in a small building, but it is not mine to repeat.",
    "ask": "Where were you last night?",
    "surface_checked": "honest",
    "show": "The Reverend Hale says he was in the vestry a good while working on his sermon, and heard a little through the door but won't repeat it. Do you know if that's true?",
@@ -1129,10 +1098,10 @@
    "surface": true,
    "deceptive": true,
    "title": "Silas Voss on the evening",
-   "text": "I kept my usual evening habits, Constable\u2014an appointment with a client, then the business of tidying my office before I went home. Nothing in it worth troubling your notebook over.",
+   "text": "I kept my usual evening habits, Constable—an appointment with a client, then the business of tidying my office before I went home. Nothing in it worth troubling your notebook over.",
    "ask": "Where were you last night?",
    "surface_checked": "cover",
-   "show": "Silas Voss says he kept his usual evening habits\u2014an appointment with a client, then tidying his office before going home. Do you know if that's true?",
+   "show": "Silas Voss says he kept his usual evening habits—an appointment with a client, then tidying his office before going home. Do you know if that's true?",
    "confront": "You told me you had an appointment with a client, then tidied your office before going home. Is that the whole of it?",
    "to": null
   },
@@ -1143,7 +1112,7 @@
    "surface": true,
    "deceptive": false,
    "title": "Hugo Vale on the evening",
-   "text": "Me? Oh, sulking, mostly\u2014dinner at the manor, then I skulked off to the billiard room and knocked balls about till I was too fed up to see straight. Didn't fancy company after the day I'd had.",
+   "text": "Me? Oh, sulking, mostly—dinner at the manor, then I skulked off to the billiard room and knocked balls about till I was too fed up to see straight. Didn't fancy company after the day I'd had.",
    "ask": "Where were you last night?",
    "surface_checked": "honest",
    "show": "Hugo Vale says after dinner at the manor he sulked off to the billiard room, knocking balls about alone, not fancying company. Do you know if that's true?",
@@ -1157,7 +1126,7 @@
    "surface": true,
    "deceptive": true,
    "title": "Clara Vale on the evening",
-   "text": "I never left the manor after dinner; Edmund and I sat up together over brandy until quite late. I can't tell you much more\u2014I had rather a head coming on and paid little attention to the hour.",
+   "text": "I never left the manor after dinner; Edmund and I sat up together over brandy until quite late. I can't tell you much more—I had rather a head coming on and paid little attention to the hour.",
    "ask": "Where were you last night?",
    "surface_checked": "cover",
    "show": "Clara Vale says she never left the manor after dinner, sitting up with Edmund over brandy until late, though a headache made her lose track of the hour. Do you know if that's true?",
@@ -1171,7 +1140,7 @@
    "surface": true,
    "deceptive": true,
    "title": "Edmund Vale on the evening",
-   "text": "Oh, nothing so thrilling as murder, I promise you\u2014we dined at the manor as always, and then Clara and I sat up over brandy until a good deal too late. I kept to my own fireside the whole evening, as any sensible man would on such a night.",
+   "text": "Oh, nothing so thrilling as murder, I promise you—we dined at the manor as always, and then Clara and I sat up over brandy until a good deal too late. I kept to my own fireside the whole evening, as any sensible man would on such a night.",
    "ask": "Where were you last night?",
    "surface_checked": "cover",
    "show": "Edmund Vale says he and Clara dined at the manor and then sat up over brandy until quite late, keeping to his own fireside all evening. Do you know if that's true?",
@@ -1184,15 +1153,15 @@
    "medical": true,
    "medical_v": 2,
    "at": "surgery",
-   "title": "The doctor\u2019s examination notes",
+   "title": "The doctor’s examination notes",
    "text": "Examination of Jonah Reed reveals petechial haemorrhages about the eyes and faint bruising to the lips and nose, consistent with smothering by a soft object pressed firmly over the face. There is no sign of struggle beyond the face itself, suggesting he was held fast until breath failed. Death occurred between half past nine and ten to ten, and I find no other injury of note upon the body.",
    "claim": {
-    "kind": "time",
-    "start": 1290,
-    "end": 1310
+    "pred": "crimeBetween",
+    "from": 1290,
+    "to": 1310
    },
    "reactions": {
-    "edmund": "Half past nine to ten? Doctors and their guesswork\u2014means nothing to me. I was at home with my sister the whole evening, as I've said, and I'll not be told otherwise by a man with a stethoscope."
+    "edmund": "Half past nine to ten? Doctors and their guesswork—means nothing to me. I was at home with my sister the whole evening, as I've said, and I'll not be told otherwise by a man with a stethoscope."
    },
    "show": "The doctor's notes show Jonah Reed had bruising and haemorrhaging consistent with smothering, with death placed between half past nine and ten to ten. Does that fit with what you know?",
    "source": "e_examination",
@@ -1205,12 +1174,12 @@
    "medical_v": 2,
    "speaker": "iris",
    "claim": {
-    "kind": "time",
-    "start": 1290,
-    "end": 1310
+    "pred": "crimeBetween",
+    "from": 1290,
+    "to": 1310
    },
    "title": "Dr Marsh on the body",
-   "text": "He was smothered, poor soul \u2014 something soft pressed hard over his face until he stopped breathing. Death occurred between half past nine and ten to ten, and there's little doubt he had no chance to fight it off.",
+   "text": "He was smothered, poor soul — something soft pressed hard over his face until he stopped breathing. Death occurred between half past nine and ten to ten, and there's little doubt he had no chance to fight it off.",
    "ask": "Doctor, what did you find when you examined Mr Reed?",
    "show": "Dr Marsh says Jonah Reed was smothered with something soft pressed hard over his face, dying between half past nine and ten to ten. Do you know anything about that?",
    "confront": "You told me Jonah Reed was smothered between half past nine and ten to ten, with no chance to fight it off. Is that the whole of it?",
@@ -1229,7 +1198,7 @@
    ],
    "unlock": "Only once Mrs Finch has produced the watch from her apron does the room's staged disorder, and what it was meant to hide, become worth reading closely.",
    "reactions": {
-    "edmund": "Poor devil. Mud on the floor's the innkeeper's business, not mine\u2014Ada never sweeps that back stair properly. I know nothing more of it than what you've just shown me."
+    "edmund": "Poor devil. Mud on the floor's the innkeeper's business, not mine—Ada never sweeps that back stair properly. I know nothing more of it than what you've just shown me."
    },
    "show": "Jonah Reed was found lying across the bed in the inn's back room, his face congested, with a feather bolster on the chair and mud crumbs by the back stairs door. Do you know anything about that?",
    "to": null
@@ -1243,11 +1212,11 @@
    "speaker": "iris",
    "ask": "Who came to your evening surgery last night, Doctor?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "clara",
     "place": "surgery",
-    "start": 1275,
-    "end": 1320
+    "from": 1275,
+    "to": 1320
    },
    "requires": [
     "s_draught_bottle"
@@ -1262,8 +1231,8 @@
    "show": "Dr Marsh says Miss Vale was at her surgery from before quarter to ten until ten o'clock, in her sight the whole time. Does that match what you know of her evening?",
    "confront": "Dr Marsh tells me you were at her surgery from before quarter to ten until ten, in her sight the whole time. Does that match what you told me?",
    "reactions": {
-    "clara": "Yes\u2014I did go to Dr Marsh, and I asked her to say nothing of it. I told you I never left the house because I did not wish to explain a migraine and a draught to anyone, least of all my brother.",
-    "edmund": "Well, if Clara went to the doctor's, she went to the doctor's\u2014that's her business, not a matter she'd trouble me with over brandy. It changes nothing of where I sat that evening."
+    "clara": "Yes—I did go to Dr Marsh, and I asked her to say nothing of it. I told you I never left the house because I did not wish to explain a migraine and a draught to anyone, least of all my brother.",
+    "edmund": "Well, if Clara went to the doctor's, she went to the doctor's—that's her business, not a matter she'd trouble me with over brandy. It changes nothing of where I sat that evening."
    },
    "to": "clara",
    "direct": "Dr Marsh says you came to her surgery before a quarter to ten with a migraine and stayed in her sight until ten o'clock. Is that correct?"
@@ -1277,11 +1246,11 @@
    "speaker": "vicar",
    "ask": "Was anyone else at the vestry last night, Mr Hale?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "hugo",
     "place": "vestry",
-    "start": 1260,
-    "end": 1335
+    "from": 1260,
+    "to": 1335
    },
    "requires": [
     "s_vestry_slip"
@@ -1293,7 +1262,7 @@
    "show": "The vicar says Mr Hugo arrived at nine and stayed in Mr Voss's office, door ajar, until a quarter past ten, sounding heated about money. Does that square with what you know?",
    "confront": "The vicar tells me you were in Mr Voss's office from nine until quarter past ten, and heated about money. Is that the whole of it?",
    "reactions": {
-    "hugo": "Oh, all right, all right\u2014heated's putting it kindly, I was practically on my knees. A man can beg his own trust for his own money without it meaning anything sinister, you know."
+    "hugo": "Oh, all right, all right—heated's putting it kindly, I was practically on my knees. A man can beg his own trust for his own money without it meaning anything sinister, you know."
    },
    "to": "hugo",
    "direct": "The vicar says you were in Mr Voss's office from nine until a quarter past ten, and rather heated about money. Is that so?"
@@ -1307,11 +1276,11 @@
    "speaker": "vicar",
    "ask": "And Mr Voss, was he in his office all that time?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "silas",
     "place": "vestry",
-    "start": 1260,
-    "end": 1335
+    "from": 1260,
+    "to": 1335
    },
    "needs": [
     "s_vicar_hugo"
@@ -1323,7 +1292,7 @@
    "show": "The vicar says Mr Voss never left his desk while his client was with him, though he won't say who the client was or when they came and went. Can you tell me anything more about that?",
    "confront": "The vicar tells me you never left your desk while your client was with you. Will you tell me who that client was?",
    "reactions": {
-    "silas": "The vicar is a discreet man, and I asked discretion of him\u2014nothing more sinister than that, Inspector. Qui tacet non utique fatetur; his silence confirms only my client's privacy, not any wrongdoing."
+    "silas": "The vicar is a discreet man, and I asked discretion of him—nothing more sinister than that, Inspector. Qui tacet non utique fatetur; his silence confirms only my client's privacy, not any wrongdoing."
    },
    "to": "silas",
    "direct": "The vicar says you never stirred from your desk while your client sat with you, though he'd not say who it was or when. Is that right?"
@@ -1352,11 +1321,11 @@
    "speaker": "clara",
    "ask": "Where were you last night, Miss Vale?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "edmund",
     "place": "manor",
-    "start": 1250,
-    "end": 1440
+    "from": 1250,
+    "to": 1440
    },
    "because": [
     "a_clara_lie"
@@ -1364,7 +1333,7 @@
    "show": "Miss Vale says she and her brother sat in the drawing room from about ten to nine until midnight, he with brandy and paper, she doing accounts. Does that match what you know?",
    "confront": "You told me you sat in the drawing room with your brother from ten to nine until midnight, doing your accounts. Is that the whole of it?",
    "reactions": {
-    "edmund": "That's exactly as I recall it\u2014brandy, the paper, Clara with her accounts, quiet as you like till midnight. I don't see what more there is to say about it."
+    "edmund": "That's exactly as I recall it—brandy, the paper, Clara with her accounts, quiet as you like till midnight. I don't see what more there is to say about it."
    },
    "to": "edmund",
    "direct": "Miss Vale says you sat together with her in the drawing room from ten to nine until midnight. Can you confirm that?"
@@ -1406,7 +1375,7 @@
    "unlock": "The prints end at the crooked frame light. Lifting it to see why someone came out here at dawn shows the bottle hidden among the pots.",
    "show": "Hidden under a cold-frame light in the greenhouse is a medicine bottle labelled for Miss Vale, a sleeping draught, with about one dose gone. Do you know how that came to be there?",
    "reactions": {
-    "clara": "Yes, that's mine. I hid it there so as not to have Ada asking why I'd been to Dr Marsh at all\u2014a foolish precaution, perhaps, but a migraine makes one act foolishly."
+    "clara": "Yes, that's mine. I hid it there so as not to have Ada asking why I'd been to Dr Marsh at all—a foolish precaution, perhaps, but a migraine makes one act foolishly."
    },
    "to": "clara",
    "direct": "You were prescribed this sleeping draught yesterday, and about one dose is missing, yet I found it hidden under a cold-frame in the greenhouse. Can you tell me how it got there?"
@@ -1423,7 +1392,7 @@
    ],
    "reading": "The watch's stopped hands give an hour to test against the yard door: if no one could have come or gone then, the door itself becomes worth examining.",
    "claim": {
-    "kind": "possession",
+    "pred": "culpritHad",
     "item": "backkey"
    },
    "requires": [
@@ -1454,14 +1423,14 @@
     "a_ada_landlord"
    ],
    "claim": {
-    "kind": "possession",
+    "pred": "had",
     "person": "edmund",
     "item": "backkey"
    },
    "show": "Mrs Finch says she locks the yard door every night at half past six and found it still locked afterward, and that only she and Mr Vale hold keys to it. Does that match what you understand?",
    "confront": "You told me you locked that yard door at half past six and found it still locked, with only you and Mr Vale holding keys. Is that the whole of it?",
    "reactions": {
-    "edmund": "Well, of course it's my key on my own chain\u2014I'm the landlord, aren't I. That hardly means I used it last night; you'll find it's been in my pocket same as always."
+    "edmund": "Well, of course it's my key on my own chain—I'm the landlord, aren't I. That hardly means I used it last night; you'll find it's been in my pocket same as always."
    },
    "to": "edmund",
    "direct": "Mrs Finch says the only other key to that yard door is yours, kept on your own chain. Can you confirm that?"
@@ -1483,14 +1452,14 @@
    ],
    "reading": "Mr Voss confirms that Hollins Wood belongs to Hugo's trust and that no timber sale was ever authorised, so the money Mr Vale drew was trust money.",
    "claim": {
-    "kind": "relation",
+    "pred": "related",
     "a": "edmund",
     "rel": "sold_timber_from_trust_of",
     "b": "hugo"
    },
    "concede": {
-    "s_silas_hollins": "I daresay I ought to have said plainly what those money orders meant, but it isn't my place to point fingers at a customer. Very well\u2014it was oak from Hollins Wood that Mr Vale was selling, Mr Hugo's own trust timber, and not a penny of it with Mr Voss's say-so, as you've now shown me plain enough.",
-    "s_ada_watch": "I suppose I held my tongue on the particulars because it wasn't my place to say whose money that really was, but there's no dodging it now you've laid Mr Voss's word before me\u2014those orders were oak money from Hollins Wood, Mr Hugo's own trust wood, sold out from under him without leave."
+    "s_silas_hollins": "I daresay I ought to have said plainly what those money orders meant, but it isn't my place to point fingers at a customer. Very well—it was oak from Hollins Wood that Mr Vale was selling, Mr Hugo's own trust timber, and not a penny of it with Mr Voss's say-so, as you've now shown me plain enough.",
+    "s_ada_watch": "I suppose I held my tongue on the particulars because it wasn't my place to say whose money that really was, but there's no dodging it now you've laid Mr Voss's word before me—those orders were oak money from Hollins Wood, Mr Hugo's own trust wood, sold out from under him without leave."
    },
    "show": "Miss Pruett says Mr Vale has cashed three money orders since Lady Day from the Severn Timber Company, marked 'on account, Hollins Wood oak', sixty-two pounds in all. Does that match what you know of his dealings?",
    "confront": "Miss Pruett tells me you've cashed three money orders since Lady Day from the Severn Timber Company, marked for Hollins Wood oak, sixty-two pounds in all. Can you explain that?",
@@ -1571,7 +1540,7 @@
    "unlock": "Mr Pike walks the detective along his path to where the raking stops; the rake never reached the soil edging by the frames, and the prints there are still sharp.",
    "show": "By the greenhouse cold frames, a line of small, narrow shoe prints goes out and back, stopping at the third frame where the glass sits crooked. Do you know whose steps those might be?",
    "reactions": {
-    "clara": "Those would be mine, I imagine\u2014small feet, narrow shoes, nothing remarkable. I went out at first light for the air; a migraine leaves one restless."
+    "clara": "Those would be mine, I imagine—small feet, narrow shoes, nothing remarkable. I went out at first light for the air; a migraine leaves one restless."
    },
    "to": null
   },
@@ -1587,7 +1556,7 @@
    ],
    "unlock": "A notice pinned at an angle over the others, with its ink still wet, has just been put up. Lifting it to see what it covers shows the pin and the scrap beneath.",
    "reactions": {
-    "silas": "Ah. The pin was obstinate, and I confess I was less than thorough in hiding what lay beneath it. It is only the same appointment slip, Inspector\u2014no more sinister for being torn."
+    "silas": "Ah. The pin was obstinate, and I confess I was less than thorough in hiding what lay beneath it. It is only the same appointment slip, Inspector—no more sinister for being torn."
    },
    "show": "Beneath the parish-meeting notice, I found a torn scrap of paper in the same careful clerk's ink, pierced by the same drawing pin, with the rest of that sheet torn away. Do you know what became of it?",
    "to": null
@@ -1601,7 +1570,7 @@
    "source": "e_clara_rake",
    "show": "The grass path to the greenhouse has been raked this morning into neat wet stripes, and the lawn rake now hangs wet on the hoe's hook in the lean-to. Do you know who might have raked that path?",
    "reactions": {
-    "clara": "I raked it myself, Mr Pike, forgive me\u2014I thought a tidy path no crime. My feet were muddy and I'd no wish for Ada to remark on it."
+    "clara": "I raked it myself, Mr Pike, forgive me—I thought a tidy path no crime. My feet were muddy and I'd no wish for Ada to remark on it."
    },
    "to": null
   },
@@ -1626,7 +1595,7 @@
    "show": "Mr Pike says he never raked that path, that raking wet grass tears it, and that his rake was found hung on the hoe's hook instead of its own. Does that match what you saw?",
    "confront": "You told me you never raked that path, and that your rake turned up on the wrong hook. Is that the whole of it?",
    "reactions": {
-    "edmund": "Pike minds his grass more than his manners, it seems. I've no notion who's been at his rake\u2014ask the gardeners, that's their province, not mine."
+    "edmund": "Pike minds his grass more than his manners, it seems. I've no notion who's been at his rake—ask the gardeners, that's their province, not mine."
    },
    "to": null
   },
@@ -1642,7 +1611,7 @@
    ],
    "unlock": "Mr Hugo's grumble that Voss pinned his name up on the vestry noticeboard sends the detective to look at the board. No slip with his name is there now, only a freshly pinned notice.",
    "reactions": {
-    "silas": "The ink is fresh because the notice is fresh, Inspector\u2014Monday's meeting must be announced. I saw no harm in covering an old torn scrap with a new and useful one."
+    "silas": "The ink is fresh because the notice is fresh, Inspector—Monday's meeting must be announced. I saw no harm in covering an old torn scrap with a new and useful one."
    },
    "show": "The parish-meeting notice on the vestry board hangs crooked over the older notices, pinned with fresh ink that's left a mirror-print below, written in a clerk's hand rather than the vicar's. Do you know anything about that?",
    "to": null
@@ -1657,11 +1626,6 @@
     "s_ada_trust"
    ],
    "unlock": "Once Mrs Finch is satisfied the detective will not blacken the Rook's name over an untidied room, she owns to having tidied it and hands over what she took.",
-   "claim": {
-    "kind": "fact",
-    "key": "watch_time",
-    "value": "0040"
-   },
    "reactions": {
     "edmund": "Twenty to one, is it? Then whatever happened to the poor fellow happened well after Clara and I had gone up to bed. Ada's tidiness has done you a service, it seems, not me."
    },
@@ -1686,7 +1650,7 @@
    "show": "Mrs Finch has put the back room straight, the sheet drawn square and the boards swept, and she's watching my face rather than the room. Do you know why she's tidied a room like that?",
    "confront": "I notice you've put this room straight, sheet squared and floor swept, and you're watching my face rather than the room. Why is that?",
    "reactions": {
-    "ada": "Oh \u2014 well, I couldn't leave the poor soul lying all higgledy for the world to gawp at, could I, love? I only straightened the sheet and the bolster, I never touched anything that mattered. I swear the room's just as decent as I'd want anyone to find it, that's all."
+    "ada": "Oh — well, I couldn't leave the poor soul lying all higgledy for the world to gawp at, could I, love? I only straightened the sheet and the bolster, I never touched anything that mattered. I swear the room's just as decent as I'd want anyone to find it, that's all."
    },
    "to": "ada",
    "direct": "I noticed this room has been tidied since the death, and you watched my face rather than the room as I looked round. Why did you straighten things before I'd seen them?"
@@ -1718,7 +1682,7 @@
    ],
    "show": "In the passage cupboard, a soft broom holds bed-fluff, a small grey feather, and crumbs of dried yard mud in its bristles, with the dustpan beside it still faintly dusty. Do you know who last used that broom?",
    "reactions": {
-    "ada": "Ah, now, you've caught me out there, love, haven't you. I did give it a bit of a sweep round the bed \u2014 I couldn't bear the dust and the mud lying about with him gone, it didn't seem right. I only tidied, I never touched anything that'd matter to you."
+    "ada": "Ah, now, you've caught me out there, love, haven't you. I did give it a bit of a sweep round the bed — I couldn't bear the dust and the mud lying about with him gone, it didn't seem right. I only tidied, I never touched anything that'd matter to you."
    },
    "to": null
   },
@@ -1732,8 +1696,8 @@
    ],
    "unlock": "once you have A crooked notice, you can ask The Reverend Thomas Hale about it",
    "title": "The Reverend Thomas Hale on a crooked notice",
-   "text": "Oh, no, that's not my hand at all\u2014our clerk writes a far neater one than I ever manage, and I daresay he pinned it in a hurry, for the board's rather crowded just now. I confess I haven't straightened it myself; there's always something else pressing.",
-   "ask": "Vicar, that parish-meeting notice on the board\u2014did you pin it up, and why is it sitting crooked over the others?",
+   "text": "Oh, no, that's not my hand at all—our clerk writes a far neater one than I ever manage, and I daresay he pinned it in a hurry, for the board's rather crowded just now. I confess I haven't straightened it myself; there's always something else pressing.",
+   "ask": "Vicar, that parish-meeting notice on the board—did you pin it up, and why is it sitting crooked over the others?",
    "deceptive": false,
    "show": "The Reverend Hale says the crooked notice isn't his hand, but the clerk's, likely pinned in haste as the board is crowded, and he hasn't straightened it himself. Do you know anything about that?",
    "confront": "You told me that notice isn't your hand but the clerk's, pinned in haste, and that you hadn't straightened it yourself. Is that the whole of it?",
@@ -1751,7 +1715,7 @@
    "motive_link": true,
    "unlock": "once you know miss pruett's counter, you know what to look for",
    "claim": {
-    "kind": "relation",
+    "pred": "related",
     "a": "jonah",
     "rel": "meant_to_expose",
     "b": "edmund"
@@ -1783,6 +1747,31 @@
     "a_dora_knew_s_secret"
    ],
    "to": null
+  },
+  {
+   "id": "pub_window",
+   "kind": "public",
+   "title": "When it happened",
+   "text": "Jonah Reed died between 21:30 and 21:50.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1290,
+    "to": 1310
+   }
+  },
+  {
+   "id": "pub_holders_backkey",
+   "kind": "public",
+   "title": "Who had Back-stair key",
+   "text": "Only Edmund Vale and Ada Finch had Back-stair key.",
+   "claim": {
+    "pred": "onlyHad",
+    "item": "backkey",
+    "people": [
+     "edmund",
+     "ada"
+    ]
+   }
   }
  ],
  "premise": {
@@ -1954,5 +1943,68 @@
    "herrings_other": 0,
    "lenient_motives": 0
   }
- }
+ },
+ "holdings": [
+  {
+   "person": "jonah",
+   "item": "watch"
+  },
+  {
+   "person": "edmund",
+   "item": "ledger"
+  },
+  {
+   "person": "silas",
+   "item": "lease"
+  },
+  {
+   "person": "ada",
+   "item": "pillow"
+  },
+  {
+   "person": "clara",
+   "item": "draught"
+  },
+  {
+   "person": "edmund",
+   "item": "backkey"
+  },
+  {
+   "person": "ada",
+   "item": "backkey"
+  },
+  {
+   "person": "ada",
+   "item": "broom"
+  }
+ ],
+ "vocabulary": {
+  "relations": [
+   {
+    "rel": "ferried_secretly"
+   },
+   {
+    "rel": "landlord_of"
+   },
+   {
+    "rel": "lodging_at"
+   },
+   {
+    "rel": "meant_to_expose"
+   },
+   {
+    "rel": "owes"
+   },
+   {
+    "rel": "sold_timber_from_trust_of"
+   },
+   {
+    "rel": "trustee_for"
+   },
+   {
+    "rel": "wants_lease_of"
+   }
+  ]
+ },
+ "claims_version": 2
 }

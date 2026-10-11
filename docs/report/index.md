@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.25 · 10 October 2026**
+**Living technical report · Edition 0.26 · 11 October 2026**
 
 ### Abstract
 
@@ -150,6 +150,17 @@ Bellweather setting with the original cast, map and art, the generator produced 
 4–7 (14–24 clues, 27–35 history events, a certified twist, lies and red herrings), which play in the existing game
 through a bridge (`dist/cases/kernel-case.mjs`) including free-text character dialogue grounded in each character's
 memories and beliefs. See `docs/mystery-kernel.md`.
+
+### Edition 0.26: claims that are sound and complete
+
+The language of clues was audited predicate by predicate and replaced. A claim is now an instance of one of eleven
+predicates over *fluents* (where someone is, who holds an object, a relation, a trait), each with a temporal mode
+(throughout, at some minute, at no minute); events change fluents through their effects, and a claim's truth is computed
+in the history (a claim the history does not decide is refused). Suspects are ruled out only by what the player knows:
+the clues they hold and trust, and *public signs* (what everyone in the village knows, held from the start). The
+direct procedure in both kernels agrees with a Z3 reference both ways on every case and on 5,600 random sets of
+evidence. All published cases were migrated; their certificates are unchanged except where the crime window, now
+public, overturns a stopped watch. Specification: `docs/claims.md`. See [chapter 12](worked-example.md).
 
 ### Edition 0.25: a worked example
 

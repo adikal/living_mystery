@@ -161,9 +161,11 @@ The composable-brick pipeline above is tied to one village's forensic enumeratio
 a model that does not depend on the setting. A case is a set of typed records: entities, events (with time span,
 place, participants and the attitude that caused them), attitudes (an agent's stance toward a proposition), rules,
 signs (observable effects of events: traces, documents, testimony, behaviour) and a question with candidate answers.
-The language model never states what a sign rules out; it picks one claim per sign, an instance of a fixed predicate (`wasAt`, `crimeBetween`, `culpritTrait`, `holds`,
-`culpritHolds`, `related`, `culpritRelated`, `crimeFact`; see [chapter 12](worked-example.md#12-3-the-representation)),
-and the kernel computes eliminations, truth values, access depth and reading depth.
+The language model never states what a sign rules out; it picks one claim per sign, an instance of a fixed predicate
+(`wasAt`, `nobodyAt`, `had`, `onlyHad`, `related`, `hasTrait`, `crimeBetween`, `crimeFact`, `culpritHad`,
+`culpritRelated`, `culpritTrait`; see [chapter 12](worked-example.md#12-3-the-representation) and the
+claims specification, `docs/claims.md`), and the kernel computes truth values in the history, eliminations from what the
+player knows, access depth and reading depth.
 
 Certification is plain code: interval and travel checks for the true history; a justification check that every
 intentional event and every false sign has its cause; monotone reachability for access; set filtering for uniqueness;
@@ -187,10 +189,11 @@ runs one generation at a time and exposes incremental progress events that the b
 published: questions for each account, every character's evening account, the doctor's examination, spoken lines for
 showing each clue and reactions for the characters involved, then JavaScript certification before it is listed.
 
-Two pieces of generated content bear on fairness. The examination states the time window the certification already
-assumed, which the player needs in order to use alibis; its claim equals the question's window, so it changes no
-elimination and no depth. The physical traits that trait claims test are shown in each person's public description,
-because a trait clue can only be used if the player can observe who has the trait. Other generated lines are claimless
+Two pieces of content bear on fairness, and both are what everyone in the village knows: *public signs*, which the
+player holds from the start and which appear in the notebook as common knowledge. One gives when the crime happened
+(the crime window), which the player needs in order to use alibis. The others give each suspect's physical traits that
+a clue tests (also shown in each person's description), because a trait clue can rule someone out only if the player
+knows who has the trait. Reasoning uses nothing else the player is not told. Other generated lines are claimless
 and do not enter certification; they are checked mechanically (no times or numbers that are not in the source, length
 limits, no second-person address in third-person lines).
 
@@ -199,8 +202,8 @@ A generated case takes roughly 10 to 20 minutes, dominated by sequential model c
 
 ## 10.16 Motive, means and opportunity; the premise deck; the Z3 oracle
 
-**Pillars.** Both kernels compute, besides opportunity (the survivors), the culprit's **means** (a true possession or
-trait claim the culprit satisfies) and **motive** (a true relation claim connecting the culprit and the victim: a secret about the culprit alone is not a reason to kill
+**Pillars.** Both kernels compute, besides opportunity (the survivors), the culprit's **means** (a true claim that the culprit had
+the item or trait, or a culprit claim the culprit satisfies) and **motive** (a true relation claim connecting the culprit and the victim: a secret about the culprit alone is not a reason to kill
 this person), each with the depth at
 which it is first understood. Publishing requires both to be reachable; innocents may have motives of their own, so no
 single pillar names the culprit. The generator deepens a pillar found more than two levels before the answer.

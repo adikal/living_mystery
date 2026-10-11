@@ -20,7 +20,7 @@ import * as Morning from '../morning.mjs';
 import {inSentence} from '../places.mjs';
 
 const clone = x => structuredClone(x), arr = v => (Array.isArray(v) ? v : []);
-const KIND = {trace: 'Physical trace', document: 'Document', record: 'Record', item: 'Item', rule: 'Reference',
+const KIND = {public: 'Common knowledge', trace: 'Physical trace', document: 'Document', record: 'Record', item: 'Item', rule: 'Reference',
   observation: 'Observation', absence: 'Observation', behavior: 'Observation', testimony: 'Testimony'};
 const MODE = {believes: 'I believe', knows: 'I know', wants: 'I want', fears: 'I fear', intends: 'I intend', feels: 'I feel'};
 const START = 1920; // 08:00 the next morning, when the investigation begins
@@ -104,14 +104,20 @@ export function makeKernelCase(records) {
     CLUES[s.id] = {title: s.title || s.id, text: s.text, tags: [KIND[s.kind] || 'Observation'], kind: KIND[s.kind] || 'Observation', source: s.title || s.id,
       raw: s.kind, at: s.at ?? null, speaker: s.speaker ?? null, about: s.about ?? null, art: 'art' in s ? s.art : undefined,
       to: s.to ?? null};
-    if (s.kind === 'testimony') continue;
+    if (s.kind === 'testimony' || s.kind === 'public') continue;   // told, or known to everyone from the start
     const at = LOCATIONS[s.at] ? s.at : STATION;
-    OBJECTS[s.id] = {label: s.title || s.id, clue: s.id, description: s.kind === 'behavior' ? 'Watch more closely' : 'Examine this'};
+    // a behaviour is a way of watching a person: one about someone who moves (not the dead victim) is seen wherever
+    // that person now is, so the lead never sits in a room they have left. 'follows' resolves to their live location.
+    // A behaviour marked 'watch' is a person's live manner (a look, a gesture, something on them), seen by watching
+    // them: it is examined wherever they are now, so a lead never sits in a room they have left. Behaviours that are a
+    // reaction about someone, or an object they left, are not 'watch' and stay where they were observed.
+    const follows = s.kind === 'behavior' && s.watch && s.about && s.about !== victim && PEOPLE[s.about] ? s.about : null;
+    OBJECTS[s.id] = {label: s.title || s.id, clue: s.id, description: s.kind === 'behavior' ? 'Watch more closely' : 'Examine this', ...(follows ? {follows} : {})};
     LOCATIONS[at].objects.push(s.id);
   }
   // Physical traits that clues test (shoe size, handedness...) are observable: add them to each public description.
   const TRAIT_WORDS = {shoe_size: v => `wears size ${v} shoes`, handed: v => `${v}-handed`};
-  const tested = [...new Set(kc.signs.map(x => claimOf(x)).filter(c => c?.kind === 'trait').map(c => c.trait))];
+  const tested = [...new Set(kc.signs.map(x => claimOf(x)).filter(c => c?.pred === 'culpritTrait').map(c => c.trait))];
   for (const kp of kc.people) {
     const P = PEOPLE[kp.id], t = kp.traits || {};
     const seen = tested.filter(k => t[k] != null).map(k => (TRAIT_WORDS[k] ?? (v => `${k.replace(/_/g, ' ')}: ${v}`))(t[k]));
@@ -178,12 +184,12 @@ export function makeKernelCase(records) {
   const evidenceClaims = {};
   for (const x of kc.signs) {
     const c = claimOf(x);
-    if (c?.kind === 'place' && PEOPLE[c.person] !== undefined || c?.kind === 'place' && c.person === victim)
+    if (c?.pred === 'wasAt' && (c.when ?? 'throughout') === 'throughout' && (PEOPLE[c.person] !== undefined || c.person === victim))
       evidenceClaims[x.id] = [{key: x.id, subject: c.person, predicate: 'location', value: c.place,
-        interval: {start: Math.round(c.start), end: Math.round(c.end)}, confidence: .9, attribution: x.title || x.id}];
-    else if (c?.kind === 'time')
+        interval: {start: Math.round(c.from), end: Math.round(c.to)}, confidence: .9, attribution: x.title || x.id}];
+    else if (c?.pred === 'crimeBetween')
       evidenceClaims[x.id] = [{key: 'time_of_crime', subject: victim, predicate: 'death_time', value: 'window',
-        interval: {start: Math.round(c.start), end: Math.round(c.end)}, confidence: .95, attribution: x.title || x.id}];
+        interval: {start: Math.round(c.from), end: Math.round(c.to)}, confidence: .95, attribution: x.title || x.id}];
   }
   const [w0, w1] = kc.question.crime.window;
   CASE.night = [Math.floor((w0 - 45) / 15) * 15, Math.ceil((w1 + 45) / 15) * 15];   // the board's timeline span
@@ -195,7 +201,9 @@ export function makeKernelCase(records) {
     life: null, kernelCase: kc};
 
   function createBehavior(K) {
-    const held = s => new Set(s.world.player.evidence.map(e => e.clue));
+    // what everyone knows is held from the start (seedSession records it in the notebook)
+    const publicSigns = kc.signs.filter(x => x.kind === 'public').map(x => x.id);
+    const held = s => new Set([...publicSigns, ...s.world.player.evidence.map(e => e.clue)]);
     // what is gone this morning (concealed), and everything that can only be reached through it
     const goneSet = s => {
       const gone = new Set(arr(s.world.flags.morning?.concealed));
@@ -240,8 +248,9 @@ export function makeKernelCase(records) {
         }
       }
       if (s.world.minute < START) K.advance(s, START - s.world.minute, null);
-      K.commit(s, {kind: 'arrival', actor: 'player', title: 'You begin the investigation', data: {boundary: true},
+      const begun = K.commit(s, {kind: 'arrival', actor: 'player', title: 'You begin the investigation', data: {boundary: true},
         changes: {'player.location': STATION}, playerText: CASE.synopsis});
+      for (const id of publicSigns) K.addEvidence(s, id, begun, 'What everyone knows');
     }
 
     // After any action: open earned gates (with their in-world reason) and reveal completed readings.
@@ -588,7 +597,7 @@ export function makeKernelCase(records) {
       if (x.show) return x.show;
       if (x.kind === 'testimony') return `${PEOPLE[x.speaker]?.name ?? 'Someone'} told me something about last night. What do you make of it?`;
       if (x.kind === 'behavior') return `I noticed ${lower(x.title)}. Why would ${PEOPLE[x.about]?.name ?? 'they'} behave like that?`;
-      if (x.kind === 'document' || x.kind === 'record') return `I found ${lower(x.title)}. Do you know anything about it?`;
+      if (x.kind === 'document' || x.kind === 'record') return `I found ${lower(x.title)}. Read it, and tell me what you make of it.`;
       if (x.kind === 'item') return `I found this: ${lower(x.title)}. Have you seen it before?`;
       return `I noticed ${lower(x.title)} at ${placeName(x.at)}. What do you make of that?`;
     }
@@ -691,7 +700,7 @@ export function makeKernelCase(records) {
     //  passed in the action) is used for feedback only when the kernel agrees that person is still possible.
     const pron = pid => PEOPLE[pid]?.pronoun === 'she' ? ['she', 'her'] : ['he', 'his'];
     function standing(use) {
-      const sub = {...kc, signs: kc.signs.filter(x => use.has(x.id)).map(x => ({...x, requires: [], unlock: 'held', reading: x.reading || 'held'}))};
+      const sub = {...kc, signs: kc.signs.filter(x => use.has(x.id) || x.kind === 'public').map(x => ({...x, requires: [], unlock: 'held', reading: x.reading || 'held'}))};
       const A = analyse(sub);
       return {A, sv: survivors(sub, A), sub};
     }
@@ -789,9 +798,11 @@ export function makeKernelCase(records) {
       for (const x of open.filter(own)) {
         const prereq = arr(x.requires).length ? signs[arr(x.requires).find(r => signs[r] && signs[r].kind !== 'testimony') ?? x.requires[0]] : null;
         const about = prereq ? String(prereq.title || 'what I found').replace(/^(the|a|an) /i, '').toLowerCase() : 'what I found';
-        // the account's own question (written not to give its content away), else a question about what earned it: for
-        // another person's account, the line the case gives for putting that account to someone (the player holds it)
-        let label = (ownAsk(x) && x.ask) || (prereq?.kind === 'testimony'
+        // the account's own question (written not to give its content away) is the natural label when it has one, even
+        // for an account also reachable from a broader question (same_as): the question must describe what we are asking
+        // this person, not name the unrelated clue that happened to unlock it. Only without an own question do we fall
+        // back to the prerequisite: a testimony's own 'show' line, or a question about the physical thing we found.
+        let label = x.ask || (prereq?.kind === 'testimony'
           ? (prereq.show || `${PEOPLE[prereq.speaker]?.name ?? 'Someone'} told me something that concerns you. What do you say to it?`)
           : `What can you tell me about the ${about}?`);
         if (out.some(([, l]) => l === label)) label = `${label.replace(/\?$/, '')} — and anything else about it?`;

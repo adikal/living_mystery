@@ -96,7 +96,8 @@ class Handler(BaseHandler):
             if not isinstance(body['accused'], str) or len(body['accused']) > 40:
                 raise ValueError('Invalid accused')
             case = load_case(body['caseId'])
-            held = sorted(case_oracle.understood(case, held))   # evidence counts once it can be read
+            public = [x['id'] for x in case['signs'] if x.get('kind') == 'public']   # what everyone knows is held
+            held = sorted(case_oracle.understood(case, set(held) | set(public)))   # evidence counts once it can be read
             cand = case_oracle.candidates(case, held)
             alt = case_oracle.alternative(case, held, body['accused'])
             out = {'survivors': sorted(h for h, r in cand.items() if r['status'] != 'unsat'),

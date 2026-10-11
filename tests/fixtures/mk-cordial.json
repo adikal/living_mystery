@@ -25,11 +25,11 @@
    },
    {
     "id": "vestry",
-    "name": "St. Alden\u2019s vestry"
+    "name": "St. Alden’s vestry"
    },
    {
     "id": "surgery",
-    "name": "Dr Marsh\u2019s surgery"
+    "name": "Dr Marsh’s surgery"
    },
    {
     "id": "halt",
@@ -153,7 +153,7 @@
    "pronoun": "she",
    "address": "Miss Vale",
    "voice": "Composed, dry and exact; she chooses words like a woman choosing gloves. Polite to the point of chill with strangers, warmer once she respects you.",
-   "public": "Edmund\u2019s younger sister. She has run Vale Manor\u2019s household for years and guards its privacy.",
+   "public": "Edmund’s younger sister. She has run Vale Manor’s household for years and guards its privacy.",
    "home": "manor"
   },
   {
@@ -179,7 +179,7 @@
    "pronoun": "she",
    "address": "Mrs Finch",
    "voice": "Warm, chatty and colloquial; calls people \"love\", runs on a little, and enjoys a bit of news more than she should.",
-   "public": "Proprietor of the Rook & Lantern. She knows everyone\u2019s habits and most of their business.",
+   "public": "Proprietor of the Rook & Lantern. She knows everyone’s habits and most of their business.",
    "home": "inn"
   },
   {
@@ -224,8 +224,8 @@
    },
    "pronoun": "he",
    "address": "Mr Hale",
-   "voice": "Gentle and rambling, with a scholar\u2019s digressions and a surprising steel when conscience is touched.",
-   "public": "Vicar of St. Alden\u2019s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
+   "voice": "Gentle and rambling, with a scholar’s digressions and a surprising steel when conscience is touched.",
+   "public": "Vicar of St. Alden’s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
    "home": "vestry"
   },
   {
@@ -235,7 +235,7 @@
    "traits": {},
    "pronoun": "she",
    "address": "Miss Pruett",
-   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people\u2019s business.",
+   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people’s business.",
    "public": "The postmistress. Every letter, parcel and telegram in Bellweather passes over her counter, and she forgets nothing.",
    "home": "post"
   },
@@ -247,7 +247,7 @@
    "pronoun": "he",
    "address": "Mr Hugo",
    "voice": "Quick, flippant and charming, full of London slang; hides nerves behind jokes and talks a little too fast.",
-   "public": "Edmund\u2019s nephew, down from London by train. Charming, restless and plainly bored by the country.",
+   "public": "Edmund’s nephew, down from London by train. Charming, restless and plainly bored by the country.",
    "home": "manor"
   }
  ],
@@ -333,28 +333,6 @@
    "a": "ada",
    "rel": "paid_hush_money_to",
    "b": "dora"
-  }
- ],
- "possession": [
-  {
-   "person": "ada",
-   "item": "vermin_tin"
-  },
-  {
-   "person": "ada",
-   "item": "flask"
-  },
-  {
-   "person": "clara",
-   "item": "grey_cloak"
-  },
-  {
-   "person": "hugo",
-   "item": "menu_card"
-  },
-  {
-   "person": "ada",
-   "item": "sealed_tin"
   }
  ],
  "question": {
@@ -802,8 +780,10 @@
    "start": 1284,
    "end": 1305,
    "causedBy": "a_ada_intend",
-   "method": "poison",
-   "summary": "Ada gives Dorothy hot blackcurrant cordial laced with vermin powder 'for her chest', then leaves."
+   "summary": "Ada gives Dorothy hot blackcurrant cordial laced with vermin powder 'for her chest', then leaves.",
+   "facts": {
+    "method": "poison"
+   }
   },
   {
    "id": "e_ada_back",
@@ -1096,12 +1076,12 @@
    "medical": true,
    "medical_v": 2,
    "at": "surgery",
-   "title": "The doctor\u2019s examination notes",
+   "title": "The doctor’s examination notes",
    "text": "Examination of the deceased shows a poison taken by mouth. Death was from a poison taken by mouth, and it occurred between twenty-four past nine and quarter to ten.",
    "claim": {
-    "kind": "time",
-    "start": 1284,
-    "end": 1305
+    "pred": "crimeBetween",
+    "from": 1284,
+    "to": 1305
    },
    "show": "The doctor's notes say the poison was taken by mouth and death occurred between twenty-four past nine and quarter to ten. Does that timing mean anything to you?",
    "reactions": {
@@ -1117,9 +1097,9 @@
    "medical_v": 2,
    "speaker": "iris",
    "claim": {
-    "kind": "time",
-    "start": 1284,
-    "end": 1305
+    "pred": "crimeBetween",
+    "from": 1284,
+    "to": 1305
    },
    "title": "Dr Marsh on the body",
    "text": "Death was from a poison taken by mouth, and it occurred between twenty-four past nine and quarter to ten.",
@@ -1136,7 +1116,7 @@
    "surface": true,
    "deceptive": true,
    "title": "Hugo Vale on the evening",
-   "text": "Oh, just the usual dreary business \u2014 sat through dinner at the manor being frightfully dull and proper, then hung about the drawing room after. Frightfully thrilling stuff, as you can imagine.",
+   "text": "Oh, just the usual dreary business — sat through dinner at the manor being frightfully dull and proper, then hung about the drawing room after. Frightfully thrilling stuff, as you can imagine.",
    "ask": "Where were you last night?",
    "surface_checked": "cover",
    "show": "Hugo Vale says he simply sat through dinner at the manor and afterward stayed in the drawing room. Do you know if that's the whole of his evening?",
@@ -1206,7 +1186,7 @@
    "surface": true,
    "deceptive": true,
    "title": "Ada Finch on the evening",
-   "text": "Oh, I never stirred from behind the bar, love \u2014 you know how it is of an evening, rushed off my feet with the darts crowd in, right up till closing and after. Ask anyone, I'm always there.",
+   "text": "Oh, I never stirred from behind the bar, love — you know how it is of an evening, rushed off my feet with the darts crowd in, right up till closing and after. Ask anyone, I'm always there.",
    "ask": "Where were you last night?",
    "surface_checked": "cover",
    "show": "Ada Finch says she never left the bar all evening, busy with the darts crowd right up till closing. Do you know if that's true?",
@@ -1234,7 +1214,7 @@
    "surface": true,
    "deceptive": true,
    "title": "Clara Vale on the evening",
-   "text": "I was here at the manor, of course \u2014 I saw to the dinner, wrote what letters needed writing, and put the house to rights before I went up. Nothing more remarkable than that.",
+   "text": "I was here at the manor, of course — I saw to the dinner, wrote what letters needed writing, and put the house to rights before I went up. Nothing more remarkable than that.",
    "ask": "Where were you last night?",
    "surface_checked": "cover",
    "show": "Clara Vale says she was at the manor seeing to dinner, writing letters, and putting the house to rights before going up. Does that match what you know?",
@@ -1253,11 +1233,11 @@
    ],
    "ask": "Where were you last night, Mrs Finch?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "ada",
     "place": "inn",
-    "start": 1080,
-    "end": 1500
+    "from": 1080,
+    "to": 1500
    },
    "show": "Ada Finch says she never left the bar all Thursday night, pulling pints from six till gone one. Do you know if that's true?",
    "confront": "You told me you never left the bar, pulling pints from six till gone one. Is that the whole of it?",
@@ -1308,11 +1288,11 @@
    "speaker": "iris",
    "ask": "Did you see anyone last night, Dr Marsh?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "vicar",
     "place": "surgery",
-    "start": 1260,
-    "end": 1350
+    "from": 1260,
+    "to": 1350
    },
    "because": [
     "a_iris_discreet"
@@ -1322,12 +1302,12 @@
    ],
    "reading": "The score-book gives the times she won't: the game began at 9.00 and White resigned at 10.30. Every other move is in the vicar's spidery hand, as his sermon notes show, so he sat at the board the whole time.",
    "concede": {
-    "r_scorebook": "Yes, all right \u2014 the book says nine to half past ten, and that's what it was; I only kept quiet on the hour because I don't like the village timing Thomas's visits like a train."
+    "r_scorebook": "Yes, all right — the book says nine to half past ten, and that's what it was; I only kept quiet on the hour because I don't like the village timing Thomas's visits like a train."
    },
    "show": "Dr Marsh says Mr Hale came for their Thursday game and stayed until it finished, though she keeps no clock on it. Do you know if that's accurate?",
    "confront": "You told me Mr Hale stayed for the whole game and you keep no clock on it. Is that the whole of it?",
    "reactions": {
-    "vicar": "Well now, Iris never was one for clocks, and I confess I'm much the same when a game's absorbing \u2014 Thursday's dragged on rather, as it does, and I couldn't put a time to it myself if you pressed me."
+    "vicar": "Well now, Iris never was one for clocks, and I confess I'm much the same when a game's absorbing — Thursday's dragged on rather, as it does, and I couldn't put a time to it myself if you pressed me."
    },
    "to": "vicar",
    "direct": "Dr Marsh says you came round for the Thursday game and stayed until it was finished, with no time given. Is that so?"
@@ -1341,11 +1321,11 @@
    "speaker": "edmund",
    "ask": "Who was at the manor last night, Mr Vale?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "clara",
     "place": "manor",
-    "start": 1200,
-    "end": 1400
+    "from": 1200,
+    "to": 1400
    },
    "requires": [
     "d_clara_note",
@@ -1358,7 +1338,10 @@
     "clara": "That is quite correct. My brother kept us all at the table and the drawing room until well past eleven, as I have said, and there is nothing more to add to it."
    },
    "to": "clara",
-   "direct": "Mr Vale says you were at his table from eight and in the drawing room till past eleven, and never stirred. Is that so?"
+   "direct": "Mr Vale says you were at his table from eight and in the drawing room till past eleven, and never stirred. Is that so?",
+   "defeats": [
+    "s_bell_saw"
+   ]
   },
   {
    "id": "s_hugo_silas",
@@ -1369,11 +1352,11 @@
    "speaker": "hugo",
    "ask": "Was Mr Voss at dinner, Mr Hugo?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "silas",
     "place": "manor",
-    "start": 1200,
-    "end": 1400
+    "from": 1200,
+    "to": 1400
    },
    "because": [
     "a_hugo_hush"
@@ -1383,12 +1366,12 @@
    ],
    "reading": "The card's pencilled times run from 8.00 to 11.20. Hugo's account tells you that 'V.' is Voss, not a Vale, and that he never left the table in between.",
    "concede": {
-    "i_menu_card": "Fine, fine \u2014 eight till twenty past eleven, the old menu doesn't lie, and I only ducked the hours because I didn't fancy being the one who put a number on Voss's little chats about the will."
+    "i_menu_card": "Fine, fine — eight till twenty past eleven, the old menu doesn't lie, and I only ducked the hours because I didn't fancy being the one who put a number on Voss's little chats about the will."
    },
    "show": "Hugo Vale says Mr Voss talked at his uncle from soup to brandy without stepping out, though he won't give exact times. Do you know if that's accurate?",
    "confront": "You told me Voss never stepped out all evening, though you wouldn't give exact hours. Is that the whole of it?",
    "reactions": {
-    "silas": "Quite so; the will required careful drafting, and I did not stir from the room. As for hours, festina lente \u2014 I was too occupied with clauses to consult my watch."
+    "silas": "Quite so; the will required careful drafting, and I did not stir from the room. As for hours, festina lente — I was too occupied with clauses to consult my watch."
    },
    "to": "silas",
    "direct": "Mr Hugo says you talked at his uncle from the soup through to the last brandy and never stepped out. Is that so?"
@@ -1405,11 +1388,11 @@
    ],
    "unlock": "Once Mrs Finch swears she never left the bar, you ask Constable Bell, who walks his round of the square between the inn and the church lane every night.",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "clara",
     "place": "square",
-    "start": 1278,
-    "end": 1280
+    "from": 1278,
+    "to": 1280
    },
    "defeats": [],
    "because": [
@@ -1418,7 +1401,7 @@
    "ask": "Mr Bell, what can you tell me about your evening on the round?",
    "confront": "Constable Bell says he saw a woman in a grey hooded cloak, with a covered basket, cross to the church lane around twenty past nine, and he took her for you. Was that you?",
    "reactions": {
-    "clara": "A grey hooded cloak, church lane, twenty past nine \u2014 yes, that would be mine, kept on the passage hook for anyone to take up. I was in the drawing room at the time, so it was evidently not I who wore it."
+    "clara": "A grey hooded cloak, church lane, twenty past nine — yes, that would be mine, kept on the passage hook for anyone to take up. I was in the drawing room at the time, so it was evidently not I who wore it."
    },
    "to": "clara",
    "direct": "Constable Bell says he saw a woman in your grey hooded cloak go up the church lane about twenty past nine with a covered basket, and took her for you. Is that so?",
@@ -1428,7 +1411,7 @@
    "id": "b_edmund_door",
    "kind": "behavior",
    "title": "The master is not at home to questions",
-   "text": "Mr Vale fills the doorway of the morning room. \"Thursday? Dined, went to bed. What my family does at my table is nobody's affair, least of all a stranger's.\" He glances once toward the hall and shuts the door.",
+   "text": "Mr Vale draws himself up, filling the space before him. \"Thursday? Dined, went to bed. What my family does at my table is nobody's affair, least of all a stranger's.\" He glances once to the side and sets his jaw, closing the subject.",
    "at": "manor",
    "about": "edmund",
    "explainedBy": [
@@ -1437,16 +1420,17 @@
    "show": "Mr Vale refused to say what his family did at his table on Thursday, glancing toward the hall before shutting the door. Do you know why he was so unwilling to speak of it?",
    "confront": "You glanced toward the hall and shut the door rather than say what your family did at your table on Thursday. Is there something you're not telling me?",
    "reactions": {
-    "edmund": "That's the whole of it. My table, my house, my business \u2014 I'll not have a stranger poking into what my family says over dinner."
+    "edmund": "That's the whole of it. My table, my house, my business — I'll not have a stranger poking into what my family says over dinner."
    },
    "to": "edmund",
-   "direct": "You stood in your doorway, said only that you dined and went to bed, glanced toward the hall, and shut the door on me. Is there more you'd care to tell me?"
+   "direct": "You stood in your doorway, said only that you dined and went to bed, glanced toward the hall, and shut the door on me. Is there more you'd care to tell me?",
+   "watch": true
   },
   {
    "id": "d_clara_note",
    "kind": "document",
    "title": "A crumpled note in the hall basket",
-   "text": "A sheet of manor notepaper, screwed into a ball, lies in the wastepaper basket under the hall salver. Smoothed out, it reads in a neat, narrow hand: \"E. \u2014 Please say nothing to anyone about last night: not the dinner, not Mr Voss, not the will. The village talks enough. C.\"",
+   "text": "A sheet of manor notepaper, screwed into a ball, lies in the wastepaper basket under the hall salver. Smoothed out, it reads in a neat, narrow hand: \"E. — Please say nothing to anyone about last night: not the dinner, not Mr Voss, not the will. The village talks enough. C.\"",
    "at": "manor",
    "source": "e_clara_note",
    "requires": [
@@ -1473,7 +1457,7 @@
    "unlock": "You ask Mr Hugo what he keeps patting. Caught out, and more afraid of looking a liar than of his aunt, he pulls the folded card out of his pocket and hands it over, begging you not to show Aunt Clara.",
    "show": "A dinner menu card found in a breast pocket has pencilled times noting Voss's continued presence right through to half past eleven. Do you know anything about this card?",
    "reactions": {
-    "hugo": "Ha \u2014 caught red-handed being frightfully bored, that's all. Poor old Voss did go on rather, didn't he? I only scribbled it to stop myself screaming, not because anything sinister was happening."
+    "hugo": "Ha — caught red-handed being frightfully bored, that's all. Poor old Voss did go on rather, didn't he? I only scribbled it to stop myself screaming, not because anything sinister was happening."
    },
    "to": null
   },
@@ -1481,7 +1465,7 @@
    "id": "i_dora_keys",
    "kind": "item",
    "title": "The postmistress's keys",
-   "text": "Constable Bell hands over the key ring he took from Miss Pruett's coat at the vestry. On it are a church key, a latchkey and a small brass key stamped 'G.P.O. \u2014 REG.'",
+   "text": "Constable Bell hands over the key ring he took from Miss Pruett's coat at the vestry. On it are a church key, a latchkey and a small brass key stamped 'G.P.O. — REG.'",
    "at": "vestry",
    "requires": [
     "i_tin"
@@ -1495,7 +1479,7 @@
    "id": "d_dora_book",
    "kind": "document",
    "title": "Inside the registered-mail safe",
-   "text": "Under the sheets of stamps lies a small black notebook. In a prim hand: '1 Aug \u2014 A.F. \u2014 \u00a35.' '1 Sept \u2014 A.F. \u2014 \u00a35.' '1 Oct \u2014 A.F. \u2014 \u00a35 (late).' Tucked inside is an envelope postmarked Liverpool and addressed to Mrs A. Finch, the Rook & Lantern. Its flap is cockled and has been stuck down again.",
+   "text": "Under the sheets of stamps lies a small black notebook. In a prim hand: '1 Aug — A.F. — £5.' '1 Sept — A.F. — £5.' '1 Oct — A.F. — £5 (late).' Tucked inside is an envelope postmarked Liverpool and addressed to Mrs A. Finch, the Rook & Lantern. Its flap is cockled and has been stuck down again.",
    "at": "post",
    "requires": [
     "i_dora_keys"
@@ -1503,14 +1487,14 @@
    "unlock": "The brass key stamped 'REG.' fits the registered-mail safe behind the post office counter, and only the postmistress carried it.",
    "source": "e_dora_hide",
    "claim": {
-    "kind": "relation",
+    "pred": "related",
     "a": "ada",
     "rel": "paid_hush_money_to",
     "b": "dora"
    },
    "show": "A notebook in the registered-mail safe records monthly five-pound payments from A.F., alongside an opened envelope addressed to Mrs Finch at the Rook and Lantern. Do you know anything about these payments?",
    "reactions": {
-    "ada": "Oh, that. Well, love, a woman's private letters are her own affair, aren't they \u2014 and paying a bit here and there is hardly a hanging matter, whatever Dorothy made of it."
+    "ada": "Oh, that. Well, love, a woman's private letters are her own affair, aren't they — and paying a bit here and there is hardly a hanging matter, whatever Dorothy made of it."
    },
    "to": null
   },
@@ -1541,7 +1525,7 @@
    "reading": "Strychnine is intensely bitter, like the dregs in the flask. The purple stain on the spoon matches the blackcurrant cordial, so the powder was stirred in from this tin.",
    "source": "e_ada_stash",
    "claim": {
-    "kind": "possession",
+    "pred": "culpritHad",
     "item": "vermin_tin"
    },
    "defeats": [
@@ -1576,7 +1560,7 @@
    "id": "d_charred_letter",
    "kind": "document",
    "title": "A scrap in the ashes",
-   "text": "A brown-edged corner of letter paper lies in the ash behind the fire-screen. Printed heading: 'Gribble & Stone, Advances Arranged, Holborn.' Typed below: '...Mr E. Vale ... the sum of \u00a31,200 remains outstanding ... final notice before proceedings...' It is dated the 14th of September.",
+   "text": "A brown-edged corner of letter paper lies in the ash behind the fire-screen. Printed heading: 'Gribble & Stone, Advances Arranged, Holborn.' Typed below: '...Mr E. Vale ... the sum of £1,200 remains outstanding ... final notice before proceedings...' It is dated the 14th of September.",
    "at": "manor",
    "requires": [
     "b_clara_grate"
@@ -1588,7 +1572,7 @@
     "clara": "My brother's affairs, and none of yours nor the village's. I burned it because Edmund would not wish his troubles read out over every counter in the parish, and I still don't."
    },
    "to": "edmund",
-   "direct": "This burnt letter from Gribble & Stone demands \u00a31,200 outstanding from you, dated the 14th of September. Can you tell me about this debt?"
+   "direct": "This burnt letter from Gribble & Stone demands £1,200 outstanding from you, dated the 14th of September. Can you tell me about this debt?"
   },
   {
    "id": "r_scorebook",
@@ -1602,8 +1586,8 @@
    ],
    "reading": "The spidery hand with its looped descenders matches Mr Hale's sermon draft. The vicar wrote every other move, so he was at this board from 9.00 until he resigned at 10.30.",
    "reactions": {
-    "vicar": "Ah \u2014 forty-one moves, was it, I always did play too long into the endgame. Iris and I simply enjoy our chess without watching the hour, and I fear the ink got smudged in the pushing about of things afterward.",
-    "iris": "Yes, we played our usual Thursday game, and I'm afraid I did smear the initials myself before tidying the mantel \u2014 I'd rather the village not chatter about how late the vicar sits in my surgery, that's the whole of it."
+    "vicar": "Ah — forty-one moves, was it, I always did play too long into the endgame. Iris and I simply enjoy our chess without watching the hour, and I fear the ink got smudged in the pushing about of things afterward.",
+    "iris": "Yes, we played our usual Thursday game, and I'm afraid I did smear the initials myself before tidying the mantel — I'd rather the village not chatter about how late the vicar sits in my surgery, that's the whole of it."
    },
    "show": "There's a chess score-book on the surgery mantel, its last game begun at nine and finished at half past ten, with two sets of initials smeared away before the moves. Can you tell me who was playing that game?",
    "to": null
@@ -1621,13 +1605,13 @@
    "unlock": "The gravel leads from the empty lost-property hook to the cellar door, and the ring in the shelf dust shows that something was moved. So you search behind the ale barrels.",
    "source": "e_ada_stash",
    "claim": {
-    "kind": "possession",
+    "pred": "had",
     "person": "clara",
     "item": "grey_cloak"
    },
    "show": "A grey hooded cloak was found bundled behind the ale barrels, damp at the hem, with a purple splash on the cuff and a collar tape reading 'C. VALE'. Do you know how it came to be there?",
    "reactions": {
-    "ada": "That old grey cloak? Miss Vale must've left it hanging in our passage some time, and heaven knows how a splash got on it, love \u2014 I certainly never wore the thing."
+    "ada": "That old grey cloak? Miss Vale must've left it hanging in our passage some time, and heaven knows how a splash got on it, love — I certainly never wore the thing."
    },
    "to": "clara",
    "direct": "This grey hooded cloak, marked 'C. VALE' inside the collar, was found behind the ale barrels with a damp hem and a purple splash on the cuff. Can you explain that?"
@@ -1645,11 +1629,11 @@
    ],
    "unlock": "You take the grey cloak you found behind the inn's cellar barrels to Constable Bell and ask him to think again about the figure he saw.",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "ada",
     "place": "square",
-    "start": 1278,
-    "end": 1280
+    "from": 1278,
+    "to": 1280
    },
    "defeats": [
     "s_bell_saw",
@@ -1667,7 +1651,7 @@
    "id": "b_hugo_pocket",
    "kind": "behavior",
    "title": "Mr Hugo's breast pocket",
-   "text": "Mr Hugo sits on the boathouse slip with a fishing rod he isn't using, all jokes. Each time dinner comes up, his hand goes to the breast pocket of his blazer and pats it flat. When you look at the pocket he stops, laughs too loudly and puts his hands behind his back.",
+   "text": "Mr Hugo holds a fishing rod he isn't using, all jokes. Each time dinner comes up, his hand goes to the breast pocket of his blazer and pats it flat. When you look at the pocket he stops, laughs too loudly and puts his hands behind his back.",
    "at": "boathouse",
    "about": "hugo",
    "explainedBy": [
@@ -1681,10 +1665,11 @@
    "show": "Mr Hugo keeps patting his breast pocket whenever dinner comes up, then stops and laughs too loudly when he notices you looking. Do you know what he's keeping in there?",
    "confront": "Every time dinner comes up, you pat your breast pocket, then stop and laugh when I look at it. What's in there?",
    "reactions": {
-    "hugo": "This? Oh, just \u2014 er \u2014 fishing tackle receipts, frightfully thrilling stuff. Nothing to do with dinner at all, I promise you, I'm just a chap who likes his pocket tidy."
+    "hugo": "This? Oh, just — er — fishing tackle receipts, frightfully thrilling stuff. Nothing to do with dinner at all, I promise you, I'm just a chap who likes his pocket tidy."
    },
    "to": "hugo",
-   "direct": "Each time dinner comes up, your hand goes to your breast pocket, and you stop and laugh too loudly when you catch me looking. What is it you're carrying there?"
+   "direct": "Each time dinner comes up, your hand goes to your breast pocket, and you stop and laugh too loudly when you catch me looking. What is it you're carrying there?",
+   "watch": true
   },
   {
    "id": "s_sermon_notes",
@@ -1695,7 +1680,7 @@
    "source": "e_vicar_study",
    "show": "Sermon sheets on the vestry desk are written in a thin, spidery hand with looped descenders and a crossed seven, with a note to himself signed T.H. Do you know anything about these sheets?",
    "reactions": {
-    "vicar": "Ah yes, my little reminder to myself about the Tertullian \u2014 one does talk to oneself rather, in sermon-writing, T.H. to T.H. as it were, no mystery in that at all."
+    "vicar": "Ah yes, my little reminder to myself about the Tertullian — one does talk to oneself rather, in sermon-writing, T.H. to T.H. as it were, no mystery in that at all."
    },
    "to": null
   },
@@ -1712,7 +1697,7 @@
    "source": "e_ada_stash",
    "show": "A sealed tin of strychnine rat powder sits untouched on the inn cellar shelf, beside a paler ring in the dust much wider than the tin itself. Do you know what usually stood in that wider ring?",
    "reactions": {
-    "ada": "Oh, that? That's just the spare, love, seal's not even broke on it \u2014 I always keep one by in case we run short. Rats in a cellar, what can you do, you can't leave the shelf bare. Wider ring in the dust? Lor', I couldn't tell you, I'm not one for staring at dust of an evening."
+    "ada": "Oh, that? That's just the spare, love, seal's not even broke on it — I always keep one by in case we run short. Rats in a cellar, what can you do, you can't leave the shelf bare. Wider ring in the dust? Lor', I couldn't tell you, I'm not one for staring at dust of an evening."
    },
    "to": null
   },
@@ -1729,7 +1714,7 @@
    "source": "e_ada_stash",
    "show": "One hook in the inn passage, marked for an item left at the Harvest Supper, is empty, with gravel grains on the flagstones leading toward the cellar door. Do you know what was on that hook?",
    "reactions": {
-    "ada": "That's Miss Vale's old grey cloak, love, left over from the Harvest Supper \u2014 I keep meaning to send it round to her. Gravel? Must've come off someone's boots, we get all sorts traipsing through of an evening. I never touched it myself, I was behind the bar the whole time, as I said."
+    "ada": "That's Miss Vale's old grey cloak, love, left over from the Harvest Supper — I keep meaning to send it round to her. Gravel? Must've come off someone's boots, we get all sorts traipsing through of an evening. I never touched it myself, I was behind the bar the whole time, as I said."
    },
    "to": null
   },
@@ -1742,7 +1727,7 @@
    "source": "e_hugo_key",
    "show": "The boathouse key is missing from its hook in the manor hall, and a chalked note says 'Gone fishing,' though one breakfast place remains untouched. Do you know where that key or its owner might be?",
    "reactions": {
-    "hugo": "Ha, guilty as charged \u2014 thought I'd rather face a pike than another word about codicils, so I scarpered before anyone could pin me down over toast. Slate's not lying, that's my hand, my rotten spelling and all. Nothing sinister, just a chap avoiding the third degree over kippers."
+    "hugo": "Ha, guilty as charged — thought I'd rather face a pike than another word about codicils, so I scarpered before anyone could pin me down over toast. Slate's not lying, that's my hand, my rotten spelling and all. Nothing sinister, just a chap avoiding the third degree over kippers."
    },
    "to": "hugo",
    "direct": "The Boathouse key is gone from its hook, and you left word on the slate that you'd gone fishing and not to wait luncheon. Where did you go?"
@@ -1761,6 +1746,30 @@
    "show": "A letter sent to Ada through a Liverpool envelope tells her that her husband is alive and living there, and that she's no widow. Did you know anything about this?",
    "to": "ada",
    "direct": "This letter tells you your husband is alive in Liverpool, though you've let everyone believe you're a widow. Is that true?"
+  },
+  {
+   "id": "pub_window",
+   "kind": "public",
+   "title": "When it happened",
+   "text": "Dorothy Pruett died between 21:24 and 21:45.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1284,
+    "to": 1305
+   }
+  },
+  {
+   "id": "pub_holders_vermin_tin",
+   "kind": "public",
+   "title": "Who had Tin of vermin powder",
+   "text": "Only Ada Finch had Tin of vermin powder.",
+   "claim": {
+    "pred": "onlyHad",
+    "item": "vermin_tin",
+    "people": [
+     "ada"
+    ]
+   }
   }
  ],
  "premise": {
@@ -1797,7 +1806,7 @@
   ],
   "accepted_v": 1
  },
- "synopsis": "Dorothy Pruett was found dead at St. Alden\u2019s vestry.",
+ "synopsis": "Dorothy Pruett was found dead at St. Alden’s vestry.",
  "loose_ends_checked": true,
  "knowledge": {
   "clara": [
@@ -1916,5 +1925,50 @@
   "s_surface_vicar|text",
   "s_tin_sealed|reactions|ada"
  ],
- "secret_checked": true
+ "secret_checked": true,
+ "holdings": [
+  {
+   "person": "ada",
+   "item": "vermin_tin"
+  },
+  {
+   "person": "ada",
+   "item": "flask"
+  },
+  {
+   "person": "clara",
+   "item": "grey_cloak"
+  },
+  {
+   "person": "hugo",
+   "item": "menu_card"
+  },
+  {
+   "person": "ada",
+   "item": "sealed_tin"
+  }
+ ],
+ "vocabulary": {
+  "relations": [
+   {
+    "rel": "blackmailed"
+   },
+   {
+    "rel": "gossiped_about"
+   },
+   {
+    "rel": "paid_hush_money_to"
+   },
+   {
+    "rel": "quarrelled_with"
+   },
+   {
+    "rel": "solicitor_to"
+   },
+   {
+    "rel": "threatened_to_expose"
+   }
+  ]
+ },
+ "claims_version": 2
 }

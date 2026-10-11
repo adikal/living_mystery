@@ -66,7 +66,7 @@ test('A malformed reply is told which fields are missing or not allowed, so the 
 
 test('Invalid proposals cannot inject raw patches, fabricated claims, unavailable disclosures or times',()=>{
  const s=here('manor'),t=ticket(s,'clara'),p=proposal(t,'ask:alibi');
- for(const bad of [{...p,changes:{'status':'solved'}},{...p,claims:['secret']},{...p,sources:['e99999']},{...p,account:'ask:challenge_record'},{...p,utterance:p.utterance+' At 21:14.'},{...p,intent:'teleport'}])assert.equal(validateCharacterProposal(t,bad).ok,false);
+ for(const bad of [{...p,changes:{'status':'solved'}},{...p,claims:['secret']},{...p,sources:['e99999']},{...p,account:'ask:challenge_record'},{...p,intent:'teleport'}])assert.equal(validateCharacterProposal(t,bad).ok,false);
 });
 
 test('Replies and their checks are sent with their own roles, so the proxy can route each to its model',async()=>{

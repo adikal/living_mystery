@@ -4,32 +4,17 @@
 // certification, via tools/mk-certify.mjs). This is the single source of truth for sign semantics. The LLM
 // never states what a sign eliminates; everything here is computed from typed records.
 //
-// Case records: setting{places,links}, rules, people{traits}, objects, relations, possession,
-// question{candidates[{id,label,facts{actor,...}}],truth,crime{event,place,window}}, attitudes, events, signs.
+// Case records: setting{places,links}, rules, people{traits}, objects{supply?}, vocabulary{relations}, holdings,
+// relations, question{candidates[{id,label,facts{actor,...}}],truth,crime{event,place,window}}, attitudes,
+// events{effects?, facts? on the crime}, signs{claim}. Claims and their meaning: claims.mjs and docs/claims.md.
 
-export const CLAIM_KINDS = new Set(['place', 'time', 'trait', 'relation', 'possession', 'fact']);
-export const SIGN_KINDS = new Set(['trace', 'testimony', 'document', 'record', 'behavior', 'item', 'rule', 'observation', 'absence']);
-const INF = 1e9;
+import {PREDICATES, claimOf, claimErrors, recordErrors, travelTable, history, truthOf, survivorsOf, instanceClaims,
+  consistent, defeatFreeSets, CLAIMS_VERSION, relationReader, victimOf, actorOf, CULPRIT_PREDICATES} from './claims.mjs';
+export {PREDICATES, claimOf, travelTable, actorOf};
 
-// Python-compatible stringification for value comparison (traits may be strings, numbers or booleans).
-const pyStr = v => v === true ? 'True' : v === false ? 'False' : v == null ? 'None' : String(v);
+// 'public' signs are what everyone in the setting knows: the player holds them from the start.
+export const SIGN_KINDS = new Set(['trace', 'testimony', 'document', 'record', 'behavior', 'item', 'rule', 'observation', 'absence', 'public']);
 const arr = v => (Array.isArray(v) ? v : []);
-
-// ---------------------------------------------------------------------------------------------------
-// World model
-// ---------------------------------------------------------------------------------------------------
-
-export function travelTable(c) {
-  const places = c.setting.places.map(p => p.id), d = {};
-  for (const a of places) { d[a] = {}; for (const b of places) d[a][b] = a === b ? 0 : INF; }
-  for (const e of arr(c.setting.links)) {
-    if (d[e.a] && d[e.b]) { d[e.a][e.b] = Math.min(d[e.a][e.b], e.minutes); d[e.b][e.a] = Math.min(d[e.b][e.a], e.minutes); }
-  }
-  for (const k of places) for (const i of places) for (const j of places)
-    if (d[i][k] + d[k][j] < d[i][j]) d[i][j] = d[i][k] + d[k][j];
-  return d;
-}
-
 const cmpTuple = (x, y) => { for (let i = 0; i < x.length; i++) { if (x[i] < y[i]) return -1; if (x[i] > y[i]) return 1; } return 0; };
 
 /** True presence intervals per person, from events (agent + others): [start, end, place, eventId], sorted. */
@@ -42,81 +27,9 @@ export function presence(c) {
 
 const peopleOf = c => Object.fromEntries(c.people.map(p => [p.id, p]));
 const hypMap = c => Object.fromEntries(c.question.candidates.map(h => [h.id, h]));
-export const actorOf = h => (h.facts || {}).actor;
-export function claimOf(sign) {
-  const x = sign.claim;
-  return x && typeof x === 'object' && !Array.isArray(x) && CLAIM_KINDS.has(x.kind) ? x : null;
-}
 
-// ---------------------------------------------------------------------------------------------------
-// Sign semantics
-// ---------------------------------------------------------------------------------------------------
-
-/** Does this trusted claim rule out hypothesis h? (place/time are handled jointly by opportunity) */
-export function eliminates(c, claim, h) {
-  const ppl = peopleOf(c), k = claim.kind, actor = actorOf(h);
-  if (k === 'trait') {
-    if (!actor || !ppl[actor]) return false;
-    return pyStr((ppl[actor].traits || {})[claim.trait]) !== pyStr(claim.value);
-  }
-  if (k === 'relation' && claim.a) return false;           // a fact about a named person: establishes, never eliminates
-  if (k === 'possession' && claim.person) return false;
-  if (k === 'relation') {
-    if (!actor) return false;
-    return !arr(c.relations).some(r => r.a === actor && r.rel === claim.rel && (!claim.b || r.b === claim.b));
-  }
-  if (k === 'possession') {
-    if (!actor) return false;
-    return !arr(c.possession).some(p => p.person === actor && p.item === claim.item);
-  }
-  if (k === 'fact') {
-    const facts = h.facts || {};
-    return claim.key in facts && pyStr(facts[claim.key]) !== pyStr(claim.value);
-  }
-  return false;
-}
-
-/** Place claims are alibis: the actor could not reach the crime scene at any minute in the window. */
-export function opportunityEliminated(c, placeClaims, window, h, tt) {
-  const actor = actorOf(h), crimePlace = c.question.crime.place;
-  if (!actor) return false;
-  const [ws, we] = window;
-  if (ws > we) return true;
-  const blocked = [];
-  for (const x of placeClaims) {
-    if (x.person !== actor || x.place === crimePlace) continue;
-    const gap = tt[x.place]?.[crimePlace] ?? 0;
-    blocked.push([x.start - gap, x.end + gap]);
-  }
-  blocked.sort(cmpTuple);
-  let t = ws;
-  for (const [s, e] of blocked) {
-    if (s > t) break;
-    t = Math.max(t, e + 1);
-    if (t > we) return true;
-  }
-  return t > we;
-}
-
-/** Truth value of a claim in the true history (detects lies and staged signs). */
-export function claimTrue(c, claim) {
-  const truth = hypMap(c)[c.question.truth], k = claim.kind;
-  if (k === 'place') {
-    const pres = presence(c)[claim.person] || [], s = claim.start, e = claim.end;
-    const there = pres.some(([ps, pe, pl]) => ps < e && pe > s && pl === claim.place);
-    const elsewhere = pres.some(([ps, pe, pl]) => ps < e && pe > s && pl !== claim.place);
-    return there && !elsewhere;
-  }
-  if (k === 'time') {
-    const crime = c.events.find(ev => ev.id === c.question.crime.event);
-    return Boolean(crime) && claim.start <= crime.start && crime.end <= claim.end;
-  }
-  if (k === 'relation' && claim.a)
-    return arr(c.relations).some(r => r.a === claim.a && r.rel === claim.rel && (!claim.b || r.b === claim.b));
-  if (k === 'possession' && claim.person)
-    return arr(c.possession).some(p => p.person === claim.person && p.item === claim.item);
-  return !eliminates(c, claim, truth);
-}
+/** Truth of a claim in the true history: true, false, or null (undetermined). */
+export const claimTrue = (c, claim) => truthOf(c, history(c), claim);
 
 // ---------------------------------------------------------------------------------------------------
 // Access, reading, trust, depth
@@ -161,24 +74,21 @@ export function analyse(c) {
     }
   }
   const understood = new Set(Object.keys(eff));
-  const truthval = {};
-  for (const [sid, s] of Object.entries(signs)) if (claimOf(s)) truthval[sid] = claimTrue(c, claimOf(s));
-  return { tt, signs, depth, eff, reachable, understood, truthval, rulesKnown: known };
+  const H = history(c, tt), truthval = {};
+  for (const [sid, s] of Object.entries(signs)) if (claimOf(s)) truthval[sid] = truthOf(c, H, claimOf(s));
+  return { tt, H, signs, depth, eff, reachable, understood, truthval, rulesKnown: known };
 }
 
-/** Candidates surviving every understood, trusted claim with effective depth <= maxDepth (null = all). */
+/** The trusted claims among the visible signs: those no visible sign defeats, as [[sid, claim], ...]. */
+export function trustedClaims(A, visible) {
+  const defeated = new Set(visible.flatMap(sid => arr(A.signs[sid].defeats)));
+  return visible.filter(sid => !defeated.has(sid) && claimOf(A.signs[sid])).sort().map(sid => [sid, claimOf(A.signs[sid])]);
+}
+
+/** Candidates consistent with every understood, trusted claim with effective depth <= maxDepth (null = all). */
 export function survivors(c, A, maxDepth = null, exclude = new Set()) {
-  const { signs, eff } = A;
-  const visible = [...A.understood].filter(sid => !exclude.has(sid) && (maxDepth === null || eff[sid] <= maxDepth));
-  const defeated = new Set();
-  for (const sid of visible) for (const d of arr(signs[sid].defeats)) defeated.add(d);
-  const trusted = visible.filter(sid => !defeated.has(sid) && claimOf(signs[sid])).map(sid => claimOf(signs[sid]));
-  let window = [...c.question.crime.window];
-  for (const x of trusted) if (x.kind === 'time') window = [Math.max(window[0], x.start), Math.min(window[1], x.end)];
-  const places = trusted.filter(x => x.kind === 'place'), others = trusted.filter(x => x.kind !== 'place' && x.kind !== 'time');
-  return c.question.candidates
-    .filter(h => !opportunityEliminated(c, places, window, h, A.tt) && !others.some(x => eliminates(c, x, h)))
-    .map(h => h.id);
+  const visible = [...A.understood].filter(sid => !exclude.has(sid) && (maxDepth === null || A.eff[sid] <= maxDepth));
+  return survivorsOf(c, trustedClaims(A, visible), A.tt);
 }
 
 /** root plus every sign that (transitively) requires or needs it. */
@@ -212,7 +122,7 @@ export function threadDepths(c, A, exclude = new Set()) {
 export function criticalSigns(c, A, thread, depth) {
   const out = [];
   for (const sid of A.understood) {
-    if (A.eff[sid] > depth) continue;
+    if (A.eff[sid] > depth || A.signs[sid].kind === 'public') continue;
     const d = threadDepths(c, A, closureDependent(c, sid))[thread];
     if (d === null || d === undefined || d > depth) out.push(sid);
   }
@@ -237,34 +147,39 @@ export function accountBacking(c, sign) {
   if (arr(c.attitudes).some(a => a.agent === sp && arr(sign.because).includes(a.id))) return 'because';
   const x = claimOf(sign);
   if (!x) return c.events.some(part) ? 'own_events' : null;
-  if (x.kind === 'place') {
+  if (x.pred === 'wasAt') {
     if (x.person === sp) return 'self';
-    if (c.events.some(e => part(e) && e.place === x.place && e.start < x.end && e.end > x.start)) return 'witnessed';
+    if (c.events.some(e => part(e) && e.place === x.place && e.start <= x.to && e.end >= x.from)) return 'witnessed';
   }
   return null;
 }
 export const unbackedAccounts = c => c.signs.filter(x => x.kind === 'testimony' && accountBacking(c, x) === null).map(x => x.id).sort();
 
 export function pillarSignsFor(c, A, actor, held = null) {
-  const ppl = peopleOf(c), means = [];
-  let motive = [];
-  const victim = c.victim || c.events.find(e => e.type === 'death' && e.agent)?.agent || null;
+  const victim = victimOf(c), read = relationReader(c), motive = [], means = [];
+  const linked = (a, b) => !victim || a === victim || b === victim;
   for (const [sid, s] of Object.entries(A.signs)) {
-    if (!A.understood.has(sid) || !A.truthval[sid] || (held && !held.has(sid))) continue;
+    // what everyone knows is not evidence against anyone: only clues count
+    if (!A.understood.has(sid) || A.truthval[sid] !== true || s.kind === 'public' || (held && !held.has(sid))) continue;
     const x = claimOf(s);
-    if (!x) continue;
-    if ((x.kind === 'relation' && x.a === actor) || (x.kind === 'relation' && victim && x.a === victim && x.b === actor)
-      || (x.kind === 'fact' && x.key === 'motive' && (x.person ?? actor) === actor)) motive.push(sid);
-    else if (x.kind === 'possession' && (x.person === actor || (!x.person && arr(c.possession).some(p => p.person === actor && p.item === x.item)))) means.push(sid);
-    else if (x.kind === 'trait' && ppl[actor] && String(ppl[actor].traits?.[x.trait]) === String(x.value)) means.push(sid);
+    if (!x || x.when === 'never' || x.not) continue;
+    // culprit predicates count for the actor if the actor satisfies them in the history
+    const satisfied = () => truthOf(c, A.H, x, actor) === true;
+    if (x.pred === 'related') { const [a, , b] = read(x.a, x.rel, x.b); if ((a === actor || (b === actor && a === victim)) && linked(a, b)) motive.push(sid); }
+    else if (x.pred === 'culpritRelated') { const [a, , b] = read(actor, x.rel, x.b); if (linked(a, b) && satisfied()) motive.push(sid); }
+    else if (x.pred === 'crimeFact' && x.key === 'motive') motive.push(sid);
+    else if ((x.pred === 'had' || x.pred === 'hasTrait') && x.person === actor) means.push(sid);
+    else if ((x.pred === 'culpritHad' || x.pred === 'culpritTrait') && satisfied()) means.push(sid);
   }
-  // a motive is a reason to kill THIS victim: at least one motive sign must connect the culprit and the victim
-  if (victim) motive = motive.filter(x => claimOf(A.signs[x])?.kind !== 'relation' || [claimOf(A.signs[x]).a, claimOf(A.signs[x]).b].includes(victim));
   return { motive: motive.sort(), means: means.sort() };
 }
 export function pillarSigns(c, A) { return pillarSignsFor(c, A, actorOf(hypMap(c)[c.question.truth])); }
 
+const describe = key => key.replace(/^at:/, 'the whereabouts of ').replace(/^holder:/, 'who had ').replace(/^has:([^:]+):/, "$1's access to ")
+  .replace(/^rel:/, 'the relation ').replace(/^trait:/, 'the trait ').replace(/^crime$/, "the crime's minute and facts");
+
 export function certify(c, requirePillars = true, requireBacking = false) {
+  if (c.claims_version !== CLAIMS_VERSION) return { ok: false, errors: [`claims version ${c.claims_version ?? 1}: migrate the case to version ${CLAIMS_VERSION} (tools/refine-c/migrate.py)`] };
   const errs = [];
   const ids = ['people', 'objects', 'attitudes', 'events', 'signs', 'rules'].flatMap(k => arr(c[k]).map(x => x.id));
   const dup = [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))].sort();
@@ -299,15 +214,18 @@ export function certify(c, requirePillars = true, requireBacking = false) {
       errs.push(`sign ${s.id}: has 'requires' but no 'unlock' text saying why, in the world, those must come first`);
     if (arr(s.needs).length && !String(s.reading ?? '').trim())
       errs.push(`sign ${s.id}: has 'needs' but no 'reading' text saying how the other clue or rule makes sense of it`);
-    if (s.claim != null && !claimOf(s)) errs.push(`sign ${s.id}: claim kind must be one of ${JSON.stringify([...CLAIM_KINDS].sort())}`);
-    if (claimOf(s)?.kind === 'place' && (!ppl[s.claim.person] || !places.has(s.claim.place)))
-      errs.push(`sign ${s.id}: place claim needs a known person and place`);
+    if (s.claim != null && !claimOf(s)) errs.push(`sign ${s.id}: a claim's pred must be one of ${JSON.stringify(Object.keys(PREDICATES).sort())}`);
+    else if (claimOf(s)) errs.push(...claimErrors(c, s.id, claimOf(s)));
+    if (s.kind === 'public' && (arr(s.requires).length || arr(s.needs).length || !claimOf(s)))
+      errs.push(`public sign ${s.id}: what everyone knows has a claim and no 'requires' or 'needs'`);
     if (s.kind === 'testimony' && !ppl[s.speaker]) errs.push(`sign ${s.id}: testimony needs a known speaker`);
+    for (const d of arr(s.defeats)) if (signs[d]?.kind === 'public') errs.push(`sign ${s.id} defeats ${d}, but what everyone knows cannot be overturned`);
   }
+  errs.push(...recordErrors(c));
   // spoken times must match the timeline; a trace lies where its source event happened
   const times = new Set();
   for (const e of c.events) { times.add(((e.start % 1440) + 1440) % 1440); times.add(((e.end % 1440) + 1440) % 1440); }
-  for (const s of c.signs) for (const k of ['start', 'end']) if (typeof s.claim?.[k] === 'number') times.add(((Math.trunc(s.claim[k]) % 1440) + 1440) % 1440);
+  for (const s of c.signs) for (const k of ['from', 'to']) if (typeof s.claim?.[k] === 'number') times.add(((Math.trunc(s.claim[k]) % 1440) + 1440) % 1440);
   for (const s of c.signs) {
     if (s.kind === 'testimony' || s.kind === 'behavior') {
       for (const m of String(s.text ?? '').matchAll(TIME_RE)) {
@@ -333,10 +251,13 @@ export function certify(c, requirePillars = true, requireBacking = false) {
   }
   if (evs[q.crime.event].agent !== actorOf(hyps[q.truth])) errs.push('the crime event agent is not the true culprit');
   const A = analyse(c);
-  // false signs: lies/mistakes (with the speaker's reason) or staging (a deliberate source), defeated deeper
+  // every claim is decided by the history; false ones are lies/mistakes (with the speaker's reason) or staging (a
+  // deliberate source), defeated deeper
   for (const [sid, tv] of Object.entries(A.truthval)) {
-    if (tv) continue;
+    if (tv === null) errs.push(`the history does not decide the claim of ${sid} (${JSON.stringify(claimOf(A.signs[sid]))}): add the events that settle it, or change the claim`);
+    if (tv === null || tv) continue;
     const s = A.signs[sid];
+    if (s.kind === 'public') { errs.push(`public sign ${sid} is false, but what everyone knows must be true`); continue; }
     if (s.kind === 'testimony') {
       if (!arr(c.attitudes).some(a => a.agent === s.speaker && arr(s.because).includes(a.id)))
         errs.push(`false testimony ${sid} by ${s.speaker} cites no attitude of ${s.speaker} explaining the lie or mistake`);
@@ -348,15 +269,17 @@ export function certify(c, requirePillars = true, requireBacking = false) {
       && A.eff[d.id] > (A.eff[sid] ?? 0) && (A.truthval[d.id] ?? true));
     if (!good.length) errs.push(`false sign ${sid} has no reachable, true defeater deeper than it`);
   }
-  // a contradiction the player can see is one the case records: two reachable signs that put one person in two places
-  // at overlapping times must have one defeating the other (otherwise the player, holding both, sees a lie broken that
-  // the game does not count)
-  const placed = [...A.understood].filter(sid => claimOf(A.signs[sid])?.kind === 'place').sort();
-  for (const [i, a] of placed.entries()) for (const b of placed.slice(i + 1)) {
-    const x = claimOf(A.signs[a]), y = claimOf(A.signs[b]);
-    if (x.person !== y.person || x.place === y.place || !(x.start < y.end && y.start < x.end)) continue;
-    if (!arr(A.signs[a].defeats).includes(b) && !arr(A.signs[b].defeats).includes(a))
-      errs.push(`${a} and ${b} put ${x.person} in two places at once, but neither is recorded as defeating the other`);
+  // consistency: claims the player can hold together that cannot all be true must include a defeat, so whatever the
+  // player holds, what they trust is consistent (docs/claims.md section 5)
+  // public knowledge is always held, so what it defeats is never trusted
+  const defeats = Object.fromEntries(c.signs.map(x => [x.id, arr(x.defeats)]));
+  const overturned = new Set(c.signs.filter(x => x.kind === 'public').flatMap(x => arr(x.defeats)));
+  const readable = [...A.understood].filter(sid => claimOf(A.signs[sid]) && !overturned.has(sid)).sort().map(sid => [sid, claimOf(A.signs[sid])]);
+  for (const [key, ids] of instanceClaims(c, readable)) for (const set of defeatFreeSets(ids, defeats)) {
+    if (!consistent(c, readable.filter(([sid]) => set.includes(sid)), A.tt)) {
+      errs.push(`${set.join(', ')} cannot all be true (${describe(key)}), but none of them defeats another: record which is false, and let the true one defeat it`);
+      break;
+    }
   }
   const full = survivors(c, A);
   if (!sameArr(full, [q.truth])) errs.push(`answer not unique from all reachable evidence: survivors ${JSON.stringify(full)}`);
@@ -366,27 +289,24 @@ export function certify(c, requirePillars = true, requireBacking = false) {
   let solve = null;
   for (let d = 0; d <= maxd; d++) if (sameArr(survivors(c, A, d), [q.truth])) { solve = d; break; }
   const surface = survivors(c, A, 0);
-  const key = [...A.understood].filter(sid => claimOf(A.signs[sid]) && A.truthval[sid]
+  const key = [...A.understood].filter(sid => claimOf(A.signs[sid]) && A.truthval[sid] === true && A.signs[sid].kind !== 'public'
     && !sameArr(survivors(c, A, null, closureDependent(c, sid)), [q.truth])).sort();
   const innocentActors = new Set(q.candidates.filter(h => h.id !== q.truth).map(actorOf));
   const herrings = c.signs.filter(s => s.kind === 'behavior' && innocentActors.has(s.about)
     && arr(s.explainedBy).some(e => A.understood.has(e) && A.eff[e] > (A.eff[s.id] ?? 0))).map(s => s.id);
   const threads = threadDepths(c, A);
   const ta = actorOf(hyps[q.truth]), innocents = q.candidates.filter(h => h.id !== q.truth);
-  const okSign = sid => A.understood.has(sid) && A.truthval[sid];
+  const okSign = sid => A.understood.has(sid) && A.truthval[sid] === true && A.signs[sid].kind !== 'public';
+  const read = relationReader(c);
   const motive = Object.keys(A.signs).filter(sid => {
     const x = claimOf(A.signs[sid]);
-    return okSign(sid) && x && ((x.kind === 'relation' && x.a === ta) || (x.kind === 'fact' && x.key === 'motive'));
+    return okSign(sid) && x && ((x.pred === 'related' && x.when !== 'never' && read(x.a, x.rel, x.b)[0] === ta) || (x.pred === 'crimeFact' && x.key === 'motive' && !x.not));
   }).sort();
-  const means = Object.keys(A.signs).filter(sid => {
-    const x = claimOf(A.signs[sid]);
-    return okSign(sid) && x && ['trait', 'possession', 'relation'].includes(x.kind) && !x.a && !x.person
-      && innocents.some(h => eliminates(c, x, h));
-  }).sort();
+  const means = Object.keys(A.signs).filter(sid => { const x = claimOf(A.signs[sid]); return okSign(sid) && x && CULPRIT_PREDICATES.has(x.pred) && !x.not; }).sort();
   const pil = pillarSigns(c, A);
   const pd = k => pil[k].length ? Math.min(...pil[k].map(x => A.eff[x])) : null;
-  if (requirePillars && !pil.motive.length) errs.push("no reachable, true evidence of the culprit's MOTIVE (a relation claim with a = the culprit)");
-  if (requirePillars && !pil.means.length) errs.push("no reachable, true evidence of the culprit's MEANS (a possession or trait claim the culprit satisfies)");
+  if (requirePillars && !pil.motive.length) errs.push("no reachable, true evidence of the culprit's MOTIVE (a related claim with a = the culprit, linked to the victim)");
+  if (requirePillars && !pil.means.length) errs.push("no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)");
   if (errs.length) return { ok: false, errors: errs, A };
   const unbacked = unbackedAccounts(c);
   if (requireBacking && unbacked.length) {
@@ -397,7 +317,7 @@ export function certify(c, requirePillars = true, requireBacking = false) {
   return { ok: true, A, solveDepth: solve, maxDepth: maxd, surface, threads, motive, means, pillars, pillarSigns: pil, unbacked,
            mmoDepth: Math.max(...Object.values(pillars).filter(v => v != null)),
            twist: !surface.includes(q.truth), key, herrings,
-           falseSigns: Object.entries(A.truthval).filter(([, v]) => !v).map(([k]) => k).sort() };
+           falseSigns: Object.entries(A.truthval).filter(([, v]) => v === false).map(([k]) => k).sort() };
 }
 
 /** JSON-safe summary of a certification report (drops the analysis internals). */

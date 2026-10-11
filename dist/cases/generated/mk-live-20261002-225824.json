@@ -25,11 +25,11 @@
    },
    {
     "id": "vestry",
-    "name": "St. Alden\u2019s vestry"
+    "name": "St. Alden’s vestry"
    },
    {
     "id": "surgery",
-    "name": "Dr Marsh\u2019s surgery"
+    "name": "Dr Marsh’s surgery"
    },
    {
     "id": "halt",
@@ -159,7 +159,7 @@
    "pronoun": "she",
    "address": "Miss Vale",
    "voice": "Composed, dry and exact; she chooses words like a woman choosing gloves. Polite to the point of chill with strangers, warmer once she respects you.",
-   "public": "Edmund\u2019s younger sister. She has run Vale Manor\u2019s household for years and guards its privacy.",
+   "public": "Edmund’s younger sister. She has run Vale Manor’s household for years and guards its privacy.",
    "home": "manor",
    "role_words": []
   },
@@ -174,7 +174,7 @@
    "pronoun": "he",
    "address": "Mr Hugo",
    "voice": "Quick, flippant and charming, full of London slang; hides nerves behind jokes and talks a little too fast.",
-   "public": "Edmund\u2019s nephew, down from London by train. Charming, restless and plainly bored by the country.",
+   "public": "Edmund’s nephew, down from London by train. Charming, restless and plainly bored by the country.",
    "home": "manor",
    "role_words": [
     "nephew"
@@ -191,7 +191,7 @@
    "pronoun": "he",
    "address": "Mr Reed",
    "voice": "Slow, weathered and wry; a river man who speaks in the present tense and weighs every word like a stone.",
-   "public": "Keeper of the manor\u2019s boathouse and ferryman when the river is up. He knows the water and keeps his own counsel.",
+   "public": "Keeper of the manor’s boathouse and ferryman when the river is up. He knows the water and keeps his own counsel.",
    "home": "boathouse",
    "role_words": [
     "boatman",
@@ -209,8 +209,8 @@
    },
    "pronoun": "he",
    "address": "Mr Pike",
-   "voice": "A plain-spoken countryman: short, blunt, practical, with a gardener\u2019s patience and the odd dour joke.",
-   "public": "The manor\u2019s groundskeeper. He lives among his glasshouses and says little to anyone.",
+   "voice": "A plain-spoken countryman: short, blunt, practical, with a gardener’s patience and the odd dour joke.",
+   "public": "The manor’s groundskeeper. He lives among his glasshouses and says little to anyone.",
    "home": "greenhouse",
    "role_words": [
     "groundskeeper",
@@ -253,7 +253,7 @@
    "pronoun": "she",
    "address": "Mrs Finch",
    "voice": "Warm, chatty and colloquial; calls people \"love\", runs on a little, and enjoys a bit of news more than she should.",
-   "public": "Proprietor of the Rook & Lantern. She knows everyone\u2019s habits and most of their business.",
+   "public": "Proprietor of the Rook & Lantern. She knows everyone’s habits and most of their business.",
    "home": "inn",
    "role_words": [
     "innkeeper",
@@ -295,8 +295,8 @@
    "traits": {},
    "pronoun": "he",
    "address": "Mr Hale",
-   "voice": "Gentle and rambling, with a scholar\u2019s digressions and a surprising steel when conscience is touched.",
-   "public": "Vicar of St. Alden\u2019s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
+   "voice": "Gentle and rambling, with a scholar’s digressions and a surprising steel when conscience is touched.",
+   "public": "Vicar of St. Alden’s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
    "home": "vestry",
    "role_words": [
     "vicar",
@@ -311,7 +311,7 @@
    "traits": {},
    "pronoun": "she",
    "address": "Miss Pruett",
-   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people\u2019s business.",
+   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people’s business.",
    "public": "The postmistress. Every letter, parcel and telegram in Bellweather passes over her counter, and she forgets nothing.",
    "home": "post",
    "role_words": [
@@ -328,7 +328,8 @@
   {
    "id": "letter",
    "name": "Edmund's letter",
-   "desc": "A letter Edmund wrote to the Governor of H.M. Prison Hull, exposing his boatman."
+   "desc": "A letter Edmund wrote to the Governor of H.M. Prison Hull, exposing his boatman.",
+   "supply": true
   },
   {
    "id": "diary",
@@ -338,7 +339,8 @@
   {
    "id": "officekey",
    "name": "Estate office key",
-   "desc": "Key to the outside stair door of the estate office over the post office."
+   "desc": "Key to the outside stair door of the estate office over the post office.",
+   "supply": true
   },
   {
    "id": "glove",
@@ -396,44 +398,6 @@
    "a": "jonah",
    "rel": "threatened_by",
    "b": "edmund"
-  }
- ],
- "possession": [
-  {
-   "person": "edmund",
-   "item": "officekey"
-  },
-  {
-   "person": "dora",
-   "item": "officekey"
-  },
-  {
-   "person": "edmund",
-   "item": "letter"
-  },
-  {
-   "person": "jonah",
-   "item": "letter"
-  },
-  {
-   "person": "edmund",
-   "item": "diary"
-  },
-  {
-   "person": "clara",
-   "item": "glove"
-  },
-  {
-   "person": "clara",
-   "item": "trunk"
-  },
-  {
-   "person": "clara",
-   "item": "registry_letter"
-  },
-  {
-   "person": "rowan",
-   "item": "billhook"
   }
  ],
  "question": {
@@ -953,8 +917,10 @@
    "start": 1312,
    "end": 1335,
    "causedBy": "a_jonah_intends",
-   "method": "gas",
-   "summary": "Reed turns the gas fire off and on again unlit, shuts the window, takes the letter, and leaves Edmund sleeping."
+   "summary": "Reed turns the gas fire off and on again unlit, shuts the window, takes the letter, and leaves Edmund sleeping.",
+   "facts": {
+    "method": "gas"
+   }
   },
   {
    "id": "e_burn",
@@ -1344,21 +1310,21 @@
    "medical_v": 2,
    "source": "e_exam",
    "at": "surgery",
-   "title": "The doctor\u2019s examination notes",
+   "title": "The doctor’s examination notes",
    "text": "Examination of the deceased shows breathing gas or fumes. Death was from breathing gas or fumes, and it occurred between eight to ten and quarter past ten.",
    "claim": {
-    "kind": "time",
-    "start": 1312,
-    "end": 1335
+    "pred": "crimeBetween",
+    "from": 1312,
+    "to": 1335
    },
    "show": "The doctor's examination shows the victim died from breathing gas or fumes, sometime between eight to ten and quarter past ten that evening. Does that time fit with what you know?",
    "to": null,
    "art": "notes",
    "reactions": {
-    "dora": "Breathing gas, is it. Well, I shut that tap the very moment I smelled it and threw the window wide\u2014I'll not have anyone say I let it linger. The fire's leak was reported, mind, and I'd have had it mended directly, only there'd been no time.",
+    "dora": "Breathing gas, is it. Well, I shut that tap the very moment I smelled it and threw the window wide—I'll not have anyone say I let it linger. The fire's leak was reported, mind, and I'd have had it mended directly, only there'd been no time.",
     "bell": "Gas, between those hours. That tallies with what Dora found and what the doctor's told me plain enough. I'll want to know who was in and out of that office in that window.",
     "iris": "Yes, that's my finding exactly as written. The cherry colouring and the hour of death are consistent with gas, not with the heart failing of itself.",
-    "jonah": "Gas, eh. Well, that old fire's leaked for months, everyone in the village knows it. A man takes his brandy, falls asleep, the tap gets knocked\u2014it's a sorry, ordinary sort of accident, nothing more."
+    "jonah": "Gas, eh. Well, that old fire's leaked for months, everyone in the village knows it. A man takes his brandy, falls asleep, the tap gets knocked—it's a sorry, ordinary sort of accident, nothing more."
    },
    "lines_for": "3a7116b0e6a1"
   },
@@ -1370,9 +1336,9 @@
    "speaker": "iris",
    "source": "e_exam",
    "claim": {
-    "kind": "time",
-    "start": 1312,
-    "end": 1335
+    "pred": "crimeBetween",
+    "from": 1312,
+    "to": 1335
    },
    "title": "Dr Marsh on the body",
    "text": "Death was from breathing gas or fumes, and it occurred between eight to ten and quarter past ten.",
@@ -1437,7 +1403,7 @@
    "surface": true,
    "deceptive": true,
    "title": "Silas Voss on the evening",
-   "text": "I played a few hands of whist at the inn, then went along to the vestry to see to some papers. A quiet evening, as such evenings go \u2014 nihil novi sub sole.",
+   "text": "I played a few hands of whist at the inn, then went along to the vestry to see to some papers. A quiet evening, as such evenings go — nihil novi sub sole.",
    "ask": "Where were you last night?",
    "surface_checked": "cover",
    "show": "Mr Voss says he played some whist at the inn, then went to the vestry to see to papers for a quiet evening. Can you confirm he was there?",
@@ -1469,7 +1435,7 @@
    "surface": true,
    "deceptive": true,
    "title": "Clara Vale on the evening",
-   "text": "I was at the vestry a good while, going over the Harvest accounts with the vicar, and then I came straight home and went up to my room. I'd rather not be troubled with questions about it\u2014I was glad enough to get to my bed.",
+   "text": "I was at the vestry a good while, going over the Harvest accounts with the vicar, and then I came straight home and went up to my room. I'd rather not be troubled with questions about it—I was glad enough to get to my bed.",
    "ask": "Where were you last night?",
    "show": "Clara Vale says she spent the evening going over Harvest accounts with the vicar, then came straight home and went up to bed. Can you confirm that's how she spent the evening?",
    "confront": "You told me you were going over Harvest accounts with the vicar, then came straight home to bed. Is that the whole of it?",
@@ -1488,11 +1454,11 @@
    "source": "e_hugo_cards",
    "ask": "Was Mr Hugo at the inn last night, and for how long?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "hugo",
     "place": "inn",
-    "start": 1200,
-    "end": 1400
+    "from": 1200,
+    "to": 1400
    },
    "needs": [
     "s_tally"
@@ -1506,7 +1472,7 @@
    "to": "hugo",
    "direct": "Mrs Finch says you were in the room all night at the whist drive, but your tally card never came back to her tin. Can you explain that?",
    "reactions": {
-    "hugo": "Ha, well, that's Mrs Finch all over, isn't it\u2014mind on the cellar, not the clock. I was there the whole blessed night, cards and all, didn't I say so? Can't help it if my tally wandered off before I handed it in."
+    "hugo": "Ha, well, that's Mrs Finch all over, isn't it—mind on the cellar, not the clock. I was there the whole blessed night, cards and all, didn't I say so? Can't help it if my tally wandered off before I handed it in."
    },
    "lines_for": "c647bc331e81"
   },
@@ -1520,11 +1486,11 @@
    "source": "e_clara_accounts",
    "ask": "When did Miss Vale come to the vestry last night, and when did she leave?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "clara",
     "place": "vestry",
-    "start": 1290,
-    "end": 1380
+    "from": 1290,
+    "to": 1380
    },
    "requires": [
     "s_glove"
@@ -1538,7 +1504,7 @@
    "to": "clara",
    "direct": "The vicar says you came at half past nine and never left the vestry until eleven, besides a private matter he won't disclose. Is that so?",
    "reactions": {
-    "clara": "The vicar has it exactly right, and I'd thank you not to press him further on the private matter\u2014it concerns no one's death, only my own affairs, which I mean to keep that way."
+    "clara": "The vicar has it exactly right, and I'd thank you not to press him further on the private matter—it concerns no one's death, only my own affairs, which I mean to keep that way."
    },
    "lines_for": "8428eebcb21d"
   },
@@ -1552,11 +1518,11 @@
    "source": "e_stitch",
    "ask": "Did anyone come to the surgery last night?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "rowan",
     "place": "surgery",
-    "start": 1298,
-    "end": 1360
+    "from": 1298,
+    "to": 1360
    },
    "because": [
     "a_iris_confidence"
@@ -1566,14 +1532,14 @@
    ],
    "reading": "The doctor won't name her patient, but she describes a deep cut from a pane of glass and seven stitches. The broken, bloodied greenhouse pane and the stitches on Mr Pike's dressed hand show the patient was Rowan Pike, in the surgery from 21:38 to 22:40.",
    "concede": {
-    "s_greenhouse_pane": "Very well \u2014 the man I treated at 21:38 for a glass cut, the one who needed seven stitches and sat with me until 22:40, was Mr Pike. I withheld his name because that is simply what I do for every patient, not because there was anything else to hide."
+    "s_greenhouse_pane": "Very well — the man I treated at 21:38 for a glass cut, the one who needed seven stitches and sat with me until 22:40, was Mr Pike. I withheld his name because that is simply what I do for every patient, not because there was anything else to hide."
    },
    "show": "Dr Marsh says a man came to her surgery at 21:38 with a deep glass cut to his hand, needing seven stitches, and he stayed until 22:40. Do you know who that might have been?",
    "confront": "Dr Marsh says a man came to her surgery at 21:38 with a deep glass cut needing seven stitches, and stayed until 22:40. Was that you?",
    "to": "rowan",
    "direct": "Dr Marsh says you came in at 21:38 with a deep glass cut, had seven stitches, and stayed in her surgery until 22:40. Is that so?",
    "reactions": {
-    "rowan": "Aye, that's me, though I'll own I never said so outright. Cut my hand on glass, not the billhook as I told you\u2014there's a broken pane wants mending and I didn't fancy the family calling it neglect."
+    "rowan": "Aye, that's me, though I'll own I never said so outright. Cut my hand on glass, not the billhook as I told you—there's a broken pane wants mending and I didn't fancy the family calling it neglect."
    },
    "lines_for": "97b08f3ac3c6"
   },
@@ -1639,7 +1605,7 @@
    "confront": "You told me a pane came down on your hand about twenty past nine, that you went to the doctor, and mended the frame before dawn. Is that the whole of it?",
    "to": null,
    "reactions": {
-    "jonah": "Pike's hand is his own business, not mine. I lent him nothing but a saw and never asked after his troubles\u2014a man's entitled to keep his own evening to himself."
+    "jonah": "Pike's hand is his own business, not mine. I lent him nothing but a saw and never asked after his troubles—a man's entitled to keep his own evening to himself."
    },
    "lines_for": "44a012316eb1"
   },
@@ -1655,11 +1621,11 @@
    ],
    "ask": "Where were you last night, Mr Reed?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "jonah",
     "place": "boathouse",
-    "start": 1180,
-    "end": 1440
+    "from": 1180,
+    "to": 1440
    },
    "show": "Mr Reed says he spent the whole evening alone at the boathouse, mending the punt's painter and sleeping, with no one to see him. Can you say whether that's true?",
    "confront": "You told me you spent the whole evening alone at the boathouse mending the painter and sleeping. Is that the whole of it?",
@@ -1671,14 +1637,14 @@
    "id": "s_diary",
    "kind": "document",
    "title": "A pocket diary on the desk",
-   "text": "Edmund's engagement diary lies open beside the blotter. Under Thursday, in a heavy hand: '6.30 \u2014 Voss, vestry. re J.R.' and below it, 'After 7 \u2014 boathouse.'",
+   "text": "Edmund's engagement diary lies open beside the blotter. Under Thursday, in a heavy hand: '6.30 — Voss, vestry. re J.R.' and below it, 'After 7 — boathouse.'",
    "at": "post",
    "source": "e_work",
    "requires": [
     "s_dora_account"
    ],
    "unlock": "Miss Pruett holds the only other key to the estate office, which she locked after the examination. Once she has told you what she found, she unlocks the stair door and lets you look at the desk.",
-   "show": "Edmund's diary shows an entry for Thursday reading '6.30 \u2014 Voss, vestry, re J.R.' and then 'After 7 \u2014 boathouse.' Can you help me understand these entries?",
+   "show": "Edmund's diary shows an entry for Thursday reading '6.30 — Voss, vestry, re J.R.' and then 'After 7 — boathouse.' Can you help me understand these entries?",
    "to": null,
    "art": "diary",
    "lines_for": "713c2abbde30"
@@ -1700,7 +1666,7 @@
    "unlock": "The diary names Voss and a 6.30 appointment at the vestry about 'J.R.'. Shown the entry, Voss decides a dead client's confidence must give way to a murder inquiry.",
    "ask": "What did Mr Vale consult you about at half past six?",
    "claim": {
-    "kind": "relation",
+    "pred": "related",
     "a": "edmund",
     "rel": "threatened_to_expose",
     "b": "jonah"
@@ -1724,11 +1690,11 @@
    "unlock": "Having come to Voss about the diary entry, you ask how his own evening ended, and he tells you who he passed on the way back.",
    "ask": "Did you see anyone on your way back to the vestry last night?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "jonah",
     "place": "square",
-    "start": 1303,
-    "end": 1308
+    "from": 1303,
+    "to": 1308
    },
    "defeats": [
     "s_jonah_alibi"
@@ -1772,7 +1738,7 @@
    "at": "post",
    "source": "e_exam",
    "claim": {
-    "kind": "fact",
+    "pred": "crimeFact",
     "key": "method",
     "value": "gas"
    },
@@ -1787,9 +1753,9 @@
    "to": null,
    "art": "wound",
    "reactions": {
-    "dora": "Cherry-pink, you say\u2014well, that's not a weak heart stopping of itself, is it. I told you what I believed at the time, that his heart had simply given out, but I'll not pretend now that it fits with gas.",
-    "bell": "Cherry lips, no struggle, a glass of brandy by him\u2014that's a quiet death, by the look of it, and gas behind it besides. I'll want the full account of who had cause to be up that stair.",
-    "iris": "That's precisely what I observed and nothing more\u2014the colour, the stillness, the brandy glass, all consistent with gas and with the hours I've given you.",
+    "dora": "Cherry-pink, you say—well, that's not a weak heart stopping of itself, is it. I told you what I believed at the time, that his heart had simply given out, but I'll not pretend now that it fits with gas.",
+    "bell": "Cherry lips, no struggle, a glass of brandy by him—that's a quiet death, by the look of it, and gas behind it besides. I'll want the full account of who had cause to be up that stair.",
+    "iris": "That's precisely what I observed and nothing more—the colour, the stillness, the brandy glass, all consistent with gas and with the hours I've given you.",
     "jonah": "No struggle, you say. Well, a man dozing with his brandy wouldn't put up much of one, would he. Sounds like the fire did its mischief quietly, same as it's always threatened to."
    },
    "lines_for": "a1f491cbcfc1"
@@ -1806,14 +1772,14 @@
    ],
    "unlock": "Voss says Edmund meant to write to the Governor that night, but there is no such letter on the desk or in the post, so you go to the boatman's boathouse to look for it.",
    "claim": {
-    "kind": "possession",
+    "pred": "culpritHad",
     "item": "letter"
    },
    "show": "In the boathouse stove I found a burnt scrap of Vale Manor notepaper mentioning 'Governor' and 'the man Marlow, who in 1921'. Do you know anything about this?",
    "to": null,
    "art": "ashes",
    "reactions": {
-    "jonah": "Paper burns, same as anything else goes in a stove\u2014I keep mine lit most nights, this time of year. I can't say what scraps might blow in or what some other hand threw there before me."
+    "jonah": "Paper burns, same as anything else goes in a stove—I keep mine lit most nights, this time of year. I can't say what scraps might blow in or what some other hand threw there before me."
    },
    "lines_for": "9fb0f58b69b5"
   },
@@ -1837,8 +1803,8 @@
    "direct": "I found a clean left-hand grey kid glove marked C.V. in the vestry's lost-property drawer, with Harvest figures tucked inside. Can you explain that?",
    "art": "glove",
    "reactions": {
-    "vicar": "Oh\u2014oh dear. Yes, that is Miss Vale's glove, and I did say nobody called, which was unkind of me and untrue. I promised her discretion, you see, and I'm afraid conscience and promise have been pulling rather hard against one another.",
-    "clara": "Yes, that is mine. I was going over the Harvest figures with the vicar and must have left it on the bench \u2014 the pencilled sum is my own hand, you'll find, nothing more sinister than arithmetic. I'd be obliged if you'd keep my visit there to yourself."
+    "vicar": "Oh—oh dear. Yes, that is Miss Vale's glove, and I did say nobody called, which was unkind of me and untrue. I promised her discretion, you see, and I'm afraid conscience and promise have been pulling rather hard against one another.",
+    "clara": "Yes, that is mine. I was going over the Harvest figures with the vicar and must have left it on the bench — the pencilled sum is my own hand, you'll find, nothing more sinister than arithmetic. I'd be obliged if you'd keep my visit there to yourself."
    },
    "lines_for": "fb7d230fea6a"
   },
@@ -1859,7 +1825,7 @@
    "direct": "I found your crumpled whist tally card, running from 8.0 to 11.20, with several rounds initialled D.P. and a note that you owe her 2 shillings. Can you explain that?",
    "art": "card",
    "reactions": {
-    "hugo": "Ha, caught out proper, aren't I. Yes, cards all night, 'owe D.P. two bob' and all\u2014I only said drinks because I didn't fancy Clara hearing I'd been at the tables again, that's the whole of my crime."
+    "hugo": "Ha, caught out proper, aren't I. Yes, cards all night, 'owe D.P. two bob' and all—I only said drinks because I didn't fancy Clara hearing I'd been at the tables again, that's the whole of my crime."
    },
    "lines_for": "bfb1cbb9874c"
   },
@@ -1880,7 +1846,7 @@
    "unlock": "Pike has been shielding Reed. Shown the scorched scrap naming 'the man Marlow', he sees the secret is already out and that silence no longer protects anyone.",
    "ask": "Did you go near the boathouse last night, Mr Pike?",
    "claim": {
-    "kind": "relation",
+    "pred": "related",
     "a": "jonah",
     "rel": "threatened_by",
     "b": "edmund"
@@ -1948,7 +1914,7 @@
    "unlock": "Mr Pike says a pane came down on his hand. No broken pane is in sight, so you walk the greenhouse looking for it and find the sacked-over frame, then search the cinder heap for the glass.",
    "show": "In the greenhouse I found sacking tacked over an empty pane, a freshly scrubbed bench, and bloodied glass shards hidden under ash, and Mr Pike now wears a fresh dressing on his hand. Can you tell me what happened there?",
    "reactions": {
-    "rowan": "Aye, that pane went years back, cracked clean through\u2014nothing to do with my hand. I cut this on my own billhook, pruning, same as I told you. Weather's been rough on that glass a long while, that's all."
+    "rowan": "Aye, that pane went years back, cracked clean through—nothing to do with my hand. I cut this on my own billhook, pruning, same as I told you. Weather's been rough on that glass a long while, that's all."
    },
    "to": "rowan",
    "direct": "There's a broken pane here covered with sacking, a scrubbed bench, and bloodied glass hidden in the ash, and you keep your stitched hand hidden in your pocket. Can you explain that?",
@@ -1968,7 +1934,7 @@
    "unlock": "While you look at the labelled trunk by the front door, you see the single glove lying on the hall table beside it.",
    "show": "On the hall table by Miss Vale's trunk lies a single right-hand glove marked C.V., with no matching left glove anywhere in the house. Do you know where its pair might be?",
    "reactions": {
-    "clara": "I must have dropped its pair somewhere about the vestry\u2014gloves do go missing, Inspector, it's hardly a mystery worth your time. I was there settling the Harvest accounts with the vicar, as I've already told you."
+    "clara": "I must have dropped its pair somewhere about the vestry—gloves do go missing, Inspector, it's hardly a mystery worth your time. I was there settling the Harvest accounts with the vicar, as I've already told you."
    },
    "to": "clara",
    "direct": "I found a single right-hand grey kid glove marked C.V. on the hall table, with no left-hand glove anywhere in the house. Can you explain that?",
@@ -2005,7 +1971,7 @@
    "unlock": "Miss Pruett will open the padlocked yard gate only for the constable. You fetch Constable Bell from the square, and with him there she has to unlock it and let you through to the foot of the office stair.",
    "show": "At the foot of the post office's back stair there's still a faint smell of coal gas, the office window above stands wide open, and the stair door at the top is locked. Can you help me understand that?",
    "reactions": {
-    "dora": "I shut that tap and opened the window myself, soon as I smelled it\u2014had to air the place before anyone could go up safe. The door's locked now because the constable told me to lock it, and locked it stays till he says different."
+    "dora": "I shut that tap and opened the window myself, soon as I smelled it—had to air the place before anyone could go up safe. The door's locked now because the constable told me to lock it, and locked it stays till he says different."
    },
    "to": null,
    "art": "stairs",
@@ -2061,7 +2027,7 @@
    "unlock": "Mr Pike says his billhook slipped, so you go into the potting shed to look at the billhook for blood.",
    "show": "The billhook on its nail in the potting shed is dull and clean, with no blood on it anywhere, beside a scrap of sacking and spilled carpet tacks. Can you explain how that fits with the injury?",
    "reactions": {
-    "rowan": "That hook's clean 'cause I wiped it after, same as I always do\u2014keeps the rust off. I told you I cut myself pruning, and that's the truth of it, blade or no blood on it now."
+    "rowan": "That hook's clean 'cause I wiped it after, same as I always do—keeps the rust off. I told you I cut myself pruning, and that's the truth of it, blade or no blood on it now."
    },
    "to": "rowan",
    "direct": "The billhook on its nail is dull and clean, with no blood on it at all, though you told me it caused your cut. Can you explain that?",
@@ -2082,7 +2048,7 @@
    "show": "At the manor, Miss Vale spoke through the locked letterbox saying the family isn't receiving and she'll speak of her brother only with Constable Bell present. Do you know why she's being so guarded?",
    "confront": "You spoke to me through the letterbox, bolted the door, and said you'd only discuss your brother with Constable Bell present. Why are you being so guarded?",
    "reactions": {
-    "clara": "I bolted it because I will not have the house gawped at and gossiped over while we're still reeling from my brother's death. I've said I'll speak to the constable, and to him I shall\u2014not to every curious soul who knocks."
+    "clara": "I bolted it because I will not have the house gawped at and gossiped over while we're still reeling from my brother's death. I've said I'll speak to the constable, and to him I shall—not to every curious soul who knocks."
    },
    "to": "clara",
    "direct": "This morning your front door was bolted, and you spoke through the letterbox saying you'd only talk with Constable Bell present. Can you explain that?",
@@ -2103,7 +2069,7 @@
    "show": "At the post office, Miss Pruett has padlocked the yard gate to the office stair and says she'll open it for nobody but Constable Bell. Do you know why she's being so careful about it?",
    "confront": "You've padlocked the yard gate to the office stair and said you'd open it for nobody but Constable Bell. Why are you being so careful about it?",
    "reactions": {
-    "dora": "That lock's new, yes, and glad of it\u2014I'll not have every busybody in the village traipsing through my yard while this is going on. The lavender's for the smell, nothing more, and the gate opens for Constable Bell and no one else."
+    "dora": "That lock's new, yes, and glad of it—I'll not have every busybody in the village traipsing through my yard while this is going on. The lavender's for the smell, nothing more, and the gate opens for Constable Bell and no one else."
    },
    "to": "dora",
    "direct": "I noticed a new padlock on the yard gate, and you said you'd open it for nobody but Constable Bell. Can you explain that?",
@@ -2116,11 +2082,11 @@
    "sighting": true,
    "source": "e_dora_whist",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "dora",
     "place": "inn",
-    "start": 1170,
-    "end": 1380
+    "from": 1170,
+    "to": 1380
    },
    "title": "Ada Finch saw Dorothy Pruett",
    "text": "Oh, love, I saw Miss Pruett at The Rook & Lantern at quarter to eight.",
@@ -2132,7 +2098,7 @@
    "confront": "You told me you saw Miss Pruett at The Rook & Lantern at quarter to eight. Is that right?",
    "lines_for": "f0edf5277737",
    "reactions": {
-    "dora": "Quarter to eight, you say \u2014 well, I may have come in a shade earlier than I recalled, but I was at my whist all the same, and nothing about that alters what I found at the office in the morning."
+    "dora": "Quarter to eight, you say — well, I may have come in a shade earlier than I recalled, but I was at my whist all the same, and nothing about that alters what I found at the office in the morning."
    }
   },
   {
@@ -2142,11 +2108,11 @@
    "sighting": true,
    "source": "e_dora_whist",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "silas",
     "place": "inn",
-    "start": 1200,
-    "end": 1300
+    "from": 1200,
+    "to": 1300
    },
    "title": "Ada Finch saw Silas Voss",
    "text": "Oh, love, I saw Mr Voss at The Rook & Lantern at quarter past eight.",
@@ -2168,11 +2134,11 @@
    "sighting": true,
    "source": "e_dora_whist",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "ada",
     "place": "inn",
-    "start": 1170,
-    "end": 1380
+    "from": 1170,
+    "to": 1380
    },
    "title": "Dorothy Pruett saw Ada Finch",
    "text": "I observed Mrs Finch at The Rook & Lantern at quarter to eight.",
@@ -2184,7 +2150,7 @@
    "confront": "You told me you saw Mrs Finch at The Rook & Lantern at quarter to eight. Is that right?",
    "lines_for": "cc1f79f0af22",
    "reactions": {
-    "ada": "Oh, bless her, quarter to eight does sound right, love \u2014 I was running about with the cards and the teapot all evening, hardly had a moment to watch the clock myself."
+    "ada": "Oh, bless her, quarter to eight does sound right, love — I was running about with the cards and the teapot all evening, hardly had a moment to watch the clock myself."
    }
   },
   {
@@ -2194,11 +2160,11 @@
    "sighting": true,
    "source": "e_dora_whist",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "silas",
     "place": "inn",
-    "start": 1200,
-    "end": 1300
+    "from": 1200,
+    "to": 1300
    },
    "title": "Dorothy Pruett saw Silas Voss",
    "text": "I observed Mr Voss at The Rook & Lantern at quarter past eight.",
@@ -2210,7 +2176,7 @@
    "confront": "You told me you saw Mr Voss at The Rook & Lantern at quarter past eight. Is that right?",
    "lines_for": "811288cf7998",
    "reactions": {
-    "silas": "Quarter past eight, yes \u2014 Miss Pruett keeps a sharper eye on the room than most. I played, then went to my papers at the vestry, exactly as I said."
+    "silas": "Quarter past eight, yes — Miss Pruett keeps a sharper eye on the room than most. I played, then went to my papers at the vestry, exactly as I said."
    }
   },
   {
@@ -2220,11 +2186,11 @@
    "sighting": true,
    "source": "e_dora_whist",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "bell",
     "place": "inn",
-    "start": 1170,
-    "end": 1380
+    "from": 1170,
+    "to": 1380
    },
    "title": "Ada Finch saw Arthur Bell",
    "text": "Oh, love, I saw Constable Bell at The Rook & Lantern at quarter to eight.",
@@ -2246,11 +2212,11 @@
    "sighting": true,
    "source": "e_bell_evening",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "ada",
     "place": "inn",
-    "start": 1170,
-    "end": 1380
+    "from": 1170,
+    "to": 1380
    },
    "title": "Arthur Bell saw Ada Finch",
    "text": "I saw Mrs Finch at The Rook & Lantern at quarter to eight.",
@@ -2262,7 +2228,7 @@
    "lines_for": "8af874d1aa24",
    "confront": "You told me you saw Mrs Finch at The Rook & Lantern at quarter to eight. Is that correct?",
    "reactions": {
-    "ada": "Quarter to eight, that's it exactly, love \u2014 running my whist drive same as every Thursday, you can ask anyone who was there."
+    "ada": "Quarter to eight, that's it exactly, love — running my whist drive same as every Thursday, you can ask anyone who was there."
    }
   },
   {
@@ -2272,11 +2238,11 @@
    "sighting": true,
    "source": "e_bell_evening",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "dora",
     "place": "inn",
-    "start": 1170,
-    "end": 1380
+    "from": 1170,
+    "to": 1380
    },
    "title": "Arthur Bell saw Dorothy Pruett",
    "text": "I saw Miss Pruett at The Rook & Lantern at quarter to eight.",
@@ -2298,11 +2264,11 @@
    "sighting": true,
    "source": "e_bell_evening",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "silas",
     "place": "inn",
-    "start": 1200,
-    "end": 1300
+    "from": 1200,
+    "to": 1300
    },
    "title": "Arthur Bell saw Silas Voss",
    "text": "I saw Mr Voss at The Rook & Lantern at quarter past eight.",
@@ -2314,7 +2280,7 @@
    "lines_for": "e0a37e872328",
    "confront": "You told me you saw Mr Voss at The Rook & Lantern at quarter past eight. Is that correct?",
    "reactions": {
-    "silas": "Quarter past eight, as the constable has it \u2014 a man of his habits is not often wrong. I was at cards until twenty to ten, then to my files, nothing more to add."
+    "silas": "Quarter past eight, as the constable has it — a man of his habits is not often wrong. I was at cards until twenty to ten, then to my files, nothing more to add."
    }
   },
   {
@@ -2324,11 +2290,11 @@
    "sighting": true,
    "source": "e_dora_whist",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "bell",
     "place": "inn",
-    "start": 1170,
-    "end": 1380
+    "from": 1170,
+    "to": 1380
    },
    "title": "Dorothy Pruett saw Arthur Bell",
    "text": "I observed Constable Bell at The Rook & Lantern at quarter to eight.",
@@ -2350,11 +2316,11 @@
    "sighting": true,
    "source": "e_hugo_cards",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "ada",
     "place": "inn",
-    "start": 1200,
-    "end": 1380
+    "from": 1200,
+    "to": 1380
    },
    "title": "Hugo Vale saw Ada Finch",
    "text": "Yeah, I saw Mrs Finch at The Rook & Lantern at quarter past eight.",
@@ -2366,7 +2332,7 @@
    "lines_for": "e599265ada0f",
    "confront": "You told me you saw Mrs Finch at The Rook & Lantern at quarter past eight. Is that correct?",
    "reactions": {
-    "ada": "Quarter past eight, love, yes \u2014 that'd be after I'd got the second round of whist going, I shouldn't wonder young Mr Vale noticed me dashing about with the trays."
+    "ada": "Quarter past eight, love, yes — that'd be after I'd got the second round of whist going, I shouldn't wonder young Mr Vale noticed me dashing about with the trays."
    }
   },
   {
@@ -2376,11 +2342,11 @@
    "sighting": true,
    "source": "e_hugo_cards",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "bell",
     "place": "inn",
-    "start": 1200,
-    "end": 1380
+    "from": 1200,
+    "to": 1380
    },
    "title": "Hugo Vale saw Arthur Bell",
    "text": "Yeah, I saw Constable Bell at The Rook & Lantern at quarter past eight.",
@@ -2402,11 +2368,11 @@
    "sighting": true,
    "source": "e_hugo_cards",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "dora",
     "place": "inn",
-    "start": 1200,
-    "end": 1380
+    "from": 1200,
+    "to": 1380
    },
    "title": "Hugo Vale saw Dorothy Pruett",
    "text": "Yeah, I saw Miss Pruett at The Rook & Lantern at quarter past eight.",
@@ -2418,7 +2384,32 @@
    "lines_for": "03893fc652a8",
    "confront": "You told me you saw Miss Pruett at The Rook & Lantern at quarter past eight. Is that correct?",
    "reactions": {
-    "dora": "Quarter past eight \u2014 well, I shouldn't dispute Mr Vale's memory, though I'd have placed myself there rather sooner. I was at my whist regardless, until eleven, just as I told you."
+    "dora": "Quarter past eight — well, I shouldn't dispute Mr Vale's memory, though I'd have placed myself there rather sooner. I was at my whist regardless, until eleven, just as I told you."
+   }
+  },
+  {
+   "id": "pub_window",
+   "kind": "public",
+   "title": "When it happened",
+   "text": "Edmund Vale died between 21:52 and 22:15.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1312,
+    "to": 1335
+   }
+  },
+  {
+   "id": "pub_holders_letter",
+   "kind": "public",
+   "title": "Who had Edmund's letter",
+   "text": "Only Edmund Vale and Jonah Reed had Edmund's letter.",
+   "claim": {
+    "pred": "onlyHad",
+    "item": "letter",
+    "people": [
+     "edmund",
+     "jonah"
+    ]
    }
   }
  ],
@@ -2712,5 +2703,69 @@
   ]
  },
  "declines_version": 3,
- "review_version": 2
+ "review_version": 2,
+ "holdings": [
+  {
+   "person": "edmund",
+   "item": "officekey"
+  },
+  {
+   "person": "dora",
+   "item": "officekey"
+  },
+  {
+   "person": "edmund",
+   "item": "letter"
+  },
+  {
+   "person": "jonah",
+   "item": "letter"
+  },
+  {
+   "person": "edmund",
+   "item": "diary"
+  },
+  {
+   "person": "clara",
+   "item": "glove"
+  },
+  {
+   "person": "clara",
+   "item": "trunk"
+  },
+  {
+   "person": "clara",
+   "item": "registry_letter"
+  },
+  {
+   "person": "rowan",
+   "item": "billhook"
+  }
+ ],
+ "vocabulary": {
+  "relations": [
+   {
+    "rel": "dismissed_by"
+   },
+   {
+    "rel": "employs"
+   },
+   {
+    "rel": "owes"
+   },
+   {
+    "rel": "resents"
+   },
+   {
+    "rel": "tenant_of"
+   },
+   {
+    "rel": "threatened_by"
+   },
+   {
+    "rel": "threatened_to_expose"
+   }
+  ]
+ },
+ "claims_version": 2
 }

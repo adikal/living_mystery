@@ -24,11 +24,11 @@
    },
    {
     "id": "vestry",
-    "name": "St. Alden\u2019s vestry"
+    "name": "St. Alden’s vestry"
    },
    {
     "id": "surgery",
-    "name": "Dr Marsh\u2019s surgery"
+    "name": "Dr Marsh’s surgery"
    },
    {
     "id": "halt",
@@ -151,8 +151,8 @@
    },
    "pronoun": "he",
    "address": "Mr Hale",
-   "voice": "Gentle and rambling, with a scholar\u2019s digressions and a surprising steel when conscience is touched.",
-   "public": "Vicar of St. Alden\u2019s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
+   "voice": "Gentle and rambling, with a scholar’s digressions and a surprising steel when conscience is touched.",
+   "public": "Vicar of St. Alden’s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
    "home": "vestry",
    "role_words": [
     "vicar",
@@ -170,7 +170,7 @@
    },
    "pronoun": "she",
    "address": "Miss Pruett",
-   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people\u2019s business.",
+   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people’s business.",
    "public": "The postmistress. Every letter, parcel and telegram in Bellweather passes over her counter, and she forgets nothing.",
    "home": "post",
    "role_words": [
@@ -188,7 +188,7 @@
    "pronoun": "she",
    "address": "Mrs Finch",
    "voice": "Warm, chatty and colloquial; calls people \"love\", runs on a little, and enjoys a bit of news more than she should.",
-   "public": "Proprietor of the Rook & Lantern. She knows everyone\u2019s habits and most of their business.",
+   "public": "Proprietor of the Rook & Lantern. She knows everyone’s habits and most of their business.",
    "home": "inn",
    "role_words": [
     "innkeeper",
@@ -206,7 +206,7 @@
    "pronoun": "she",
    "address": "Miss Vale",
    "voice": "Composed, dry and exact; she chooses words like a woman choosing gloves. Polite to the point of chill with strangers, warmer once she respects you.",
-   "public": "Edmund\u2019s younger sister. She has run Vale Manor\u2019s household for years and guards its privacy.",
+   "public": "Edmund’s younger sister. She has run Vale Manor’s household for years and guards its privacy.",
    "home": "manor",
    "role_words": []
   },
@@ -342,36 +342,6 @@
    "a": "dora",
    "rel": "accused_by",
    "b": "vicar"
-  }
- ],
- "possession": [
-  {
-   "person": "dora",
-   "item": "letter_opener"
-  },
-  {
-   "person": "edmund",
-   "item": "hunting_knife"
-  },
-  {
-   "person": "clara",
-   "item": "pruning_knife"
-  },
-  {
-   "person": "ada",
-   "item": "carving_knife"
-  },
-  {
-   "person": "vicar",
-   "item": "vicar_watch"
-  },
-  {
-   "person": "vicar",
-   "item": "draft_letter"
-  },
-  {
-   "person": "iris",
-   "item": "forceps"
   }
  ],
  "question": {
@@ -734,8 +704,10 @@
    "start": 1350,
    "end": 1360,
    "causedBy": "a_dora_rage",
-   "method": "blade",
-   "summary": "The quarrel turns violent; Dora stabs the vicar with her letter-opener, whose tip snaps off."
+   "summary": "The quarrel turns violent; Dora stabs the vicar with her letter-opener, whose tip snaps off.",
+   "facts": {
+    "method": "blade"
+   }
   },
   {
    "id": "e_death",
@@ -987,7 +959,7 @@
    "surface": true,
    "deceptive": true,
    "title": "Ada Finch on the evening",
-   "text": "Oh, I was behind the bar same as every night, love, right through till closing \u2014 busy enough with the regulars to keep me on my feet. Dora looked in and sat herself in the back parlour for a good while that evening, poor dear, and after I'd shut up I saw to the takings before off to my bed.",
+   "text": "Oh, I was behind the bar same as every night, love, right through till closing — busy enough with the regulars to keep me on my feet. Dora looked in and sat herself in the back parlour for a good while that evening, poor dear, and after I'd shut up I saw to the takings before off to my bed.",
    "ask": "Where were you last night?",
    "agrees_checked": 3,
    "surface_why": "She says Dora sat in the back parlour all evening, but in truth Dora only asked Ada to claim this as a false alibi while Dora went off to meet someone else; Ada's account repeats the fabricated story as fact.",
@@ -1082,17 +1054,17 @@
    "medical_v": 2,
    "source": "e_exam",
    "at": "surgery",
-   "title": "The doctor\u2019s examination notes",
+   "title": "The doctor’s examination notes",
    "text": "Examination of the Reverend Thomas Hale reveals a single deep puncture wound to the torso, consistent with a sharp, narrow blade driven with considerable force. There is no evidence of a prolonged struggle or secondary injury, and the wound track shows no significant internal migration. Death occurred between twenty-five past ten and ten to eleven, the wound itself proving immediately fatal.",
    "claim": {
-    "kind": "time",
-    "start": 1345,
-    "end": 1370
+    "pred": "crimeBetween",
+    "from": 1345,
+    "to": 1370
    },
    "reactions": {
-    "bell": "Puncture wound, driven hard and clean \u2014 that tallies with what Doctor Marsh found when I searched his coat. No struggle to speak of, which is why I never saw a mark on them boards past the one patch.",
-    "iris": "That's my finding, written plain. Single thrust, deep and narrow, death near-instant between those times \u2014 I'll say no more of it before the inquest, not even to you.",
-    "dora": "A single blow, you say \u2014 well, that only shows some ruffian meant business, doesn't it. I'm sure I couldn't tell you what manner of blade does that sort of thing."
+    "bell": "Puncture wound, driven hard and clean — that tallies with what Doctor Marsh found when I searched his coat. No struggle to speak of, which is why I never saw a mark on them boards past the one patch.",
+    "iris": "That's my finding, written plain. Single thrust, deep and narrow, death near-instant between those times — I'll say no more of it before the inquest, not even to you.",
+    "dora": "A single blow, you say — well, that only shows some ruffian meant business, doesn't it. I'm sure I couldn't tell you what manner of blade does that sort of thing."
    },
    "show": "The doctor's notes show the Reverend Hale died of a single deep stab wound to the torso from a narrow blade, driven with force, between twenty-five past ten and ten to eleven. Does that match what you understood?",
    "to": null,
@@ -1107,12 +1079,12 @@
    "speaker": "iris",
    "source": "e_exam",
    "claim": {
-    "kind": "time",
-    "start": 1345,
-    "end": 1370
+    "pred": "crimeBetween",
+    "from": 1345,
+    "to": 1370
    },
    "title": "Dr Marsh on the body",
-   "text": "The poor Reverend died between twenty-five past ten and ten to eleven \u2014 a single deep stab wound to the body, delivered with real force by a narrow blade. There was nothing to be done; death would have followed within moments.",
+   "text": "The poor Reverend died between twenty-five past ten and ten to eleven — a single deep stab wound to the body, delivered with real force by a narrow blade. There was nothing to be done; death would have followed within moments.",
    "ask": "Doctor, what did you find when you examined Mr Hale?",
    "show": "Dr Marsh says the Reverend died between twenty-five past ten and ten to eleven, from one deep stab wound delivered with real force by a narrow blade. Do you know if that's consistent with what you saw?",
    "confront": "You told me the Reverend died between twenty-five past ten and ten to eleven, from one deep stab wound delivered with force. Is that the whole of it?",
@@ -1127,7 +1099,7 @@
    "at": "square",
    "source": "e_bell_secure",
    "claim": {
-    "kind": "possession",
+    "pred": "culpritHad",
     "item": "letter_opener"
    },
    "requires": [
@@ -1136,8 +1108,8 @@
    "unlock": "Dr Marsh says the fragment is in Constable Bell's evidence tin and sends the detective to him; Bell opens it once she has vouched for them.",
    "show": "This is a snapped inch of thin steel, bevelled on one edge, flecked with red sealing-wax and stamped 'G.P.O.', taken from the wound. Do you recognise it?",
    "reactions": {
-    "bell": "G.P.O. stamp, is it. Found in the wound, right where Doctor Marsh's label says \u2014 I locked it away myself and haven't touched it since.",
-    "dora": "A broken bit of steel with the Post Office mark \u2014 well, that could belong to any manner of implement about the counter. I'm sure I don't know how such a thing came to be in a wound."
+    "bell": "G.P.O. stamp, is it. Found in the wound, right where Doctor Marsh's label says — I locked it away myself and haven't touched it since.",
+    "dora": "A broken bit of steel with the Post Office mark — well, that could belong to any manner of implement about the counter. I'm sure I don't know how such a thing came to be in a wound."
    },
    "to": null,
    "art": "wound",
@@ -1151,9 +1123,9 @@
    "at": "square",
    "source": "e_bell_secure",
    "claim": {
-    "kind": "time",
-    "start": 1350,
-    "end": 1365
+    "pred": "crimeBetween",
+    "from": 1350,
+    "to": 1365
    },
    "requires": [
     "t_iris_exam"
@@ -1176,7 +1148,7 @@
    "at": "square",
    "source": "e_bell_secure",
    "claim": {
-    "kind": "relation",
+    "pred": "related",
     "a": "vicar",
     "rel": "threatened_to_expose",
     "b": "dora"
@@ -1186,8 +1158,8 @@
    ],
    "unlock": "Dr Marsh mentions a folded paper from the coat that is now locked in Bell's tin, so the detective asks to see it.",
    "reactions": {
-    "bell": "That draft was in his coat when I searched it \u2014 put me in mind there was more to his business that night than just a late walk. I locked it up straight away, not for me to go blabbing it about the village.",
-    "dora": "He had no right to write such wicked slander, true or not. I never denied opening a letter or two out of due diligence \u2014 that's hardly murder, Inspector."
+    "bell": "That draft was in his coat when I searched it — put me in mind there was more to his business that night than just a late walk. I locked it up straight away, not for me to go blabbing it about the village.",
+    "dora": "He had no right to write such wicked slander, true or not. I never denied opening a letter or two out of due diligence — that's hardly murder, Inspector."
    },
    "show": "I've found a draft letter in the vicar's coat accusing Miss Pruett of opening and resealing letters, saying he meant to see her once more at the Halt. Do you know anything of this?",
    "to": "dora",
@@ -1207,11 +1179,11 @@
    ],
    "ask": "Where were you last night, Miss Pruett?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "dora",
     "place": "inn",
-    "start": 1290,
-    "end": 1395
+    "from": 1290,
+    "to": 1395
    },
    "to": null,
    "same_as": "night",
@@ -1281,11 +1253,11 @@
    "unlock": "Miss Pruett names Mrs Finch as her witness, so the detective goes to the inn to ask her.",
    "ask": "Miss Pruett says she sat in your back parlour until a quarter past eleven. Did she?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "dora",
     "place": "inn",
-    "start": 1290,
-    "end": 1395
+    "from": 1290,
+    "to": 1395
    },
    "confront": "You told me Dora sat in your back parlour from half nine till gone eleven, and that Mr Vale sat in his corner all evening unlikely to notice anything. Is that the whole of it?",
    "reactions": {
@@ -1321,7 +1293,7 @@
    "confront": "You told me the Pruett woman slipped in near twenty to ten, whispered at Mrs Finch's elbow, and left by the yard door before ten, while you watched that door till half eleven. Is that the whole of it?",
    "reactions": {
     "dora": "Mr Vale was deep in his glass, as usual, and no doubt saw shapes in the dark that weren't there. I was in that parlour the whole evening, whatever he claims to have noticed.",
-    "ada": "Oh, well \u2014 Mr Vale does like to fancy he sees everything over his ale, love, but a body can slip to the privy and back without the whole taproom marking it. I only said what I believed to be true."
+    "ada": "Oh, well — Mr Vale does like to fancy he sees everything over his ale, love, but a body can slip to the privy and back without the whole taproom marking it. I only said what I believed to be true."
    },
    "to": null,
    "lines_for": "f04dc6b8363d"
@@ -1357,7 +1329,7 @@
    "unlock": "The sand has been heaped over the spot where the body lay. The detective brushes it aside to look at the boards underneath.",
    "show": "These are steel dressing forceps engraved 'I.M.', found wedged between the platform boards where the body lay, their jaws tacky with dried blood and a fleck of red wax caught in the teeth. Do you recognise these?",
    "reactions": {
-    "iris": "Those are mine, engraved plain enough \u2014 must have slipped from my hand in that poor light while I worked. The blood on them is from the examination, nothing more sinister than that."
+    "iris": "Those are mine, engraved plain enough — must have slipped from my hand in that poor light while I worked. The blood on them is from the examination, nothing more sinister than that."
    },
    "to": "iris",
    "direct": "I found your forceps, engraved 'I.M.', wedged in the platform boards with blood on the jaws and a fleck of red wax in the teeth. How did they come to be there?",
@@ -1381,7 +1353,7 @@
    ],
    "unlock": "The draft says the vicar 'put it to Miss Pruett'. He worked in the vestry, which shares a wall with Silas Voss's office, so the detective takes the draft to the solicitor. Since the matter is already in writing, Voss agrees to say what he heard.",
    "claim": {
-    "kind": "relation",
+    "pred": "related",
     "a": "dora",
     "rel": "accused_by",
     "b": "vicar"
@@ -1426,7 +1398,7 @@
    ],
    "unlock": "Having found the hidden tin, the detective asks Ada what it holds, and she fetches the note to explain it rather than be thought a thief.",
    "claim": {
-    "kind": "relation",
+    "pred": "related",
     "a": "ada",
     "rel": "owes",
     "b": "vicar"
@@ -1453,7 +1425,7 @@
    ],
    "unlock": "The constable says the body lay by the platform bench, so the detective goes to the Halt to look there and finds churns standing on that very spot, which have to be moved.",
    "reactions": {
-    "bell": "Aye, I shifted them churns and put sand down myself \u2014 couldn't have the milk-train folk gawping and gossiping before the inquest's had its say. No call for alarm, it was my doing and nothing hid but the mess."
+    "bell": "Aye, I shifted them churns and put sand down myself — couldn't have the milk-train folk gawping and gossiping before the inquest's had its say. No call for alarm, it was my doing and nothing hid but the mess."
    },
    "show": "By the platform bench I found milk churns moved aside to reveal a heap of fresh raked sand, and the fire bucket emptied with wet sand stuck inside. Do you know what happened here?",
    "to": null,
@@ -1495,7 +1467,7 @@
    "show": "Ada recalls that Mr Vale, well into his cups, muttered something about 'that woman slipping out the yard door' before she sent him home. Do you know what he meant by that?",
    "confront": "Ada recalls you muttering, well into your cups, about 'that woman slipping out the yard door' before she sent you home. Can you tell me what you meant?",
    "reactions": {
-    "edmund": "A man can mutter what he likes in his cups, can't he. If I said something of the sort, I don't rightly recall it \u2014 ask Ada, she's the one with the memory for gossip.",
+    "edmund": "A man can mutter what he likes in his cups, can't he. If I said something of the sort, I don't rightly recall it — ask Ada, she's the one with the memory for gossip.",
     "ada": "Oh, Edmund's always one for a mutter in his cups, love, but that's just a drunk man's fancy talk - don't you go putting stock in it. He'd blame the moon for slipping out the yard door if you let him natter on long enough."
    },
    "to": "edmund",
@@ -1568,11 +1540,11 @@
    "sighting": true,
    "source": "e_dinner",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "edmund",
     "place": "manor",
-    "start": 1140,
-    "end": 1260
+    "from": 1140,
+    "to": 1260
    },
    "title": "Clara Vale saw Edmund Vale",
    "text": "I saw Mr Vale at Vale Manor at quarter past seven.",
@@ -1594,11 +1566,11 @@
    "sighting": true,
    "source": "e_clara_surgery",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "iris",
     "place": "surgery",
-    "start": 1280,
-    "end": 1430
+    "from": 1280,
+    "to": 1430
    },
    "title": "Clara Vale saw Dr Iris Marsh",
    "text": "I saw Dr Marsh at her surgery at twenty-five to ten.",
@@ -1611,6 +1583,30 @@
    "lines_for": "669a28c87e12",
    "reactions": {
     "iris": "Yes, that's correct, I was at the surgery at that hour, before the constable called me out. I've nothing further to add until the inquest, as I've already said."
+   }
+  },
+  {
+   "id": "pub_window",
+   "kind": "public",
+   "title": "When it happened",
+   "text": "The Reverend Thomas Hale died between 22:25 and 22:50.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1345,
+    "to": 1370
+   }
+  },
+  {
+   "id": "pub_holders_letter_opener",
+   "kind": "public",
+   "title": "Who had Post office letter-opener",
+   "text": "Only Dorothy Pruett had Post office letter-opener.",
+   "claim": {
+    "pred": "onlyHad",
+    "item": "letter_opener",
+    "people": [
+     "dora"
+    ]
    }
   }
  ],
@@ -1787,5 +1783,61 @@
   ]
  },
  "declines_version": 3,
- "review_version": 2
+ "review_version": 2,
+ "holdings": [
+  {
+   "person": "dora",
+   "item": "letter_opener"
+  },
+  {
+   "person": "edmund",
+   "item": "hunting_knife"
+  },
+  {
+   "person": "clara",
+   "item": "pruning_knife"
+  },
+  {
+   "person": "ada",
+   "item": "carving_knife"
+  },
+  {
+   "person": "vicar",
+   "item": "vicar_watch"
+  },
+  {
+   "person": "vicar",
+   "item": "draft_letter"
+  },
+  {
+   "person": "iris",
+   "item": "forceps"
+  }
+ ],
+ "vocabulary": {
+  "relations": [
+   {
+    "rel": "accused_by"
+   },
+   {
+    "rel": "friend_of"
+   },
+   {
+    "rel": "owes"
+   },
+   {
+    "rel": "quarrelled_with"
+   },
+   {
+    "rel": "resents"
+   },
+   {
+    "rel": "sister_of"
+   },
+   {
+    "rel": "threatened_to_expose"
+   }
+  ]
+ },
+ "claims_version": 2
 }

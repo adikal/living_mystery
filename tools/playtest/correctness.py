@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.join(HERE, '..', 'refine-c'))
 from game import ROOT  # noqa: E402
 from llm import JUDGE_MODEL, call_json  # noqa: E402
 from refine import analyse  # noqa: E402
+from migrate import migrate  # noqa: E402
 
 CATEGORIES = ['history_contradiction', 'unfair_refusal', 'hint_wrong', 'secret_leak', 'wrong_reason', 'identity',
               'game_rule', 'other']
@@ -59,8 +60,9 @@ SCHEMA = {'type': 'object', 'required': ['issues'], 'properties': {'issues': {'t
 
 
 def case_as_played(rel, cases_dir):
+    """The case as it was played, in the current claims version (older copies are migrated as they are read)."""
     old = os.path.join(cases_dir, rel.replace('dist/cases/generated/', '')) if cases_dir else None
-    return json.load(open(old if old and os.path.exists(old) else os.path.join(ROOT, rel)))
+    return migrate(json.load(open(old if old and os.path.exists(old) else os.path.join(ROOT, rel))))[0]
 
 
 def records(kc):

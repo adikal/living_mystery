@@ -1,23 +1,31 @@
-"""Parity: certify every case produced by the runs with the Python checker and the JS kernel; compare results."""
-import glob, json, os, subprocess, sys
+"""Parity: certify every case produced by the runs with the Python checker and the JS kernel; compare results.
+Each case is first migrated to the current claims version (migrate.py), into a temporary folder both kernels read."""
+import glob, json, os, subprocess, sys, tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from refine import certify
+from migrate import migrate
 
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 files = sorted(glob.glob(f'{HERE}/runs/*/*/*.json'))
 files = [f for f in files if not f.endswith('result.json')]
+tmp = tempfile.mkdtemp(prefix='parity-')
+migrated = []
+for i, f in enumerate(files):
+    m = os.path.join(tmp, f'{i:04d}.json')
+    json.dump(migrate(json.load(open(f)))[0], open(m, 'w'))
+    migrated.append(m)
 FIELDS = [('solve_depth', 'solveDepth'), ('max_depth', 'maxDepth'), ('surface', 'surface'), ('threads', 'threads'),
           ('twist', 'twist'), ('key', 'key'), ('herrings', 'herrings'), ('false_signs', 'falseSigns'),
           ('motive', 'motive'), ('means', 'means'), ('pillars', 'pillars'), ('pillar_signs', 'pillarSigns'),
           ('mmo_depth', 'mmoDepth'), ('unbacked', 'unbacked')]
 js = []
-for i in range(0, len(files), 40):
-    out = subprocess.run(['node', f'{ROOT}/tools/mk-certify.mjs', *files[i:i + 40]], capture_output=True, text=True, check=True)
+for i in range(0, len(migrated), 40):
+    out = subprocess.run(['node', f'{ROOT}/tools/mk-certify.mjs', *migrated[i:i + 40]], capture_output=True, text=True, check=True)
     js += json.loads(out.stdout)
 mismatch = 0
-for f, j in zip(files, js):
-    p = certify(json.load(open(f)))
+for f, m, j in zip(files, migrated, js):
+    p = certify(json.load(open(m)))
     diffs = []
     if p['ok'] != j['ok']:
         diffs.append(f"ok py={p['ok']} js={j['ok']} | py={p.get('errors', [])[:2]} js={j.get('errors', [])[:2]}")

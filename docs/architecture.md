@@ -33,7 +33,7 @@ present and arrival, which opens earned leads at their own location and reveals 
 |---|---|---|
 | 8000 | `server/static_server.py` | serves `dist/` with no-cache headers; `POST /__log` appends browser events to `logs/game.log` |
 | 8787 | `server/llm_proxy.py` | loopback proxy for dialogue, character turns, the fact-checker and the morning director; routes each call's role to Bedrock or a local Ollama model (`LM_ROUTES`, `server/llm_backends.py`); logs each call with its role, model and time to `logs/proxy.log` |
-| 8788 | `server/director_server.py` | Z3: the case oracle (`/case`, accusation feedback) and World Director plan checks (`/solve`); logs to `logs/director.log` |
+| 8788 | `server/director_server.py` | Z3: the case oracle (`/case`, accusation feedback; public signs count as held) and World Director plan checks (`/solve`); logs to `logs/director.log` |
 | 8789 | `server/generator_server.py` | case generation jobs with progress events; logs to `logs/generator.log` |
 
 ## Wording-only dialogue, critic, and audit

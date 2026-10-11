@@ -56,7 +56,8 @@ These paths are relative to the repository root. The report build checks their e
 | `dist/case-artifact.mjs` | Deep-case artifact schema + compiler (neutral observations, gates, forces, inversion) and `expandArtifact` (safe LLM-artifact expander) | Depth note (docs/depth-operators.md) |
 | `dist/operators.mjs` | Coherence-preserving artifact→artifact depth operators (add/gate/interpolate/force/declare-inversion) | Depth note (docs/depth-operators.md) |
 | `dist/deep-generator.mjs` | Deterministic seed-driven deep-case generator: three shapes (time/motive/means), ~5-hop discovery ladders + load-free red-herring fog | Depth note (docs/depth-operators.md) |
-| `dist/mk/kernel.mjs` | Mystery kernel: sign semantics, access/reading depth, thread depths and certification | Mystery kernel note (docs/mystery-kernel.md) |
+| `dist/mk/kernel.mjs` | Mystery kernel: access/reading depth, thread depths and certification | Mystery kernel note (docs/mystery-kernel.md) |
+| `dist/mk/claims.mjs` | Claim semantics: truth in the history, elimination from what the player knows, consistency | Claims specification (docs/claims.md) |
 | `dist/cases/kernel-case.mjs` | Bridge from certified kernel records to the runtime case interface (history, beliefs, gated signs, accounts, grading) | Mystery kernel note (docs/mystery-kernel.md) |
 | `tools/refine-c/refine.py` | Refinement harness: code-scheduled, model-written, code-certified generation with a plausibility critic | Mystery kernel note (docs/mystery-kernel.md) |
 | `tools/refine-c/publish.py` | Selects certified cases, adds questions and evening accounts, publishes to `dist/cases/generated/` | Mystery kernel note (docs/mystery-kernel.md) |
@@ -164,6 +165,7 @@ For a research or external-review snapshot, associate a report edition with a re
 | 0.23 | 2026-10-04 | Self-improvement by playtesting: agent players through a text interface, scorecard, judge, paired held-out experiments, offline replay and a ledger of hypotheses; epochs 0–2 (declines that close the subject, the chosen account before a decline, hints that name whom and then the question) |
 | 0.24 | 2026-10-05 | Bug track (detectors, correctness judge, investigation; six general bugs fixed), epoch 3 on fresh cases, dead ends and blocked replies across versions; a contradiction law in both kernels |
 | 0.25 | 2026-10-10 | A worked example (chapter 12): one case's records, the kernel and Z3 at design time and at run time, with real refusals and solver results |
+| 0.26 | 2026-10-11 | Claims version 2: eleven predicates over fluents with temporal modes; truth computed in the history; elimination from the player's knowledge only (public signs), sound and complete with respect to it, checked against Z3 both ways; published cases migrated |
 
 ### Forensic milestone source map
 

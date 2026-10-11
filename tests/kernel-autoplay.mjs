@@ -10,7 +10,7 @@ export function autoplay(records, {accuse = null, maxSteps = 400, method = recor
     const have = held(), locked = new Set(s.world.flags.lockedObjects || []);
     // 1. an unlocked, unexamined object anywhere
     const earned = o => (records.signs.find(x => x.id === o)?.requires || []).every(r => have.has(r));
-    const obj = Object.entries(rt.LOCATIONS).flatMap(([loc, l]) => l.objects.map(o => [loc, o]))
+    const obj = Object.keys(rt.LOCATIONS).flatMap(loc => rt.objectsAt(s.world, loc).map(o => [loc, o]))
       .find(([, o]) => (!locked.has(o) || earned(o)) && !have.has(rt.OBJECTS[o].clue));
     if (obj) {
       // an earned-but-closed lead opens when you get there

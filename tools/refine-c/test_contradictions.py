@@ -14,7 +14,7 @@ from refine import certify  # noqa: E402
 CASE = os.path.join(HERE, '..', '..', 'dist', 'cases', 'generated', 'mk-live-20261002-222517.json')
 # true from the history (Miss Pruett was home at the post office from 22:55), against her false accounts (the inn)
 SEEN = {'id': 's_test_seen', 'kind': 'testimony', 'speaker': 'silas', 'title': 'x', 'text': '',
-        'claim': {'kind': 'place', 'person': 'dora', 'place': 'post', 'start': 1380, 'end': 1390}}
+        'claim': {'pred': 'wasAt', 'person': 'dora', 'place': 'post', 'from': 1380, 'to': 1390}}
 
 
 class Contradictions(unittest.TestCase):
@@ -25,7 +25,7 @@ class Contradictions(unittest.TestCase):
     def test_a_true_account_is_recorded_as_defeating_the_lie(self):
         c = copy.deepcopy(self.case)
         c['signs'].append(copy.deepcopy(SEEN))
-        self.assertTrue(any('two places at once' in e for e in certify(c)['errors']))
+        self.assertTrue(any('cannot all be true (the whereabouts of dora)' in e for e in certify(c)['errors']), certify(c)['errors'])
         self.assertGreater(publish.record_contradictions(c, log=lambda *a: None), 0)
         seen = next(x for x in c['signs'] if x['id'] == 's_test_seen')
         self.assertTrue(seen['defeats'])

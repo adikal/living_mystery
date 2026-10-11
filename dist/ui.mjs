@@ -771,7 +771,7 @@ function renderTour(){
   const top=Math.min(innerHeight-tip.offsetHeight-12,Math.max(12,r.bottom+10)),left=Math.min(innerWidth-tip.offsetWidth-12,Math.max(12,r.left));
   tip.style.top=`${top}px`;tip.style.left=`${left}px`;el.scrollIntoView?.({block:'nearest'});
 }
-function maybeOpening(){if(!$('#modal')?.open&&!openingSeen()&&session.world.status!=='solved'&&!session.world.player.evidence.length)openingModal(0);}
+function maybeOpening(){if(!$('#modal')?.open&&!openingSeen()&&session.world.status!=='solved'&&!session.events.some(e=>e.kind==='command'))openingModal(0);}
 
 function startGenerated(id,title){
   dlog('case_start',{id,title});

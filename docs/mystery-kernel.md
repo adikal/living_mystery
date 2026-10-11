@@ -128,7 +128,10 @@ to things by **description** ("a tall man in a grey coat"), never directly by id
 entity fits is part of the puzzle.
 
 The LLM never states what a sign rules out. It chooses a **sign kind** and fills the slots; the kernel
-computes the eliminations against each candidate hypothesis with fixed code:
+computes the eliminations against each candidate hypothesis with fixed code. (Implemented as claims version 2: eleven
+predicates over facts that change with events, with their truth computed in the history and eliminations computed only
+from what the player knows, checked against Z3 both ways; see [the claims specification](claims.md). The table below
+is the original design.)
 
 | Sign kind | Carries | Rules out candidates who… |
 |---|---|---|

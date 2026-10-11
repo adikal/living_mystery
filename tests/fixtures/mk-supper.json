@@ -22,11 +22,11 @@
    },
    {
     "id": "vestry",
-    "name": "St. Alden\u2019s vestry"
+    "name": "St. Alden’s vestry"
    },
    {
     "id": "surgery",
-    "name": "Dr Marsh\u2019s surgery"
+    "name": "Dr Marsh’s surgery"
    }
   ],
   "links": [
@@ -82,7 +82,7 @@
   {
    "id": "clara",
    "name": "Clara Vale",
-   "role": "The victim\u2019s sister",
+   "role": "The victim’s sister",
    "traits": {
     "handed": "right",
     "keys": "manor"
@@ -90,7 +90,7 @@
    "pronoun": "she",
    "address": "Miss Vale",
    "voice": "Composed and guarded; courteous but says little, quietly deflecting private matters. Speaks briefly.",
-   "public": "Edmund\u2019s younger sister. She manages the manor and has asked that its private affairs remain private.",
+   "public": "Edmund’s younger sister. She manages the manor and has asked that its private affairs remain private.",
    "home": "manor"
   },
   {
@@ -104,7 +104,7 @@
    "pronoun": "he",
    "address": "Mr Pike",
    "voice": "A plain-spoken working man; blunt and practical, short sentences, no flourishes.",
-   "public": "The manor\u2019s groundskeeper. His bandaged hand and green coat have become subjects of village conversation.",
+   "public": "The manor’s groundskeeper. His bandaged hand and green coat have become subjects of village conversation.",
    "home": "greenhouse"
   },
   {
@@ -117,8 +117,8 @@
    },
    "pronoun": "he",
    "address": "Mr Voss",
-   "voice": "A precise, careful solicitor; measured and a touch formal, but concise \u2014 never rambling.",
-   "public": "A precise, courteous solicitor who keeps an office in the vestry. He handled Edmund\u2019s estate accounts.",
+   "voice": "A precise, careful solicitor; measured and a touch formal, but concise — never rambling.",
+   "public": "A precise, courteous solicitor who keeps an office in the vestry. He handled Edmund’s estate accounts.",
    "home": "vestry"
   },
   {
@@ -131,7 +131,7 @@
    "pronoun": "she",
    "address": "Mrs Finch",
    "voice": "A warm, chatty innkeeper; colloquial and quick to share impressions, though she runs on a little.",
-   "public": "The Rook & Lantern\u2019s proprietor. She knows everyone\u2019s habits and is certain she saw something useful last night.",
+   "public": "The Rook & Lantern’s proprietor. She knows everyone’s habits and is certain she saw something useful last night.",
    "home": "inn"
   },
   {
@@ -144,7 +144,7 @@
    "pronoun": "she",
    "address": "Dr Marsh",
    "voice": "Measured and clinical; direct and concise, stays to what she observed.",
-   "public": "Methodical and direct. She examined Edmund\u2019s body and treated a patient at the greenhouse last night.",
+   "public": "Methodical and direct. She examined Edmund’s body and treated a patient at the greenhouse last night.",
    "home": "surgery"
   },
   {
@@ -154,7 +154,7 @@
    "traits": {},
    "pronoun": "he",
    "address": "Constable Bell",
-   "voice": "A plain, gruff country constable; terse and matter-of-fact, everyday speech \u2014 never bureaucratic or long-winded.",
+   "voice": "A plain, gruff country constable; terse and matter-of-fact, everyday speech — never bureaucratic or long-winded.",
    "public": "Bell has secured the manor and asked you to investigate. He will hear an accusation when you can explain it with evidence.",
    "home": "square"
   },
@@ -173,7 +173,8 @@
   {
    "id": "decanter",
    "name": "Study brandy decanter",
-   "desc": "Cut-glass decanter on Edmund's study table, from which he takes a nightly glass."
+   "desc": "Cut-glass decanter on Edmund's study table, from which he takes a nightly glass.",
+   "supply": true
   },
   {
    "id": "rat_tin",
@@ -231,28 +232,6 @@
    "a": "silas",
    "rel": "embezzled_from",
    "b": "edmund"
-  }
- ],
- "possession": [
-  {
-   "person": "silas",
-   "item": "rat_tin"
-  },
-  {
-   "person": "silas",
-   "item": "ledger"
-  },
-  {
-   "person": "clara",
-   "item": "decanter"
-  },
-  {
-   "person": "edmund",
-   "item": "decanter"
-  },
-  {
-   "person": "clara",
-   "item": "receipt"
   }
  ],
  "question": {
@@ -829,16 +808,16 @@
    "medical": true,
    "medical_v": 2,
    "at": "surgery",
-   "title": "The doctor\u2019s examination notes",
+   "title": "The doctor’s examination notes",
    "text": "Examination of the deceased, Edmund Vale, reveals no external wounds or signs of struggle. The lividity, stomach contents, and general presentation are consistent with a poison taken by mouth, with death itself occurring some hours after ingestion. I estimate he died around twenty to one, the fatal dose having been taken earlier, between ten to nine and half past nine.",
    "claim": {
-    "kind": "time",
-    "start": 1250,
-    "end": 1290
+    "pred": "crimeBetween",
+    "from": 1250,
+    "to": 1290
    },
    "show": "The doctor's notes put the fatal dose between ten to nine and half past nine, with death itself around twenty to one. Does that match what you know of his movements that evening?",
    "reactions": {
-    "silas": "A precise window, I see. I was at my desk in the vestry that whole evening, as Constable Bell will confirm \u2014 whatever befell Mr Vale, it did not involve me."
+    "silas": "A precise window, I see. I was at my desk in the vestry that whole evening, as Constable Bell will confirm — whatever befell Mr Vale, it did not involve me."
    },
    "source": "e_examine",
    "to": null
@@ -850,12 +829,12 @@
    "medical_v": 2,
    "speaker": "iris",
    "claim": {
-    "kind": "time",
-    "start": 1250,
-    "end": 1290
+    "pred": "crimeBetween",
+    "from": 1250,
+    "to": 1290
    },
    "title": "Dr Marsh on the body",
-   "text": "He died around twenty to one, but the poison was taken by mouth some hours before that, between ten to nine and half past nine \u2014 the body doesn't lie about these things, even if the household does.",
+   "text": "He died around twenty to one, but the poison was taken by mouth some hours before that, between ten to nine and half past nine — the body doesn't lie about these things, even if the household does.",
    "ask": "Doctor, what did you find when you examined Edmund?",
    "show": "Dr Marsh tells me the poison was taken by mouth sometime between ten to nine and half past nine, though he didn't die until around twenty to one. Does that fit with what you saw that evening?",
    "confront": "You told me the poison was taken between ten to nine and half past nine, with death coming later, near twenty to one. Is there more you can tell me about that window?",
@@ -955,11 +934,11 @@
    "speaker": "iris",
    "ask": "Who was the patient you treated at the greenhouse last night, and when?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "rowan",
     "place": "greenhouse",
-    "start": 1240,
-    "end": 1300
+    "from": 1240,
+    "to": 1300
    },
    "because": [
     "a_iris_confidence"
@@ -972,8 +951,8 @@
    "show": "Dr Marsh says she was called to the greenhouse at twenty to nine and left at twenty to ten, stitching a hand cut on glass, and that the patient never left the stool. Does that match what you saw?",
    "confront": "You told me you reached the greenhouse at twenty to nine and left at twenty to ten, and that your patient never left the stool the whole time. Is that the complete truth?",
    "concede": {
-    "s_greenhouse_stool": "Yes, that stool is where I stitched him \u2014 the blood on the seat and that pane is from his hand, and he sat there the whole while I worked, twenty to nine till twenty to ten. I said no name only to spare him the gossip, but it was Rowan Pike, plain enough.",
-    "t_rowan": "Well, there's his own word matching mine \u2014 the greenhouse, the cut hand, the doctor called, so I'll say it plainly now: it was Rowan Pike I tended, from twenty to nine till twenty to ten, and I only held back the name to spare him talk."
+    "s_greenhouse_stool": "Yes, that stool is where I stitched him — the blood on the seat and that pane is from his hand, and he sat there the whole while I worked, twenty to nine till twenty to ten. I said no name only to spare him the gossip, but it was Rowan Pike, plain enough.",
+    "t_rowan": "Well, there's his own word matching mine — the greenhouse, the cut hand, the doctor called, so I'll say it plainly now: it was Rowan Pike I tended, from twenty to nine till twenty to ten, and I only held back the name to spare him talk."
    },
    "reactions": {
     "rowan": "That's right. Cut my hand bad on the glass, didn't move off that stool till she was done. Nothing more to it."
@@ -990,11 +969,11 @@
    "speaker": "ada",
    "ask": "Did anyone from the manor come by the inn last night?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "clara",
     "place": "inn",
-    "start": 1240,
-    "end": 1320
+    "from": 1240,
+    "to": 1320
    },
    "requires": [
     "s_slate"
@@ -1007,10 +986,10 @@
    "show": "Mrs Finch says someone sat in her back parlour over an account from twenty to nine until the church clock struck ten, without stirring once, though she won't give a name. Do you know who that might have been?",
    "confront": "You told me someone sat in your back parlour from twenty to nine till ten o'clock without stirring, but you wouldn't give me a name. Will you tell me who it was now?",
    "concede": {
-    "s_parlour_glove": "Ah, that's her glove right enough, left in my settle where she sat the whole time \u2014 Clara Vale it was, in my back parlour from twenty to nine till ten o'clock. I only kept mum because I'd promised her I would."
+    "s_parlour_glove": "Ah, that's her glove right enough, left in my settle where she sat the whole time — Clara Vale it was, in my back parlour from twenty to nine till ten o'clock. I only kept mum because I'd promised her I would."
    },
    "reactions": {
-    "clara": "I've nothing to add to that. Mrs Finch keeps her word, and I'll keep mine \u2014 my business at the inn is my own."
+    "clara": "I've nothing to add to that. Mrs Finch keeps her word, and I'll keep mine — my business at the inn is my own."
    },
    "to": "clara",
    "direct": "You said someone sat in your back parlour over an account from twenty to nine until ten but wouldn't give a name. Is that the whole of it?"
@@ -1024,11 +1003,11 @@
    "speaker": "bell",
    "ask": "Where were you yourself last night, Constable?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "ada",
     "place": "inn",
-    "start": 1245,
-    "end": 1330
+    "from": 1245,
+    "to": 1330
    },
    "requires": [
     "s_slate"
@@ -1040,7 +1019,7 @@
    "confront": "You told me you were behind that bar the whole while, quarter to nine till ten past ten. Is that so?",
    "reactions": {
     "ada": "Well, that's about right, near enough. I was run off my feet behind that bar the whole evening, so I couldn't have told you the half of who came and went outside.",
-    "silas": "The constable is mistaken on the hour, nothing more. I was at the vestry the whole evening, as he himself says \u2014 whether he passed at ten to nine or twenty past, I was there, working."
+    "silas": "The constable is mistaken on the hour, nothing more. I was at the vestry the whole evening, as he himself says — whether he passed at ten to nine or twenty past, I was there, working."
    },
    "show": "Constable Bell says he had his pint at the Rook from quarter to nine till ten past ten, with Mrs Finch behind the bar the whole while. Does that match what you recall?"
   },
@@ -1105,7 +1084,7 @@
    "id": "s_slate",
    "kind": "trace",
    "title": "The slate behind the bar",
-   "text": "Face down on the shelf under the counter is the Rook's chalk slate, with last night's tallies still on it, among them \"Const. B. \u2014 1 pint, pd.\" Lower down, one line has been rubbed away recently. The chalk is smeared in a thumb-wide streak, and only the word \"...settled\" can still be made out at its end.",
+   "text": "Face down on the shelf under the counter is the Rook's chalk slate, with last night's tallies still on it, among them \"Const. B. — 1 pint, pd.\" Lower down, one line has been rubbed away recently. The chalk is smeared in a thumb-wide streak, and only the word \"...settled\" can still be made out at its end.",
    "at": "inn",
    "source": "e_ada_hide",
    "requires": [
@@ -1130,14 +1109,14 @@
    ],
    "ask": "Did you see anyone about the village on your rounds last night?",
    "claim": {
-    "kind": "place",
+    "pred": "wasAt",
     "person": "silas",
     "place": "vestry",
-    "start": 1250,
-    "end": 1290
+    "from": 1250,
+    "to": 1290
    },
    "reactions": {
-    "silas": "Quite so \u2014 I was at my desk, as Bell says. The accounts don't tally themselves, and with this audit hanging over the parish, I'd every reason to be diligent that evening. I'm glad my lamp was seen; it confirms I was hard at work, nothing more."
+    "silas": "Quite so — I was at my desk, as Bell says. The accounts don't tally themselves, and with this audit hanging over the parish, I'd every reason to be diligent that evening. I'm glad my lamp was seen; it confirms I was hard at work, nothing more."
    },
    "confront": "You told me you passed the vestry twice, ten to nine and half past, and both times saw Mr Voss writing at his desk. Is that the whole of it?",
    "show": "Constable Bell says he saw Mr Voss at his desk in the vestry, still writing by lamp light both at ten to nine and again at half past nine. Does that match what you recall of that evening?"
@@ -1146,7 +1125,7 @@
    "id": "s_audit_letter",
    "kind": "document",
    "title": "Draft letter in the study desk",
-   "text": "An unsent draft in Edmund's hand, addressed to Messrs Harrow & Lyle, auditors, London: \"Sums entered by my solicitor, Mr Voss, do not answer to the bank's figures. Over two years some \u00a31,400 appears drawn without my leave. I require an examination of the ledger next week.\"",
+   "text": "An unsent draft in Edmund's hand, addressed to Messrs Harrow & Lyle, auditors, London: \"Sums entered by my solicitor, Mr Voss, do not answer to the bank's figures. Over two years some £1,400 appears drawn without my leave. I require an examination of the ledger next week.\"",
    "at": "manor",
    "source": "e_edmund_letter",
    "requires": [
@@ -1154,7 +1133,7 @@
    ],
    "unlock": "Miss Vale keeps the study desk locked so no one sees the manor's debts. Once you show that you know about her evening at the Rook settling the account, she has no reason left to guard the desk and unlocks it for you.",
    "claim": {
-    "kind": "relation",
+    "pred": "related",
     "a": "silas",
     "rel": "embezzled_from",
     "b": "edmund"
@@ -1178,7 +1157,7 @@
    ],
    "unlock": "The cupboard is locked. Now that Constable Bell has owned up about the Rook, he's willing to help, and he hands you the parish's duplicate key from his ring.",
    "claim": {
-    "kind": "possession",
+    "pred": "culpritHad",
     "item": "rat_tin"
    },
    "reactions": {
@@ -1192,7 +1171,7 @@
    "id": "b_clara_pocket",
    "kind": "behavior",
    "title": "Miss Vale and the folded paper",
-   "text": "As you come into the manor hall, Miss Vale picks a folded paper off the hall table and pushes it deep into her cardigan pocket. For the rest of the interview she keeps her hand over the pocket, and she looks away when you mention last night.",
+   "text": "As you approach, Miss Vale pushes a folded paper deep into her cardigan pocket. For the rest of the interview she keeps her hand over the pocket, and she looks away when you mention last night.",
    "at": "manor",
    "source": "e_clara_pocket",
    "about": "clara",
@@ -1205,13 +1184,14 @@
    },
    "show": "I saw Miss Vale snatch a folded paper from the hall table and push it into her cardigan pocket, keeping her hand over it and looking away whenever last night was mentioned. Do you know what that paper might be?",
    "to": "clara",
-   "direct": "You picked up a folded paper and pushed it into your pocket, keeping your hand over it and looking away when I mentioned last night. What is it?"
+   "direct": "You picked up a folded paper and pushed it into your pocket, keeping your hand over it and looking away when I mentioned last night. What is it?",
+   "watch": true
   },
   {
    "id": "d_receipt",
    "kind": "document",
    "title": "The folded receipt",
-   "text": "A half-sheet of the Rook & Lantern's notepaper: \"Received of Miss C. Vale, in settlement of the Vale Manor account, eighteen pounds four shillings. Paid in full with thanks. \u2014 A. Finch.\"",
+   "text": "A half-sheet of the Rook & Lantern's notepaper: \"Received of Miss C. Vale, in settlement of the Vale Manor account, eighteen pounds four shillings. Paid in full with thanks. — A. Finch.\"",
    "at": "manor",
    "source": "e_clara_receipt",
    "requires": [
@@ -1300,7 +1280,7 @@
    "id": "b_ada_thumb",
    "kind": "behavior",
    "title": "Mrs Finch's thumb",
-   "text": "While Mrs Finch talks, she keeps rubbing her right thumb on her apron. The thumb is grey with chalk, and so is a streak on the apron. Twice her eyes go to the framed licence behind the bar, which hangs crooked, and there is a clean, pale mark on the wall by the door.",
+   "text": "While Mrs Finch talks, she keeps rubbing her right thumb against her apron. The thumb is grey with chalk, and so is a streak on the apron. Twice her eyes flick aside and down, as if to something hanging crooked, and her gaze lingers there a moment before she catches herself.",
    "at": "inn",
    "source": "e_ada_wipe",
    "about": "ada",
@@ -1313,7 +1293,8 @@
    },
    "show": "I noticed Mrs Finch kept rubbing chalk from her thumb onto her apron, and her eyes kept going to that crooked licence behind the bar, near a clean pale mark on the wall. Do you know what that's about?",
    "to": "ada",
-   "direct": "You keep rubbing your chalk-grey thumb on your apron and glancing at the crooked licence frame with the clean mark on the wall. What's that about?"
+   "direct": "You keep rubbing your chalk-grey thumb on your apron and glancing at the crooked licence frame with the clean mark on the wall. What's that about?",
+   "watch": true
   },
   {
    "id": "t_rowan_pots",
@@ -1340,7 +1321,7 @@
    "unlock": "once you have The vestry stores cupboard, you can ask Arthur Bell about it",
    "title": "Arthur Bell on the vestry stores cupboard",
    "text": "I've held the spare vestry cupboard key for years, same as I do for a few other places about the village, in case Mr Voss is away and something's needed in a hurry. It's just old habit, nothing more to it.",
-   "ask": "Constable, I see you hold a duplicate key to this cupboard\u2014why is that?",
+   "ask": "Constable, I see you hold a duplicate key to this cupboard—why is that?",
    "deceptive": false,
    "show": "Constable Bell says he's held a spare key to the vestry cupboard for years, just old habit. Do you know if that's true?",
    "confront": "You told me you've held the spare vestry cupboard key for years, just old habit. Is that the whole of it?",
@@ -1363,6 +1344,30 @@
    "show": "There's a half-crossed-out ledger page in Mr Voss's hand speaking of money transferred to himself from the timber account, to be repaid before any audit, and saying Mr Vale must not see the bank figures. Can you explain this?",
    "to": "silas",
    "direct": "I found this torn ledger page in the vestry desk, written in your hand, about moving timber account funds to yourself and hiding the figures from Mr Vale. Can you explain it?"
+  },
+  {
+   "id": "pub_window",
+   "kind": "public",
+   "title": "When it happened",
+   "text": "The victim died between 20:50 and 21:30.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1250,
+    "to": 1290
+   }
+  },
+  {
+   "id": "pub_holders_rat_tin",
+   "kind": "public",
+   "title": "Who had Tin of arsenical rat poison",
+   "text": "Only Silas Voss had Tin of arsenical rat poison.",
+   "claim": {
+    "pred": "onlyHad",
+    "item": "rat_tin",
+    "people": [
+     "silas"
+    ]
+   }
   }
  ],
  "id": "mk-live-20260927-122514",
@@ -1512,5 +1517,41 @@
   "silas": "Composed and quietly going about his usual business, betraying nothing out of the ordinary.",
   "iris": "Calm and dutiful, tired from the call-out but tight-lipped about who summoned her.",
   "bell": "Overly hearty and rehearsed, insisting on his rounds a bit too readily while dreading word of his missed patrol reaching the sergeant."
- }
+ },
+ "holdings": [
+  {
+   "person": "silas",
+   "item": "rat_tin"
+  },
+  {
+   "person": "silas",
+   "item": "ledger"
+  },
+  {
+   "person": "clara",
+   "item": "decanter"
+  },
+  {
+   "person": "edmund",
+   "item": "decanter"
+  },
+  {
+   "person": "clara",
+   "item": "receipt"
+  }
+ ],
+ "vocabulary": {
+  "relations": [
+   {
+    "rel": "embezzled_from"
+   },
+   {
+    "rel": "employed_by"
+   },
+   {
+    "rel": "sister_of"
+   }
+  ]
+ },
+ "claims_version": 2
 }

@@ -9,16 +9,16 @@ import {certify} from '../dist/mk/kernel.mjs';
 const kc = JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-222517.json', import.meta.url), 'utf8'));
 // true from the history (Miss Pruett was home at the post office from 22:55), against her false account (the inn)
 const seen = {id: 's_test_seen', kind: 'testimony', speaker: 'silas', title: 'x', text: '',
-  claim: {kind: 'place', person: 'dora', place: 'post', start: 1380, end: 1390}};
+  claim: {pred: 'wasAt', person: 'dora', place: 'post', from: 1380, to: 1390}};
 
 test('the kernel refuses an unrecorded contradiction, and accepts it once recorded', () => {
   assert.ok(certify(kc).ok, 'the published case certifies');
   const broken = structuredClone(kc);
   broken.signs.push(structuredClone(seen));
   const out = certify(broken);
-  assert.ok(!out.ok && out.errors.some(e => /s_test_seen put dora in two places at once/.test(e) || /put dora in two places at once/.test(e)), JSON.stringify(out.errors));
+  assert.ok(!out.ok && out.errors.some(e => /s_test_seen.* cannot all be true \(the whereabouts of dora\)/.test(e)), JSON.stringify(out.errors));
   const mended = structuredClone(broken);
-  const lies = mended.signs.filter(x => x.kind === 'testimony' && x.claim?.person === 'dora' && x.claim?.place === 'inn').map(x => x.id);
+  const lies = mended.signs.filter(x => x.kind === 'testimony' && x.claim?.pred === 'wasAt' && x.claim?.person === 'dora' && x.claim?.place === 'inn').map(x => x.id);
   mended.signs.find(x => x.id === 's_test_seen').defeats = lies;
   assert.ok(certify(mended).ok, JSON.stringify(certify(mended).errors));
 });

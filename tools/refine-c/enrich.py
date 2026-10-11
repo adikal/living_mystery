@@ -211,11 +211,11 @@ def add_knowledge(case):
     forbidden = []
     for x in case['signs']:
         c = claim_of(x)
-        if c and c['kind'] in ('possession', 'relation', 'trait', 'fact'):
+        if c and c['pred'] not in ('wasAt', 'nobodyAt', 'crimeBetween'):
             forbidden.append(json.dumps(c))
     forbidden += [f"{a['agent']} {a['mode']}: {a['content']}" for a in case['attitudes'] if a['mode'] in ('fears', 'intends', 'wants', 'knows')]
     people = [{'id': p['id'], 'name': p['name'], 'role': p.get('role'), 'public': p.get('public'), 'home': p.get('home'),
-               'holds': [q['item'] for q in case.get('possession', []) if q['person'] == p['id']
+               'holds': [q['item'] for q in case.get('holdings', []) if q['person'] == p['id']
                          and not any(q['item'] in f for f in forbidden)]}
               for p in case['people'] if p['id'] != victim]
     from refine import claim_true, travel_table

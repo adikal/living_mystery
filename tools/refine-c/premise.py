@@ -105,7 +105,7 @@ def seed_rules(p):
 PREMISE (fixed by code; the seed is rejected unless it matches):
 - the victim is '{p['victim']}': set "victim": "{p['victim']}" at the top level; the victim takes no part after their death,
   and a 'death' event (type "death", agent "{p['victim']}") records when they died;
-- question.crime.place is '{p['place']}'; the crime event's agent is '{p['culprit']}' and it carries "method": "{p['method']}";
+- question.crime.place is '{p['place']}'; the crime event's agent is '{p['culprit']}' and it carries "facts": {{"method": "{p['method']}"}};
 - the attitude that causes the crime (its causedBy, or what that attitude is 'because' of) carries "motive": "{p['motive']}";
 - question.candidates are exactly the actors {json.dumps(p['suspects'])}; the truth is '{p['culprit']}';
 - give the case a short evocative "title" (3-5 words) that names no suspect.
@@ -136,8 +136,8 @@ def seed_errors(case, p):
     crime = next((e for e in case.get('events', []) if e.get('id') == (q.get('crime') or {}).get('event')), {})
     if crime.get('agent') != p['culprit']:
         errs.append(f"premise: the crime event's agent must be {p['culprit']}")
-    if crime.get('method') != p['method']:
-        errs.append(f"premise: the crime event must carry \"method\": \"{p['method']}\"")
+    if (crime.get('facts') or {}).get('method') != p['method']:
+        errs.append(f"premise: the crime event must carry \"facts\": {{\"method\": \"{p['method']}\"}}")
     if (q.get('crime') or {}).get('place') != p['place']:
         errs.append(f"premise: question.crime.place must be {p['place']}")
     actors = sorted(((h.get('facts') or {}).get('actor') for h in q.get('candidates', [])), key=str)

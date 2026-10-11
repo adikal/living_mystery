@@ -20,15 +20,17 @@ SHIPPED = sorted(glob.glob(str(ROOT / 'dist/cases/generated/mk-*.json')))
 
 def small():
     return {
+        'claims_version': 2,
         'setting': {'places': [{'id': 'gallery'}, {'id': 'cottage'}, {'id': 'inn'}],
                     'links': [{'a': 'gallery', 'b': 'cottage', 'minutes': 10}, {'a': 'cottage', 'b': 'inn', 'minutes': 15}]},
         'people': [{'id': 'tom', 'traits': {'handed': 'left'}}, {'id': 'wife', 'traits': {'handed': 'right'}}, {'id': 'keeper', 'traits': {}}],
-        'relations': [], 'possession': [],
+        'relations': [], 'holdings': [],
         'question': {'truth': 'h_tom', 'candidates': [{'id': 'h_tom', 'facts': {'actor': 'tom'}}, {'id': 'h_wife', 'facts': {'actor': 'wife'}}],
                      'crime': {'event': 'e_push', 'place': 'gallery', 'window': [1320, 1440]}},
         'events': [{'id': 'e_push', 'agent': 'tom', 'place': 'gallery', 'start': 1400, 'end': 1402},
                    {'id': 'e_wife', 'agent': 'wife', 'place': 'cottage', 'start': 1300, 'end': 1500}],
-        'signs': [{'id': 's_wife', 'kind': 'testimony', 'claim': {'kind': 'place', 'person': 'wife', 'place': 'cottage', 'start': 1310, 'end': 1450}}]}
+        'signs': [{'id': 's_wife', 'kind': 'testimony', 'claim': {'pred': 'wasAt', 'person': 'wife', 'place': 'cottage', 'from': 1310, 'to': 1450}},
+                  {'id': 'pub_window', 'kind': 'public', 'claim': {'pred': 'crimeBetween', 'from': 1320, 'to': 1440}}]}
 
 
 class Oracle(unittest.TestCase):
@@ -41,22 +43,23 @@ class Oracle(unittest.TestCase):
 
     def test_alibi_rules_out_with_core_and_alternative_story(self):
         c = small()
-        cand = O.candidates(c, ['s_wife'])
-        self.assertEqual(cand['h_wife'], {'status': 'unsat', 'actor': 'wife', 'because': ['s_wife']})
+        cand = O.candidates(c, ['s_wife', 'pub_window'])
+        # the alibi rules her out only together with when it happened
+        self.assertEqual(cand['h_wife'], {'status': 'unsat', 'actor': 'wife', 'because': ['pub_window', 's_wife']})
         self.assertEqual(cand['h_tom']['status'], 'sat')
         # without the alibi the wife could have been at the gallery: a concrete minute inside the window
-        alt = O.alternative(c, [], 'tom')
+        alt = O.alternative(c, ['pub_window'], 'tom')
         self.assertEqual(alt['actor'], 'wife'); self.assertTrue(1320 <= alt['minute'] <= 1440)
 
     def test_alibi_with_gap_leaves_a_window(self):
-        c = small(); c['signs'][0]['claim'].update(start=1310, end=1380)   # home until 23:00, 10 min walk
-        alt = O.alternative(c, ['s_wife'], 'tom')
-        self.assertEqual(alt['actor'], 'wife'); self.assertGreater(alt['minute'], 1390)
+        c = small(); c['signs'][0]['claim'].update({'from': 1310, 'to': 1380})   # home until 23:00, 10 min walk
+        alt = O.alternative(c, ['s_wife', 'pub_window'], 'tom')
+        self.assertEqual(alt['actor'], 'wife'); self.assertGreaterEqual(alt['minute'], 1390)
 
     def test_defeated_claims_are_not_trusted(self):
         c = small()
         c['signs'].append({'id': 's_log', 'kind': 'record', 'defeats': ['s_wife']})
-        self.assertEqual(O.survivors(c, ['s_wife', 's_log']), ['h_tom', 'h_wife'])
+        self.assertEqual(O.survivors(c, ['s_wife', 's_log', 'pub_window']), ['h_tom', 'h_wife'])
 
     def test_shipped_cases_pass_and_agree_with_the_kernel_at_every_depth(self):
         self.assertTrue(SHIPPED)

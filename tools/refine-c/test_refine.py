@@ -5,13 +5,16 @@ from refine import certify, apply_patch, survivors, analyse
 
 
 def base():
+    # claims follow docs/claims.md (version 2); what everyone knows (the crime window here) is a public sign
     return {
+        'claims_version': 2,
         'setting': {'name': 'Test', 'places': [{'id': 'gallery', 'name': 'Gallery'}, {'id': 'cottage', 'name': 'Cottage'}, {'id': 'inn', 'name': 'Inn'}],
                     'links': [{'a': 'gallery', 'b': 'cottage', 'minutes': 10}, {'a': 'cottage', 'b': 'inn', 'minutes': 15}]},
         'rules': [{'id': 'r_trim', 'text': 'wicks are trimmed hourly', 'knowledge': 'acquirable'}],
         'people': [{'id': 'tom', 'name': 'Tom', 'traits': {'handed': 'left'}}, {'id': 'wife', 'name': 'Wife', 'traits': {'handed': 'right'}},
                    {'id': 'cox', 'name': 'Coxswain', 'traits': {'handed': 'right'}}, {'id': 'keeper', 'name': 'Keeper', 'traits': {}}],
-        'objects': [], 'relations': [{'a': 'tom', 'rel': 'owes', 'b': 'keeper'}], 'possession': [{'person': 'tom', 'item': 'gallery_key'}],
+        'objects': [{'id': 'gallery_key'}, {'id': 'smugglers'}], 'vocabulary': {'relations': [{'rel': 'owes'}, {'rel': 'paid_by'}, {'rel': 'hates'}]},
+        'relations': [{'a': 'tom', 'rel': 'owes', 'b': 'keeper'}], 'holdings': [{'person': 'tom', 'item': 'gallery_key'}],
         'question': {'text': 'who pushed the keeper?', 'truth': 'h_tom',
                      'candidates': [{'id': 'h_tom', 'label': 'Tom', 'facts': {'actor': 'tom'}}, {'id': 'h_wife', 'label': 'Wife', 'facts': {'actor': 'wife'}},
                                     {'id': 'h_cox', 'label': 'Cox', 'facts': {'actor': 'cox'}}],
@@ -24,10 +27,11 @@ def base():
                    {'id': 'e_wife', 'type': 'sleep', 'agent': 'wife', 'place': 'cottage', 'start': 1300, 'end': 1500, 'causedBy': 'a_wife'},
                    {'id': 'e_cox', 'type': 'drink', 'agent': 'cox', 'place': 'inn', 'start': 1300, 'end': 1500, 'causedBy': 'a_cox'}],
         'signs': [
-            {'id': 's_wife', 'kind': 'testimony', 'speaker': 'cox', 'text': 'She never left the cottage.', 'claim': {'kind': 'place', 'person': 'wife', 'place': 'cottage', 'start': 1310, 'end': 1450}},
-            {'id': 's_cox', 'kind': 'record', 'text': 'The inn ledger.', 'claim': {'kind': 'place', 'person': 'cox', 'place': 'inn', 'start': 1310, 'end': 1450}},
-            {'id': 's_debt', 'kind': 'document', 'text': 'An IOU from Tom to the keeper.', 'claim': {'kind': 'relation', 'a': 'tom', 'rel': 'owes', 'b': 'keeper'}},
-            {'id': 's_holds', 'kind': 'record', 'text': 'Tom holds the gallery key.', 'claim': {'kind': 'possession', 'person': 'tom', 'item': 'gallery_key'}},
+            {'id': 's_wife', 'kind': 'testimony', 'speaker': 'cox', 'text': 'She never left the cottage.', 'claim': {'pred': 'wasAt', 'person': 'wife', 'place': 'cottage', 'from': 1310, 'to': 1450}},
+            {'id': 's_cox', 'kind': 'record', 'text': 'The inn ledger.', 'claim': {'pred': 'wasAt', 'person': 'cox', 'place': 'inn', 'from': 1310, 'to': 1450}},
+            {'id': 's_debt', 'kind': 'document', 'text': 'An IOU from Tom to the keeper.', 'claim': {'pred': 'related', 'a': 'tom', 'rel': 'owes', 'b': 'keeper'}},
+            {'id': 's_holds', 'kind': 'record', 'text': 'Tom holds the gallery key.', 'claim': {'pred': 'had', 'person': 'tom', 'item': 'gallery_key'}},
+            {'id': 'pub_window', 'kind': 'public', 'text': 'The keeper died between ten and midnight.', 'claim': {'pred': 'crimeBetween', 'from': 1320, 'to': 1440}},
         ]}
 
 
@@ -40,7 +44,7 @@ class Checker(unittest.TestCase):
         self.assertFalse(r['twist'])
 
     def test_not_unique(self):
-        c = base(); c['signs'] = c['signs'][:1]
+        c = base(); c['signs'] = [x for x in c['signs'] if x['id'] in ('s_wife', 'pub_window')]
         r = certify(c)
         self.assertFalse(r['ok']); self.assertTrue(any('not unique' in e for e in r['errors']))
 
@@ -60,10 +64,11 @@ class Checker(unittest.TestCase):
         c = base()
         c['attitudes'].append({'id': 'a_wife_protect', 'agent': 'wife', 'mode': 'wants', 'content': 'protect tom'})
         c['signs'].append({'id': 's_alibi', 'kind': 'testimony', 'speaker': 'wife', 'because': ['a_wife_protect'], 'text': 'Tom was with me all night.',
-                           'claim': {'kind': 'place', 'person': 'tom', 'place': 'cottage', 'start': 1330, 'end': 1430}})
+                           # with a 10-minute walk, at the cottage from 22:09 to 23:51 leaves no minute of 22:00 to 24:00 for the gallery
+                           'claim': {'pred': 'wasAt', 'person': 'tom', 'place': 'cottage', 'from': 1329, 'to': 1431}})
         c['signs'].append({'id': 's_key', 'kind': 'item', 'text': 'A key.'})
         c['signs'].append({'id': 's_log', 'kind': 'record', 'text': 'Lamp log.', 'requires': ['s_key'], 'needs': ['r_rule'], 'unlock': 'the key opens the log cabinet', 'reading': 'the manual says wicks are trimmed hourly',
-                           'claim': {'kind': 'place', 'person': 'tom', 'place': 'gallery', 'start': 1395, 'end': 1405}, 'defeats': ['s_alibi']})
+                           'claim': {'pred': 'wasAt', 'person': 'tom', 'place': 'gallery', 'from': 1400, 'to': 1402}, 'defeats': ['s_alibi']})
         c['signs'].append({'id': 'r_rule', 'kind': 'rule', 'rule': 'r_trim', 'text': 'The keeper manual.'})
         return c
 
@@ -84,9 +89,9 @@ class Checker(unittest.TestCase):
         c = self.twist()
         c['relations'].append({'a': 'tom', 'rel': 'paid_by', 'b': 'smugglers'})
         c['signs'].append({'id': 's_pay', 'kind': 'document', 'text': 'A payment note.', 'requires': ['s_key'], 'unlock': 'the key opens his chest',
-                           'claim': {'kind': 'relation', 'a': 'tom', 'rel': 'paid_by', 'b': 'smugglers'}})
-        c['signs'].append({'id': 's_keyring', 'kind': 'trace', 'text': 'Only one gallery key was issued.',
-                           'claim': {'kind': 'possession', 'item': 'gallery_key'}})
+                           'claim': {'pred': 'related', 'a': 'tom', 'rel': 'paid_by', 'b': 'smugglers'}})
+        c['signs'].append({'id': 's_keyring', 'kind': 'trace', 'text': 'Whoever did it had the gallery key.',
+                           'claim': {'pred': 'culpritHad', 'item': 'gallery_key'}})
         r = certify(c)
         self.assertTrue(r['ok'], r.get('errors'))
         self.assertEqual(r['motive'], ['s_debt', 's_pay']); self.assertEqual(r['means'], ['s_keyring'])
@@ -95,7 +100,7 @@ class Checker(unittest.TestCase):
 
     def test_false_world_fact_is_caught(self):
         c = self.twist()
-        c['signs'].append({'id': 's_bad', 'kind': 'document', 'text': 'A note.', 'claim': {'kind': 'relation', 'a': 'wife', 'rel': 'paid_by', 'b': 'smugglers'}})
+        c['signs'].append({'id': 's_bad', 'kind': 'document', 'text': 'A note.', 'claim': {'pred': 'related', 'a': 'wife', 'rel': 'paid_by', 'b': 'smugglers'}})
         r = certify(c); self.assertFalse(r['ok']); self.assertTrue(any('s_bad' in e for e in r['errors']))
 
     def test_edges_need_in_world_reasons(self):
@@ -118,9 +123,23 @@ class Checker(unittest.TestCase):
         c = self.twist(); next(x for x in c['signs'] if x['id'] == 's_log').pop('defeats')
         r = certify(c); self.assertFalse(r['ok']); self.assertTrue(any('no reachable, true defeater' in e for e in r['errors']))
 
-    def test_trait_claim_computed(self):
-        c = base(); c['signs'] = [x for x in c['signs'] if x['id'] in ('s_debt', 's_holds')] + [{'id': 's_glove', 'kind': 'trace', 'text': 'A left-hand glove.', 'claim': {'kind': 'trait', 'trait': 'handed', 'value': 'left'}}]
+    def test_trait_clue_rules_out_only_those_known_to_lack_it(self):
+        glove = {'id': 's_glove', 'kind': 'trace', 'text': 'A left-hand glove.', 'claim': {'pred': 'culpritTrait', 'trait': 'handed', 'value': 'left'}}
+        c = base(); c['signs'] = [x for x in c['signs'] if x['id'] in ('s_debt', 's_holds')] + [glove]
+        self.assertFalse(certify(c)['ok'], 'nothing the player knows says who is right-handed')
+        c['signs'] += [{'id': f'pub_{p}', 'kind': 'public', 'text': f'{p} is right-handed.', 'claim': {'pred': 'hasTrait', 'person': p, 'trait': 'handed', 'value': 'right'}} for p in ('wife', 'cox')]
         r = certify(c); self.assertTrue(r['ok'], r.get('errors')); self.assertEqual(r['surface'], ['h_tom'])
+
+    def test_undecided_claims_and_old_cases_are_refused(self):
+        c = self.twist(); next(x for x in c['signs'] if x['id'] == 's_log')['claim'].update({'from': 1395, 'to': 1405})
+        self.assertTrue(any('does not decide the claim of s_log' in e for e in certify(c)['errors']))
+        old = base(); old.pop('claims_version')
+        self.assertIn('migrate the case', certify(old)['errors'][0])
+
+    def test_any_contradiction_needs_a_recorded_defeat(self):
+        c = base(); c['signs'].append({'id': 's_gone', 'kind': 'record', 'text': 'The key was handed in at nine.',
+                                       'claim': {'pred': 'had', 'person': 'tom', 'item': 'gallery_key', 'when': 'never', 'from': 1300, 'to': 1500}})
+        self.assertTrue(any('s_gone, s_holds cannot all be true' in e for e in certify(c)['errors']))
 
     def test_patch_remove_only_target(self):
         with self.assertRaises(ValueError):
@@ -142,7 +161,7 @@ class Pillars(unittest.TestCase):
     def test_innocent_motive_is_not_the_culprits(self):
         c = base(); c['signs'] = [x for x in c['signs'] if x['id'] != 's_debt']
         c['relations'].append({'a': 'wife', 'rel': 'hates', 'b': 'keeper'})
-        c['signs'].append({'id': 's_hate', 'kind': 'testimony', 'speaker': 'cox', 'text': 'She hated him.', 'claim': {'kind': 'relation', 'a': 'wife', 'rel': 'hates', 'b': 'keeper'}})
+        c['signs'].append({'id': 's_hate', 'kind': 'testimony', 'speaker': 'cox', 'text': 'She hated him.', 'claim': {'pred': 'related', 'a': 'wife', 'rel': 'hates', 'b': 'keeper'}})
         self.assertFalse(certify(c)['ok'])
 
     def test_deep_motive_sets_mmo_depth(self):

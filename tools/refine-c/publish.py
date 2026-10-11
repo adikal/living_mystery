@@ -362,18 +362,24 @@ def _solve_shape(case):
 
 
 def contradictions(case):
-    """Pairs of reachable signs that put one person in two places at overlapping times with neither recorded as
-    defeating the other (the kernels refuse such a case)."""
-    from refine import analyse, claim_of
+    """Pairs of reachable claims that cannot both be true (one person in two places, one object with two holders, two
+    values of a trait, ...) with neither recorded as defeating the other: the kernels refuse such a case. Conflicts
+    that need three or more claims are left for the kernels to report."""
+    from refine import analyse
+    from claims import claim_of, consistent, instance_claims
     A = analyse(case)
-    placed = sorted(sid for sid in A['understood'] if (claim_of(A['signs'][sid]) or {}).get('kind') == 'place')
-    out = []
-    for i, a in enumerate(placed):
-        for b in placed[i + 1:]:
-            x, y = claim_of(A['signs'][a]), claim_of(A['signs'][b])
-            if x['person'] == y['person'] and x['place'] != y['place'] and x['start'] < y['end'] and y['start'] < x['end'] \
-                    and b not in A['signs'][a].get('defeats', []) and a not in A['signs'][b].get('defeats', []):
-                out.append((a, b, A['truthval'].get(a), A['truthval'].get(b)))
+    overturned = {d for x in case['signs'] if x.get('kind') == 'public' for d in x.get('defeats', [])}
+    readable = [(sid, claim_of(A['signs'][sid])) for sid in sorted(A['understood']) if claim_of(A['signs'][sid]) and sid not in overturned]
+    claim = dict(readable)
+    out, seen = [], set()
+    for ids in instance_claims(case, readable).values():
+        for i, a in enumerate(ids):
+            for b in ids[i + 1:]:
+                if (a, b) in seen or b in A['signs'][a].get('defeats', []) or a in A['signs'][b].get('defeats', []):
+                    continue
+                seen.add((a, b))
+                if not consistent(case, [(a, claim[a]), (b, claim[b])], A['tt']):
+                    out.append((a, b, A['truthval'].get(a), A['truthval'].get(b)))
     return out
 
 
@@ -442,7 +448,7 @@ def add_sightings(case, log=print):
             continue
         sid = f's_saw_{a}_{b}_{pl}'
         sign = {'id': sid, 'kind': 'testimony', 'speaker': a, 'sighting': True, 'source': ev,
-                'claim': {'kind': 'place', 'person': b, 'place': pl, 'start': lo, 'end': hi},
+                'claim': {'pred': 'wasAt', 'person': b, 'place': pl, 'from': lo, 'to': hi},
                 'title': f"{names[a]} saw {names[b]}", 'text': '', 'ask': 'Did you see anyone last night?'}
         case['signs'].append(sign)
         ok, shape = _solve_shape(case)
@@ -452,7 +458,7 @@ def add_sightings(case, log=print):
             case['signs'].remove(sign)
     if not kept:
         return 0
-    when = lambda x: spoken_about((x['claim']['start'] + min(x['claim']['end'], x['claim']['start'] + 30)) / 2)
+    when = lambda x: spoken_about((x['claim']['from'] + min(x['claim']['to'], x['claim']['from'] + 30)) / 2)
     setting = {p['id']: p for p in enrich.SETTING.get('people', [])}
     places = {p['id']: p['name'] for p in enrich.SETTING.get('places', [])}
     items = [{'id': x['id'], 'speaker': names[x['speaker']], 'voice': setting.get(x['speaker'], {}).get('voice', ''),
@@ -729,8 +735,8 @@ def add_concessions(case):
     signs = {x['id']: x for x in case['signs']}
     tt = travel_table(case)
     def meaning(c):
-        if c['kind'] == 'place':
-            return f"{names[c['person']]['name']} was at {places.get(c['place'], c['place'])} from {clock_words(c['start'])} to {clock_words(c['end'])}"
+        if c['pred'] == 'wasAt' and c.get('when', 'throughout') == 'throughout':
+            return f"{names[c['person']]['name']} was at {places.get(c['place'], c['place'])} from {clock_words(c['from'])} to {clock_words(c['to'])}"
         return json.dumps(c)
     items, keys = [], []
     for x in case['signs']:
@@ -932,7 +938,7 @@ def add_medical(case):
         notes = f"Examination of the deceased shows {cause}. " + says
     with SIGNS:
         case['signs'][:] = [x for x in case['signs'] if not x.get('medical')]
-    claim = {'kind': 'time', 'start': w0, 'end': w1}
+    claim = {'pred': 'crimeBetween', 'from': w0, 'to': w1}
     doctor = enrich.role(case, 'examiner')
     doctor = doctor if doctor != victim else None
     SIGNS.acquire()

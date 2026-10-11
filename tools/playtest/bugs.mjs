@@ -5,11 +5,13 @@
 //   node tools/playtest/bugs.mjs --out bugs.json [--before <cases dir>] [--current b1,b2] tools/playtest/runs/e*/
 //
 // Games are checked against the case they were played on: --before is a copy of the case files from before later case
-// changes, used for every batch not listed in --current.
+// changes, used for every batch not listed in --current. Copies of older cases must first be migrated to the current
+// claims version (.venv/bin/python tools/refine-c/migrate.py --write <copies>).
 import {readFileSync, readdirSync, existsSync, writeFileSync} from 'node:fs';
 import {join, basename, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {analyse, survivors, claimOf} from '../../dist/mk/kernel.mjs';
+import {consistent, instanceClaims, CLAIMS_VERSION} from '../../dist/mk/claims.mjs';
 
 const ROOT = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const FOLLOW = 5;       // actions after a hint within which following it should give its clue
@@ -33,27 +35,29 @@ function caseFor(rel, batch, o, cache) {
   const key = `${batch}|${rel}`;
   if (!cache.has(key)) {
     const old = o.before && !o.current.has(batch) ? join(o.before, rel.replace(/^dist\/cases\/generated\//, '')) : null;
-    cache.set(key, JSON.parse(readFileSync(old && existsSync(old) ? old : join(ROOT, rel), 'utf8')));
+    const file = old && existsSync(old) ? old : join(ROOT, rel), kc = JSON.parse(readFileSync(file, 'utf8'));
+    if (kc.claims_version !== CLAIMS_VERSION) throw Error(`${file}: claims version ${kc.claims_version ?? 1}; migrate it (tools/refine-c/migrate.py --write)`);
+    cache.set(key, kc);
   }
   return cache.get(key);
 }
 
-// pairs of signs that put one person in two places at overlapping times, neither recorded as defeating the other
-// (the kernels' contradiction law)
+// pairs of held claims that cannot both be true, neither recorded as defeating the other (the kernels' consistency law;
+// conflicts needing three or more claims are the kernels' to report)
 function contradictions(kc, ids) {
-  const S = Object.fromEntries(kc.signs.map(x => [x.id, x])), out = [];
-  const placed = [...ids].filter(id => S[id] && claimOf(S[id])?.kind === 'place').sort();
-  for (const [i, a] of placed.entries()) for (const b of placed.slice(i + 1)) {
-    const x = claimOf(S[a]), y = claimOf(S[b]);
-    if (x.person === y.person && x.place !== y.place && x.start < y.end && y.start < x.end
-      && !(S[a].defeats ?? []).includes(b) && !(S[b].defeats ?? []).includes(a)) out.push([a, b, x.person]);
+  const S = Object.fromEntries(kc.signs.map(x => [x.id, x])), out = [], seen = new Set();
+  const held = [...ids].filter(id => S[id] && claimOf(S[id])).sort().map(id => [id, claimOf(S[id])]), claim = Object.fromEntries(held);
+  for (const [key, group] of instanceClaims(kc, held)) for (const [i, a] of group.entries()) for (const b of group.slice(i + 1)) {
+    if (seen.has(`${a}|${b}`) || (S[a].defeats ?? []).includes(b) || (S[b].defeats ?? []).includes(a)) continue;
+    seen.add(`${a}|${b}`);
+    if (!consistent(kc, [[a, claim[a]], [b, claim[b]]])) out.push([a, b, key]);
   }
   return out;
 }
 
 // survivors over the evidence held, read as the constable reads it (every held sign understood)
 function standing(kc, held) {
-  const sub = {...kc, signs: kc.signs.filter(x => held.has(x.id)).map(x => ({...x, requires: [], unlock: 'held', reading: x.reading || 'held'}))};
+  const sub = {...kc, signs: kc.signs.filter(x => held.has(x.id) || x.kind === 'public').map(x => ({...x, requires: [], unlock: 'held', reading: x.reading || 'held'}))};
   return survivors(sub, analyse(sub));
 }
 
@@ -71,7 +75,7 @@ function detect(ep, kc, batch) {
     // an accusation refused while the player holds a contradiction the case does not count
     if (t.accusation && !t.accusation.accepted)
       for (const [a, b, p] of contradictions(kc, before))
-        add('unrecorded_contradiction', i, `${a}|${b}`, {accused: t.accusation.suspect, person: p, signs: [a, b],
+        add('unrecorded_contradiction', i, `${a}|${b}`, {accused: t.accusation.suspect, about: p, signs: [a, b],
           texts: [S[a]?.text, S[b]?.text].map(x => String(x ?? '').slice(0, 200)), survivors: standing(kc, before)});
     const c = t.character;
     if (c) {
@@ -132,7 +136,7 @@ function main() {
     scanned.add(sig);
     for (const [a, b, p] of contradictions(kc, analyse(kc).understood))
       findings.push({kind: 'case_contradiction', severity: SEVERITY.case_contradiction, batch: key.split('|')[0], episode: null,
-        case: kc.id, title: kc.title, step: null, signature: `case_contradiction|${kc.id}|${a}|${b}`, evidence: {person: p, signs: [a, b]}});
+        case: kc.id, title: kc.title, step: null, signature: `case_contradiction|${kc.id}|${a}|${b}`, evidence: {about: p, signs: [a, b]}});
   }
   const bugs = {};
   for (const x of findings) {
