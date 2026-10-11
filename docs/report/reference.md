@@ -1,6 +1,6 @@
-# 12. Glossary, source map and report maintenance
+# 13. Glossary, source map and report maintenance
 
-## 12.1 Glossary
+## 13.1 Glossary
 
 | Term | Meaning here |
 | --- | --- |
@@ -25,7 +25,7 @@
 | Shared IR | An intermediate representation translated into a supported solver fragment. |
 | World Director | Coordinator of selected plan admission and continued-investigation checks. |
 
-## 12.2 Source map
+## 13.2 Source map
 
 These paths are relative to the repository root. The report build checks their existence. Follow the associated chapter for the interpretation of each implementation boundary; code remains the authority if a document becomes stale.
 
@@ -114,7 +114,7 @@ This is a small selected bibliography, not a systematic literature review. Links
 3. de Moura, L., and Bjørner, N. (2008). **Z3: An Efficient SMT Solver.** TACAS. [Microsoft Research publication](https://www.microsoft.com/en-us/research/publication/z3-an-efficient-smt-solver/). Background for the chosen SMT implementation.
 4. Potassco. **clingo: an ASP system.** [Official project documentation](https://potassco.org/clingo/). Reference for a possible future adapter, not an implemented dependency.
 
-## 12.4 Maintaining a living report
+## 13.4 Maintaining a living report
 
 The Markdown chapters in `docs/report/` are the editing source. SVG figures in its `figures/` directory are source assets. `scripts/build_report.py` produces linked HTML chapters and a single-page edition in `dist/report/`, with no runtime JavaScript, remote fonts, CDN dependencies or model calls. It supports the deliberately small Markdown subset documented in the authoring guide. Do not hand-edit generated HTML.
 
@@ -135,7 +135,7 @@ The standalone design docs remain useful operational references: `docs/architect
 
 For a research or external-review snapshot, associate a report edition with a real code commit or release tag after the user's review. Do not invent a commit identifier for an uncommitted working tree. Preserve older editions through version control. PDF publication and archival releases are future packaging steps; the single-page HTML already supplies print styling.
 
-## 12.5 Milestone record
+## 13.5 Milestone record
 
 | Edition | Date | Scope |
 | --- | --- | --- |
@@ -163,6 +163,7 @@ For a research or external-review snapshot, associate a report edition with a re
 | 0.22 | 2026-10-03 | Fixes from five play-throughs as general rules: start positions from the history; witnessed knowledge; stress from the history; duplicate questions asked through one; hints along the kernel's critical signs; the constable as a setting role; Z3 counts only readable evidence |
 | 0.23 | 2026-10-04 | Self-improvement by playtesting: agent players through a text interface, scorecard, judge, paired held-out experiments, offline replay and a ledger of hypotheses; epochs 0–2 (declines that close the subject, the chosen account before a decline, hints that name whom and then the question) |
 | 0.24 | 2026-10-05 | Bug track (detectors, correctness judge, investigation; six general bugs fixed), epoch 3 on fresh cases, dead ends and blocked replies across versions; a contradiction law in both kernels |
+| 0.25 | 2026-10-10 | A worked example (chapter 12): one case's records, the kernel and Z3 at design time and at run time, with real refusals and solver results |
 
 ### Forensic milestone source map
 

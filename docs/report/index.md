@@ -2,7 +2,7 @@
 
 ## A deterministic substrate for believable characters and investigable worlds
 
-**Living technical report · Edition 0.24 · 5 October 2026**
+**Living technical report · Edition 0.25 · 10 October 2026**
 
 ### Abstract
 
@@ -150,6 +150,10 @@ Bellweather setting with the original cast, map and art, the generator produced 
 4–7 (14–24 clues, 27–35 history events, a certified twist, lies and red herrings), which play in the existing game
 through a bridge (`dist/cases/kernel-case.mjs`) including free-text character dialogue grounded in each character's
 memories and beliefs. See `docs/mystery-kernel.md`.
+
+### Edition 0.25: a worked example
+
+Chapter 12 follows one case, *Death Among the Orchids*, through its life: the records that represent it, how the generator's proposals were refused and accepted by the kernel, and how the director, the characters and the accusation were checked during a play-through, with the solver's actual results. See [chapter 12](worked-example.md).
 
 ### Edition 0.24: a bug track, and a fourth epoch
 

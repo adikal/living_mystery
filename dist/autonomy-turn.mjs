@@ -36,7 +36,7 @@ export async function deliberateWorld(session,{fetchImpl=globalThis.fetch,signal
  const abort=()=>controller.abort();signal?.addEventListener('abort',abort,{once:true});
  let timer;const audit={status:'fallback',context:ticket.context};
  try{
-  const request={system:AUTONOMY_PROMPT,prompt:JSON.stringify(ticket.context),max_tokens:300};audit.request=request;
+  const request={role:'autonomy',system:AUTONOMY_PROMPT,prompt:JSON.stringify(ticket.context),max_tokens:300};audit.request=request;
   if(request.prompt.length>16000)throw Error('Autonomy context exceeds budget');
   const response=await Promise.race([
    (async()=>{const res=await fetchImpl(endpoint,{method:'POST',headers:{'content-type':'application/json','X-Living-Mystery':'character-v1'},body:JSON.stringify(request),signal:controller.signal});if(!res.ok)throw Error('Autonomy service unavailable');const body=await res.json();if(typeof body.text!=='string'||body.text.length>3000)throw Error('Invalid autonomy response');return body.text;})(),

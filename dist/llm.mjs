@@ -3,6 +3,20 @@ const ENDPOINT_KEY='living-mystery.llm.endpoint',ENABLED_KEY='living-mystery.llm
 function safeStore(store){try{return store??globalThis.localStorage}catch{return undefined}}
 export function llmConfig(store){try{const s=safeStore(store);return {endpoint:s?.getItem(ENDPOINT_KEY)||'',enabled:s?.getItem(ENABLED_KEY)==='1',reasoning:s?.getItem(REASONING_KEY)==='1'}}catch{return {endpoint:'',enabled:false,reasoning:false}}}
 export function setLlmConfig({endpoint,enabled,reasoning},store){try{const s=safeStore(store);if(endpoint!==undefined)s?.setItem(ENDPOINT_KEY,String(endpoint).trim());if(enabled!==undefined)s?.setItem(ENABLED_KEY,enabled?'1':'0');if(reasoning!==undefined)s?.setItem(REASONING_KEY,reasoning?'1':'0')}catch{}}
+// How long to wait for a whole character turn, as the proxy advertises for its models (local models are slower).
+// Synchronous, so a turn never waits on it: the first call per endpoint asks the proxy in the background, and until
+// the answer arrives (or if the proxy cannot say) the Bedrock default applies.
+const DEFAULT_TURN_MS=45000,timeouts=new Map();
+export function turnTimeout(store,fetchImpl=globalThis.fetch){
+  const {endpoint}=llmConfig(store);
+  if(!timeouts.has(endpoint)){
+    const entry={ms:DEFAULT_TURN_MS};timeouts.set(endpoint,entry);
+    entry.ready=Promise.resolve().then(()=>fetchImpl(new URL('health',endpoint))).then(r=>r.json())
+      .then(h=>{if(Number.isFinite(h.turn_timeout_ms))entry.ms=h.turn_timeout_ms;}).catch(()=>{});
+  }
+  return timeouts.get(endpoint).ms;
+}
+export const turnTimeoutKnown=store=>timeouts.get(llmConfig(store).endpoint)?.ready;
 export function llmActive(store){const c=llmConfig(store);try{const u=new URL(c.endpoint);return c.enabled&&['http:','https:'].includes(u.protocol)&&!u.username&&!u.password}catch{return false}}
 
 export const REALIZATION_VERSION=3;
@@ -30,6 +44,8 @@ export function parseCritic(raw){
   if(typeof raw!=='string')return null;
   const text=raw.trim(),fence=text.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
   let x;try{x=JSON.parse(fence?fence[1]:text);}catch{return null;}
+  // a bare pass means no violations (some models leave out the empty list); a bare reject gives no reason, so it is unclear
+  if(x&&typeof x==='object'&&Object.keys(x).join(',')==='verdict'&&x.verdict==='pass')x={verdict:'pass',violations:[]};
   if(!x||typeof x!=='object'||Object.keys(x).sort().join(',')!=='verdict,violations'||!['pass','reject'].includes(x.verdict)||!Array.isArray(x.violations)||x.violations.length>20||!x.violations.every(v=>typeof v==='string'&&v.length<=1000)||x.verdict==='pass'&&x.violations.length)return null;return x;
 }
 

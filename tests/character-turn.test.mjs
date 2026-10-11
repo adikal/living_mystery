@@ -57,9 +57,22 @@ test('Model may clarify or refuse without acquiring evidence; explicit ending re
  assert.ok(!s.world.npcs.clara.disclosed);assert.deepEqual(diagnostics(s).errors,[]);
 });
 
+test('A malformed reply is told which fields are missing or not allowed, so the model can mend it',()=>{
+ const s=here('manor'),t=ticket(s,'clara'),p=proposal(t,'ask:alibi');const {utterance,...rest}=p;
+ const r=validateCharacterProposal(t,{...rest,mood:'calm'});
+ assert.equal(r.ok,false);assert.match(r.reason,/^invalid_shape: /);assert.match(r.reason,/Missing: utterance\./);assert.match(r.reason,/Not allowed: mood\./);
+ assert.equal(validateCharacterProposal(t,{...p,plan:null}).ok,validateCharacterProposal(t,p).ok);
+});
+
 test('Invalid proposals cannot inject raw patches, fabricated claims, unavailable disclosures or times',()=>{
  const s=here('manor'),t=ticket(s,'clara'),p=proposal(t,'ask:alibi');
  for(const bad of [{...p,changes:{'status':'solved'}},{...p,claims:['secret']},{...p,sources:['e99999']},{...p,account:'ask:challenge_record'},{...p,utterance:p.utterance+' At 21:14.'},{...p,intent:'teleport'}])assert.equal(validateCharacterProposal(t,bad).ok,false);
+});
+
+test('Replies and their checks are sent with their own roles, so the proxy can route each to its model',async()=>{
+ const s=here('manor'),t=ticket(s,'clara','Where were you?',{type:'ask',person:'clara',topic:'alibi'}),p=proposal(t,'ask:alibi');const roles=[];
+ await proposeCharacterTurn(t,{store:active(),fetchImpl:async(_url,init)=>{const b=JSON.parse(init.body);roles.push(b.role);return {ok:true,json:async()=>({text:b.system===CHARACTER_CRITIC?'{"verdict":"pass","violations":[]}':JSON.stringify(p)})};}});
+ assert.deepEqual(roles,['character','checker']);
 });
 
 test('Critic rejection gets one repair attempt, then falls back without applying the rejected words',async()=>{

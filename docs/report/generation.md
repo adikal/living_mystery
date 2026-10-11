@@ -161,8 +161,9 @@ The composable-brick pipeline above is tied to one village's forensic enumeratio
 a model that does not depend on the setting. A case is a set of typed records: entities, events (with time span,
 place, participants and the attitude that caused them), attitudes (an agent's stance toward a proposition), rules,
 signs (observable effects of events: traces, documents, testimony, behaviour) and a question with candidate answers.
-The language model never states what a sign rules out; it picks a sign kind (place, time, trait, possession,
-relation, fact) and the kernel computes eliminations, truth values, access depth and reading depth.
+The language model never states what a sign rules out; it picks one claim per sign, an instance of a fixed predicate (`wasAt`, `crimeBetween`, `culpritTrait`, `holds`,
+`culpritHolds`, `related`, `culpritRelated`, `crimeFact`; see [chapter 12](worked-example.md#12-3-the-representation)),
+and the kernel computes eliminations, truth values, access depth and reading depth.
 
 Certification is plain code: interval and travel checks for the true history; a justification check that every
 intentional event and every false sign has its cause; monotone reachability for access; set filtering for uniqueness;

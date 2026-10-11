@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {SYSTEM_PROMPT,CRITIC_PROMPT,buildUserPrompt,checkAnchors,llmConfig,setLlmConfig,llmActive,realizeLine,realizeDialogue,parseCritic} from '../dist/llm.mjs';
+import {SYSTEM_PROMPT,CRITIC_PROMPT,buildUserPrompt,checkAnchors,llmConfig,setLlmConfig,llmActive,realizeLine,realizeDialogue,parseCritic,turnTimeout,turnTimeoutKnown} from '../dist/llm.mjs';
 const authored='I lent Silas my green coat at 20:55.',payload={speaker:'Rowan',authoredLine:authored,entities:['Silas','Rowan']};
 function fakeStore(){const m=new Map();return {getItem:k=>m.get(k),setItem:(k,v)=>m.set(k,v)}}
 function active(){const store=fakeStore();setLlmConfig({endpoint:'http://127.0.0.1:8787',enabled:true},store);return store}
@@ -50,6 +50,12 @@ test('Critic accepts a complete JSON verdict, optionally in a single code fence'
   }
 });
 
+test('A bare pass verdict is a pass; a bare reject or a pass with other fields is unclear, so not a pass',()=>{
+  assert.deepEqual(parseCritic('{"verdict":"pass"}'),{verdict:'pass',violations:[]});
+  assert.deepEqual(parseCritic('```json\n{"verdict": "pass"}\n```'),{verdict:'pass',violations:[]});
+  for(const raw of ['{"verdict":"reject"}','{"verdict":"pass","note":"fine"}','{"verdict":"maybe"}'])assert.equal(parseCritic(raw),null);
+});
+
 test('Ambiguous critic prose cannot authorize a generated line',async()=>{
   const ambiguous=[
     `Example output: ${pass}\nActual verdict: reject. The reply invents evidence.`,
@@ -63,4 +69,17 @@ test('Ambiguous critic prose cannot authorize a generated line',async()=>{
     const result=await realizeDialogue(payload,{store:active(),fetchImpl:sequence('Well, '+authored,raw)});
     assert.equal(result.status,'fallback');assert.equal(result.reason,'invalid_critic');assert.equal(result.text,authored);
   }
+});
+
+test('The turn timeout comes from the proxy, once per endpoint, and is 45 s until it answers or if it cannot',async()=>{
+  const mem=new Map();const store={getItem:k=>mem.get(k)??null,setItem:(k,v)=>mem.set(k,v)};
+  setLlmConfig({endpoint:'http://127.0.0.1:8797/',enabled:true},store);
+  const asked=[];const fetchImpl=async url=>{asked.push(String(url));return {json:async()=>({turn_timeout_ms:240000})};};
+  assert.equal(turnTimeout(store,fetchImpl),45000);
+  await turnTimeoutKnown(store);
+  assert.equal(turnTimeout(store,fetchImpl),240000);
+  assert.deepEqual(asked,['http://127.0.0.1:8797/health']);
+  setLlmConfig({endpoint:'http://127.0.0.1:8798/'},store);
+  turnTimeout(store,async()=>{throw Error('down');});await turnTimeoutKnown(store);
+  assert.equal(turnTimeout(store),45000);
 });

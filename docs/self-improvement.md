@@ -12,6 +12,9 @@ for bugs. Epochs 0–3 have been played (ledger: `tools/playtest/ledger.jsonl`);
 .venv/bin/python tools/playtest/run.py --batch e1-heldout --plan-from e0-heldout   # the same episodes after a change
 node tools/playtest/replay.mjs --root <checkout> --sample 80 tools/playtest/runs/e1-*/*__*.json   # offline check
 node tools/playtest/replay.mjs --targets turns.json ...                    # re-ask given turns ([{file, step}])
+node tools/playtest/replay.mjs --endpoint http://127.0.0.1:8797/ --timeout 300000 --parallel 1 ...   # another proxy
+.venv/bin/python tools/playtest/replay_judge.py /tmp/replay-A.json        # independent judge of accepted replies
+.venv/bin/python tools/playtest/replay_compare.py /tmp/replay-A.json /tmp/replay-B.json   # paired comparison
 node tools/playtest/bugs.mjs --out bugs.json tools/playtest/runs/e*/      # bug detectors, ranked by severity
 .venv/bin/python tools/playtest/correctness.py tools/playtest/runs/<batch>   # correctness judge
 ```
@@ -312,6 +315,45 @@ The same 120 recorded questions put to three versions: turns that leave the play
 (−11%, not significant); replies written freely by the model 72% → 74% (no change). On 106 turns the correctness judge
 called unfair refusals, re-asking them after the fixes changed nothing: most are the fact-checker refusing a fact no
 account gives, which is what keeps characters from solving the case early.
+
+### A local open-weight model for the characters and the fact-checker
+
+Gemma 4 26B (a mixture of experts with 4B active parameters, run by Ollama 0.40 on an M3 Pro with 36 GB) replaced Claude
+Sonnet 4.5 as both the character and its fact-checker; everything else stayed on Bedrock. The same 120 recorded
+questions (`--sample 120 --seed 11` over `e3-base` and `e3a-train`) were put to both, and an independent judge
+(`replay_judge.py`, Claude Sonnet 5) read every accepted reply with the character's accounts and the village's
+who-is-who, and listed each fact the accounts do not give.
+
+The first run found two faults in the game, not in the model, both fixed and general: the character prompt did not say
+that the spoken words go inside the one JSON object (Gemma wrote them after it, and 150 attempts failed the shape
+check, whose reason now names the missing and unexpected fields); and the verdict parser refused a bare
+`{"verdict":"pass"}`, so every reply Gemma's checker passed was thrown away. After the fixes:
+
+| On 120 questions | Sonnet 4.5 (Bedrock) | Gemma 4 26B (local) | Qwen3.6 35B (local) |
+|---|---|---|---|
+| Free replies written by the model | 76% | 95% | 94% |
+| Dead ends | 8% | 4% | 1% |
+| Refused attempts per question | 1.23 | 0.33 | 0.46 |
+| Replies refused by the fact-checker | 100 of 191 checked | **0 of 115** | **7 of 120** |
+| Malformed replies (retried) | 0 | 16 | 4 |
+| Accepted replies the judge found a fact in | 53% | 46% | 65% |
+| Accepted replies the judge found a contradiction in | 11% (10) | 16% (18) | 15% (17) |
+| Seconds per call: character / checker (median) | 5.3 / 3.4 | 9.1 / 5.2 | 8.8 / 5.4 |
+| Seconds per turn, median / 90th percentile | 16.4 / 29.4 | 15.7 / 35.7 | 14.8 / 33.2 |
+
+The difference is the fact-checker. Gemma's checker passed every reply put to it (115 checks), where Sonnet refused about half, so its
+higher rate of free replies is the absence of a check, not better replies: the replies it accepted contradict the
+accounts more often (the solicitor claiming the vicar's study; the constable denying words the detective quotes back
+to him). Gemma as the character is close to Sonnet: the judge finds slightly fewer added facts per reply (0.63 against
+0.88), its replies are about twice as slow per call, and about one attempt in ten is malformed and asked again. Turn
+times are similar here only because Gemma's turns are rarely refused; the Bedrock times are for six questions at a
+time, and the Mac slept three times during the night run (once for a thermal emergency), so 8 questions were re-asked.
+A second Bedrock run differed from the first by 3 points in free replies and 4 in dead ends, which is the noise between
+runs. Qwen3.6 35B (a mixture of experts with about 3B active parameters, 23 GB) was then run the same way. Its checker refused
+7 of 120 replies, against Sonnet's 100 of 191, so it is lenient too, if less so than Gemma's; as the character it adds
+more facts than either (1.00 per accepted reply, against 0.88 for Sonnet and 0.63 for Gemma), with fewer malformed
+replies than Gemma (4 against 16). Neither local model is yet a fact-checker the game can rely on. The next step is a
+local character with Sonnet as the fact-checker (`LM_ROUTES=character=ollama:gemma4:26b`).
 
 Open after epoch 2: judged liveliness 0.33 lower than baseline (−0.67 to −0.06); rejected replies per turn 0.65 against
 0.59 (not significant). Neither the players nor the judge has yet been calibrated against human play; with 18 pairs, only

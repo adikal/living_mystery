@@ -8,7 +8,7 @@ import {exportDialogueSave,importDialogueSave,dialogueEntities,normalizeBoardNot
 import {idbGet,idbSet} from './idb-save.mjs';
 import {perspectiveAt,missedAt} from './inspector.mjs';
 import {registerKernelCase,caseTables,CASE_OPTIONS,SUSPECTS,PILLARS,copy,createSession,dispatch,followupOptions,playerClaims,parseCommand,playerView,worldAt,timeLabel,distance,diagnostics,caseHealth,exportSession,importSession,inSentence} from './engine.mjs';
-import {llmActive,llmConfig,setLlmConfig,parseCritic} from './llm.mjs';
+import {llmActive,llmConfig,setLlmConfig,parseCritic,turnTimeout} from './llm.mjs';
 
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const storageKey='living-mystery.bellweather.v1';
@@ -149,7 +149,7 @@ async function runCharacter(person,text,action=null){
   stopReplay();cursor=null;const target=session,epoch=++characterEpoch,useDirector=directorEnabled();
   characterController=new AbortController();characterBusy=true;characterPending={person,text};renderVoiceResult();
   try{
-    const result=await proposeCharacterTurn(ticket,{signal:characterController.signal});
+    const result=await proposeCharacterTurn(ticket,{signal:characterController.signal,timeoutMs:turnTimeout(undefined,fetch)});
     dlog('character_turn',{person,text,action,status:result.audit?.status,reason:result.audit?.reason,
       accounts:ticket.context.accounts.map(a=>a.id+(a.deceptive?'[lie]':'')),
       attempts:(result.audit?.attempts||[]).map(a=>({validation:a.validation,critic:String(a.critic?.response??'').slice(0,400),reply:String(a.generation?.response??'').slice(0,400)})),
@@ -182,12 +182,12 @@ function fallbackReason(audit){
   if(r==='disabled')return 'AI is turned off';
   if(r&&r!=='rejected')return `the AI was unavailable (${String(r).slice(0,60)})`;
   const last=(audit?.attempts||[]).at(-1);
-  if(last&&last.validation&&last.validation!=='pass')return `the AI reply was rejected because ${VALIDATION_REASON[last.validation]||'it stated facts this character does not know'}`;
+  if(last&&last.validation&&last.validation!=='pass')return `the AI reply was rejected because ${VALIDATION_REASON[last.validation.split(':')[0]]||'it stated facts this character does not know'}`;
   const crit=last?.critic?.response;let v=null;try{v=JSON.parse(String(crit).replace(/^[^{]*/,'').replace(/[^}]*$/,''))?.violations?.[0];}catch{}
   if(v&&/memor|not (present|contained|in) (in )?the (selected )?account|added (a )?fact/i.test(String(v)))return 'the AI reply revealed something the character remembers but has not told you yet, so they kept it to themselves';
   return v?`the fact-checker rejected the AI reply (${String(v).slice(0,140)})`:'the AI reply could not be checked';
 }
-function characterComposer(){return llmActive()&&llmConfig().reasoning?`<form id="character-form" class="character-composer"><label for="character-question">Speak in your own words</label><textarea id="character-question" maxlength="1200" rows="2" placeholder="Ask anything… (Enter to send)" ${characterBusy?'disabled':''}>${esc(characterDraft)}</textarea><button class="sr-only" ${characterBusy?'disabled':''} tabindex="-1">Send</button></form>`:'';}
+function characterComposer(){if(llmActive())turnTimeout(undefined,fetch);return llmActive()&&llmConfig().reasoning?`<form id="character-form" class="character-composer"><label for="character-question">Speak in your own words</label><textarea id="character-question" maxlength="1200" rows="2" placeholder="Ask anything… (Enter to send)" ${characterBusy?'disabled':''}>${esc(characterDraft)}</textarea><button class="sr-only" ${characterBusy?'disabled':''} tabindex="-1">Send</button></form>`:'';}
 // While a character turn is in flight, show the player's question and a spinner
 // in the main feed (below the question, before the reply arrives).
 function pendingEntries(){

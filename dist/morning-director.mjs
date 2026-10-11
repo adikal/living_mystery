@@ -120,23 +120,23 @@ export async function directMorning(session, {fetchImpl = globalThis.fetch, sign
   if (!reason) return {status: 'not_needed'};
   if (session.world.minute < (session.world.caseRecords.setting?.day?.start ?? 0)) return {status: 'not_needed'};
   const base = exportSession(session), ctxt = context(session);
-  const call = async (system, prompt, max_tokens) => {
+  const call = async (role, system, prompt, max_tokens) => {
     const res = await fetchImpl(endpoint, {method: 'POST', signal, headers: {'content-type': 'application/json', 'X-Living-Mystery': 'character-v1'},
-      body: JSON.stringify({system, prompt: JSON.stringify(prompt), max_tokens})});
+      body: JSON.stringify({role, system, prompt: JSON.stringify(prompt), max_tokens})});
     if (!res.ok) throw Error(`director unavailable (${res.status})`);
     return parseJsonLoose((await res.json()).text);
   };
   const timer = new Promise((_, no) => setTimeout(() => no(Error('director timed out')), timeoutMs));
   let proposal, result, audit = {};
   try {
-    proposal = await Promise.race([call(DIRECTOR_PROMPT, ctxt, 1500), timer]);
+    proposal = await Promise.race([call('director', DIRECTOR_PROMPT, ctxt, 1500), timer]);
     // the code critic's reasons go back once, so a fault (a meeting resting on private history, say) is mended, not just cut
     const first = Morning.check(session, session.world.caseRecords, r.behavior.morningCtx, proposal);
     if (first.errors.length) {
-      const again = await Promise.race([call(DIRECTOR_PROMPT, {...ctxt, previous_attempt: proposal, rejected: first.errors}, 1500), timer]).catch(() => null);
+      const again = await Promise.race([call('director', DIRECTOR_PROMPT, {...ctxt, previous_attempt: proposal, rejected: first.errors}, 1500), timer]).catch(() => null);
       if (again?.agendas) { audit.revised = first.errors; proposal = again; }
     }
-    result = await Promise.race([criticise(session, proposal ?? {}, {lineCritic: items => call(LINE_CRITIC, items, 800)}), timer]);
+    result = await Promise.race([criticise(session, proposal ?? {}, {lineCritic: items => call('line_critic', LINE_CRITIC, items, 800)}), timer]);
     audit = {trigger: reason, why: proposal?.why ?? '', ...(audit.revised ? {revised: audit.revised} : {}), ...result.audit};
   } catch (e) {
     if (signal?.aborted || exportSession(session) !== base) return {status: 'stale'};

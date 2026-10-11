@@ -1,8 +1,8 @@
 {
   "title": "Living Mystery",
   "subtitle": "A deterministic substrate for believable characters and investigable worlds",
-  "edition": "0.24",
-  "date": "2026-10-05",
+  "edition": "0.25",
+  "date": "2026-10-10",
   "chapters": [
     [
       "index",
@@ -53,8 +53,12 @@
       "11. Self-improvement by playtesting"
     ],
     [
+      "worked-example",
+      "12. A worked example"
+    ],
+    [
       "reference",
-      "12. References & maintenance"
+      "13. References & maintenance"
     ]
   ]
 }

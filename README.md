@@ -53,6 +53,20 @@ python3 -m venv .venv && .venv/bin/pip install -r server/requirements-solver.txt
 .venv/bin/python server/generator_server.py   # new cases (several minutes) :8789
 ```
 
+**A local open-weight model instead of Bedrock.** Each in-game call has a role (`character`, `checker`, `director`,
+`line_critic`, `autonomy`, `dialogue`), and the proxy sends each role to the backend and model in `LM_ROUTES`; roles not
+named stay on Bedrock. For example, with [Ollama](https://ollama.com) and Gemma 4 for the characters and their
+fact-checker:
+
+```sh
+ollama serve &  ollama pull gemma4:26b
+LM_ROUTES="character=ollama:gemma4:26b,checker=ollama:gemma4:26b" .venv/bin/python server/llm_proxy.py
+```
+
+The proxy prints its routes on start and reports them at `GET /health`, with the turn timeout the game should use
+(240 s when the character or checker is local, 45 s on Bedrock). Stop it and start it without `LM_ROUTES` to go back.
+Case generation and the playtest tools always use Bedrock.
+
 In the game: choose a case from the menu, or **✨ Generate a new deep case**. Talk to people with the listed questions
 or in your own words, examine what you find, show it to people, and take your case to the constable. The notebook's
 **Hints** tab gives one nudge at a time. **Menu → 🐞 Flag an issue** saves a note and the game state to `logs/game.log`.
@@ -83,8 +97,9 @@ node tools/playtest/bugs.mjs --out bugs.json tools/playtest/runs/e*/            
 
 ## Documentation
 
-- [Technical report](dist/report/index.html) (edition 0.24; [continuous edition](dist/report/complete.html)): the
+- [Technical report](dist/report/index.html) (edition 0.25; [continuous edition](dist/report/complete.html)): the
   connected argument, with diagrams; sources in [docs/report/](docs/report/index.md).
+- [A worked example](dist/report/worked-example.html) ([source](docs/report/worked-example.md)): one case's records, and how the kernel, Z3 and the model critics reason over them, at design time and at run time.
 - [Self-improvement by playtesting](docs/self-improvement.md): the method, the tools and every result.
 - [The living village](docs/living-village.md): sightings, the morning director and the rules found by playing.
 - [Mystery kernel](docs/mystery-kernel.md): the history's four record types, certification and refinement.
