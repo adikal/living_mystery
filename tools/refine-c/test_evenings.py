@@ -21,7 +21,9 @@ class Evenings(unittest.TestCase):
         added = [e for e in self.case['events'] if e.get('ordinary')]
         self.case['events'] = [e for e in self.case['events'] if not e.get('ordinary')]
         self.case['attitudes'] = [a for a in self.case['attitudes'] if a['id'] not in {e['causedBy'] for e in added}]
-        self.case['signs'] = [x for x in self.case['signs'] if not (x.get('surface') and x['speaker'] in {e['agent'] for e in added})]
+        self.case['signs'] = [x for x in self.case['signs'] if not (x.get('surface') and x['speaker'] in {e['agent'] for e in added})
+                              and not (x.get('sighting') and ({x['speaker'], x['claim']['person']} & {e['agent'] for e in added}))]
+        # (and the sightings by or about those people, which rest on those evenings)
         self.saved = refine.llm_json
 
     def tearDown(self):

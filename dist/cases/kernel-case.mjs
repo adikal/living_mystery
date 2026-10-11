@@ -789,8 +789,11 @@ export function makeKernelCase(records) {
       for (const x of open.filter(own)) {
         const prereq = arr(x.requires).length ? signs[arr(x.requires).find(r => signs[r] && signs[r].kind !== 'testimony') ?? x.requires[0]] : null;
         const about = prereq ? String(prereq.title || 'what I found').replace(/^(the|a|an) /i, '').toLowerCase() : 'what I found';
-        // the account's own question (written not to give its content away), else a question about what earned it
-        let label = (ownAsk(x) && x.ask) || (prereq?.kind === 'testimony' ? 'Someone told me something about you. Can you explain?' : `What can you tell me about the ${about}?`);
+        // the account's own question (written not to give its content away), else a question about what earned it: for
+        // another person's account, the line the case gives for putting that account to someone (the player holds it)
+        let label = (ownAsk(x) && x.ask) || (prereq?.kind === 'testimony'
+          ? (prereq.show || `${PEOPLE[prereq.speaker]?.name ?? 'Someone'} told me something that concerns you. What do you say to it?`)
+          : `What can you tell me about the ${about}?`);
         if (out.some(([, l]) => l === label)) label = `${label.replace(/\?$/, '')} — and anything else about it?`;
         if (!out.some(([, l]) => l === label)) out.push([x.id, label]);
       }

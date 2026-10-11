@@ -1183,6 +1183,22 @@
  ],
  "signs": [
   {
+   "id": "s_surface_hugo",
+   "kind": "testimony",
+   "speaker": "hugo",
+   "surface": true,
+   "deceptive": false,
+   "title": "Hugo Vale on the evening",
+   "text": "Oh, just propping up the bar at the inn, nursing a drink and losing a few hands of nothing-in-particular, you know how it is in this village of an evening. Didn't stay to the bitter end, just drifted off home when I'd had enough and turned in - thrilling stuff, I know.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Hugo Vale says he spent the evening at the inn drinking and playing cards before heading home to bed. Do you know if that's true?",
+   "lines_for": "3cea0e7d1103",
+   "confront": "You told me you were at the inn playing cards and drinking, then went straight home to bed. Is that the whole of it?"
+  },
+  {
    "id": "s_surface_rowan",
    "kind": "testimony",
    "speaker": "rowan",
@@ -1191,28 +1207,13 @@
    "title": "Rowan Pike on the evening",
    "text": "Cut my hand bad on some glass, so I went and had the doctor see to it and sat resting there a good while before heading home to bed. Nothing more to it than that.",
    "ask": "Where were you last night?",
-   "agrees_checked": 2,
+   "agrees_checked": 3,
    "surface_why": "He claims his evening was just the cut hand, the doctor, and resting before bed, but he omits (and thus conceals) that he was out delivering Reed's saw and overheard Edmund confronting Reed, and he says 'nothing more to it than that' while actually at dawn he deliberately destroyed evidence (swept u",
    "surface_checked": "cover",
    "to": null,
    "show": "Rowan Pike says he cut his hand on glass and had the doctor see to it, then rested there before heading home to bed. Do you know if that's true?",
-   "confront": "You told me you cut your hand on glass, had the doctor tend it, then rested there before going home to bed. Is that the whole of it?"
-  },
-  {
-   "id": "s_surface_hugo",
-   "kind": "testimony",
-   "speaker": "hugo",
-   "surface": true,
-   "deceptive": true,
-   "title": "Hugo Vale on the evening",
-   "text": "Spent the evening at the inn passing the time with cards and the usual chatter, nothing worth telling really, then wandered back and turned in. Honestly, dullest night I've had since I got here.",
-   "ask": "Where were you last night?",
-   "agrees_checked": 2,
-   "surface_why": "He describes an unremarkable night of cards and chatter with 'nothing worth telling,' but he omits that he pocketed his signed tally card instead of turning it in to Ada - a deliberate, concealed act that the bland account falsely implies didn't happen.",
-   "surface_checked": "cover",
-   "to": null,
-   "show": "Hugo Vale says he spent the evening at the inn playing cards and chatting, then wandered back and turned in. Do you know if that's true?",
-   "confront": "You told me you spent the evening at the inn with cards and chatter, then wandered back and turned in. Is that the whole of it?"
+   "confront": "You told me you cut your hand on glass, had the doctor tend it, then rested there before going home to bed. Is that the whole of it?",
+   "lines_for": "3d3b427d9309"
   },
   {
    "id": "s_surface_bell",
@@ -1223,11 +1224,12 @@
    "title": "Arthur Bell on the evening",
    "text": "Spent the evening by the fire at the Rook & Lantern, nursing a pint with a few of the neighbours. Nothing more to it than that - a man likes a bit of quiet company after a long day. Turned in once the pint was done.",
    "ask": "Where were you last night?",
-   "agrees_checked": 2,
+   "agrees_checked": 3,
    "to": null,
    "show": "Arthur Bell says he spent the evening by the fire at the Rook & Lantern, nursing a pint with the neighbours before turning in. Do you know if that's true?",
    "confront": "You told me you spent the evening by the fire at the Rook & Lantern, nursing a pint, before turning in. Is that the whole of it?",
-   "surface_checked": "honest"
+   "surface_checked": "honest",
+   "lines_for": "10658abe825b"
   },
   {
    "id": "s_surface_ada",
@@ -1238,11 +1240,12 @@
    "title": "Ada Finch on the evening",
    "text": "Oh, love, Thursday means the whist drive at the Rook & Lantern, and I was busy with it the whole evening - pouring tea, chivvying the tables along, and nipping down to the cellar more times than I care to count. Between the players and the gossip I hardly had a moment to call my own, but it was a lovely full house, if I say so myself.",
    "ask": "Where were you last night?",
-   "agrees_checked": 2,
+   "agrees_checked": 3,
    "surface_checked": "honest",
    "to": null,
    "show": "Ada Finch says she spent the whole of Thursday evening at the whist drive at the Rook & Lantern, pouring tea and seeing to the cellar. Do you know if that's true?",
-   "confront": "You told me you spent the whole of Thursday evening busy at the whist drive, pouring tea and going down to the cellar. Is that the whole of it?"
+   "confront": "You told me you spent the whole of Thursday evening busy at the whist drive, pouring tea and going down to the cellar. Is that the whole of it?",
+   "lines_for": "c186f617b1ce"
   },
   {
    "id": "s_morning_hugo",
@@ -1256,7 +1259,8 @@
    "surface_checked": "honest",
    "to": null,
    "show": "Hugo Vale says his morning was unremarkable until Bell rushed in around ten to seven to tell him Edmund was dead. Do you know anything of what he did before that?",
-   "confront": "You told me your morning was dull until Bell came rushing in near ten to seven to say Edmund was dead. Is that the whole of it?"
+   "confront": "You told me your morning was dull until Bell came rushing in near ten to seven to say Edmund was dead. Is that the whole of it?",
+   "lines_for": "2f9664db3301"
   },
   {
    "id": "s_morning_dora",
@@ -1270,7 +1274,8 @@
    "surface_checked": "honest",
    "to": null,
    "confront": "You told me you found Edmund's body around six, raised the doctor and the constable soon after, and later locked the office door yourself on his orders. Is that the whole of it?",
-   "show": "Dorothy Pruett says she opened up at six, found the stair door ajar and smelled gas before finding Edmund dead, then roused Dr Marsh and told Constable Bell. Do you know if that's true?"
+   "show": "Dorothy Pruett says she opened up at six, found the stair door ajar and smelled gas before finding Edmund dead, then roused Dr Marsh and told Constable Bell. Do you know if that's true?",
+   "lines_for": "4c85ff130a6f"
   },
   {
    "id": "s_morning_bell",
@@ -1284,7 +1289,8 @@
    "surface_checked": "honest",
    "to": null,
    "confront": "You told me Dora informed you at twenty past six, that you were there for Dr Marsh's examination at twenty-five past, and that you told the household at ten to seven. Is that all?",
-   "show": "Constable Bell says Dora told him at about twenty past six, and that he was there when Dr Marsh examined the body, before going up to break the news at the manor. Do you know if that's true?"
+   "show": "Constable Bell says Dora told him at about twenty past six, and that he was there when Dr Marsh examined the body, before going up to break the news at the manor. Do you know if that's true?",
+   "lines_for": "7c5d4d8a8acf"
   },
   {
    "id": "s_morning_iris",
@@ -1298,7 +1304,8 @@
    "surface_checked": "honest",
    "to": null,
    "show": "Dr Iris Marsh says Dora roused her at about quarter past six, and that by twenty-five past six she was examining Edmund's body in the estate office. Can you confirm that was the case?",
-   "confront": "You told me Dora woke you at quarter past six and that you were examining Edmund's body by twenty-five past six. Is that the whole of it?"
+   "confront": "You told me Dora woke you at quarter past six and that you were examining Edmund's body by twenty-five past six. Is that the whole of it?",
+   "lines_for": "ba6c438c5d02"
   },
   {
    "id": "s_morning_jonah",
@@ -1312,7 +1319,8 @@
    "surface_checked": "cover",
    "to": null,
    "show": "Jonah Reed says he was at the boathouse all morning and never left it, learning of Edmund's death only when Bell came up around ten to seven. Do you know if that's true?",
-   "confront": "You told me you stayed at the boathouse all morning and only heard of Edmund's death when Bell came up near ten to seven. Is that the whole of it?"
+   "confront": "You told me you stayed at the boathouse all morning and only heard of Edmund's death when Bell came up near ten to seven. Is that the whole of it?",
+   "lines_for": "9ec0bfb5fe17"
   },
   {
    "id": "s_morning_clara",
@@ -1326,7 +1334,8 @@
    "surface_checked": "honest",
    "to": null,
    "show": "Clara Vale says she knew nothing until Bell came to the manor at about ten to seven and broke the news of Edmund's death. Can you tell me if that fits with what you saw?",
-   "confront": "You told me you knew nothing of Edmund's death until Bell came to break the news at about ten to seven. Is that the whole of it?"
+   "confront": "You told me you knew nothing of Edmund's death until Bell came to break the news at about ten to seven. Is that the whole of it?",
+   "lines_for": "24152edb1696"
   },
   {
    "id": "s_medical",
@@ -1350,7 +1359,8 @@
     "bell": "Gas, between those hours. That tallies with what Dora found and what the doctor's told me plain enough. I'll want to know who was in and out of that office in that window.",
     "iris": "Yes, that's my finding exactly as written. The cherry colouring and the hour of death are consistent with gas, not with the heart failing of itself.",
     "jonah": "Gas, eh. Well, that old fire's leaked for months, everyone in the village knows it. A man takes his brandy, falls asleep, the tap gets knocked\u2014it's a sorry, ordinary sort of accident, nothing more."
-   }
+   },
+   "lines_for": "3a7116b0e6a1"
   },
   {
    "id": "s_medical_iris",
@@ -1369,7 +1379,8 @@
    "ask": "Doctor, what did you find when you examined Mr Vale?",
    "show": "Dr Marsh tells me the death was caused by breathing gas or fumes, between eight to ten and quarter past ten. Does that match what you know of the evening?",
    "confront": "You've told me the death was from breathing gas or fumes, between eight to ten and quarter past ten. Is there anything you'd add to that?",
-   "to": null
+   "to": null,
+   "lines_for": "bb1a794f8064"
   },
   {
    "id": "s_surface_dora",
@@ -1380,11 +1391,12 @@
    "title": "Dorothy Pruett on the evening",
    "text": "I was at the inn for the whist drive, playing cards till gone eleven, and then I went straight home to bed, same as always.",
    "ask": "Where were you last night?",
-   "show": "Dorothy Pruett says she was at the whist drive at the Rook & Lantern until late, then home to bed, and only learned of the matter at the office the next morning. Can you confirm that's so?",
-   "confront": "You told me you were at the whist drive until late and only found out about the office the next morning. Is that the whole of it?",
    "to": null,
    "surface_checked": "honest",
-   "agrees_checked": 2
+   "agrees_checked": 3,
+   "show": "Dorothy Pruett says she played cards at the whist drive till gone eleven, then went straight home to bed. Do you know if that's true?",
+   "lines_for": "406bc2d8f567",
+   "confront": "You told me you were at the whist drive till gone eleven, then straight home to bed. Is that the whole of it?"
   },
   {
    "id": "s_surface_vicar",
@@ -1399,7 +1411,8 @@
    "show": "The Reverend Hale says he spent the evening in the vestry going over the Harvest Festival accounts, and saw to a few small matters after. Can you confirm that's how he spent the evening?",
    "confront": "You told me you were in the vestry over the Harvest accounts, then saw to a few small matters after. Is that the whole of it?",
    "to": null,
-   "agrees_checked": 2
+   "agrees_checked": 3,
+   "lines_for": "2e04439949ac"
   },
   {
    "id": "s_surface_iris",
@@ -1410,11 +1423,12 @@
    "title": "Dr Iris Marsh on the evening",
    "text": "I had a patient in with a hand injury that wanted stitching, and I kept him resting a good while before he went home. I don't give names, but that's the whole of my evening.",
    "ask": "Where were you last night?",
-   "show": "Dr Marsh says she attended a patient's injury that evening and kept them under observation some while after, but won't say who. Do you know anything of this?",
-   "confront": "You told me you attended a patient's injury that evening and watched over them some while after, but wouldn't say who. Can you tell me now?",
    "to": null,
    "surface_checked": "honest",
-   "agrees_checked": 2
+   "agrees_checked": 3,
+   "show": "Dr Iris Marsh says she had a patient in that evening with a hand injury needing stitching, and kept him resting a good while before he went home. Do you know who that patient was?",
+   "lines_for": "56a972270261",
+   "confront": "You told me you had a patient with a hand injury that evening, and kept him resting before he went home. Is that the whole of it?"
   },
   {
    "id": "s_surface_silas",
@@ -1429,7 +1443,8 @@
    "show": "Mr Voss says he played some whist at the inn, then went to the vestry to see to papers for a quiet evening. Can you confirm he was there?",
    "confront": "You told me you played whist, then went to the vestry to see to some papers for a quiet evening. Is that the whole of it?",
    "to": null,
-   "agrees_checked": 2
+   "agrees_checked": 3,
+   "lines_for": "a0c86a9c3870"
   },
   {
    "id": "s_surface_jonah",
@@ -1440,11 +1455,12 @@
    "title": "Jonah Reed on the evening",
    "text": "I don't move from the boathouse all evening. Sat by the stove, minded my own business, same as any other night, till I turned in.",
    "ask": "Where were you last night?",
-   "show": "Jonah Reed says he never left the boathouse all evening, sitting alone by the stove with his thoughts. Can you confirm he was there the whole time?",
-   "confront": "You told me you never left the boathouse all evening, just sitting with your thoughts by the stove. Is that the whole of it?",
    "to": null,
    "surface_checked": "cover",
-   "agrees_checked": 2
+   "agrees_checked": 3,
+   "show": "Jonah Reed says he never left the boathouse all evening, just sat by the stove till he turned in. Do you know if that's true?",
+   "lines_for": "8281402225cb",
+   "confront": "You told me you never left the boathouse, just sat by the stove till you turned in. Is that the whole of it?"
   },
   {
    "id": "s_surface_clara",
@@ -1459,7 +1475,8 @@
    "confront": "You told me you were going over Harvest accounts with the vicar, then came straight home to bed. Is that the whole of it?",
    "to": null,
    "surface_checked": "cover",
-   "agrees_checked": 2
+   "agrees_checked": 3,
+   "lines_for": "fe35d00d13c4"
   },
   {
    "id": "s_ada_hugo",
@@ -1490,7 +1507,8 @@
    "direct": "Mrs Finch says you were in the room all night at the whist drive, but your tally card never came back to her tin. Can you explain that?",
    "reactions": {
     "hugo": "Ha, well, that's Mrs Finch all over, isn't it\u2014mind on the cellar, not the clock. I was there the whole blessed night, cards and all, didn't I say so? Can't help it if my tally wandered off before I handed it in."
-   }
+   },
+   "lines_for": "c647bc331e81"
   },
   {
    "id": "s_vicar_clara",
@@ -1521,7 +1539,8 @@
    "direct": "The vicar says you came at half past nine and never left the vestry until eleven, besides a private matter he won't disclose. Is that so?",
    "reactions": {
     "clara": "The vicar has it exactly right, and I'd thank you not to press him further on the private matter\u2014it concerns no one's death, only my own affairs, which I mean to keep that way."
-   }
+   },
+   "lines_for": "8428eebcb21d"
   },
   {
    "id": "s_iris_rowan",
@@ -1547,7 +1566,7 @@
    ],
    "reading": "The doctor won't name her patient, but she describes a deep cut from a pane of glass and seven stitches. The broken, bloodied greenhouse pane and the stitches on Mr Pike's dressed hand show the patient was Rowan Pike, in the surgery from 21:38 to 22:40.",
    "concede": {
-    "s_greenhouse_pane": "Very well - he came in at twenty-two to eleven with a bad cut from glass, took seven stitches, and I kept him in that chair until ten to twenty-one. I didn't name him before because that's between a doctor and her patient, not for want of truth."
+    "s_greenhouse_pane": "Very well \u2014 the man I treated at 21:38 for a glass cut, the one who needed seven stitches and sat with me until 22:40, was Mr Pike. I withheld his name because that is simply what I do for every patient, not because there was anything else to hide."
    },
    "show": "Dr Marsh says a man came to her surgery at 21:38 with a deep glass cut to his hand, needing seven stitches, and he stayed until 22:40. Do you know who that might have been?",
    "confront": "Dr Marsh says a man came to her surgery at 21:38 with a deep glass cut needing seven stitches, and stayed until 22:40. Was that you?",
@@ -1555,7 +1574,8 @@
    "direct": "Dr Marsh says you came in at 21:38 with a deep glass cut, had seven stitches, and stayed in her surgery until 22:40. Is that so?",
    "reactions": {
     "rowan": "Aye, that's me, though I'll own I never said so outright. Cut my hand on glass, not the billhook as I told you\u2014there's a broken pane wants mending and I didn't fancy the family calling it neglect."
-   }
+   },
+   "lines_for": "97b08f3ac3c6"
   },
   {
    "id": "s_clara_account",
@@ -1573,7 +1593,8 @@
    "show": "Miss Vale says she spent the evening on parish business and did not expect her brother home, nor wait up for him. Does that square with what you know?",
    "confront": "You told me you spent the evening on parish business and did not wait up for your brother. Is that the whole of it?",
    "to": null,
-   "same_as": "night"
+   "same_as": "night",
+   "lines_for": "5ff84fb7b2f8"
   },
   {
    "id": "s_hugo_account",
@@ -1594,7 +1615,8 @@
    "show": "Mr Hugo says he had a quiet pint or two at the Rook and knew nothing of his uncle's business that night. Can you confirm he was there?",
    "confront": "You told me you had a quiet pint or two at the Rook and knew nothing of your uncle's affairs. Is that the whole of it?",
    "to": null,
-   "same_as": "night"
+   "same_as": "night",
+   "lines_for": "29ed722266cb"
   },
   {
    "id": "s_rowan_account",
@@ -1618,7 +1640,8 @@
    "to": null,
    "reactions": {
     "jonah": "Pike's hand is his own business, not mine. I lent him nothing but a saw and never asked after his troubles\u2014a man's entitled to keep his own evening to himself."
-   }
+   },
+   "lines_for": "44a012316eb1"
   },
   {
    "id": "s_jonah_alibi",
@@ -1641,7 +1664,8 @@
    "show": "Mr Reed says he spent the whole evening alone at the boathouse, mending the punt's painter and sleeping, with no one to see him. Can you say whether that's true?",
    "confront": "You told me you spent the whole evening alone at the boathouse mending the painter and sleeping. Is that the whole of it?",
    "to": null,
-   "same_as": "night"
+   "same_as": "night",
+   "lines_for": "ba0652dd9478"
   },
   {
    "id": "s_diary",
@@ -1656,7 +1680,8 @@
    "unlock": "Miss Pruett holds the only other key to the estate office, which she locked after the examination. Once she has told you what she found, she unlocks the stair door and lets you look at the desk.",
    "show": "Edmund's diary shows an entry for Thursday reading '6.30 \u2014 Voss, vestry, re J.R.' and then 'After 7 \u2014 boathouse.' Can you help me understand these entries?",
    "to": null,
-   "art": "diary"
+   "art": "diary",
+   "lines_for": "713c2abbde30"
   },
   {
    "id": "s_silas_secret",
@@ -1682,7 +1707,8 @@
    },
    "confront": "You've told me Edmund came to you at half past six, saying his boatman Reed was really Jonah Marlow, an escaped convict he meant to confront and report that very night. Is that the whole of it?",
    "to": null,
-   "show": "Mr Voss says Edmund came to him at half past six and said his boatman Reed was really one Jonah Marlow, an escaped convict, and meant to confront him then write to the Governor. Do you know anything about that?"
+   "show": "Mr Voss says Edmund came to him at half past six and said his boatman Reed was really one Jonah Marlow, an escaped convict, and meant to confront him then write to the Governor. Do you know anything about that?",
+   "lines_for": "71b43ee4d61c"
   },
   {
    "id": "s_silas_sighting",
@@ -1714,7 +1740,8 @@
    "reactions": {
     "jonah": "Voss sees what he sees, I suppose, though the light by that pump's poor enough to fool a man's own mother. I don't recall passing him, and I'll not swear to being anywhere but the boathouse, where the river keeps its own counsel."
    },
-   "same_as": "night"
+   "same_as": "night",
+   "lines_for": "63ae8483b8c8"
   },
   {
    "id": "s_dora_account",
@@ -1734,7 +1761,8 @@
    "unlock": "Faced with the smell of gas on her own stair and the open window above it, Miss Pruett can't pretend nothing was wrong. She agrees to say what she found upstairs, though she still plays it down.",
    "show": "Miss Pruett says she found the office door ajar this morning, with Mr Vale dead in his chair, the fire out, the tap shut and the window open. Does that match what you've learned?",
    "confront": "You told me you found the office door ajar, Mr Vale dead in his chair, the fire out, the tap shut, and the window open. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "lines_for": "ac2051d6ed52"
   },
   {
    "id": "s_exam",
@@ -1763,7 +1791,8 @@
     "bell": "Cherry lips, no struggle, a glass of brandy by him\u2014that's a quiet death, by the look of it, and gas behind it besides. I'll want the full account of who had cause to be up that stair.",
     "iris": "That's precisely what I observed and nothing more\u2014the colour, the stillness, the brandy glass, all consistent with gas and with the hours I've given you.",
     "jonah": "No struggle, you say. Well, a man dozing with his brandy wouldn't put up much of one, would he. Sounds like the fire did its mischief quietly, same as it's always threatened to."
-   }
+   },
+   "lines_for": "a1f491cbcfc1"
   },
   {
    "id": "s_stove",
@@ -1785,7 +1814,8 @@
    "art": "ashes",
    "reactions": {
     "jonah": "Paper burns, same as anything else goes in a stove\u2014I keep mine lit most nights, this time of year. I can't say what scraps might blow in or what some other hand threw there before me."
-   }
+   },
+   "lines_for": "9fb0f58b69b5"
   },
   {
    "id": "s_glove",
@@ -1807,8 +1837,10 @@
    "direct": "I found a clean left-hand grey kid glove marked C.V. in the vestry's lost-property drawer, with Harvest figures tucked inside. Can you explain that?",
    "art": "glove",
    "reactions": {
-    "vicar": "Oh\u2014oh dear. Yes, that is Miss Vale's glove, and I did say nobody called, which was unkind of me and untrue. I promised her discretion, you see, and I'm afraid conscience and promise have been pulling rather hard against one another."
-   }
+    "vicar": "Oh\u2014oh dear. Yes, that is Miss Vale's glove, and I did say nobody called, which was unkind of me and untrue. I promised her discretion, you see, and I'm afraid conscience and promise have been pulling rather hard against one another.",
+    "clara": "Yes, that is mine. I was going over the Harvest figures with the vicar and must have left it on the bench \u2014 the pencilled sum is my own hand, you'll find, nothing more sinister than arithmetic. I'd be obliged if you'd keep my visit there to yourself."
+   },
+   "lines_for": "fb7d230fea6a"
   },
   {
    "id": "s_tally",
@@ -1828,7 +1860,8 @@
    "art": "card",
    "reactions": {
     "hugo": "Ha, caught out proper, aren't I. Yes, cards all night, 'owe D.P. two bob' and all\u2014I only said drinks because I didn't fancy Clara hearing I'd been at the tables again, that's the whole of my crime."
-   }
+   },
+   "lines_for": "bfb1cbb9874c"
   },
   {
    "id": "s_rowan_overheard",
@@ -1855,7 +1888,8 @@
    "show": "Mr Pike says that returning Reed's saw about quarter past seven, he heard the Squire inside the boathouse say a letter naming Marlow would go to Hull with the morning post. Did you hear anything of that exchange?",
    "confront": "You told me that returning Reed's saw about quarter past seven, you heard the Squire say a letter naming Marlow would go to Hull with the morning post. Is that the whole of it?",
    "to": null,
-   "same_as": "night"
+   "same_as": "night",
+   "lines_for": "1539e1708b66"
   },
   {
    "id": "s_clara_trunk",
@@ -1878,7 +1912,8 @@
    "direct": "There's a corded trunk labelled for your journey to Harrogate on Friday, and you stepped between me and it, saying it wasn't my concern. Can you explain that?",
    "reactions": {
     "clara": "I see you've found it. Yes, I am leaving, and I had not told Edmund, nor do I intend to explain my reasons to anyone but the people who matter to me. It has nothing to do with how he died."
-   }
+   },
+   "lines_for": "f0e35c10015b"
   },
   {
    "id": "s_clara_letter",
@@ -1897,7 +1932,8 @@
    "art": "letter",
    "reactions": {
     "clara": "Yes, that is my situation, plainly stated. I asked the vicar for a character so that I might leave this house at last, and I don't see that wanting a different life makes me answerable for his death."
-   }
+   },
+   "lines_for": "bf609ded64ba"
   },
   {
    "id": "s_greenhouse_pane",
@@ -1916,7 +1952,8 @@
    },
    "to": "rowan",
    "direct": "There's a broken pane here covered with sacking, a scrubbed bench, and bloodied glass hidden in the ash, and you keep your stitched hand hidden in your pocket. Can you explain that?",
-   "art": "sacking"
+   "art": "sacking",
+   "lines_for": "ab8a0a764d93"
   },
   {
    "id": "s_lone_glove",
@@ -1935,7 +1972,8 @@
    },
    "to": "clara",
    "direct": "I found a single right-hand grey kid glove marked C.V. on the hall table, with no left-hand glove anywhere in the house. Can you explain that?",
-   "art": "glove"
+   "art": "glove",
+   "lines_for": "87e20b4f04eb"
   },
   {
    "id": "s_vicar_alone",
@@ -1951,7 +1989,8 @@
    "show": "The Reverend Hale says he spent Thursday evening alone in the vestry working on his sermon, with no callers at all. Does that match what you understand?",
    "confront": "You told me you spent Thursday evening alone in the vestry on your sermon, with no callers at all. Is that the whole of it?",
    "to": null,
-   "same_as": "s_vicar_clara"
+   "same_as": "s_vicar_clara",
+   "lines_for": "bfc2a720c718"
   },
   {
    "id": "s_gas_stair",
@@ -1969,7 +2008,8 @@
     "dora": "I shut that tap and opened the window myself, soon as I smelled it\u2014had to air the place before anyone could go up safe. The door's locked now because the constable told me to lock it, and locked it stays till he says different."
    },
    "to": null,
-   "art": "stairs"
+   "art": "stairs",
+   "lines_for": "4e6a942b8746"
   },
   {
    "id": "s_dora_debt",
@@ -1987,7 +2027,8 @@
    "show": "Miss Pruett says she was at Mrs Finch's whist until eleven, partnered Mr Hugo twice, and that he owes her two shillings pencilled on his own card. Does that match what you recall?",
    "confront": "You told me you were at the whist until eleven, partnered Mr Hugo twice, and that he owes you two shillings pencilled on his own card. Is that the whole of it?",
    "to": null,
-   "same_as": "night"
+   "same_as": "night",
+   "lines_for": "b2e5909250d6"
   },
   {
    "id": "s_rowan_billhook",
@@ -2004,7 +2045,8 @@
    "show": "Mr Pike says his billhook slipped while cutting laurels before dark, that he tied a rag round it, and spent the evening as usual. Does that match what you know?",
    "confront": "You told me your billhook slipped cutting laurels before dark, that you tied a rag round it, and spent the evening as usual. Is that the whole of it?",
    "to": null,
-   "same_as": "night"
+   "same_as": "night",
+   "lines_for": "c6453f8b83c3"
   },
   {
    "id": "s_billhook_clean",
@@ -2023,7 +2065,8 @@
    },
    "to": "rowan",
    "direct": "The billhook on its nail is dull and clean, with no blood on it at all, though you told me it caused your cut. Can you explain that?",
-   "art": "billhook"
+   "art": "billhook",
+   "lines_for": "cce122bb60aa"
   },
   {
    "id": "s_manor_bolted",
@@ -2042,7 +2085,8 @@
     "clara": "I bolted it because I will not have the house gawped at and gossiped over while we're still reeling from my brother's death. I've said I'll speak to the constable, and to him I shall\u2014not to every curious soul who knocks."
    },
    "to": "clara",
-   "direct": "This morning your front door was bolted, and you spoke through the letterbox saying you'd only talk with Constable Bell present. Can you explain that?"
+   "direct": "This morning your front door was bolted, and you spoke through the letterbox saying you'd only talk with Constable Bell present. Can you explain that?",
+   "lines_for": "66c2f38fad5d"
   },
   {
    "id": "s_yard_gate",
@@ -2062,7 +2106,8 @@
     "dora": "That lock's new, yes, and glad of it\u2014I'll not have every busybody in the village traipsing through my yard while this is going on. The lavender's for the smell, nothing more, and the gate opens for Constable Bell and no one else."
    },
    "to": "dora",
-   "direct": "I noticed a new padlock on the yard gate, and you said you'd open it for nobody but Constable Bell. Can you explain that?"
+   "direct": "I noticed a new padlock on the yard gate, and you said you'd open it for nobody but Constable Bell. Can you explain that?",
+   "lines_for": "b33f3b8569a0"
   },
   {
    "id": "s_saw_ada_dora_inn",
@@ -2084,7 +2129,11 @@
    "to": "dora",
    "direct": "Mrs Finch says she saw you at The Rook & Lantern at quarter to eight. Is that so?",
    "show": "Mrs Finch says she saw Miss Pruett at The Rook & Lantern at quarter to eight. Can you confirm that?",
-   "confront": "You told me you saw Miss Pruett at The Rook & Lantern at quarter to eight. Is that right?"
+   "confront": "You told me you saw Miss Pruett at The Rook & Lantern at quarter to eight. Is that right?",
+   "lines_for": "f0edf5277737",
+   "reactions": {
+    "dora": "Quarter to eight, you say \u2014 well, I may have come in a shade earlier than I recalled, but I was at my whist all the same, and nothing about that alters what I found at the office in the morning."
+   }
   },
   {
    "id": "s_saw_ada_silas_inn",
@@ -2106,7 +2155,11 @@
    "to": "silas",
    "direct": "Mrs Finch says she saw you at The Rook & Lantern at quarter past eight. Is that so?",
    "show": "Mrs Finch says she saw Mr Voss at The Rook & Lantern at quarter past eight. Can you confirm that?",
-   "confront": "You told me you saw Mr Voss at The Rook & Lantern at quarter past eight. Is that right?"
+   "confront": "You told me you saw Mr Voss at The Rook & Lantern at quarter past eight. Is that right?",
+   "lines_for": "4c333f31a5b7",
+   "reactions": {
+    "silas": "Quarter past eight sounds about right, Mrs Finch has a good eye for the clock. I played my hands and went on to the vestry to file my papers, as I told you."
+   }
   },
   {
    "id": "s_saw_dora_ada_inn",
@@ -2128,7 +2181,11 @@
    "to": "ada",
    "direct": "Miss Pruett says she saw you at The Rook & Lantern at quarter to eight. Is that so?",
    "show": "Miss Pruett says she saw Mrs Finch at The Rook & Lantern at quarter to eight. Can you confirm that?",
-   "confront": "You told me you saw Mrs Finch at The Rook & Lantern at quarter to eight. Is that right?"
+   "confront": "You told me you saw Mrs Finch at The Rook & Lantern at quarter to eight. Is that right?",
+   "lines_for": "cc1f79f0af22",
+   "reactions": {
+    "ada": "Oh, bless her, quarter to eight does sound right, love \u2014 I was running about with the cards and the teapot all evening, hardly had a moment to watch the clock myself."
+   }
   },
   {
    "id": "s_saw_dora_silas_inn",
@@ -2150,7 +2207,219 @@
    "to": "silas",
    "direct": "Miss Pruett says she saw you at The Rook & Lantern at quarter past eight. Is that so?",
    "show": "Miss Pruett says she saw Mr Voss at The Rook & Lantern at quarter past eight. Can you confirm that?",
-   "confront": "You told me you saw Mr Voss at The Rook & Lantern at quarter past eight. Is that right?"
+   "confront": "You told me you saw Mr Voss at The Rook & Lantern at quarter past eight. Is that right?",
+   "lines_for": "811288cf7998",
+   "reactions": {
+    "silas": "Quarter past eight, yes \u2014 Miss Pruett keeps a sharper eye on the room than most. I played, then went to my papers at the vestry, exactly as I said."
+   }
+  },
+  {
+   "id": "s_saw_ada_bell_inn",
+   "kind": "testimony",
+   "speaker": "ada",
+   "sighting": true,
+   "source": "e_dora_whist",
+   "claim": {
+    "kind": "place",
+    "person": "bell",
+    "place": "inn",
+    "start": 1170,
+    "end": 1380
+   },
+   "title": "Ada Finch saw Arthur Bell",
+   "text": "Oh, love, I saw Constable Bell at The Rook & Lantern at quarter to eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "bell",
+   "direct": "Mrs Finch says she saw you at The Rook & Lantern at quarter to eight. Is that so?",
+   "show": "Mrs Finch says she saw Constable Bell at The Rook & Lantern at quarter to eight. Does that match what you remember?",
+   "lines_for": "3cfeba2e3b51",
+   "confront": "You told me you saw Constable Bell at The Rook & Lantern at quarter to eight. Is that right?",
+   "reactions": {
+    "bell": "Quarter to eight, aye, that'd be about the time I settled by the fire. Nothing wrong in a constable taking a pint of an evening, Mrs Finch'll vouch I didn't stir far after that."
+   }
+  },
+  {
+   "id": "s_saw_bell_ada_inn",
+   "kind": "testimony",
+   "speaker": "bell",
+   "sighting": true,
+   "source": "e_bell_evening",
+   "claim": {
+    "kind": "place",
+    "person": "ada",
+    "place": "inn",
+    "start": 1170,
+    "end": 1380
+   },
+   "title": "Arthur Bell saw Ada Finch",
+   "text": "I saw Mrs Finch at The Rook & Lantern at quarter to eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "ada",
+   "direct": "Constable Bell says he saw you at The Rook & Lantern at quarter to eight. Is that so?",
+   "show": "Constable Bell says he saw Mrs Finch at The Rook & Lantern at quarter to eight. Would you say that's accurate?",
+   "lines_for": "8af874d1aa24",
+   "confront": "You told me you saw Mrs Finch at The Rook & Lantern at quarter to eight. Is that correct?",
+   "reactions": {
+    "ada": "Quarter to eight, that's it exactly, love \u2014 running my whist drive same as every Thursday, you can ask anyone who was there."
+   }
+  },
+  {
+   "id": "s_saw_bell_dora_inn",
+   "kind": "testimony",
+   "speaker": "bell",
+   "sighting": true,
+   "source": "e_bell_evening",
+   "claim": {
+    "kind": "place",
+    "person": "dora",
+    "place": "inn",
+    "start": 1170,
+    "end": 1380
+   },
+   "title": "Arthur Bell saw Dorothy Pruett",
+   "text": "I saw Miss Pruett at The Rook & Lantern at quarter to eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "dora",
+   "direct": "Constable Bell says he saw you at The Rook & Lantern at quarter to eight. Is that so?",
+   "show": "Constable Bell says he saw Miss Pruett at The Rook & Lantern at quarter to eight. Does that sound right to you?",
+   "lines_for": "21f094a2d6fa",
+   "confront": "You told me you saw Miss Pruett at The Rook & Lantern at quarter to eight. Is that correct?",
+   "reactions": {
+    "dora": "Quarter to eight is near enough correct, Constable, though I'd have said a touch later myself. In any case I was at the inn until eleven, as recorded, and no business of mine with the gas till morning."
+   }
+  },
+  {
+   "id": "s_saw_bell_silas_inn",
+   "kind": "testimony",
+   "speaker": "bell",
+   "sighting": true,
+   "source": "e_bell_evening",
+   "claim": {
+    "kind": "place",
+    "person": "silas",
+    "place": "inn",
+    "start": 1200,
+    "end": 1300
+   },
+   "title": "Arthur Bell saw Silas Voss",
+   "text": "I saw Mr Voss at The Rook & Lantern at quarter past eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "silas",
+   "direct": "Constable Bell says he saw you at The Rook & Lantern at quarter past eight. Is that so?",
+   "show": "Constable Bell says he saw Mr Voss at The Rook & Lantern at quarter past eight. Can you confirm that?",
+   "lines_for": "e0a37e872328",
+   "confront": "You told me you saw Mr Voss at The Rook & Lantern at quarter past eight. Is that correct?",
+   "reactions": {
+    "silas": "Quarter past eight, as the constable has it \u2014 a man of his habits is not often wrong. I was at cards until twenty to ten, then to my files, nothing more to add."
+   }
+  },
+  {
+   "id": "s_saw_dora_bell_inn",
+   "kind": "testimony",
+   "speaker": "dora",
+   "sighting": true,
+   "source": "e_dora_whist",
+   "claim": {
+    "kind": "place",
+    "person": "bell",
+    "place": "inn",
+    "start": 1170,
+    "end": 1380
+   },
+   "title": "Dorothy Pruett saw Arthur Bell",
+   "text": "I observed Constable Bell at The Rook & Lantern at quarter to eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "bell",
+   "direct": "Miss Pruett says she observed you at The Rook & Lantern at quarter to eight. Is that so?",
+   "show": "Miss Pruett says she observed Constable Bell at The Rook & Lantern at quarter to eight. Is that how you recall it?",
+   "lines_for": "e801c781f3f6",
+   "confront": "You told me you observed Constable Bell at The Rook & Lantern at quarter to eight. Is that the whole of it?",
+   "reactions": {
+    "bell": "Quarter to eight sounds right enough, Miss Pruett's not one to misremember. I had my pint, a bit of quiet company, and that was the whole of it."
+   }
+  },
+  {
+   "id": "s_saw_hugo_ada_inn",
+   "kind": "testimony",
+   "speaker": "hugo",
+   "sighting": true,
+   "source": "e_hugo_cards",
+   "claim": {
+    "kind": "place",
+    "person": "ada",
+    "place": "inn",
+    "start": 1200,
+    "end": 1380
+   },
+   "title": "Hugo Vale saw Ada Finch",
+   "text": "Yeah, I saw Mrs Finch at The Rook & Lantern at quarter past eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "ada",
+   "direct": "Hugo Vale says he saw you at The Rook & Lantern at quarter past eight. Is that so?",
+   "show": "Hugo Vale says he saw Mrs Finch at The Rook & Lantern at quarter past eight. Does that fit with what you know?",
+   "lines_for": "e599265ada0f",
+   "confront": "You told me you saw Mrs Finch at The Rook & Lantern at quarter past eight. Is that correct?",
+   "reactions": {
+    "ada": "Quarter past eight, love, yes \u2014 that'd be after I'd got the second round of whist going, I shouldn't wonder young Mr Vale noticed me dashing about with the trays."
+   }
+  },
+  {
+   "id": "s_saw_hugo_bell_inn",
+   "kind": "testimony",
+   "speaker": "hugo",
+   "sighting": true,
+   "source": "e_hugo_cards",
+   "claim": {
+    "kind": "place",
+    "person": "bell",
+    "place": "inn",
+    "start": 1200,
+    "end": 1380
+   },
+   "title": "Hugo Vale saw Arthur Bell",
+   "text": "Yeah, I saw Constable Bell at The Rook & Lantern at quarter past eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "bell",
+   "direct": "Hugo Vale says you were at The Rook & Lantern at quarter past eight. Is that so?",
+   "confront": "You told me you saw Constable Bell at The Rook & Lantern at quarter past eight. Is that correct?",
+   "lines_for": "a0ee3d0a8f82",
+   "show": "Hugo Vale says he saw Constable Bell at The Rook & Lantern at quarter past eight. Do you know if that's so?",
+   "reactions": {
+    "bell": "Quarter past eight's close enough, though I'd have thought it a touch earlier myself. Either way, I was sat by that fire the whole evening, nothing more to it."
+   }
+  },
+  {
+   "id": "s_saw_hugo_dora_inn",
+   "kind": "testimony",
+   "speaker": "hugo",
+   "sighting": true,
+   "source": "e_hugo_cards",
+   "claim": {
+    "kind": "place",
+    "person": "dora",
+    "place": "inn",
+    "start": 1200,
+    "end": 1380
+   },
+   "title": "Hugo Vale saw Dorothy Pruett",
+   "text": "Yeah, I saw Miss Pruett at The Rook & Lantern at quarter past eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "dora",
+   "direct": "Hugo Vale says he saw you at The Rook & Lantern at quarter past eight. Is that so?",
+   "show": "Hugo Vale says he saw Miss Pruett at The Rook & Lantern at quarter past eight. Would that agree with what you remember?",
+   "lines_for": "03893fc652a8",
+   "confront": "You told me you saw Miss Pruett at The Rook & Lantern at quarter past eight. Is that correct?",
+   "reactions": {
+    "dora": "Quarter past eight \u2014 well, I shouldn't dispute Mr Vale's memory, though I'd have placed myself there rather sooner. I was at my whist regardless, until eleven, just as I told you."
+   }
   }
  ],
  "premise": {
@@ -2284,6 +2553,7 @@
   "s_exam|reactions|jonah",
   "s_gas_stair|reactions|dora",
   "s_glove|direct",
+  "s_glove|reactions|clara",
   "s_glove|reactions|vicar",
   "s_greenhouse_pane|direct",
   "s_greenhouse_pane|reactions|rowan",
@@ -2307,14 +2577,42 @@
   "s_morning_iris|text",
   "s_morning_jonah|text",
   "s_rowan_account|reactions|jonah",
+  "s_saw_ada_bell_inn|direct",
+  "s_saw_ada_bell_inn|reactions|bell",
+  "s_saw_ada_bell_inn|text",
   "s_saw_ada_dora_inn|direct",
+  "s_saw_ada_dora_inn|reactions|dora",
   "s_saw_ada_dora_inn|text",
   "s_saw_ada_silas_inn|direct",
+  "s_saw_ada_silas_inn|reactions|silas",
   "s_saw_ada_silas_inn|text",
+  "s_saw_bell_ada_inn|direct",
+  "s_saw_bell_ada_inn|reactions|ada",
+  "s_saw_bell_ada_inn|text",
+  "s_saw_bell_dora_inn|direct",
+  "s_saw_bell_dora_inn|reactions|dora",
+  "s_saw_bell_dora_inn|text",
+  "s_saw_bell_silas_inn|direct",
+  "s_saw_bell_silas_inn|reactions|silas",
+  "s_saw_bell_silas_inn|text",
   "s_saw_dora_ada_inn|direct",
+  "s_saw_dora_ada_inn|reactions|ada",
   "s_saw_dora_ada_inn|text",
+  "s_saw_dora_bell_inn|direct",
+  "s_saw_dora_bell_inn|reactions|bell",
+  "s_saw_dora_bell_inn|text",
   "s_saw_dora_silas_inn|direct",
+  "s_saw_dora_silas_inn|reactions|silas",
   "s_saw_dora_silas_inn|text",
+  "s_saw_hugo_ada_inn|direct",
+  "s_saw_hugo_ada_inn|reactions|ada",
+  "s_saw_hugo_ada_inn|text",
+  "s_saw_hugo_bell_inn|direct",
+  "s_saw_hugo_bell_inn|reactions|bell",
+  "s_saw_hugo_bell_inn|text",
+  "s_saw_hugo_dora_inn|direct",
+  "s_saw_hugo_dora_inn|reactions|dora",
+  "s_saw_hugo_dora_inn|text",
   "s_silas_sighting|direct",
   "s_silas_sighting|reactions|jonah",
   "s_stove|reactions|jonah",
@@ -2413,5 +2711,6 @@
    "I can offer no entry at all on that particular matter."
   ]
  },
- "declines_version": 3
+ "declines_version": 3,
+ "review_version": 2
 }

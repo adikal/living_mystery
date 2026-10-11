@@ -92,16 +92,24 @@ line the game will show or a character will say. Flag an item only for a concret
 - it names a person wrongly (e.g. calls the victim by another person's name) or gets a relationship wrong (calls a
   sister a wife: 'people' says who everyone is),
 - an innocent character confesses to something they did not do, or the culprit confesses to the crime,
-- it reveals who the culprit is where the item is not itself proof.
+- it reveals who the culprit is where the item is not itself proof,
+- it speaks of the victim as alive now ('victim' is dead since last night): "ask the landlady" when she is the victim.
 Characters may lie where the item says 'lie': true, and accounts may be honestly mistaken: repeating, quoting or
 reacting to an account is NOT a fault because the account itself is wrong. For the detective's lines ('said_by' the
 detective) check only that they add no fact beyond the clue in 'about'. Vague is fine. Report only definite faults. Return
 {"problems": {"<key>": "<what is wrong>"}} with only the faulty items (empty object if none)."""
 
 
+REVIEW_VERSION = 2   # 2: the victim is dead; forms of address checked in code
+
+
 def review_publish(case):
-    """Check everything publish wrote against the true history; drop faulty lines (the game falls back to templates)."""
+    """Check everything publish wrote against the true history; drop faulty lines (the game falls back to templates).
+    Items reviewed under an older version of the review are reviewed again."""
     from refine import llm_json, CRITIC_MODEL
+    import publish
+    if case.get('review_version') != REVIEW_VERSION:
+        case['reviewed'], case['review_version'] = [], REVIEW_VERSION
     victim = victim_of(case)
     items = {}
     for x in case['signs']:
@@ -120,8 +128,10 @@ def review_publish(case):
     ctx = {'victim': victim, 'culprit': truth_actor(case), 'history': _history(case),
            'people': [{'id': p['id'], 'name': p['name'], 'who': next((q.get('public') for q in SETTING.get('people', []) if q['id'] == p['id']), '')}
                       for p in case['people']]}
-    problems = {}
-    keys = list(todo)
+    # a form of address no one in the setting answers to (and the history does not use) is a fault, found by code
+    problems = {k: f"wrong form of address: {', '.join(w)}" for k, v in todo.items()
+                if (w := publish.wrong_addresses(v['text'], publish.history_text(case)))}
+    keys = [k for k in todo if k not in problems]
     for i in range(0, len(keys), 40):
         chunk = {k: todo[k] for k in keys[i:i + 40]}
         out = llm_json(REVIEW, json.dumps({**ctx, 'items': chunk}), 4000, model=CRITIC_MODEL).get('problems') or {}

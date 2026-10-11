@@ -27,10 +27,9 @@ class Sightings(unittest.TestCase):
 
     def test_kept_sightings_leave_the_solve_unchanged(self):
         before = publish._solve_shape(self.case)
-        lines = iter(['I saw them there about ten.'] * 99)
         saved = refine.llm_json
         refine.llm_json = lambda system, prompt, *a, **k: ({'problems': {}} if system == enrich.REVIEW else
-                                                          {'lines': {i['id']: next(lines) for i in json.loads(prompt)}})
+                                                          {'lines': {i['id']: f"I saw {i['saw']} there about ten." for i in json.loads(prompt)}})
         try:
             n = publish.add_sightings(self.case, log=lambda *a: None)
         finally:

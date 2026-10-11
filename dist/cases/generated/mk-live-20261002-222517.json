@@ -923,12 +923,13 @@
    "title": "Dorothy Pruett on the evening",
    "text": "I closed the counter at the usual hour and went along to Mrs Finch's parlour for my cocoa, as I generally do of an evening. I came home directly after and went straight up to bed, and that is all there is to tell.",
    "ask": "Where were you last night?",
-   "agrees_checked": 2,
+   "agrees_checked": 3,
    "surface_why": "She claims she went to Mrs Finch's parlour for cocoa and then straight home to bed, but she actually arranged a false alibi (asking Ada to say she was in the parlour) to cover a secret meeting with the vicar that ended in his stabbing.",
    "surface_checked": "cover",
    "to": null,
    "show": "Dorothy Pruett says she closed the counter at the usual hour, took cocoa with Mrs Finch, then went straight home to bed. Do you know if that's true?",
-   "confront": "You told me you closed up, took cocoa with Mrs Finch, and went straight home to bed. Is that the whole of it?"
+   "confront": "You told me you closed up, took cocoa with Mrs Finch, and went straight home to bed. Is that the whole of it?",
+   "lines_for": "5dbb1f6c93f7"
   },
   {
    "id": "s_surface_iris",
@@ -939,12 +940,13 @@
    "title": "Dr Iris Marsh on the evening",
    "text": "I was called out that evening on a professional matter I'll not discuss until the proper time, and before that I had sat a good while in conversation about a private matter. I retired rather late, and that's all I'll say of it for now.",
    "ask": "Where were you last night?",
-   "agrees_checked": 2,
+   "agrees_checked": 3,
    "surface_why": "She vaguely implies a professional call and private conversation, but omits and obscures her actual actions: examining the body with Bell and tampering with evidence (losing forceps at the scene), which conceals her involvement in the death investigation that night.",
    "surface_checked": "cover",
    "to": null,
    "show": "Dr Iris Marsh says she was called out that evening on a professional matter, having first sat talking over a private matter, and retired late. Do you know anything of that?",
-   "confront": "You told me you were called out on a professional matter after sitting a good while over a private matter, retiring late. Is that the whole of it?"
+   "confront": "You told me you were called out on a professional matter after sitting a good while over a private matter, retiring late. Is that the whole of it?",
+   "lines_for": "0894a2dbd009"
   },
   {
    "id": "s_surface_edmund",
@@ -955,11 +957,12 @@
    "title": "Edmund Vale on the evening",
    "text": "I dined at the manor and then went along to the Rook for a glass or two, same as any other evening, keeping my own company till they turned me out. I don't see what more a man's evening wants explaining than that.",
    "ask": "Where were you last night?",
-   "agrees_checked": 2,
+   "agrees_checked": 3,
    "surface_checked": "honest",
    "to": null,
    "show": "Edmund Vale says he dined at the manor, then sat alone at the Rook with a glass or two until closing. Do you know if that's true?",
-   "confront": "You told me you dined at the manor, then kept your own company at the Rook till closing. Is that the whole of it?"
+   "confront": "You told me you dined at the manor, then kept your own company at the Rook till closing. Is that the whole of it?",
+   "lines_for": "0c847e7ef13d"
   },
   {
    "id": "s_surface_clara",
@@ -970,11 +973,12 @@
    "title": "Clara Vale on the evening",
    "text": "I dined at home with my brother, and afterward I sat up a good while with Dr Marsh, talking over a private family matter that is no one's business but ours. I did not stir from the house again that night.",
    "ask": "Where were you last night?",
-   "agrees_checked": 2,
+   "agrees_checked": 3,
    "surface_checked": "honest",
    "to": null,
    "show": "Clara Vale says she dined at home with her brother, then sat up a long while with Dr Marsh over a private family matter, and never left the house. Do you know if that's true?",
-   "confront": "You told me you dined with your brother, then sat up with Dr Marsh over a private family matter, never leaving the house. Is that the whole of it?"
+   "confront": "You told me you dined with your brother, then sat up with Dr Marsh over a private family matter, never leaving the house. Is that the whole of it?",
+   "lines_for": "8a440016f966"
   },
   {
    "id": "s_surface_ada",
@@ -985,12 +989,13 @@
    "title": "Ada Finch on the evening",
    "text": "Oh, I was behind the bar same as every night, love, right through till closing \u2014 busy enough with the regulars to keep me on my feet. Dora looked in and sat herself in the back parlour for a good while that evening, poor dear, and after I'd shut up I saw to the takings before off to my bed.",
    "ask": "Where were you last night?",
-   "agrees_checked": 2,
+   "agrees_checked": 3,
    "surface_why": "She says Dora sat in the back parlour all evening, but in truth Dora only asked Ada to claim this as a false alibi while Dora went off to meet someone else; Ada's account repeats the fabricated story as fact.",
    "surface_checked": "cover",
    "to": null,
    "show": "Ada Finch says she was behind the bar all evening till closing, that Dorothy Pruett sat in her back parlour a good while, and that she then saw to the takings before bed. Do you know if that's true?",
-   "confront": "You told me you were behind the bar till closing, that Dorothy Pruett sat in your parlour a good while, and that you then saw to the takings before bed. Is that the whole of it?"
+   "confront": "You told me you were behind the bar till closing, that Dorothy Pruett sat in your parlour a good while, and that you then saw to the takings before bed. Is that the whole of it?",
+   "lines_for": "899ffc7b3c4d"
   },
   {
    "id": "s_surface_bell",
@@ -1001,12 +1006,13 @@
    "title": "Arthur Bell on the evening",
    "text": "Spent the evening by the fire, nothing more exciting than a pint and a game of dominoes with a couple of the regulars. Quiet night, home to bed after, same as any other.",
    "ask": "Where were you last night?",
-   "agrees_checked": 2,
+   "agrees_checked": 3,
    "surface_why": "He claims it was just a quiet evening of pints and dominoes and home to bed 'same as any other' - but he actually discovered the vicar's body, woke Dr Marsh, examined the body and searched the coat, told Ada Finch, locked evidence in his tin, and covered up the bloodstained boards with sand and milk",
    "surface_checked": "cover",
    "to": null,
    "show": "Constable Bell says he spent the evening by the fire with a pint and a game of dominoes, then home to bed. Do you know if that's true?",
-   "confront": "You told me you spent the evening playing dominoes by the fire, then went straight home to bed. Is that the whole of it?"
+   "confront": "You told me you spent the evening playing dominoes by the fire, then went straight home to bed. Is that the whole of it?",
+   "lines_for": "d795f76e1065"
   },
   {
    "id": "s_morning_iris",
@@ -1020,7 +1026,8 @@
    "surface_checked": "honest",
    "to": null,
    "show": "Dr Marsh says Bell woke her at twenty to six to tell her of the death, and that she was examining the body by six o'clock. Does that match what you recall?",
-   "confront": "You told me Bell woke you at twenty to six and that you were examining the body by six o'clock. Is that the whole of it?"
+   "confront": "You told me Bell woke you at twenty to six and that you were examining the body by six o'clock. Is that the whole of it?",
+   "lines_for": "dc742d5253f5"
   },
   {
    "id": "s_morning_bell",
@@ -1034,7 +1041,8 @@
    "surface_checked": "honest",
    "to": null,
    "show": "Constable Bell says he found the vicar's body at twenty past five, woke Dr Marsh soon after, and later told Ada Finch of the death. Does that match what you know?",
-   "confront": "You say you found the vicar's body at twenty past five, woke Dr Marsh soon after, and moved the churns before telling Ada Finch. Is that the whole of it?"
+   "confront": "You say you found the vicar's body at twenty past five, woke Dr Marsh soon after, and moved the churns before telling Ada Finch. Is that the whole of it?",
+   "lines_for": "9cfc1208a700"
   },
   {
    "id": "s_morning_ada",
@@ -1048,7 +1056,8 @@
    "surface_checked": "honest",
    "to": null,
    "show": "Ada Finch says Constable Bell came to her at about ten to seven and told her the vicar had died. Does that fit with what you know?",
-   "confront": "You told me Constable Bell came to you at about ten to seven and told you the vicar had died. Is that the whole of it?"
+   "confront": "You told me Constable Bell came to you at about ten to seven and told you the vicar had died. Is that the whole of it?",
+   "lines_for": "354e2c5c6cfe"
   },
   {
    "id": "s_surface_silas",
@@ -1063,7 +1072,8 @@
    "show": "Silas Voss says he stayed at his desk in the vestry until his work was done, then went straight home, speaking to no one of parish business. Do you know if that's true?",
    "confront": "You told me you stayed at your desk until your work was done, then went straight home and spoke to no one of parish business. Is that the whole of it?",
    "to": null,
-   "agrees_checked": 2
+   "agrees_checked": 3,
+   "lines_for": "9a89ecfbbf72"
   },
   {
    "id": "s_medical",
@@ -1086,7 +1096,8 @@
    },
    "show": "The doctor's notes show the Reverend Hale died of a single deep stab wound to the torso from a narrow blade, driven with force, between twenty-five past ten and ten to eleven. Does that match what you understood?",
    "to": null,
-   "art": "notes"
+   "art": "notes",
+   "lines_for": "056ab2188ebf"
   },
   {
    "id": "s_medical_iris",
@@ -1105,7 +1116,8 @@
    "ask": "Doctor, what did you find when you examined Mr Hale?",
    "show": "Dr Marsh says the Reverend died between twenty-five past ten and ten to eleven, from one deep stab wound delivered with real force by a narrow blade. Do you know if that's consistent with what you saw?",
    "confront": "You told me the Reverend died between twenty-five past ten and ten to eleven, from one deep stab wound delivered with force. Is that the whole of it?",
-   "to": null
+   "to": null,
+   "lines_for": "412c547af7a7"
   },
   {
    "id": "s_tip",
@@ -1128,7 +1140,8 @@
     "dora": "A broken bit of steel with the Post Office mark \u2014 well, that could belong to any manner of implement about the counter. I'm sure I don't know how such a thing came to be in a wound."
    },
    "to": null,
-   "art": "wound"
+   "art": "wound",
+   "lines_for": "42f48ba919e1"
   },
   {
    "id": "s_watch",
@@ -1152,7 +1165,8 @@
     "dora": "A stopped watch tells you when he died, not who did it, Inspector. I was home with my cocoa at that hour, as I've already said."
    },
    "to": null,
-   "art": "watch"
+   "art": "watch",
+   "lines_for": "5af50110c406"
   },
   {
    "id": "s_letter",
@@ -1178,7 +1192,8 @@
    "show": "I've found a draft letter in the vicar's coat accusing Miss Pruett of opening and resealing letters, saying he meant to see her once more at the Halt. Do you know anything of this?",
    "to": "dora",
    "direct": "The vicar wrote that he intended to confront you once more that night at the Halt about the post office letters. Did you meet him?",
-   "art": "letter"
+   "art": "letter",
+   "lines_for": "8b4b8c058aee"
   },
   {
    "id": "t_dora",
@@ -1198,10 +1213,11 @@
     "start": 1290,
     "end": 1395
    },
-   "show": "Miss Pruett says she closed the counter at six and spent from half past nine to a quarter past eleven in Mrs Finch's back parlour with her cocoa. Can you confirm that?",
-   "confront": "You told me you sat in Mrs Finch's parlour from half past nine to a quarter past eleven with your cocoa. Is that the whole of it?",
    "to": null,
-   "same_as": "night"
+   "same_as": "night",
+   "confront": "You told me you closed the counter at six and spent from half past nine till a quarter past eleven in Mrs Finch's parlour. Is that the whole of it?",
+   "lines_for": "861c60a9be0e",
+   "show": "Miss Pruett says she sat with Mrs Finch in the back parlour from half past nine until a quarter past eleven. Can you confirm that?"
   },
   {
    "id": "t_ada",
@@ -1215,7 +1231,8 @@
    "show": "Mrs Finch says she was behind her bar the whole night, pulling pints and listening to the farmers grumble. Does that match what you saw?",
    "confront": "You told me you were behind your bar the whole night, with nothing to tell. Is that the whole of it?",
    "to": null,
-   "same_as": "night"
+   "same_as": "night",
+   "lines_for": "cf6571f4a106"
   },
   {
    "id": "t_edmund",
@@ -1229,7 +1246,8 @@
    "show": "Mr Vale says he dined at home, then had a glass or two at the Rook, and came home when he pleased. Does that match what you know?",
    "confront": "You told me you dined at home, drank at the Rook, and came home when you pleased. Is that the whole of it?",
    "to": null,
-   "same_as": "night"
+   "same_as": "night",
+   "lines_for": "1dc1f8469a41"
   },
   {
    "id": "t_clara",
@@ -1243,7 +1261,8 @@
    "show": "Miss Vale says she dined at eight, then went out on a private errand she won't describe, returning before midnight. Do you know anything of that errand?",
    "confront": "You told me you dined at eight, then went out on a private errand you won't describe, home before midnight. Is that the whole of it?",
    "to": null,
-   "same_as": "night"
+   "same_as": "night",
+   "lines_for": "aa73e6b57aa8"
   },
   {
    "id": "t_ada_cover",
@@ -1274,7 +1293,8 @@
    },
    "show": "Ada Finch vouches that Dora sat in her back parlour from half nine till gone eleven, and that Mr Vale sat in his usual corner of the taproom all evening without noticing much. Do you know if that's true?",
    "to": "dora",
-   "direct": "Mrs Finch says you were with her in her back parlour from half past nine till gone eleven. Is that so?"
+   "direct": "Mrs Finch says you were with her in her back parlour from half past nine till gone eleven. Is that so?",
+   "lines_for": "e78a57ce5483"
   },
   {
    "id": "t_edmund_parlour",
@@ -1303,7 +1323,8 @@
     "dora": "Mr Vale was deep in his glass, as usual, and no doubt saw shapes in the dark that weren't there. I was in that parlour the whole evening, whatever he claims to have noticed.",
     "ada": "Oh, well \u2014 Mr Vale does like to fancy he sees everything over his ale, love, but a body can slip to the privy and back without the whole taproom marking it. I only said what I believed to be true."
    },
-   "to": null
+   "to": null,
+   "lines_for": "f04dc6b8363d"
   },
   {
    "id": "t_iris_exam",
@@ -1320,7 +1341,8 @@
    "unlock": "The forceps are engraved with Dr Marsh's initials. When the detective brings them back to her surgery, she sees they have been on the platform and agrees to describe what she drew out of the wound with them.",
    "confront": "You told me you drew a piece of metal from the wound and gave it, with his watch and a folded paper, to Constable Bell to lock away. Is that the whole of it?",
    "to": null,
-   "show": "Dr Marsh says she drew a piece of metal from the wound and gave Constable Bell everything from the coat, including the watch and a folded paper. Do you know if that's true?"
+   "show": "Dr Marsh says she drew a piece of metal from the wound and gave Constable Bell everything from the coat, including the watch and a folded paper. Do you know if that's true?",
+   "lines_for": "3ff35c0fac97"
   },
   {
    "id": "s_forceps",
@@ -1339,7 +1361,8 @@
    },
    "to": "iris",
    "direct": "I found your forceps, engraved 'I.M.', wedged in the platform boards with blood on the jaws and a fleck of red wax in the teeth. How did they come to be there?",
-   "art": "forceps"
+   "art": "forceps",
+   "lines_for": "1891df9e16e9"
   },
   {
    "id": "t_silas_overheard",
@@ -1363,9 +1386,10 @@
     "rel": "accused_by",
     "b": "vicar"
    },
-   "confront": "You told me you overheard the vicar accuse Dorothy of opening letters, and heard her say it would finish her, before he said she must put it right herself. Is that the whole of it?",
    "to": null,
-   "show": "Mr Voss says he overheard the vicar tell Miss Pruett through the partition that letters had been opened at her counter, and that she must make it right. Do you know if that's true?"
+   "show": "Mr Voss says he heard the vicar tell Dorothy that letters had been opened at her counter, and that she must make it right herself. Do you know anything about that?",
+   "lines_for": "fe4660841272",
+   "confront": "You told me the vicar said letters had been opened at your counter and that you must make it right yourself. Is that the whole of it?"
   },
   {
    "id": "b_ada_cash",
@@ -1388,7 +1412,8 @@
     "ada": "Oh, that's just my little savings, love, nothing to trouble yourself over. A woman likes to keep a bit put by where wandering fingers won't find it."
    },
    "to": "ada",
-   "direct": "I found a tin box of coins and notes hidden under a loose board behind your bar. Can you tell me about that?"
+   "direct": "I found a tin box of coins and notes hidden under a loose board behind your bar. Can you tell me about that?",
+   "lines_for": "3a66e741bfb1"
   },
   {
    "id": "s_iou",
@@ -1408,11 +1433,13 @@
    },
    "show": "This is a note in the vicar's hand recording five pounds received from him by A. Finch last spring, to be repaid by Michaelmas, tucked behind the inn's ledger. Do you know anything of this debt?",
    "reactions": {
-    "dora": "A debt between Mrs Finch and the vicar is no business of mine, Inspector. I keep the post office accounts, not the Rook's."
+    "dora": "A debt between Mrs Finch and the vicar is no business of mine, Inspector. I keep the post office accounts, not the Rook's.",
+    "ada": "Oh, that. Well, love, the vicar was good enough to lend me a bit when trade was slow, and I've been paying it back quiet-like - no shame in that, surely, but I'd rather my customers didn't make a song and dance of it. I'd have told you myself if you'd asked proper."
    },
    "to": "ada",
    "direct": "I found a note showing the vicar lent you five pounds last spring, to be repaid by Michaelmas. Was that debt ever settled?",
-   "art": "note"
+   "art": "note",
+   "lines_for": "bdf7db5262fb"
   },
   {
    "id": "s_sand",
@@ -1430,7 +1457,8 @@
    },
    "show": "By the platform bench I found milk churns moved aside to reveal a heap of fresh raked sand, and the fire bucket emptied with wet sand stuck inside. Do you know what happened here?",
    "to": null,
-   "art": "churn"
+   "art": "churn",
+   "lines_for": "0e37bbdfbaae"
   },
   {
    "id": "s_florin",
@@ -1449,7 +1477,8 @@
     "ada": "Dear me, that board's been loose an age, love, I keep meaning to get Bert to nail it proper. Must've dropped that florin counting up of an evening, nothing more to it."
    },
    "to": null,
-   "art": "coin"
+   "art": "coin",
+   "lines_for": "623fe7f12ce8"
   },
   {
    "id": "b_edmund_grumble",
@@ -1470,7 +1499,8 @@
     "ada": "Oh, Edmund's always one for a mutter in his cups, love, but that's just a drunk man's fancy talk - don't you go putting stock in it. He'd blame the moon for slipping out the yard door if you let him natter on long enough."
    },
    "to": "edmund",
-   "direct": "Mrs Finch recalls you, well in your cups, muttering about 'that woman slipping out the yard door'. What did you mean by that?"
+   "direct": "Mrs Finch recalls you, well in your cups, muttering about 'that woman slipping out the yard door'. What did you mean by that?",
+   "lines_for": "3565f6443789"
   },
   {
    "id": "t_bell_found",
@@ -1496,7 +1526,8 @@
    "reactions": {
     "dora": "I'm sure I couldn't say where Constable Bell found him or at what hour - that's his business, not mine. I was indoors the whole evening and know nothing of platforms or benches, so you'll have to take his word for it, not mine."
    },
-   "to": null
+   "to": null,
+   "lines_for": "ee68c4a9349b"
   },
   {
    "id": "t_bell_first",
@@ -1512,7 +1543,8 @@
    "show": "Constable Bell says he found the body at the foot of the waiting-room steps at twenty past five and fetched Dr Marsh straight away. Does that match what you saw?",
    "confront": "You told me you found him at the foot of the waiting-room steps at twenty past five and fetched Dr Marsh straight off. Is that the whole of it?",
    "to": null,
-   "same_as": "t_bell_found"
+   "same_as": "t_bell_found",
+   "lines_for": "67b3bbe24d45"
   },
   {
    "id": "s_steps",
@@ -1526,7 +1558,8 @@
    "unlock": "The constable named the foot of the waiting-room steps, so the detective goes to the Halt to look at exactly that spot.",
    "show": "At the foot of the waiting-room steps the coal-smut dust lies even and undisturbed, with no footprint, scuff, stain, or sign of scrubbing, though further along the platform the dust has been swept about. Can you account for that?",
    "to": null,
-   "art": "stairs"
+   "art": "stairs",
+   "lines_for": "50440d8ff415"
   },
   {
    "id": "s_saw_clara_edmund_manor",
@@ -1548,7 +1581,11 @@
    "to": "edmund",
    "show": "Clara Vale says she saw Mr Vale at Vale Manor at quarter past seven. Do you know if that's true?",
    "confront": "You told me you saw Mr Vale at Vale Manor at quarter past seven. Is that the whole of it?",
-   "direct": "Clara Vale says she saw you at Vale Manor at quarter past seven. Is that so?"
+   "direct": "Clara Vale says she saw you at Vale Manor at quarter past seven. Is that so?",
+   "lines_for": "6282081a0b7f",
+   "reactions": {
+    "edmund": "Quarter past seven, was it? Well, that sounds about right, I was still at the manor copping an earful from my sister before I went off to the Rook for a proper drink in peace. Don't see what my supper hour's got to do with anything."
+   }
   },
   {
    "id": "s_saw_clara_iris_surgery",
@@ -1570,7 +1607,11 @@
    "show": "Clara Vale says she saw Dr Marsh at her surgery at twenty-five to ten. Do you know if that's true?",
    "confront": "You told me you saw Dr Marsh at her surgery at twenty-five to ten. Is that the whole of it?",
    "to": "iris",
-   "direct": "Clara Vale says she saw you at your surgery at twenty-five to ten. Is that right?"
+   "direct": "Clara Vale says she saw you at your surgery at twenty-five to ten. Is that right?",
+   "lines_for": "669a28c87e12",
+   "reactions": {
+    "iris": "Yes, that's correct, I was at the surgery at that hour, before the constable called me out. I've nothing further to add until the inquest, as I've already said."
+   }
   }
  ],
  "premise": {
@@ -1651,6 +1692,7 @@
   "s_forceps|direct",
   "s_forceps|reactions|iris",
   "s_iou|direct",
+  "s_iou|reactions|ada",
   "s_iou|reactions|dora",
   "s_letter|direct",
   "s_letter|reactions|bell",
@@ -1665,8 +1707,10 @@
   "s_morning_iris|text",
   "s_sand|reactions|bell",
   "s_saw_clara_edmund_manor|direct",
+  "s_saw_clara_edmund_manor|reactions|edmund",
   "s_saw_clara_edmund_manor|text",
   "s_saw_clara_iris_surgery|direct",
+  "s_saw_clara_iris_surgery|reactions|iris",
   "s_saw_clara_iris_surgery|text",
   "s_surface_ada|text",
   "s_surface_bell|text",
@@ -1742,5 +1786,6 @@
    "There is nothing more to add; the matter is, for me, concluded."
   ]
  },
- "declines_version": 3
+ "declines_version": 3,
+ "review_version": 2
 }

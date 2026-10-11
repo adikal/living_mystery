@@ -155,7 +155,8 @@ whether they are the culprit. Write 1 to 3 sentences in their voice, about the e
 - An innocent gives a true but vague account that keeps their private secret hidden.
 - No clock times, no numbers, no named witnesses who could confirm it; nothing that would clear or convict anyone.
 - Stay consistent with their events and attitudes; do not mention the investigation's clues.
-- 'who' says who everyone is (role, family, description): refer to people only as that allows.
+- 'who' says who everyone is (role, family, description): refer to people only as that allows. The victim is dead
+  this morning: never speak of them as able to do anything now (not "ask her", not "she'll tell you").
 - 'tells' is what they also tell the detective when asked more closely. Never contradict it, even where it is untrue (a
   person keeps to their own story). Do not repeat it either: this is the vaguer first answer, without its details.
 - If 'previous_attempt' is given, it was rejected for the reason stated: write it again without that.
@@ -164,7 +165,8 @@ Return {"accounts": {"<person id>": "<what they say>"}}."""
 AGREES = """For each person in a 1920s village mystery you get a short account of their evening and the statements they also
 give the detective ('tells'). Does the account contradict any statement (a different place, leaving when a statement
 says they stayed, a different reason, and so on), or misstate who someone is ('who' gives each person's role and
-description: calling a sister a wife is a contradiction)? Being vaguer or leaving things out is not a contradiction.
+description: calling a sister a wife is a contradiction), or speak of the victim as alive now ('who' marks them: "ask
+the landlady" when the landlady is dead is a contradiction)? Being vaguer or leaving things out is not a contradiction.
 Return {"verdicts": {"<id>": {"agrees": true | false, "why": "<for a contradiction: what differs>"}}}."""
 
 
@@ -175,14 +177,16 @@ def own_statements(case, pid):
             and not x.get('requires') and not x.get('surface') and not x.get('morning') and not x.get('sighting')]
 
 
-SURFACE_CHECK = 2   # 2: accounts are also checked for who people are (kinship, roles)
+SURFACE_CHECK = 3   # 2: accounts are also checked for who people are (kinship, roles); 3: the victim is dead
 
 
 def who_is_who(case):
     """Each person in the case as the setting describes them: name, role and public description (kinship lives there)."""
     setting = {p['id']: p for p in enrich.SETTING.get('people', [])}
+    victim = enrich.victim_of(case)
     return [{'id': p['id'], 'name': setting.get(p['id'], {}).get('name', p.get('name')), 'role': setting.get(p['id'], {}).get('role'),
-             'description': setting.get(p['id'], {}).get('public')} for p in case['people']]
+             'description': setting.get(p['id'], {}).get('public'),
+             **({'status': 'the victim: dead since last night'} if p['id'] == victim else {})} for p in case['people']]
 
 
 def surface_disagreements(case, signs):
@@ -399,12 +403,27 @@ def record_contradictions(case, log=print):
     return n
 
 
+def names_seen(case, x, text):
+    """Whether a sighting's words name the person seen (by name, surname, first name or form of address): an answer to
+    'did you see anyone?' must say whom."""
+    import re
+    p = {q['id']: q for q in enrich.SETTING.get('people', [])}.get(x['claim']['person'], {})
+    name = p.get('name') or next((q['name'] for q in case['people'] if q['id'] == x['claim']['person']), '')
+    forms = {name, p.get('address') or '', *name.split()} - {'', 'The', 'Reverend', 'Dr'}
+    return any(re.search(rf"\b{re.escape(f)}\b", text) for f in forms if len(f) > 2)
+
+
 def add_sightings(case, log=print):
     """Who saw whom last night, as accounts: read from the history, kept only if the case certifies with the same solve
     (depth, every thread, the surface reading, the false accounts), worded by a model, checked by code and reviewed.
     A sighting may never shortcut or break the puzzle."""
     from refine import llm_json, CRITIC_MODEL
     import re
+    # a published sighting that does not say whom it saw is written again (or dropped, if no wording passes)
+    unnamed = [x for x in case['signs'] if x.get('sighting') and not names_seen(case, x, x.get('text', ''))]
+    if unnamed:
+        case['signs'] = [x for x in case['signs'] if x not in unnamed]
+        log(f'  sightings: {len(unnamed)} did not name whom they saw; written again')
     have = {(x.get('speaker'), (x.get('claim') or {}).get('person')) for x in case['signs'] if x.get('sighting')}
     ok0, shape0 = _solve_shape(case)
     if not ok0:
@@ -453,7 +472,7 @@ def add_sightings(case, log=print):
     n = 0
     for x in kept:
         text = str(out.get(x['id']) or '').strip()
-        if not text or re.search(r'\d', text) or len(text.split()) > 40 or others(x):
+        if not text or re.search(r'\d', text) or len(text.split()) > 40 or others(x) or not names_seen(case, x, text):
             case['signs'].remove(x)      # no wording that passes the checks: no sighting
             continue
         x['text'] = text; x['deceptive'] = False
@@ -516,6 +535,105 @@ def _digits_ok(text, allowed):
     return all(d in have for d in re.findall(r'\d+', text))
 
 
+LINES_AGREE = """For each clue of a 1920s village mystery you get its text and the lines the detective says about it: 'show'
+(putting it to someone else) and 'confront' (putting a person's own account back to them). Does each line say only what
+the text says (it may be shorter, and may name the speaker)? A line that adds or changes a fact (a place, a time, a
+person, an action, another account's content) does not agree.
+Return {"verdicts": {"<id>": {"agrees": true | false, "why": "<for a disagreement: what differs>"}}}."""
+
+
+TITLES = ('Mr', 'Mrs', 'Miss', 'Dr', 'Constable', 'Reverend')
+
+
+def wrong_addresses(text, source=''):
+    """Forms of address in `text` that no one in the setting answers to: a title with a surname ("Miss Lacey") where no
+    person of that surname carries the title in their name or form of address ("Mrs Lacey", "The Reverend Thomas Hale").
+    A form the clue's own text uses (`source`) is allowed: it may name someone outside the cast (a late "Mrs Hale")."""
+    import re
+    titles = {}
+    for p in enrich.SETTING.get('people', []):
+        titles.setdefault(p['name'].split()[-1], set()).update(f"{p['name']} {p.get('address') or ''}".split())
+    return [f'{t} {sn}' for t, sn in re.findall(rf"\b({'|'.join(TITLES)})\.? ([A-Z][a-z]+)\b", str(text or ''))
+            if sn in titles and t not in titles[sn] and f'{t} {sn}' not in str(source or '')]
+
+
+def history_text(case):
+    """The history's own words (events, intentions): names in it, such as a late wife, are not wording faults."""
+    return ' '.join([str(e.get('summary') or '') for e in case['events']] + [str(a.get('content') or '') for a in case.get('attitudes', [])])
+
+
+def correct_addresses(case):
+    """Put right a form of address that no one answers to, in every published text of the case, where the person meant is
+    plain: the one person of that surname the title fits ("Miss Lacey" -> "Mrs Lacey", the only Lacey). Wording only.
+    Returns (corrected, left): forms put right and forms that fit no one or more than one person."""
+    import re
+    people = enrich.SETTING.get('people', [])
+    history = history_text(case)
+    female, male = {'Mrs', 'Miss'}, {'Mr'}
+
+    def fix(text):
+        nonlocal fixed, left
+        def one(m):
+            nonlocal fixed, left
+            t, sn = m.group(1), m.group(2)
+            if not wrong_addresses(m.group(0), history):
+                return m.group(0)
+            fits = [p for p in people if p['name'].split()[-1] == sn and (t not in female | male
+                    or (t in female) == (p.get('pronoun') == 'she'))]
+            if len(fits) == 1 and fits[0].get('address', '').endswith(sn):
+                fixed += 1
+                return fits[0]['address']
+            left += 1
+            return m.group(0)
+        return re.sub(rf"\b({'|'.join(TITLES)})\.? ([A-Z][a-z]+)\b", one, text) if isinstance(text, str) else text
+
+    fixed = left = 0
+    for x in case['signs']:
+        for k in ('text', 'show', 'confront', 'direct', 'ask', 'title'):
+            if isinstance(x.get(k), str):
+                x[k] = fix(x[k])
+        for k in ('reactions', 'concede'):
+            if isinstance(x.get(k), dict):
+                x[k] = {a: fix(t) for a, t in x[k].items()}
+    for pid, lines in (case.get('declines') or {}).items():
+        case['declines'][pid] = [fix(t) for t in lines]
+    return fixed, left
+
+
+def text_key(text):
+    import hashlib
+    return hashlib.sha1(str(text or '').encode()).hexdigest()[:12]
+
+
+def check_lines(case):
+    """Lines written for a clue's text are kept only while they say what the text says: lines not yet checked against
+    the current text are checked, and dropped if they add or change a fact, so add_show_lines writes them again.
+    Returns the number dropped."""
+    from refine import llm_json, CRITIC_MODEL
+    n = 0
+    for x in case['signs']:                            # a form of address no one answers to: written again
+        if any(wrong_addresses(x.get(k), f"{x.get('text')} {history_text(case)}") for k in ('show', 'confront', 'direct')):
+            for k in ('show', 'confront', 'direct', 'lines_for'):
+                x.pop(k, None)
+            n += 1
+    todo = [x for x in case['signs'] if (x.get('show') or x.get('confront')) and x.get('lines_for') != text_key(x.get('text'))]
+    if not todo:
+        return n
+    items = [{'id': x['id'], 'text': x.get('text'), **{k: x[k] for k in ('show', 'confront') if x.get(k)}} for x in todo]
+    out = _as_map(llm_json(LINES_AGREE, json.dumps(items), 4000, model=CRITIC_MODEL).get('verdicts', {}))
+    for x in todo:
+        v = out.get(x['id'])
+        if not isinstance(v, dict):
+            continue                                   # no verdict: checked again next time
+        if v.get('agrees') is False:
+            for k in ('show', 'confront', 'direct'):
+                x.pop(k, None)
+            n += 1
+        else:
+            x['lines_for'] = text_key(x.get('text'))
+    return n
+
+
 def add_show_lines(case, _retry=True):
     import re
     from refine import llm_json, CRITIC_MODEL
@@ -544,7 +662,7 @@ def add_show_lines(case, _retry=True):
             subject = None
         direct = str(got.get('direct') or '').strip()
         x['to'] = subject
-        if subject and direct.endswith('?') and len(direct.split()) <= 40 and _digits_ok(direct, x.get('text', '')):
+        if subject and direct.endswith('?') and len(direct.split()) <= 40 and _digits_ok(direct, x.get('text', '')) and not wrong_addresses(direct, x.get('text')):
             x['direct'] = direct; n += 1
         for key in ('show', 'confront'):
             if x.get(key):
@@ -555,8 +673,9 @@ def add_show_lines(case, _retry=True):
             # a line said to a third person must not address the speaker or subject as "you"
             if key == 'show' and x['kind'] in ('behavior', 'testimony') and re.search(r"^you\b|\byou('ve| have| had)? (told|said|mentioned|claimed|were|went)\b|\byour\b", line, re.I):
                 continue
-            if line.endswith('?') and len(line.split()) <= 40 and _digits_ok(line, x.get('text', '')):
+            if line.endswith('?') and len(line.split()) <= 40 and _digits_ok(line, x.get('text', '')) and not wrong_addresses(line, x.get('text')):
                 x[key] = line; n += 1
+                x.pop('lines_for', None)                       # new lines are checked by check_lines
     if n == 0 and _retry:   # an occasional malformed reply: try once more
         return add_show_lines(case, _retry=False)
     return n
@@ -1024,7 +1143,19 @@ def enrich_case(case, log=print):
         if not problems:
             break
         add_medical(case); add_concessions(case); add_show_lines(case); add_reactions(case)
+    finish_wording(case)
     return case
+
+
+def finish_wording(case, rounds=3):
+    """Last over the wording, after every step that writes it: lines that do not say what their clue says are written
+    again (each line is kept only once checked against its clue's text), and forms of address no one answers to are put
+    right where the person meant is plain."""
+    for _ in range(rounds):
+        if not check_lines(case):
+            break
+        add_show_lines(case)
+    return correct_addresses(case)
 
 
 def publish_live(case, brief_entry, stamp):

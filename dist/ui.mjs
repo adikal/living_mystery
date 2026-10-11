@@ -154,12 +154,14 @@ async function runCharacter(person,text,action=null){
       accounts:ticket.context.accounts.map(a=>a.id+(a.deceptive?'[lie]':'')),
       attempts:(result.audit?.attempts||[]).map(a=>({validation:a.validation,critic:String(a.critic?.response??'').slice(0,400),reply:String(a.generation?.response??'').slice(0,400)})),
       chosen:result.proposal?{intent:result.proposal.intent,account:result.proposal.account,utterance:result.proposal.utterance}:null,
-      spoken:result.proposal?.utterance??(ticket.action?ticket.context.accounts[0]?.statement:null)??'(fallback line)',
+      spoken:result.proposal?.utterance??null,
       rejections:(result.audit?.attempts||[]).map(a=>{if(a.validation&&a.validation!=='pass')return `check: ${String(a.validation).slice(0,160)}`;
         const v=parseCritic(a.critic?.response??'');return v?.verdict==='reject'?`critic: ${(v.violations||[]).join(' | ').slice(0,300)}`:null;}).filter(Boolean)});
     if(epoch!==characterEpoch||session!==target)return;
     const candidate=copy(session);
     const applied=applyCharacterTurn(candidate,ticket,result);
+    // a fallback's words are chosen when the turn is applied: log what the player was actually told
+    if(!result.proposal&&!applied.cancelled)dlog('character_fallback',{person,text,spoken:candidate.events.findLast(e=>e.kind==='speech'&&e.actor===person&&e.data?.listener==='player')?.data?.assertion??null});
     if(!applied.cancelled){
       const checked=useDirector?await commitDirectedTurn(target,candidate,{signal:characterController.signal,onChecking:()=>{if(epoch===characterEpoch&&session===target){directorPending=true;render();}}}):{status:'not_needed'};
       if(epoch!==characterEpoch||session!==target)return;
