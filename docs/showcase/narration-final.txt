@@ -1,0 +1,13 @@
+Living Mystery: product video narration (British male, measured documentary read).
+One file per line: narr/<voice>/p01.mp3 ... p10.mp3 (ElevenLabs). The builder falls back to narr/pNN.aiff (macOS draft).
+
+p01  Bellweather, nineteen thirty-two. Hugo Vale has been found drowned in the mill race, and someone in this village held him under.
+p02  Every resident is an autonomous agent, with their own memories, loyalties and grudges, and secrets they will work hard to keep.
+p03  It is a living world. People go about their business across the village while the clock runs, and every walk and every question costs you time.
+p04  You are the detective. Ask anyone anything, in your own words, and they answer in character. The doctor tells you plainly how Hugo died. Others are more careful with what they share.
+p05  Search each place for what was left behind. A bandaged hand. A smear of rust on a sleeve. A small brass key in a dead man's pocket.
+p06  Then test each find against the people involved. The boatman's injured hand looks damning, until he explains the snagged wire on his eel traps, and the doctor backs him up.
+p07  Put new evidence in front of someone, and they respond to it as it happens. Show Edmund Vale his nephew's torn letter, and he realises the young man was blackmailing his own aunt.
+p08  The guilty lie, and lie well. Clara Vale admits the letter is real, then holds to her story of a walk along the river. Press her, and her trust in you begins to slip.
+p09  When you can show who did it, how, and why, take your case to Constable Bell. Every link in your accusation must rest on evidence you have found.
+p10  Then begin again. Every case is generated fresh, with a new victim, a new killer, and a new web of alibis. A story director shapes the twists, the red herrings and the lies, and guarantees that every case is fair and solvable.

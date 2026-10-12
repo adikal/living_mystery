@@ -13,3 +13,10 @@ logs/
 tools/art/out/
 dist/cases/archive/live/
 tools/playtest/runs/
+
+# Showcase video: keep scripts and notes; media, generated audio and render caches stay local
+docs/showcase/*
+!docs/showcase/build_product.py
+!docs/showcase/make_titles.py
+!docs/showcase/narration-final.txt
+!docs/showcase/MAKING-OF.md
