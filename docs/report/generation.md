@@ -252,10 +252,43 @@ solve, rate at their target difficulty, and about 96% of replies to a standard q
 (`tools/e2e_dialogue.mjs`).
 
 **Questions that ask the same thing.** An account's own question ("Where were you last night, Mr Pike?") can reword a
-standard one ("What is your account of last night?"). A model groups such questions per person at publish and marks
-the account `same_as` the question it rewords; in play that question brings the account out, so the menu never offers
-both. Rewriting the questions instead was tried: the rewrites asked about something else or gave the account away.
+standard one ("What is your account of last night?"). Publishing marks such an account `same_as` the question that
+delivers it, so the menu never offers both. An alias may target only a question that actually brings the account out:
+the night question or "anything else" (`ALIAS_TOPICS`: `night`, `more`), or another account of the same speaker. An
+alias to the morning, sightings or news question, or to another speaker, is invalid, and the account keeps its own
+button. `dist/cases/questions.mjs` is the single source of these rules for play and publishing. A plain whereabouts
+question is recognised by code: the core phrase ("where were you last night", "what did you do last night") with only
+forms of address and filler around it, so "Where were you last night, Mrs Lacey?" is aliased to the night question and
+"What did you do with the key after supper last night?" is not. Identical wording (of a standard question, or of
+another of the speaker's questions) is aliased by code as well; a model judge adds the semantic rewordings. Every run applies the deterministic aliases. When the judge is unavailable the earlier
+aliases are kept, still validated; a successful judge run can drop an alias it no longer confirms. The publish gate
+(`deterministic_gate`) rejects a missing, undeliverable or cyclic alias, and maintenance tools repair aliases without
+the network (`mark_duplicate_questions(case, judge=False)`) before they gate a case. Play applies the same rule to
+cases published earlier. Rewriting the questions instead does not work: the rewrites ask about something else or give
+the account away.
 
 **What people saw.** Every pair of people at one place at one time in the true history is a candidate sighting; each is
 added and the case certified again, and it is kept only if the solve is unchanged (depth, every thread, the surface
 reading, the false accounts). So a witness can say whom they saw without ever shortcutting the puzzle.
+
+## 10.18 Committing a published case
+
+**Status: implemented.**
+
+A case becomes playable when its index lists it, so every publication writes in one order, under one lock: a recovery
+marker naming the case file and its hash, the case file (read back from disk and compared by hash), the premise
+history, and the index last. Each file is replaced atomically (written to a same-directory temporary, flushed, then
+renamed; the destination keeps its permissions) and never holds a value that is not JSON. A crash at any point leaves
+either nothing visible or a marker that the next live publication, `publish.py` run or `backfill.py` start finishes. A marker
+that cannot be trusted (unreadable, malformed, or naming a file whose identity or hash differ) is moved aside as
+`.publication-transaction.rejected-<time>.json` with a warning; the file it names stays unlisted and publication goes
+on. A corrupt premise history is real data loss and stops the commit, with instructions to restore or move it aside.
+The history keeps every record, so finishing an old commit twice can never add a premise twice; the deck still rotates
+against the last forty.
+
+The lock (`tools/refine-c/publication_io.py`) excludes other threads and processes, is reentrant within a thread, also
+takes the older `live/.index.lock` that earlier generator processes use, and clears temporaries left by interrupted
+writes. Work that calls a model (re-enrichment, backfill) runs outside the lock, so it writes a case only if the file is
+unchanged since it was read, and only the cases the index lists. A new case never replaces a published one: a reused
+id is refused. Rebuilding the shipped cases keeps the index entry of a case that failed its gate, or has no certified
+run, as long as its file exists, read from the index as it is at commit time.

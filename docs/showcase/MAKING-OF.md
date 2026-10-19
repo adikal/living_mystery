@@ -35,7 +35,7 @@ without rendering.
   understated 1930s-village mystery underscore at about 84 BPM, low piano ostinato, strings, pizzicato and celesta,
   no drums, a gentle lift in the final 30 s and a resolving chord at the end. We generated two takes and chose take A.
 - **Titles.** `make_titles.py` uses the game's own visual language: Baskerville headlines, tracked Avenir labels, the
-  antique-gold accent and a soft bottom gradient band. All meaning is carried by the words, never by hue
+  antique-gold accent and a soft bottom gradient band. All meaning is carried by the words and symbols, so it survives colour blindness
   (colour-blind safe).
 - **Not in git.** Footage (349 MB), voice and music audio, the render cache and `product.mp4`. They are large, and
   the audio is paid output that we regenerate rather than version.
@@ -46,50 +46,54 @@ without rendering.
 1. Write for the audience and list the must-mention features before you write a word: living characters with their
    own memories, procedurally generated cases, a story director that keeps cases fair and solvable, and the verbs
    (talk, examine, piece together, confront, accuse). The first draft left most of them out.
-2. Use the audience's vocabulary, not the builder's: "autonomous agents" and "a living world", never "LLM".
+2. Use the audience's vocabulary. For the games VP that meant "autonomous agents" and "a living world" in place of "LLM";
+   for the reasoning VP, LLM, Z3 and KR are the right words.
 3. Avoid stock AI phrasing ("watch it land", "every soul"). Describe the concrete thing on screen instead, for example
    "Show Edmund Vale his nephew's torn letter, and he realises…".
 4. Narration should fill about 85% of the runtime. Long silent stretches read as unfinished.
 5. End on the argument, then let a silent end card carry the tagline. A spoken punchline after a long final line made
    the ending drag.
+6. Avoid the "X, not Y" and "X, never Y" constructions; they read as machine-written. State the positive claim.
+7. Spell for the voice: write "Zee three" for Z3 and "L L M" for LLM in the TTS text; British voices say "Zed".
+8. Time diagram reveals to phrases in the narration, so they stay in sync when the voice changes.
 
 **Picture**
-6. Log the footage with contact sheets (one frame every 2 s) before cutting. They showed the real hero beats
+9. Log the footage with contact sheets (one frame every 2 s) before cutting. They showed the real hero beats
    (Edmund's "Good God. Blackmail.", Clara's trust falling from 30 to 22, the case menu with different victims) and
    the dead time to cut, such as 15–20 s of typing indicators.
-7. Never crop a full-screen UI to fill 16:9; letterbox it instead. Use deliberate push-ins where text has to be read
+10. Never crop a full-screen UI to fill 16:9; letterbox it instead. Use deliberate push-ins where text has to be read
    at 1080p.
-8. Motion must be sub-pixel. Pushes built from ffmpeg `crop` step in whole pixels and judder: frame-to-frame motion
+11. Motion must be sub-pixel. Pushes built from ffmpeg `crop` step in whole pixels and judder: frame-to-frame motion
    went 0, 1.1, 0, 1.6, 0…. A Pillow affine transform per frame gives smooth 0.5 px steps, cutting the jitter from
    0.83 to 0.03.
-9. Keep motion continuous. Static full-screen shots between moving close-ups felt jerky, so full shots get a slow 2%
+12. Keep motion continuous. Static full-screen shots between moving close-ups felt jerky, so full shots get a slow 2%
    push. 3.5% began to trim the left map panel.
-10. Start shots after the app's own animations have finished. A dissolve that begins while an in-game menu is still
+13. Start shots after the app's own animations have finished. A dissolve that begins while an in-game menu is still
     fading blends three images instead of two.
-11. When narration lengthens a shot, hold the last good frame instead of reading further into the recording. Each
+14. When narration lengthens a shot, hold the last good frame instead of reading further into the recording. Each
     shot has a source cut-off just before the next player action; without it, clicks on the next character leaked
     into dissolves.
-12. Titles should look native: the game's own fonts, no boxes, a gradient band, and timing that never covers the line
+15. Titles should look native: the game's own fonts, no boxes, a gradient band, and timing that never covers the line
     being read.
 
 **Sound**
-13. Built-in macOS voices are fine for timing drafts but too monotone for a final.
-14. ElevenLabs takes contain long internal pauses. Shorten pauses over 0.5 s to about 0.4 s. Make every cut inside
+16. Built-in macOS voices are fine for timing drafts but too monotone for a final.
+17. ElevenLabs takes contain long internal pauses. Shorten pauses over 0.5 s to about 0.4 s. Make every cut inside
     silence, crossfade the splices and fade each line to true zero. Trimming with ffmpeg `silenceremove` cut into the
     sound and caused audible clicks at line edges.
-15. Don't use a reactive sidechain duck. It let the music surge about 10 dB in every one-second gap between lines.
+18. Don't use a reactive sidechain duck. It let the music surge about 10 dB in every one-second gap between lines.
     Compute the duck from the narration timeline instead, so the music stays down through each run of lines and
     rises only on the cards and genuine pauses.
-16. Normalise loudness linearly, with a measured gain and a limiter. Single-pass dynamic `loudnorm` acts like
+19. Normalise loudness linearly, with a measured gain and a limiter. Single-pass dynamic `loudnorm` acts like
     automatic gain control and pulls the music up between lines.
-17. Generate the music to the cut's length and line its final swell up with the last spoken word.
+20. Generate the music to the cut's length and line its final swell up with the last spoken word.
 
 **Process**
-18. Use numbers where you can't watch or listen. Frame-difference spikes find bad dissolves, phase correlation finds
+21. Use numbers where you can't watch or listen. Frame-difference spikes find bad dissolves, phase correlation finds
     jitter, and level profiles find music surges and edge clicks. A human pass still caught what the numbers didn't
     (the glitch after "what they share"), so plan for both.
-19. Make rebuilds cheap: render shots in parallel, cache them by their parameters, and use a `--plan` mode, so voice
+22. Make rebuilds cheap: render shots in parallel, cache them by their parameters, and use a `--plan` mode, so voice
     and music changes take minutes.
-20. Bound every looped ffmpeg input with `-t`. An unbounded `-loop 1` input renders forever.
-21. Keep the API key in a `chmod 600` file. Scope its permissions (text to speech, voices read, music), cap its
+23. Bound every looped ffmpeg input with `-t`. An unbounded `-loop 1` input renders forever.
+24. Keep the API key in a `chmod 600` file. Scope its permissions (text to speech, voices read, music), cap its
     credits, set an expiry, and never paste it into chat or the repo.

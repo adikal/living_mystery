@@ -95,6 +95,9 @@ FEATURES = {
     't_accuse': ('Make your case', 'Who, how and why'),
     't_generated': ('A new case every time', 'Generated fresh, directed for drama'),
     't_certified': ('Every case certified', 'Fair and solvable before you play'),
+    'tt_generated': ('Generated cases', 'Written by an LLM in minutes'),
+    'tt_play': ('At play time', 'Free speech, bounded by the records'),
+    'tt_board': ('The clue board', 'Motive, means and opportunity, per suspect'),
 }
 for n, (lab, head) in FEATURES.items():
     feature(n, lab, head)

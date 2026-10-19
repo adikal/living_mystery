@@ -1,0 +1,84 @@
+{
+  "schema_version": "publication-critic-calibration-v1",
+  "purpose": "Labeled regressions for prompt calibration; frozen pilot artifacts remain unchanged.",
+  "fixtures": [
+    {
+      "id": "minutes-after-midnight",
+      "expected_verdict": "pass",
+      "regression": "critic-error",
+      "case_excerpt": {
+        "events": [
+          {"id": "e_arrival", "start": 1320, "summary": "The witness arrives at ten o'clock at night."},
+          {"id": "e_departure", "start": 1370, "summary": "The witness leaves at ten to eleven."},
+          {"id": "e_discovery", "start": 1770, "summary": "The body is found at half past five the next morning."}
+        ]
+      },
+      "rationale": "1320 is 22:00, 1370 is 22:50, and 1770 is 05:30 on the next day; these records agree."
+    },
+    {
+      "id": "declared-intentional-lie",
+      "expected_verdict": "pass",
+      "regression": "critic-error",
+      "case_excerpt": {
+        "signs": [
+          {"id": "s_cover", "kind": "testimony", "deceptive": true, "claim": {"pred": "wasAt", "person": "silas", "place": "lane", "from": 1380, "to": 1395}, "text": "I only glanced in and left.", "defeated_by": "s_clean_patch"},
+          {"id": "s_clean_patch", "kind": "record", "text": "A clean patch shows where the missing letter lay.", "defeats": ["s_cover"]}
+        ],
+        "events": [
+          {"id": "e_visit", "agent": "silas", "start": 1380, "end": 1395, "summary": "Silas takes the letter and shuts the tap."}
+        ]
+      },
+      "rationale": "The testimony is intentionally false, is marked deceptive, states its declared cover story, and has a reachable recorded defeater."
+    },
+    {
+      "id": "hidden-private-motive",
+      "expected_verdict": "pass",
+      "regression": "critic-error",
+      "case_excerpt": {
+        "attitudes": [
+          {"id": "a_private_fear", "agent": "silas", "mode": "fears", "content": "Exposure of a private debt."}
+        ],
+        "signs": []
+      },
+      "rationale": "An author-side motive never presented to the player does not itself create a player-facing loose end."
+    },
+    {
+      "id": "confirmed-wrong-hour-in-show-line",
+      "expected_verdict": "fail",
+      "regression": "confirmed-prose-record-defect",
+      "source": {"blind_case_id": "case-05", "slot_id": "slot-05-medium", "candidate_sha256": "a3207d7bb31942cb7c18784d29e8940b5670c43ca471a8eebd6658171d2260b5"},
+      "record_ids": ["t_hugo", "t_hugo.show"],
+      "case_excerpt": {
+        "structured_time": "ten past nine",
+        "testimony_time": "ten past nine",
+        "show_line_time": "ten past ten"
+      },
+      "rationale": "The player-facing show line changes the source record by one hour."
+    },
+    {
+      "id": "confirmed-wrong-day-in-show-line",
+      "expected_verdict": "fail",
+      "regression": "confirmed-prose-record-defect",
+      "source": {"blind_case_id": "case-09", "slot_id": "slot-10-easy", "candidate_sha256": "811e3145d587d61733d06ce6444da49e0759293fe8dd86e25f4157538a8833fe"},
+      "record_ids": ["s_rowan_door", "s_rowan_door.show"],
+      "case_excerpt": {
+        "event_and_testimony": "Rowan opened the greenhouse near midnight and found the body at dawn.",
+        "show_line": "Rowan opened the greenhouse the next morning."
+      },
+      "rationale": "The player-facing show line moves the door opening to the wrong day."
+    },
+    {
+      "id": "confirmed-prose-claim-time-mismatch",
+      "expected_verdict": "fail",
+      "regression": "confirmed-prose-record-defect",
+      "source": {"blind_case_id": "case-10", "slot_id": "slot-11-medium", "candidate_sha256": "78993c46cb270ec3d5cff89f7e8a4bc441c3652c3f194da34660d6badde204d5"},
+      "record_ids": ["e_post", "s_dora_clock"],
+      "case_excerpt": {
+        "event_minutes": [1374, 1376],
+        "structured_claim": "22:54-22:56",
+        "player_facing_prose": "22:40"
+      },
+      "rationale": "The player-facing prose changes the time asserted by the event and structured claim."
+    }
+  ]
+}

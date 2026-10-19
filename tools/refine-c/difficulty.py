@@ -19,6 +19,8 @@ import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+import publication_io as pubio  # noqa: E402
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 MODEL_PATH = os.path.join(HERE, 'settings', 'difficulty.json')
 MIN_ACTIONS = 10
@@ -26,7 +28,8 @@ FEATURES = ('depth', 'lies_on_path', 'lies_other', 'herrings_aimed', 'herrings_o
 
 
 def load_model(path=MODEL_PATH):
-    return json.load(open(path))
+    with open(path) as source:
+        return json.load(source)
 
 
 # ---- features ----------------------------------------------------------------------------------------------------
@@ -75,6 +78,24 @@ def rate(case, report=None, model=None):
     f = features(case, report)
     s = score(f, model)
     return {'v': model['v'], 'score': round(s, 3), 'level': level(s, model), 'features': f}
+
+
+_MISSING = object()
+
+
+def rate_with_target(case, report=None, model=None, target=_MISSING):
+    """Rate a case without discarding an existing requested difficulty target."""
+    if target is _MISSING:
+        target = (case.get('difficulty') or {}).get('target')
+    rating = rate(case, report=report, model=model)
+    if target is not None:
+        rating['target'] = target
+    return rating
+
+
+def index_rating(rating):
+    """The durable public subset of a case rating, including its target when present."""
+    return {key: rating[key] for key in ('level', 'score', 'target') if key in rating}
 
 
 # ---- generation targets ------------------------------------------------------------------------------------------
@@ -127,20 +148,23 @@ def published():
 
 
 def rate_all(log=print):
-    """Rate every published case and copy the rating into its index entry (adds no fact: a measurement)."""
+    """Atomically re-rate cases, preserve targets, and commit each corpus index last."""
     model = load_model()
-    for idx_path, base in published():
-        if not os.path.exists(idx_path):
-            continue
-        index = json.load(open(idx_path))
-        for entry in index:
-            path = f"{base}/{entry['file']}"
-            case = json.load(open(path))
-            case['difficulty'] = rate(case, model=model)
-            json.dump(case, open(path, 'w'), indent=1)
-            entry['difficulty'] = {'level': case['difficulty']['level'], 'score': case['difficulty']['score']}
-            log(f"{entry['id']:30} {entry['difficulty']['level']:7} {entry['difficulty']['score']}")
-        json.dump(index, open(idx_path, 'w'), indent=1)
+    corpora = published()
+    publication_root = os.path.commonpath([os.path.dirname(idx_path) for idx_path, _ in corpora])
+    with pubio.publication_lock(publication_root):
+        for idx_path, base in corpora:
+            if not os.path.exists(idx_path):
+                continue
+            index = pubio.read_json(idx_path)
+            for entry in index:
+                path = f"{base}/{entry['file']}"
+                case = pubio.read_json(path)
+                case['difficulty'] = rate_with_target(case, model=model)
+                pubio.atomic_json(path, case)
+                entry['difficulty'] = index_rating(case['difficulty'])
+                log(f"{entry['id']:30} {entry['difficulty']['level']:7} {entry['difficulty']['score']}")
+            pubio.atomic_json(idx_path, index)             # readers see case contents before matching metadata
 
 
 # ---- plays and fitting -------------------------------------------------------------------------------------------
@@ -154,34 +178,35 @@ def plays(log_path=f'{ROOT}/logs/game.log', model=None):
     def close():
         if cur and cur['case']:
             rows.append(cur)
-    for line in open(log_path):
-        try:
-            r = json.loads(line)
-        except ValueError:
-            continue
-        kind = r.get('kind')
-        if kind == 'case_start':
-            if cur and cur['case'] == r.get('id') and not cur['solved']:
-                continue                      # the same investigation resumed (a reload), not a new play
-            close()
-            cur = {'case': r.get('id'), 'hints': 0, 'wrong': 0, 'solved': False, 'actions': 0}
-        elif cur and r.get('caseId') == cur['case']:
-            if kind == 'action':
-                cur['actions'] += 1
-            elif kind == 'hint':
-                cur['hints'] += 1
-            elif kind == 'accusation':
-                if r.get('status') == 'supported':
-                    cur['solved'] = True
-                elif not cur['solved']:
-                    cur['wrong'] += 1
+    with open(log_path, encoding='utf-8') as log_file:
+        for line in log_file:
+            try:
+                r = json.loads(line)
+            except ValueError:
+                continue
+            kind = r.get('kind')
+            if kind == 'case_start':
+                if cur and cur['case'] == r.get('id') and not cur['solved']:
+                    continue                      # the same investigation resumed (a reload), not a new play
+                close()
+                cur = {'case': r.get('id'), 'hints': 0, 'wrong': 0, 'solved': False, 'actions': 0}
+            elif cur and r.get('caseId') == cur['case']:
+                if kind == 'action':
+                    cur['actions'] += 1
+                elif kind == 'hint':
+                    cur['hints'] += 1
+                elif kind == 'accusation':
+                    if r.get('status') == 'supported':
+                        cur['solved'] = True
+                    elif not cur['solved']:
+                        cur['wrong'] += 1
     close()
     files = {os.path.basename(f)[:-5]: f for f in glob.glob(f'{ROOT}/dist/cases/generated/**/mk-*.json', recursive=True)}
     out = []
     for p in rows:
         if p['case'] not in files or p['actions'] < MIN_ACTIONS:
             continue                          # a case opened and left is not a play
-        case = json.load(open(files[p['case']]))
+        case = pubio.read_json(files[p['case']])
         p['features'] = (case.get('difficulty') or {}).get('features') or features(case)
         p['clean'] = p['solved'] and p['hints'] <= limit['max_hints'] and p['wrong'] <= limit['max_wrong_accusations']
         out.append(p)
@@ -223,7 +248,7 @@ def fit(force=False, log=print):
     fitted = {**model, 'v': model['v'] + 1, 'kind': 'logistic', 'source': f'logistic fit on {len(rows)} plays',
               'bias': round(bias, 4), 'weights': {k: round(w, 4) for k, w in zip(FEATURES, weights)},
               'bands': [[0.4, 'easy'], [0.7, 'medium'], [None, 'hard']]}
-    json.dump(fitted, open(MODEL_PATH, 'w'), indent=1)
+    pubio.atomic_json(MODEL_PATH, fitted)
     log(f"fitted on {len(rows)} plays: {fitted['weights']} bias {fitted['bias']}; run `rate` to re-rate the cases")
     return fitted
 

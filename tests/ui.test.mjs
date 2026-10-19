@@ -710,3 +710,17 @@ test('The map shows where people really are: someone walking is on the path betw
   assert.doesNotMatch(pinPeople(html, away), new RegExp(`data-face="${pid}"`), 'not yet at the place they are going');
   assert.match(html, new RegExp(`class="map-face acting" data-face="${pid}"`), 'walking for a plan of their own: the acting ring');
 });
+
+
+test('Done markers use canonical question identity in legacy saved cases',()=>{
+  const kc=JSON.parse(readFileSync(new URL('./fixtures/mk-cordial.json',import.meta.url),'utf8'));
+  kc.id='mk-test-ui-night-alias';
+  kc.signs.push({id:'t_duplicate_night',kind:'testimony',speaker:'iris',source:'e_chess',title:'Chess detail',
+    text:'We played chess at my surgery.',ask:'Where were you last night?'});
+  const s=engine.createSession(2,engine.registerKernelCase(kc));
+  if(s.world.player.location!==s.world.npcs.iris.location)engine.dispatch(s,{type:'move',to:s.world.npcs.iris.location});
+  engine.dispatch(s,{type:'ask',person:'iris',topic:'t_duplicate_night'});
+  const saved=dialogueSave.exportDialogueSave(s,new Map(),{},{}),ui=adapter(saved);
+  assert.equal(ui.run("actionDone({type:'ask',person:'iris',topic:'night'})"),true);
+  assert.equal(ui.run("actionDone({type:'ask',person:'iris',topic:'t_duplicate_night'})"),true);
+});

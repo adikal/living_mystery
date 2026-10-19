@@ -1,17 +1,52 @@
 """Publish generated Bellweather cases for the game: for each brief, take the deepest case that the JS kernel
 certifies (across every run), give it a stable id and title, and write dist/cases/generated/{id}.json + index.json."""
-import glob, json, os, re, subprocess, sys
+import copy, datetime, glob, json, os, re, subprocess, sys, tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import enrich
 import difficulty  # noqa: E402
+import provenance  # noqa: E402
+import publication_io as pubio  # noqa: E402
 import threading
-SIGNS = threading.Lock()   # publish steps run in parallel; sign-list changes are serialised
+SIGNS = threading.Lock()   # individual maintenance helpers can also be called directly
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 OUT = f'{ROOT}/dist/cases/generated'
+PUBLICATION_REVIEW_VERSION = 'whole-case-publication-review-v2'
+PUBLICATION_REVIEW_SCHEMA_VERSION = 'whole-case-publication-review-schema-v1'
+PUBLICATION_CERTIFICATE_VERSION = 'publication-review-certificate-v2'
+PUBLICATION_REVIEW_PROMPT = """You are the final independent publication reviewer for a complete 1932 English village mystery.
+The deterministic logic, timing, reachability and uniqueness checks are separate and their outcome is hidden from you.
+Integer times are minutes after midnight, not HHMM: 1320 means 22:00. Values above 1440 are on the next day;
+for example, 1770 means 05:30 the next day. Convert every integer time this way before comparing chronology or prose.
+Judge the WHOLE case only for common-sense plausibility, fairness and craft. Fail if any material problem remains:
+- LOCK: obtaining a prerequisite would not naturally lead the detective to the gated clue.
+- READING: a prerequisite does not actually make sense of the clue.
+- CHARACTER: a person acts or speaks against their established attitudes, knowledge, events or voice.
+- LOOSE END: a player-facing person or suspicion is materially implicated without a fair explanation or resolution. Hidden
+  private motives, fears, attitudes and events are author-side context, not automatically player-facing loose ends.
+- GIVEAWAY: wording names the culprit or announces what evidence proves.
+- CONTRADICTION: player-facing prose or story facts conflict. Intentional false testimony and cover stories are allowed:
+  do not compare them directly to private true events as if they should be honest. Instead check that each declared lie is
+  faithful to its structured false claim or stated cover story and that its declared, reachable defeater can expose it.
+- FAIRNESS: a necessary inference depends on information the player cannot learn, or prose materially overstates records.
+- CRAFT: a material whole-case coherence defect would make the mystery confusing or implausible. Minor, borderline,
+  optional-subplot, stylistic or taste concerns must pass and must not appear as fail issues.
+Every fail issue must name the relevant record id (or GLOBAL), one check label, and a specific actionable problem.
+Reply with exactly one JSON object: {"verdict":"pass"|"fail","issues":["<id>: <CHECK>: <problem>", ...]}"""
+PUBLICATION_REVIEW_SCHEMA = {
+    'type': 'object',
+    'properties': {
+        'verdict': {'type': 'string', 'enum': ['pass', 'fail']},
+        'issues': {'type': 'array', 'items': {'type': 'string'}},
+    },
+    'required': ['verdict', 'issues'],
+}
+PUBLICATION_REVIEW_CHECKS = ('LOCK', 'READING', 'CHARACTER', 'LOOSE END', 'GIVEAWAY', 'CONTRADICTION', 'FAIRNESS', 'CRAFT')
+# Blinding removes labels that reveal a requested experimental level. They remain in the candidate hash when present.
+PUBLICATION_REVIEW_BLIND_FIELDS = ('id', 'difficulty', 'difficulty_target', 'publication_review')
 # Blurbs state only the certified public premise (who is dead, where they were found). Anything more
 # (a quarrel, a suspicion) would be an uncertified fact the characters could never confirm.
-TITLES = {
+CASE_TITLES = {
     'bw-ledger': ('The Study Door', 'Edmund Vale is found dead in his study at Vale Manor.'),
     'bw-poison': ('A Supper at Vale Manor', 'Edmund Vale died in the night, after supper at Vale Manor.'),
     'bw-pair': ('The Greenhouse Steps', 'Edmund Vale was found at the foot of the greenhouse steps.'),
@@ -24,24 +59,261 @@ TITLES = {
 sys.path.insert(0, os.path.join(ROOT, 'server'))
 
 
-def gate(case):
-    """A case publishes only when the Python kernel, the JS kernel and the Z3 oracle all certify it and agree:
-    motive, means and opportunity reachable; the true history possible; only the truth survives."""
-    import tempfile
+def publication_candidate(case):
+    """The exact enriched candidate reviewed by the model, without metadata added after that boundary."""
+    candidate = copy.deepcopy(case)
+    candidate.pop('publication_review', None)
+    candidate.pop('difficulty', None)
+    return candidate
+
+
+def publication_candidate_sha256(case):
+    return provenance.sha256(publication_candidate(case))
+
+
+def _publication_prompt_case(case):
+    """Hide requested-level labels and prior certificates from the reviewer, without changing the bound candidate."""
+    candidate = publication_candidate(case)
+    for key in PUBLICATION_REVIEW_BLIND_FIELDS:
+        candidate.pop(key, None)
+    return candidate
+
+
+def _publication_review_shape(raw):
+    """Return a typed terminal verdict, or None for a reasonless fail eligible for one semantic retry."""
+    from refine import CriticStatus
+    if not isinstance(raw, dict):
+        return CriticStatus.UNAVAILABLE, ()
+    verdict, supplied = raw.get('verdict'), raw.get('issues')
+    if verdict not in ('pass', 'fail') or not isinstance(supplied, list) or any(not isinstance(i, str) for i in supplied):
+        return CriticStatus.UNAVAILABLE, ()
+    if verdict == 'pass':
+        return (CriticStatus.PASS, ()) if not supplied else (CriticStatus.UNAVAILABLE, ())
+    pattern = re.compile(r'^\S[^:]*:\s*(?:' + '|'.join(re.escape(check) for check in PUBLICATION_REVIEW_CHECKS) + r'):\s*\S', re.I)
+    issues = tuple(issue.strip() for issue in supplied if issue.strip() and pattern.match(issue.strip()))[:12]
+    return (CriticStatus.FAIL, issues) if issues else None
+
+
+def publication_critic(case):
+    """One typed whole-case review operation; only a reasonless fail receives the normal single semantic retry."""
+    import refine
+    prompt = json.dumps(_publication_prompt_case(case), ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+    attempts = []
+    for semantic_attempt in range(2):
+        try:
+            response = refine.llm_json_audited(
+                PUBLICATION_REVIEW_PROMPT,
+                prompt,
+                4000,
+                model=refine.CRITIC_MODEL,
+                schema=PUBLICATION_REVIEW_SCHEMA,
+                audit_metadata={'purpose': 'final-whole-case-publication-critic',
+                                'semantic_retry': semantic_attempt,
+                                'prompt_version': PUBLICATION_REVIEW_VERSION,
+                                'schema_version': PUBLICATION_REVIEW_SCHEMA_VERSION},
+            )
+        except Exception as error:
+            message = f'{type(error).__name__}: {error}'
+            raw = getattr(error, 'raw_response', {'error': message})
+            attempt = refine.CriticAttempt(raw, refine._exception_request_ids(error), message)
+            attempts.append(attempt)
+            audit = provenance.current_audit()
+            if audit and getattr(error, 'logical_request_id', None):
+                audit.annotate(error.logical_request_id, typed_critic_outcome='UNAVAILABLE')
+            request_ids = tuple(rid for item in attempts for rid in item.request_ids)
+            return refine.CriticOutcome(refine.CriticStatus.UNAVAILABLE, (), raw, tuple(attempts), request_ids,
+                                        getattr(error, 'inference_profile', refine.CRITIC_MODEL))
+        attempt = refine.CriticAttempt(response.payload, response.request_ids)
+        attempts.append(attempt)
+        shaped = _publication_review_shape(response.payload)
+        audit = provenance.current_audit()
+        if shaped is None:
+            if audit and response.logical_request_id:
+                audit.annotate(response.logical_request_id, typed_critic_outcome='UNAVAILABLE_REASONLESS_RETRY')
+            continue
+        status, issues = shaped
+        if audit and response.logical_request_id:
+            audit.annotate(response.logical_request_id, typed_critic_outcome=status.value, critic_issues=list(issues))
+        request_ids = tuple(rid for item in attempts for rid in item.request_ids)
+        return refine.CriticOutcome(status, issues, response.payload, tuple(attempts), request_ids,
+                                    response.inference_profile)
+    if audit and response.logical_request_id:
+        audit.annotate(response.logical_request_id, typed_critic_outcome='UNAVAILABLE')
+    request_ids = tuple(rid for item in attempts for rid in item.request_ids)
+    return refine.CriticOutcome(refine.CriticStatus.UNAVAILABLE, (), attempts[-1].raw_response, tuple(attempts),
+                                request_ids, response.inference_profile)
+
+
+def _certificate(outcome, candidate_hash, timestamp=None):
+    """Build a public, hash-bound typed certificate without private critic issue text."""
+    issue_digest = provenance.sha256(list(outcome.issues))
+    certificate = {
+        'version': PUBLICATION_CERTIFICATE_VERSION,
+        'candidate_sha256': candidate_hash,
+        'critic_status': outcome.status.value,
+        'critic_issue_count': len(outcome.issues),
+        'critic_issues_sha256': issue_digest,
+        'prompt': {'version': PUBLICATION_REVIEW_VERSION, 'sha256': provenance.sha256(PUBLICATION_REVIEW_PROMPT)},
+        'schema': {'version': PUBLICATION_REVIEW_SCHEMA_VERSION, 'sha256': provenance.sha256(PUBLICATION_REVIEW_SCHEMA)},
+        'requested_inference_profile': outcome.inference_profile,
+        'request_ids': list(outcome.request_ids),
+        'timestamp': timestamp or provenance.utc_now(),
+    }
+    certificate['digest'] = provenance.sha256(certificate)
+    return certificate
+
+
+def review_for_publication(case, reviewer=None, timestamp=None, return_outcome=False):
+    """Attach a safe hash-bound certificate; keep detailed findings in the ignored private audit."""
+    candidate_hash = publication_candidate_sha256(case)
+    if reviewer is not None:
+        outcome = reviewer(case)
+    elif provenance.current_audit() is not None:
+        outcome = publication_critic(case)
+    else:
+        run_id = f'publication-{candidate_hash[:16]}-{os.getpid()}-{provenance.utc_now().replace(":", "").replace(".", "")}'
+        audit = provenance.RunAudit(
+            os.path.join(HERE, 'runs', 'publication-reviews', run_id), run_id, 'ordinary-publication',
+            {'candidate_sha256': candidate_hash,
+             'prompt_version': PUBLICATION_REVIEW_VERSION,
+             'prompt_sha256': provenance.sha256(PUBLICATION_REVIEW_PROMPT),
+             'schema_version': PUBLICATION_REVIEW_SCHEMA_VERSION,
+             'schema_sha256': provenance.sha256(PUBLICATION_REVIEW_SCHEMA)},
+        )
+        with provenance.activate(audit, parent_operation='ordinary-publication', phase='final-whole-case-review'):
+            outcome = publication_critic(case)
+        audit.finish(outcome.status.value, '; '.join(outcome.issues) or None,
+                     candidate_sha256=candidate_hash, request_ids=list(outcome.request_ids))
+    certificate = _certificate(outcome, candidate_hash, timestamp)
+    case['publication_review'] = certificate
+    return (certificate, outcome) if return_outcome else certificate
+
+
+def publication_certificate_errors(case):
+    """Validate a certificate and its exact enriched-candidate binding without exposing private findings."""
+    from refine import CriticStatus
+    certificate = case.get('publication_review')
+    if not isinstance(certificate, dict):
+        return ['publication review certificate is missing']
+    errors = []
+    digest = certificate.get('digest')
+    unsigned = {key: value for key, value in certificate.items() if key != 'digest'}
+    if not isinstance(digest, str) or digest != provenance.sha256(unsigned):
+        errors.append('publication review certificate digest mismatch')
+    if certificate.get('version') != PUBLICATION_CERTIFICATE_VERSION:
+        errors.append('publication review certificate version mismatch')
+    if certificate.get('candidate_sha256') != publication_candidate_sha256(case):
+        errors.append('publication review certificate candidate hash is stale')
+    status = certificate.get('critic_status')
+    valid_statuses = {item.value for item in CriticStatus}
+    if status not in valid_statuses:
+        errors.append('publication critic status is invalid or missing')
+    issue_count = certificate.get('critic_issue_count')
+    if isinstance(issue_count, bool) or not isinstance(issue_count, int) or issue_count < 0:
+        errors.append('publication review issue count is invalid or missing')
+    issue_digest = certificate.get('critic_issues_sha256')
+    if not isinstance(issue_digest, str) or not re.fullmatch(r'[0-9a-f]{64}', issue_digest):
+        errors.append('publication review issue digest is invalid or missing')
+    if status == CriticStatus.PASS.value and (issue_count != 0 or issue_digest != provenance.sha256([])):
+        errors.append('publication PASS certificate must bind an empty critic issue list')
+    if status == CriticStatus.FAIL.value and issue_count == 0:
+        errors.append('publication FAIL certificate must bind at least one critic issue')
+    expected_prompt = {'version': PUBLICATION_REVIEW_VERSION, 'sha256': provenance.sha256(PUBLICATION_REVIEW_PROMPT)}
+    expected_schema = {'version': PUBLICATION_REVIEW_SCHEMA_VERSION, 'sha256': provenance.sha256(PUBLICATION_REVIEW_SCHEMA)}
+    if certificate.get('prompt') != expected_prompt:
+        errors.append('publication review prompt hash or version mismatch')
+    if certificate.get('schema') != expected_schema:
+        errors.append('publication review schema hash or version mismatch')
+    if not isinstance(certificate.get('requested_inference_profile'), str) or not certificate['requested_inference_profile']:
+        errors.append('publication review inference profile is missing')
+    if not isinstance(certificate.get('request_ids'), list):
+        errors.append('publication review request IDs are missing')
+    if not isinstance(certificate.get('timestamp'), str) or not certificate['timestamp']:
+        errors.append('publication review timestamp is missing')
+    return errors
+
+
+def deterministic_gate(case):
+    """Network-free Python/JavaScript/Z3 certification: the ordinary blocking publication gate."""
     import case_oracle
     from refine import certify
     py = certify(case, require_backing=True)
-    with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as f:
-        json.dump(case, f)
+    with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as handle:
+        json.dump(case, handle)
     try:
-        js = js_certify([f.name])[0]
+        js = js_certify([handle.name])[0]
     finally:
-        os.remove(f.name)
+        os.remove(handle.name)
     z = case_oracle.check_case(case)
-    errors = [f'python: {e}' for e in py.get('errors', [])] + [f'js: {e}' for e in js.get('errors', [])] + z['errors']
+    errors = ([f'python: {error}' for error in py.get('errors', [])]
+              + [f'js: {error}' for error in js.get('errors', [])]
+              + z['errors'] + question_alias_errors(case))
     if py['ok'] and js['ok'] and (py['solve_depth'], py['pillars']) != (js['solveDepth'], js['pillars']):
         errors.append(f"python and js disagree: {py['solve_depth']}/{py['pillars']} vs {js['solveDepth']}/{js['pillars']}")
-    return {'ok': not errors, 'errors': errors, 'js': js, 'z3': z}
+    return {'ok': not errors, 'errors': errors, 'python': py, 'js': js, 'z3': z}
+
+
+def gate(case, strict_publication_review=False):
+    """Run the deterministic gate; optionally promote whole-case review findings to blocking errors."""
+    result = deterministic_gate(case)
+    certificate_errors = publication_certificate_errors(case)
+    certificate = case.get('publication_review')
+    status = certificate.get('critic_status') if isinstance(certificate, dict) else None
+    if strict_publication_review and status != 'PASS':
+        certificate_errors.append(f"publication critic status is {status or 'missing'}, not PASS")
+    # Deduplicate while preserving diagnostic order.
+    certificate_errors = list(dict.fromkeys(certificate_errors))
+    if strict_publication_review and certificate_errors:
+        result['errors'] = [*result.get('errors', []), *certificate_errors]
+        result['ok'] = False
+    result['publication_review_mode'] = 'strict' if strict_publication_review else 'shadow'
+    result['publication_review'] = certificate
+    result['publication_review_errors'] = certificate_errors
+    return result
+
+
+def _read_json(path):
+    """Read JSON while deterministically closing the file descriptor."""
+    return pubio.read_json(path)
+
+
+def _atomic_json(path, value):
+    """Durably replace complete JSON through a same-directory temporary."""
+    return pubio.atomic_json(path, value)
+
+
+def _serialized_case(case, strict_publication_review=False):
+    """Round-trip the exact served object and gate that representation before any write."""
+    serialized = json.loads(json.dumps(case, ensure_ascii=False))
+    post = gate(serialized, strict_publication_review=strict_publication_review)
+    if not post['ok']:
+        raise ValueError('the serialized published case failed certification: ' + '; '.join(post['errors'][:3]))
+    return serialized, post
+
+
+def _review_gate_rate(case, difficulty_target=None, strict_publication_review=False):
+    """The shared publication boundary: review, deterministically gate, rate, and validate the exact serializable
+    candidate (strict critic enforcement is opt-in). Writes nothing; callers commit what it returns."""
+    review_for_publication(case)
+    pre = gate(case, strict_publication_review=strict_publication_review)
+    if not pre['ok']:
+        raise ValueError('the published case failed certification: ' + '; '.join(pre['errors'][:3]))
+    case['difficulty'] = difficulty.rate_with_target(case, report=pre['python'], target=difficulty_target)
+    return _serialized_case(case, strict_publication_review=strict_publication_review)
+
+
+def disk_sha256(path):
+    """The provenance hash of the JSON now at path (None if it is gone): what optimistic checks and read-backs compare."""
+    try:
+        return provenance.sha256(_read_json(path))
+    except FileNotFoundError:
+        return None
+
+
+def _require_on_disk(path, expected_sha256):
+    """Read a just-written file back and refuse to advertise it unless it is exactly what was meant to be written."""
+    if disk_sha256(path) != expected_sha256:
+        raise OSError(f'{os.path.basename(path)} did not read back as written; the index was not updated')
 
 
 def js_certify(paths):
@@ -58,26 +330,122 @@ Each item lists 'already_asked': questions the detective can already put to ever
 one of those, it will be asked that way; otherwise ask about this account's own topic.
 Return {"questions": {"<id>": "<question>"}}."""
 # What the detective can ask anyone (kernel-case.mjs topicsFor / followupOptions): account questions must differ from these.
-def _standard_questions():
-    """The questions the game offers everyone, read from the game's own module (dist/cases/questions.mjs)."""
+def _question_rules():
+    """The standard questions and the alias rules, read from the game's own module (dist/cases/questions.mjs), so
+    publishing and play classify questions identically."""
     url = 'file://' + os.path.join(ROOT, 'dist', 'cases', 'questions.mjs')
-    out = subprocess.run(['node', '--input-type=module', '-e',
-                          f'import({json.dumps(url)}).then(m => console.log(JSON.stringify(m.STANDARD_QUESTIONS)))'],
-                         capture_output=True, text=True, check=True)
-    q = json.loads(out.stdout)
+    script = (f'import({json.dumps(url)}).then(m => console.log(JSON.stringify({{standard: m.STANDARD_QUESTIONS, '
+              'aliasTopics: m.ALIAS_TOPICS, filler: m.QUESTION_FILLER, nightCore: m.NIGHT_QUESTION_CORE})))')
+    out = subprocess.run(['node', '--input-type=module', '-e', script], capture_output=True, text=True, check=True)
+    rules = json.loads(out.stdout)
+    q = dict(rules['standard'])
     q.pop('case', None)                       # the constable's briefing is not an account question
     q.pop('everyday', None)                   # nor is the plain-facts question (it never brings out an account)
-    return q
+    return q, tuple(rules['aliasTopics']), tuple(rules['filler']), rules['nightCore']
 
 
-_STANDARD = _standard_questions()
+_STANDARD, ALIAS_TOPICS, _QUESTION_FILLER, _NIGHT_CORE = _question_rules()
 STANDARD_TOPICS, STANDARD_QUESTIONS = list(_STANDARD), list(_STANDARD.values())
 SAME = """For each character you get the questions a detective can ask them, with ids. Group the questions that ask for the
 same thing in different words: any question asking where they were or what they did last night asks the same as
 "What is your account of last night?", however it is addressed.
 Questions about different topics, times, people or objects are different, even if they look alike.
 Return {"duplicates": {"<character id>": [["<id>", "<id>", ...], ...]}} listing only groups of two or more."""
-TITLE_WORDS = {'Mr', 'Mrs', 'Miss', 'Dr', 'Doctor', 'Constable', 'I', 'Edmund', 'Vale'}
+TITLE_WORDS = {'Mr', 'Mrs', 'Miss', 'Dr', 'Doctor', 'Constable', 'Reverend', 'I'}
+
+
+def _question_key(value):
+    """Case- and punctuation-insensitive wording. Must stay identical to questions.mjs `questionKey`."""
+    return ' '.join(re.findall(r"[a-z0-9]+", str(value).lower().replace('’', "'")))
+
+
+_ALIAS_STANDARD_BY_KEY = {_question_key(_STANDARD[topic]): topic for topic in ALIAS_TOPICS if topic in _STANDARD}
+
+
+def _case_names(case):
+    """Every name and form of address in the case, for recognising a vocative around a plain question."""
+    import premise
+    setting = {p['id']: p for p in premise.SETTING.get('people', [])}
+    out = []
+    for person in case.get('people', []):
+        out += [person.get('name', ''), setting.get(person['id'], {}).get('name', ''), setting.get(person['id'], {}).get('address', '')]
+    return [name for name in out if name]
+
+
+def is_plain_night_question(question, names=()):
+    """Whether a question asks only where the person was last night (questions.mjs `isPlainNightQuestion`)."""
+    words = set(_QUESTION_FILLER) | {w for name in names for w in _question_key(name).split() if w}
+    filler = '|'.join(sorted(re.sub(r'[^a-z0-9]', '', w) for w in words if re.sub(r'[^a-z0-9]', '', w)))
+    return re.fullmatch(rf'(?:(?:{filler}) )*{_NIGHT_CORE}(?: (?:{filler}))*', _question_key(question)) is not None
+
+
+def _alias_signs(case):
+    """Account questions that may carry an alias: own-question testimony (summaries and sightings have fixed questions)."""
+    return {sign['id']: sign for sign in case.get('signs', [])
+            if sign.get('kind') == 'testimony' and sign.get('ask') and sign.get('id')
+            and not (sign.get('surface') or sign.get('morning') or sign.get('sighting'))}
+
+
+def _valid_alias_target(case_signs, sid, target):
+    """An alias target must deliver the account: a night-delivering standard topic or the same speaker's account."""
+    if target in ALIAS_TOPICS:
+        return True
+    other = case_signs.get(target)
+    return bool(other and other.get('kind') == 'testimony' and other.get('speaker') == case_signs[sid].get('speaker')
+                and target != sid)
+
+
+def deterministic_duplicate_questions(case):
+    """Aliases that do not need a model: plain whereabouts questions, exact night-question wording, and exact
+    same-speaker rewordings."""
+    names = _case_names(case)
+    people = {}
+    for sign in _alias_signs(case).values():
+        people.setdefault(sign.get('speaker'), []).append(sign)
+    aliases = {}
+    for questions in people.values():
+        first_by_wording = {}
+        for sign in questions:
+            key = _question_key(sign['ask'])
+            standard = _ALIAS_STANDARD_BY_KEY.get(key) or ('night' if is_plain_night_question(sign['ask'], names) else None)
+            if standard:
+                aliases[sign['id']] = standard
+            elif key in first_by_wording:
+                aliases[sign['id']] = first_by_wording[key]
+            else:
+                first_by_wording[key] = sign['id']
+    return aliases
+
+
+def _resolved_alias(topic, aliases):
+    seen = set()
+    while topic in aliases:
+        if topic in seen:
+            return None
+        seen.add(topic)
+        topic = aliases[topic]
+    return topic
+
+
+def question_alias_errors(case):
+    """Publication errors for unsafe, cyclic, or missing deterministic question aliases."""
+    case_signs = {sign.get('id'): sign for sign in case.get('signs', []) if sign.get('id')}
+    aliases = {sid: sign['same_as'] for sid, sign in case_signs.items() if sign.get('same_as')}
+    eligible = _alias_signs(case)
+    errors = []
+    for sid, target in aliases.items():
+        if sid not in eligible:
+            errors.append(f'question {sid} has an alias but no own question')
+        elif not _valid_alias_target(case_signs, sid, target):
+            errors.append(f'question {sid} aliases {target}, which does not deliver it')
+        elif _resolved_alias(sid, aliases) is None:
+            errors.append(f'question alias cycle at {sid}')
+    for sid, target in deterministic_duplicate_questions(case).items():
+        resolved = _resolved_alias(sid, aliases)
+        expected = _resolved_alias(target, aliases) if target in aliases else target
+        if resolved != expected:
+            errors.append(f'question {sid} duplicates {target} but is not aliased to it')
+    return list(dict.fromkeys(errors))
 
 
 def add_questions(case, synopsis):
@@ -87,6 +455,7 @@ def add_questions(case, synopsis):
     import re
     signs = {x['id']: x for x in case['signs']}
     names = {p['id']: p['name'] for p in case['people']}
+    victim_words = set(names.get(enrich.victim_of(case), '').split())   # the dead are named in every premise
     def known(x):
         return ' '.join([synopsis, x.get('title', '')] + [signs[r].get('text', '') for r in x.get('requires', []) if r in signs])
     todo = [x for x in case['signs'] if x['kind'] == 'testimony' and not x.get('ask')]
@@ -97,7 +466,7 @@ def add_questions(case, synopsis):
         out = llm_json(ASK, json.dumps({'premise': synopsis, 'items': items}), 2000, model=CRITIC_MODEL).get('questions', {})
         for x in todo:
             q = str(out.get(x['id'], '')).strip()
-            caps = [w for w in re.findall(r"[A-Z][a-z]+", q)[1:] if w not in TITLE_WORDS and w not in names.get(x['speaker'], '')]
+            caps = [w for w in re.findall(r"[A-Z][a-z]+", q)[1:] if w not in TITLE_WORDS | victim_words and w not in names.get(x['speaker'], '')]
             leak = [w for w in caps if w not in known(x)]
             if q.endswith('?') and 3 <= len(q.split()) <= 16 and not leak:
                 x['ask'] = q; n += 1
@@ -105,46 +474,69 @@ def add_questions(case, synopsis):
     return n
 
 
-def mark_duplicate_questions(case):
-    """x['same_as'] = the standard topic ('night', ...) or account id whose question x's question rewords. In play such an
-    account is asked through that question, so the menu never shows two questions that ask the same thing. Rewriting
-    the question instead was tried: the rewrites either asked about something else or gave the account away."""
-    for x in case['signs']:
-        x.pop('same_as', None)
-    for sid, keep in duplicate_questions(case).items():
-        x = next(y for y in case['signs'] if y['id'] == sid)
-        x['same_as'] = keep
-    return sum(1 for x in case['signs'] if x.get('same_as'))
+def mark_duplicate_questions(case, judge=True):
+    """Attach aliases (same_as) so the menu never shows two questions asking the same thing.
+
+    Aliases are recomputed on every run: deterministic aliases always apply, and the semantic judge adds the rest.
+    Only when the judge is unavailable (or `judge=False`, the network-free repair used by maintenance tools) are
+    earlier aliases kept, still subject to validation, so a transient model failure never removes a reviewed alias
+    while a successful run can drop an alias it no longer confirms."""
+    case_signs = {sign['id']: sign for sign in case['signs'] if sign.get('id')}
+    eligible = _alias_signs(case)
+    judged = duplicate_questions(case) if judge else None
+    if judged is None:   # judge unavailable: keep what earlier runs established
+        aliases = {sid: sign['same_as'] for sid, sign in case_signs.items() if sign.get('same_as')}
+    else:
+        aliases = dict(judged)
+    aliases.update(deterministic_duplicate_questions(case))
+    aliases = {sid: target for sid, target in aliases.items()
+               if sid in eligible and _valid_alias_target(case_signs, sid, target)}
+    # Drop chains that cycle rather than serialise an alias the runtime cannot resolve.
+    aliases = {sid: target for sid, target in aliases.items() if _resolved_alias(sid, aliases) is not None}
+    for sign in case['signs']:
+        sign.pop('same_as', None)
+        if sign.get('id') in aliases:
+            sign['same_as'] = aliases[sign['id']]
+    return len(aliases)
 
 
 def duplicate_questions(case, model=None):
-    from refine import CRITIC_MODEL
-    """{account id: the question it duplicates} for account questions that ask the same as a standard question or as
-    another of the same person's questions (the first of a group is kept). Judged by a fast model, per person."""
-    from refine import llm_json
+    """Model-judged aliases for semantic rewordings the deterministic rules cannot identify safely, or None when the
+    judge is unavailable. Groups are per speaker; a target must deliver the account (see `_valid_alias_target`)."""
+    from refine import llm_json, CRITIC_MODEL
+    eligible = _alias_signs(case)
     people = {}
-    for x in case['signs']:
-        if x['kind'] == 'testimony' and x.get('ask') and not (x.get('surface') or x.get('morning') or x.get('sighting')):
-            people.setdefault(x['speaker'], []).append(x)
+    for sign in eligible.values():
+        people.setdefault(sign['speaker'], []).append(sign)
     if not people:
         return {}
     items = {pid: [{'id': f'std{i}', 'question': q} for i, q in enumerate(STANDARD_QUESTIONS)]
              + [{'id': x['id'], 'question': x['ask']} for x in xs] for pid, xs in people.items()}
     try:
-        groups = llm_json(SAME, json.dumps(items), 1200, model=model or CRITIC_MODEL).get('duplicates', {})   # the fast model missed most duplicates in trials
+        groups = llm_json(SAME, json.dumps(items), 1200, model=model or CRITIC_MODEL).get('duplicates', {})
     except Exception:
-        return {}
-    text = {i['id']: i['question'] for pid in items for i in items[pid]}
+        return None
+    if not isinstance(groups, dict):
+        return None
+    case_signs = {sign['id']: sign for sign in case['signs'] if sign.get('id')}
     out = {}
-    for pid, gs in (groups or {}).items():
+    for pid, gs in groups.items():
+        own = {i['id'] for i in items.get(pid, [])}
         for g in gs if isinstance(gs, list) else []:
-            g = [i for i in g if i in text] if isinstance(g, list) else []
+            g = [i for i in g if isinstance(i, str) and i in own] if isinstance(g, list) else []
             if len(g) < 2:
                 continue
-            keep = next((i for i in g if i.startswith('std')), g[0])        # a standard question always stays
+            standard = [i for i in g if i.startswith('std')]
+            if standard:
+                topic = STANDARD_TOPICS[int(standard[0][3:])]
+                if topic not in ALIAS_TOPICS:   # that standard question does not deliver an account: no alias
+                    continue
+                keep = topic
+            else:
+                keep = g[0]
             for i in g:
-                if i != keep and not i.startswith('std'):
-                    out[i] = STANDARD_TOPICS[int(keep[3:])] if keep.startswith('std') else keep
+                if not i.startswith('std') and i != keep and _valid_alias_target(case_signs, i, keep):
+                    out[i] = keep
     return out
 
 
@@ -941,16 +1333,15 @@ def add_medical(case):
     claim = {'pred': 'crimeBetween', 'from': w0, 'to': w1}
     doctor = enrich.role(case, 'examiner')
     doctor = doctor if doctor != victim else None
-    SIGNS.acquire()
-    home = next((p.get('home') for p in case['people'] if p['id'] == doctor), None)
-    case['signs'].insert(0, {'id': 's_medical', 'kind': 'record', 'medical': True, 'medical_v': MEDICAL_V, 'source': exam['id'],
-                             'at': home or q['crime']['place'],
-                             'title': 'The doctor\u2019s examination notes', 'text': notes, 'claim': claim})
-    if doctor:
-        case['signs'].insert(1, {'id': f's_medical_{doctor}', 'kind': 'testimony', 'medical': True, 'medical_v': MEDICAL_V,
-                                 'speaker': doctor, 'source': exam['id'], 'claim': claim, 'title': f"{next(p['address'] or p['name'] for p in case['people'] if p['id'] == doctor)} on the body", 'text': says,
-                                 'ask': f"Doctor, what did you find when you examined {vaddr}?"})
-    SIGNS.release()
+    with SIGNS:
+        home = next((p.get('home') for p in case['people'] if p['id'] == doctor), None)
+        case['signs'].insert(0, {'id': 's_medical', 'kind': 'record', 'medical': True, 'medical_v': MEDICAL_V, 'source': exam['id'],
+                                 'at': home or q['crime']['place'],
+                                 'title': 'The doctor\u2019s examination notes', 'text': notes, 'claim': claim})
+        if doctor:
+            case['signs'].insert(1, {'id': f's_medical_{doctor}', 'kind': 'testimony', 'medical': True, 'medical_v': MEDICAL_V,
+                                     'speaker': doctor, 'source': exam['id'], 'claim': claim, 'title': f"{next(p['address'] or p['name'] for p in case['people'] if p['id'] == doctor)} on the body", 'text': says,
+                                     'ask': f"Doctor, what did you find when you examined {vaddr}?"})
     return 1
 
 
@@ -1119,7 +1510,6 @@ def enrich_case(case, log=print):
     Questions, evening summaries (claimless, of the speaker's own events), the examination's notes and account (worded
     from the examination event), the answer's method and motive, concessions, everyday facts, moods, show lines and
     reactions. Then everything written is reviewed against the true history and faulty lines are dropped."""
-    import concurrent.futures as cf
     missing = __import__('premise').morning_errors(case)
     if missing:
         raise ValueError('the case has no morning to word: ' + '; '.join(missing))
@@ -1129,13 +1519,15 @@ def enrich_case(case, log=print):
     add_ordinary_evenings(case, log)                   # everyone in the case has an evening (certified solve-neutral)
     enrich.add_answer(case)                            # the examination wording depends on the method
     enrich.add_accepted(case)                          # every answer the player's evidence fairly supports
-    with cf.ThreadPoolExecutor(7) as ex:               # independent: each writes to its own part of the case
-        for f in [ex.submit(fn, case) for fn in (add_surface_accounts, add_morning_accounts, add_medical, add_concessions, enrich.add_knowledge,
-                                                  enrich.add_moods, add_show_lines, enrich.add_art)]:
-            f.result()
-    with cf.ThreadPoolExecutor(3) as ex:               # these need the accounts written above
-        for f in [ex.submit(mark_surface_truth, case), ex.submit(add_questions, case, case.get('synopsis', '')), ex.submit(add_reactions, case)]:
-            f.result()
+    # These phases all read or mutate the shared sign list, often across a model call. Keep them ordered so each
+    # phase sees a complete predecessor state. Running in the caller also preserves the active provenance context.
+    for operation in (add_surface_accounts, add_morning_accounts, add_medical, add_concessions,
+                      enrich.add_knowledge, enrich.add_moods, add_show_lines, enrich.add_art):
+        operation(case)
+    for operation, args in ((mark_surface_truth, (case,)),
+                            (add_questions, (case, case.get('synopsis', ''))),
+                            (add_reactions, (case,))):
+        operation(*args)
     add_sightings(case, log)                           # who saw whom, read from the history, certified solve-neutral
     record_contradictions(case, log)                   # a contradiction the player can see is one the case records
     add_declines(case)                                 # in-voice ways to decline, stating no fact
@@ -1164,11 +1556,123 @@ def finish_wording(case, rounds=3):
     return correct_addresses(case)
 
 
-def publish_live(case, brief_entry, stamp):
-    """Publish one freshly generated case for play: premise, questions, evening accounts, JS certification."""
+def prepare_experiment_case(case, brief_entry, stamp):
+    """Apply publish-time wording in memory without writing a playable case or mutating premise history."""
+    title, blurb, place, _ = brief_entry
+    case = json.loads(json.dumps(case))
+    case['id'] = f'experiment-{stamp}'
+    pr = case.get('premise')
+    if pr:
+        case['answer'] = {'method': pr['method'], 'motive': pr['motive']}
+        case['victim'] = pr['victim']
+        title = str(case.get('title') or '').strip()[:60] or title
+        name_words = {w for p in case['people'] for w in p['name'].split()} - {'The', 'Reverend', 'Dr', 'Mr', 'Mrs', 'Miss', 'Constable'}
+        if set(re.findall(r"[A-Za-z]+", title)) & name_words:
+            import premise as P
+            where = P.at(place)
+            title = 'Death at ' + (' '.join(w[:1].upper() + w[1:] if i else w for i, w in enumerate(where.split())) if where.startswith('the ') else where)
+    case['title'] = title
+    vname = next((p['name'] for p in case['people'] if p['id'] == enrich.victim_of(case)), 'Edmund Vale')
+    case['synopsis'] = blurb if case['question']['crime'].get('place') == place else f'{vname} is dead.'
+    enrich_case(case)
+    return case
+
+
+def _live_transaction_path():
+    return os.path.join(LIVE, '.publication-transaction.json')
+
+
+def _quarantine_marker(transaction_path, reason):
+    """Move a recovery marker that cannot be trusted aside (kept for inspection) so it never blocks publication."""
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
+    rejected = os.path.join(os.path.dirname(transaction_path), f'.publication-transaction.rejected-{stamp}.json')
+    pubio.durable_rename(transaction_path, rejected)
+    print(f'WARNING: live publication recovery marker rejected ({reason}); moved to {rejected}. Any case file it '
+          'names stays unindexed; publication continues.', file=sys.stderr)
+
+
+def _recover_live_publication_locked():
+    """Finish an interrupted index-last live commit while the shared publication lock is held.
+
+    Only a marker that names a case file whose identity and hash match it is finished. Any other marker (unreadable,
+    malformed, or naming a different file) is quarantined: the case it names is left unindexed and publication goes
+    on, since refusing would block every later publication on a file no one can vouch for. A corrupt premise history
+    still raises (premise._history says how to recover): the marker stays, so the commit finishes on the next run."""
+    transaction_path = _live_transaction_path()
+    if not os.path.exists(transaction_path):
+        return None
+    try:
+        transaction = _read_json(transaction_path)
+    except ValueError as error:
+        return _quarantine_marker(transaction_path, f'unreadable: {error}')
+    entry = transaction.get('entry') if isinstance(transaction, dict) else None
+    filename = transaction.get('case_file') if isinstance(transaction, dict) else None
+    if (not isinstance(entry, dict) or transaction.get('version') != 1 or not isinstance(filename, str) or
+            os.path.basename(filename) != filename or not isinstance(entry.get('id'), str) or
+            entry.get('file') != f'live/{filename}' or not isinstance(transaction.get('case_sha256'), str)):
+        return _quarantine_marker(transaction_path, 'invalid marker')
+    path = os.path.join(LIVE, filename)
+    if not os.path.exists(path):
+        pubio.durable_unlink(transaction_path)  # interrupted before the case became visible
+        return None
+    try:
+        case = _read_json(path)
+    except ValueError:
+        case = None
+    if not isinstance(case, dict) or case.get('id') != entry['id'] or provenance.sha256(case) != transaction['case_sha256']:
+        return _quarantine_marker(transaction_path, f'{filename} does not match its identity or hash')
+    premise_record = transaction.get('premise')
+    if premise_record:
+        import premise as P
+        P.remember(premise_record, publication_id=entry['id'], lock_held=True)
+    idx_path = os.path.join(LIVE, 'index.json')
+    index = _read_json(idx_path) if os.path.exists(idx_path) else []
+    index = [entry] + [item for item in index if item.get('id') != entry['id']]
+    _atomic_json(idx_path, index[:30])             # index is always the visibility commit
+    pubio.durable_unlink(transaction_path)
+    return entry
+
+
+def recover_live_publication():
+    """Reconcile an orphan case left by an interrupted live publication."""
+    os.makedirs(LIVE, exist_ok=True)
+    with pubio.publication_lock(os.path.dirname(LIVE)):
+        return _recover_live_publication_locked()
+
+
+def _commit_live_case(case, entry, premise_record=None):
+    """Commit case, premise history, then index under one lock with recovery metadata. A new publication never
+    replaces a published case: a reused stamp is refused."""
+    os.makedirs(LIVE, exist_ok=True)
+    filename = f"{case['id']}.json"
+    path = os.path.join(LIVE, filename)
+    marker = {'version': 1, 'case_file': filename, 'case_sha256': provenance.sha256(case),
+              'entry': entry, 'premise': premise_record}
+    with pubio.publication_lock(os.path.dirname(LIVE)):
+        _recover_live_publication_locked()
+        if os.path.exists(path):
+            raise ValueError(f'{filename} is already published; a live case is never overwritten')
+        _atomic_json(_live_transaction_path(), marker)
+        _atomic_json(path, case)
+        _require_on_disk(path, marker['case_sha256'])   # the marker stays, so a failure here is recoverable
+        if premise_record:
+            import premise as P
+            P.remember(premise_record, publication_id=case['id'], lock_held=True)
+        idx_path = os.path.join(LIVE, 'index.json')
+        index = _read_json(idx_path) if os.path.exists(idx_path) else []
+        index = [entry] + [item for item in index if item.get('id') != case['id']]
+        _atomic_json(idx_path, index[:30])         # index-last: never advertise an absent case
+        pubio.durable_unlink(_live_transaction_path())
+    return path
+
+
+def publish_live(case, brief_entry, stamp, strict_publication_review=False):
+    """Publish a generated case; deterministic checks block and strict critic enforcement is opt-in."""
     title, blurb, place, _ = brief_entry
     case = json.loads(json.dumps(case))
     case['id'] = f'mk-live-{stamp}'
+    if os.path.exists(os.path.join(LIVE, f"{case['id']}.json")):   # fail before enrichment; the commit checks again
+        raise ValueError(f"{case['id']} is already published; a live case is never overwritten")
     pr = case.get('premise')
     if pr:   # the premise deck fixed who, how and why: the answer is known, the title comes from the story
         case['answer'] = {'method': pr['method'], 'motive': pr['motive']}
@@ -1185,43 +1689,55 @@ def publish_live(case, brief_entry, stamp):
     vname = next((p['name'] for p in case['people'] if p['id'] == enrich.victim_of(case)), 'Edmund Vale')
     case['synopsis'] = blurb if case['question']['crime'].get('place') == place else f'{vname} is dead.'
     enrich_case(case)
-    os.makedirs(LIVE, exist_ok=True)
-    path = f"{LIVE}/{case['id']}.json"
-    g = gate(case)
-    if not g['ok']:
-        raise ValueError('the published case failed certification: ' + '; '.join(g['errors'][:3]))
+    target = case.pop('difficulty_target', None)
+    if target is None:
+        target = (case.get('difficulty') or {}).get('target')
+    case, g = _review_gate_rate(case, target, strict_publication_review)
     r = g['js']
-    case['difficulty'] = {**difficulty.rate(case), 'target': case.pop('difficulty_target', None)}
-    json.dump(case, open(path, 'w'), indent=1)
-    if pr:
-        import premise as P
-        P.remember(pr)
-    idx_path = f'{LIVE}/index.json'
-    import fcntl
-    lock = open(f'{LIVE}/.index.lock', 'w')          # several generators may publish at once (tools/refine-c/batch.py)
-    fcntl.flock(lock, fcntl.LOCK_EX)
-    index = json.load(open(idx_path)) if os.path.exists(idx_path) else []
     entry = {'id': case['id'], 'file': f"live/{case['id']}.json", 'title': title, 'solveDepth': r['solveDepth'],
              'blurb': f"{case['synopsis']} Depth {r['solveDepth']}, {len(case['signs'])} clues, {len(case['question']['candidates'])} suspects.",
-             'generated': stamp, 'difficulty': {k: case['difficulty'][k] for k in ('level', 'score', 'target')}}
-    index = [entry] + [e for e in index if e['id'] != case['id']]
-    json.dump(index[:30], open(idx_path, 'w'), indent=1)
-    fcntl.flock(lock, fcntl.LOCK_UN)
+             'generated': stamp, 'difficulty': difficulty.index_rating(case['difficulty'])}
+    _commit_live_case(case, entry, pr)
     return entry, r
 
 
-def enrich_live():
-    """Add show lines and reactions to cases already generated on this machine."""
-    for path in sorted(glob.glob(f'{LIVE}/mk-live-*.json')):
-        case = json.load(open(path))
-        enrich_case(case)
-        a = sum(1 for x in case['signs'] if x.get('show')); b = sum(len(x.get('reactions') or {}) for x in case['signs'])
-        g = gate(case)
-        if g['ok']:
-            json.dump(case, open(path, 'w'), indent=1)
-        else:
-            print('  NOT saved:', g['errors'][:3])
-        print(f'enriched {os.path.basename(path)}: {a} show lines, {b} reactions')
+def enrich_live(strict_publication_review=False):
+    """Re-enrich the indexed live cases through deterministic publication, optionally enforcing a strict critic
+    verdict. Files the index no longer lists (truncated away) are left alone. Each case is written only if it is
+    unchanged on disk since it was read (optimistic concurrency: enrichment runs outside the lock), and one case's
+    failure never stops the next."""
+    root, idx_path = os.path.dirname(LIVE), os.path.join(LIVE, 'index.json')
+    with pubio.publication_lock(root):
+        _recover_live_publication_locked()
+        listed = _read_json(idx_path) if os.path.exists(idx_path) else []
+    for listed_entry in listed:
+        name = os.path.basename(str(listed_entry.get('file') or ''))
+        path = os.path.join(LIVE, name)
+        try:
+            case = _read_json(path)
+            read_sha256 = provenance.sha256(case)
+            enrich_case(case)
+            a = sum(1 for x in case['signs'] if x.get('show')); b = sum(len(x.get('reactions') or {}) for x in case['signs'])
+            target = (case.get('difficulty') or {}).get('target')
+            saved, _ = _review_gate_rate(case, target, strict_publication_review)
+            with pubio.publication_lock(root):
+                _recover_live_publication_locked()
+                if disk_sha256(path) != read_sha256:
+                    print(f'  {name} NOT saved: it changed on disk while it was enriched; run again')
+                    continue
+                index = _read_json(idx_path) if os.path.exists(idx_path) else []
+                if not any(entry.get('id') == saved.get('id') for entry in index):
+                    print(f'  {name} NOT saved: the index no longer lists it')
+                    continue
+                _atomic_json(path, saved)
+                for entry in index:
+                    if entry.get('id') == saved.get('id'):
+                        entry['difficulty'] = difficulty.index_rating(saved['difficulty'])
+                _atomic_json(idx_path, index)         # case first, matching index metadata last
+        except Exception as error:   # a model, gate or I/O failure on one case must not stop the others
+            print(f'  {name} NOT saved: {type(error).__name__}: {error}')
+            continue
+        print(f'enriched {name}: {a} show lines, {b} reactions')
 
 
 def js_certify_obj(case):
@@ -1258,42 +1774,80 @@ def carry_over(case, prev):
     return case
 
 
-def main():
+def main(strict_publication_review=False):
     best = {}
-    for brief in TITLES:
+    for brief in CASE_TITLES:
         files = sorted(glob.glob(f'{HERE}/runs/*/{brief}/final-case.json'))
         if not files:
             continue
         for f, r in zip(files, js_certify(files)):
-            if r['ok'] and (brief not in best or (r['solveDepth'], len(json.load(open(f))['signs'])) > best[brief][1]):
-                best[brief] = (f, (r['solveDepth'], len(json.load(open(f))['signs'])), r)
+            if r['ok'] and (brief not in best or (r['solveDepth'], len(_read_json(f)['signs'])) > best[brief][1]):
+                best[brief] = (f, (r['solveDepth'], len(_read_json(f)['signs'])), r)
     os.makedirs(OUT, exist_ok=True)
-    index = []
-    for brief, (f, _, r) in sorted(best.items()):
-        case = json.load(open(f))
-        title, blurb = TITLES[brief]
+    index_path = f'{OUT}/index.json'
+    prepared, not_replaced = {}, {}     # brief -> (path, case, entry, report, source); brief -> why it was not
+    for brief in sorted(CASE_TITLES):
+        if brief not in best:
+            not_replaced[brief] = 'no certified run'
+            continue
+        f = best[brief][0]
+        case = _read_json(f)
+        title, blurb = CASE_TITLES[brief]
         case['id'], case['title'], case['synopsis'] = f'mk-{brief}', title, blurb
-        prev = f'{OUT}/mk-{brief}.json'
-        if os.path.exists(prev):
-            carry_over(case, json.load(open(prev)))
+        path = f'{OUT}/mk-{brief}.json'
+        previous_case = _read_json(path) if os.path.exists(path) else None
+        if previous_case:
+            carry_over(case, previous_case)
         enrich_case(case)
-        g = gate(case)
-        if not g['ok']:
-            print(f'  mk-{brief} NOT published: {g["errors"][:3]}')
-            if os.path.exists(prev):
-                index.append(next((e for e in json.load(open(f'{OUT}/index.json')) if e['id'] == case['id']), None))
+        target = case.pop('difficulty_target', None)
+        if target is None:
+            target = ((case.get('difficulty') or {}).get('target') or
+                      ((previous_case or {}).get('difficulty') or {}).get('target'))
+        try:
+            case, g = _review_gate_rate(case, target, strict_publication_review)
+        except ValueError as error:
+            not_replaced[brief] = str(error)
             continue
         r = g['js']
-        case['difficulty'] = difficulty.rate(case)
-        json.dump(case, open(prev, 'w'), indent=1)
-        index.append({'id': case['id'], 'file': f'mk-{brief}.json', 'title': title,
-                      'blurb': f"{blurb} Depth {r['solveDepth']}, {len(case['signs'])} clues, {len(case['question']['candidates'])} suspects.",
-                      'solveDepth': r['solveDepth'], 'source': os.path.relpath(f, ROOT),
-                      'difficulty': {k: case['difficulty'][k] for k in ('level', 'score')}})
-        print(f"published mk-{brief}: depth {r['solveDepth']}, pillars {r['pillars']}, {len(case['signs'])} clues <- {os.path.relpath(f, ROOT)}")
-    json.dump([e for e in index if e], open(f'{OUT}/index.json', 'w'), indent=1)
-    print(f'{len(index)} cases in {os.path.relpath(OUT, ROOT)}/index.json')
+        entry = {'id': case['id'], 'file': f'mk-{brief}.json', 'title': title,
+                 'blurb': f"{blurb} Depth {r['solveDepth']}, {len(case['signs'])} clues, {len(case['question']['candidates'])} suspects.",
+                 'solveDepth': r['solveDepth'], 'source': os.path.relpath(f, ROOT),
+                 'difficulty': difficulty.index_rating(case['difficulty'])}
+        prepared[brief] = (path, case, entry, r, f)
+    kept = {}
+    with pubio.publication_lock(OUT):
+        if os.path.dirname(LIVE) == OUT and os.path.exists(_live_transaction_path()):
+            _recover_live_publication_locked()
+        for path, case, _, _, _ in prepared.values():
+            _atomic_json(path, case)
+        for path, case, _, _, _ in prepared.values():
+            _require_on_disk(path, provenance.sha256(case))   # every advertised file reads back before the index
+        # Entries not replaced come from the index as it is now, not as it was read before enrichment: another
+        # maintenance run (difficulty, backfill) may have updated them meanwhile. One whose file is gone is dropped.
+        current = _read_json(index_path) if os.path.exists(index_path) else []
+        on_disk = {entry.get('id'): entry for entry in current}
+        index = []
+        for brief in sorted(CASE_TITLES):
+            if brief in prepared:
+                index.append(prepared[brief][2])
+            elif brief in not_replaced:
+                old = on_disk.get(f'mk-{brief}')
+                if old and old.get('file') and os.path.isfile(os.path.join(OUT, old['file'])):
+                    index.append(old)
+                    kept[brief] = 'kept previous index entry'
+                elif old:
+                    kept[brief] = 'previous index entry dropped: its file is gone'
+        _atomic_json(index_path, index)          # index-last batch commit
+    for brief, reason in not_replaced.items():
+        if brief in kept:
+            print(f'  mk-{brief} NOT replaced ({reason}); {kept[brief]}')
+        elif reason != 'no certified run':      # a brief that never had a run and never had a case is not news
+            print(f'  mk-{brief} NOT published ({reason}); no previous entry to keep')
+    for brief, (_, case, _, r, source) in prepared.items():
+        print(f"published mk-{brief}: depth {r['solveDepth']}, pillars {r['pillars']}, {len(case['signs'])} clues <- {os.path.relpath(source, ROOT)}")
+    print(f'{len(prepared)} written, {len(index)} cases in {os.path.relpath(OUT, ROOT)}/index.json')
 
 
 if __name__ == '__main__':
-    enrich_live() if '--live' in sys.argv else main()
+    strict_review = '--strict-publication-review' in sys.argv
+    enrich_live(strict_review) if '--live' in sys.argv else main(strict_review)

@@ -1,0 +1,561 @@
+{
+  "schema_version": 2,
+  "title": "Archived playtest depth and run-time gate analysis",
+  "scope": {
+    "run_directory": "tools/playtest/runs/e3c",
+    "raw_episodes": 27,
+    "independent_cases": 3,
+    "score_join": "raw episode.id = scores.json[].id",
+    "structural_join": "scores.json[].case = archived case path; strict current certifier",
+    "excluded": [
+      "batch.json",
+      "report.json",
+      "report.md",
+      "scores.json as an episode",
+      "judged.json"
+    ]
+  },
+  "depth_analysis": {
+    "unit_of_analysis": "case",
+    "independence_note": "Case is the independent unit for structural-depth association. Multiple episodes from one case are repeated behavioral observations and are aggregated before correlation.",
+    "exploratory": true,
+    "case_count": 3,
+    "episode_count": 27,
+    "right_censoring": {
+      "definition": "Unsolved runs are right-censored: an out-of-budget or quit episode ends before a solve, so observed actions are a lower bound on actions-to-solve. All-run summaries remain descriptive, solved-only summaries are separate, and no survival-model inference is attempted.",
+      "runs": 27,
+      "solved_events": 9,
+      "right_censored_runs": 18
+    },
+    "depth_join": {
+      "source": "archived score-card case path certified by the current strict JS certifier",
+      "strict_certifier_arguments": [
+        true,
+        true
+      ],
+      "snapshot_field": "episode.report.solve_depth",
+      "comparison_target": "current certificate instantaneous_solve_depth",
+      "disagreement_policy": "error",
+      "disagreement_count": 0,
+      "disagreements": [],
+      "normalized_case_set_sha256": "4e6afa3cd8e950758474f63b2c210855a752b7ea8624548735570ac59e79e668"
+    },
+    "cases": [
+      {
+        "case": "mk-live-20261003-082809",
+        "archived_case_path": "dist/cases/generated/live/mk-live-20261003-082809.json",
+        "normalized_case_sha256": "a3a36477ffba5d45c5023f4cf848146916e92eb0efde0ef9531773307a7960af",
+        "structural_depth": {
+          "instantaneous_solve_depth": 3,
+          "stable_depth": 3,
+          "thread_depths": {
+            "c_hugo": 2,
+            "c_rowan": 2,
+            "c_vicar": 2,
+            "truth": 3
+          },
+          "pillar_depths": {
+            "opportunity": 3,
+            "means": 2,
+            "motive": 2,
+            "maximum": 3
+          },
+          "snapshot_agreement": {
+            "status": "agree",
+            "episode_snapshot_values": [
+              3
+            ],
+            "current_certified_instantaneous_solve_depth": 3
+          }
+        },
+        "episodes": 9,
+        "solved": {
+          "count": 3,
+          "denominator": 9,
+          "rate": 0.333333
+        },
+        "correct": {
+          "count": 3,
+          "denominator": 9,
+          "rate": 0.333333
+        },
+        "right_censoring": {
+          "runs": 9,
+          "solved_events": 3,
+          "right_censored_runs": 6
+        },
+        "all_run": {
+          "actions": {
+            "n": 9,
+            "median": 103,
+            "range": [
+              39,
+              110
+            ]
+          },
+          "hints": {
+            "n": 9,
+            "median": 2,
+            "range": [
+              0,
+              12
+            ]
+          },
+          "longest_stall": {
+            "n": 9,
+            "median": 17,
+            "range": [
+              0,
+              34
+            ]
+          }
+        },
+        "solved_only": {
+          "actions": {
+            "n": 3,
+            "median": 70,
+            "range": [
+              39,
+              88
+            ]
+          }
+        }
+      },
+      {
+        "case": "mk-live-20261003-135210",
+        "archived_case_path": "dist/cases/generated/live/mk-live-20261003-135210.json",
+        "normalized_case_sha256": "483f0951f7426115fa57a6805b6638728f30b14935e4f07e56c632e315765faf",
+        "structural_depth": {
+          "instantaneous_solve_depth": 5,
+          "stable_depth": 5,
+          "thread_depths": {
+            "c_dora": 5,
+            "c_rowan": 5,
+            "c_vera": 4,
+            "truth": 4
+          },
+          "pillar_depths": {
+            "opportunity": 5,
+            "means": 5,
+            "motive": 4,
+            "maximum": 5
+          },
+          "snapshot_agreement": {
+            "status": "agree",
+            "episode_snapshot_values": [
+              5
+            ],
+            "current_certified_instantaneous_solve_depth": 5
+          }
+        },
+        "episodes": 9,
+        "solved": {
+          "count": 4,
+          "denominator": 9,
+          "rate": 0.444444
+        },
+        "correct": {
+          "count": 4,
+          "denominator": 9,
+          "rate": 0.444444
+        },
+        "right_censoring": {
+          "runs": 9,
+          "solved_events": 4,
+          "right_censored_runs": 5
+        },
+        "all_run": {
+          "actions": {
+            "n": 9,
+            "median": 99,
+            "range": [
+              61,
+              110
+            ]
+          },
+          "hints": {
+            "n": 9,
+            "median": 2,
+            "range": [
+              0,
+              16
+            ]
+          },
+          "longest_stall": {
+            "n": 9,
+            "median": 18,
+            "range": [
+              0,
+              29
+            ]
+          }
+        },
+        "solved_only": {
+          "actions": {
+            "n": 4,
+            "median": 79.0,
+            "range": [
+              61,
+              91
+            ]
+          }
+        }
+      },
+      {
+        "case": "mk-live-20261003-130906",
+        "archived_case_path": "dist/cases/generated/live/mk-live-20261003-130906.json",
+        "normalized_case_sha256": "142e331e21abb10a1e09aa3b4a55b393f5708e0f5572011cdababebc6dad3337",
+        "structural_depth": {
+          "instantaneous_solve_depth": 7,
+          "stable_depth": 7,
+          "thread_depths": {
+            "c_ada": 7,
+            "c_rowan": 6,
+            "c_vera": 7,
+            "truth": 2
+          },
+          "pillar_depths": {
+            "opportunity": 7,
+            "means": 7,
+            "motive": 5,
+            "maximum": 7
+          },
+          "snapshot_agreement": {
+            "status": "agree",
+            "episode_snapshot_values": [
+              7
+            ],
+            "current_certified_instantaneous_solve_depth": 7
+          }
+        },
+        "episodes": 9,
+        "solved": {
+          "count": 2,
+          "denominator": 9,
+          "rate": 0.222222
+        },
+        "correct": {
+          "count": 2,
+          "denominator": 9,
+          "rate": 0.222222
+        },
+        "right_censoring": {
+          "runs": 9,
+          "solved_events": 2,
+          "right_censored_runs": 7
+        },
+        "all_run": {
+          "actions": {
+            "n": 9,
+            "median": 103,
+            "range": [
+              67,
+              105
+            ]
+          },
+          "hints": {
+            "n": 9,
+            "median": 3,
+            "range": [
+              0,
+              8
+            ]
+          },
+          "longest_stall": {
+            "n": 9,
+            "median": 14,
+            "range": [
+              0,
+              28
+            ]
+          }
+        },
+        "solved_only": {
+          "actions": {
+            "n": 2,
+            "median": 81.5,
+            "range": [
+              67,
+              96
+            ]
+          }
+        }
+      }
+    ],
+    "spearman_case_level": {
+      "depth_variable": "current certified instantaneous_solve_depth",
+      "n_cases": 3,
+      "exploratory": true,
+      "correlations": {
+        "solve_rate": {
+          "rho": -0.5,
+          "n_cases": 3
+        },
+        "correct_rate": {
+          "rho": -0.5,
+          "n_cases": 3
+        },
+        "median_all_run_actions": {
+          "rho": 0.0,
+          "n_cases": 3
+        },
+        "median_all_run_hints": {
+          "rho": 0.866025,
+          "n_cases": 3
+        },
+        "median_all_run_longest_stall": {
+          "rho": -0.5,
+          "n_cases": 3
+        },
+        "median_solved_only_actions": {
+          "rho": 1.0,
+          "n_cases": 3
+        }
+      },
+      "note": "Spearman correlations use 3 case aggregates; the 27 episodes are not treated as independent structural-depth observations."
+    }
+  },
+  "runtime_gate_audit": {
+    "episodes": 27,
+    "kernel_audited_candidates": {
+      "total": 48,
+      "accepted": 26,
+      "refused": 22,
+      "verdict_counts": {
+        "still solvable": 26,
+        "answer not unique from all reachable evidence: survivors [\"c_rowan\",\"c_vera\",\"c_vicar\"]": 1,
+        "false sign s_ada_lie has no reachable, true defeater deeper than it": 6,
+        "false sign s_vera has no reachable, true defeater deeper than it": 4,
+        "false sign s_watch has no reachable, true defeater deeper than it": 4,
+        "no reachable, true evidence of the culprit's MEANS (a possession or trait claim the culprit satisfies)": 7
+      }
+    },
+    "opportunities": {
+      "definition": "unique (episode_id, person, clue) among audit.solvable entries",
+      "unique": 45,
+      "repeated_proposal_instances": 3,
+      "opportunities_proposed_more_than_once": 3,
+      "repeated": [
+        {
+          "episode_id": "mk-live-20261003-082809__pro__suspicious__s1",
+          "person": "vera",
+          "clue": "s_burnt",
+          "proposals": 2
+        },
+        {
+          "episode_id": "mk-live-20261003-135210__amateur__impatient__s2",
+          "person": "dora",
+          "clue": "s_burnt_pages",
+          "proposals": 2
+        },
+        {
+          "episode_id": "mk-live-20261003-135210__beginner__literal__s3",
+          "person": "vera",
+          "clue": "s_envelope",
+          "proposals": 2
+        }
+      ]
+    },
+    "code_invalid_conceal_errors": {
+      "count": 9,
+      "definition": "final audit.code entries containing '(conceal)'"
+    },
+    "actual_concealment_executions": {
+      "set_additions": 15,
+      "unique_episode_clues": 15,
+      "with_same_or_prior_accepted_episode_clue_audit": 15,
+      "association_scope": "episode and clue; compact execution traces do not retain the executing person",
+      "associations": [
+        {
+          "episode_id": "mk-live-20261003-082809__amateur__chatty__s3",
+          "clue": "s_burnt",
+          "execution_trace_index": 35,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            34
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-082809__amateur__literal__s1",
+          "clue": "s_iou",
+          "execution_trace_index": 45,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            45
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-082809__amateur__methodical__s2",
+          "clue": "s_iou",
+          "execution_trace_index": 68,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            63
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-082809__beginner__literal__s3",
+          "clue": "s_iou",
+          "execution_trace_index": 49,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            49
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-082809__pro__suspicious__s1",
+          "clue": "s_iou",
+          "execution_trace_index": 29,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            27
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-130906__amateur__literal__s3",
+          "clue": "s_medical",
+          "execution_trace_index": 7,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            6
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-130906__beginner__impatient__s2",
+          "clue": "s_vera_letter",
+          "execution_trace_index": 11,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            11
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-130906__pro__methodical__s1",
+          "clue": "s_vera_letter",
+          "execution_trace_index": 13,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            11
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-135210__amateur__impatient__s2",
+          "clue": "s_burnt_pages",
+          "execution_trace_index": 22,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            12,
+            22
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-135210__amateur__methodical__s1",
+          "clue": "s_burnt_pages",
+          "execution_trace_index": 32,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            31
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-135210__beginner__chatty__s1",
+          "clue": "s_notebook",
+          "execution_trace_index": 10,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            9
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-135210__beginner__literal__s2",
+          "clue": "s_burnt_pages",
+          "execution_trace_index": 17,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            17
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-135210__beginner__literal__s2",
+          "clue": "s_envelope",
+          "execution_trace_index": 33,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            32
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-135210__beginner__literal__s3",
+          "clue": "s_burnt_pages",
+          "execution_trace_index": 17,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            17
+          ]
+        },
+        {
+          "episode_id": "mk-live-20261003-135210__pro__methodical__s2",
+          "clue": "s_burnt_pages",
+          "execution_trace_index": 29,
+          "prior_accepted_audit": true,
+          "accepted_trace_indexes": [
+            29
+          ]
+        }
+      ],
+      "definition": "new clue IDs added between consecutive cumulative trace[i].concealed sets"
+    },
+    "separation_note": "Kernel-audited candidates, code-invalid conceal errors, and actual concealment executions are distinct events; none is used as a proxy for another.",
+    "representative_examples": {
+      "accepted_not_executed": {
+        "episode_id": "mk-live-20261003-082809__beginner__literal__s1",
+        "trace_index": 23,
+        "person": "iris",
+        "clue": "s_medical",
+        "reason": "still solvable",
+        "director_status": "accepted",
+        "outcome": "accepted by the kernel audit but the clue was never added to concealed in this episode"
+      },
+      "refused": {
+        "episode_id": "mk-live-20261003-082809__amateur__literal__s1",
+        "trace_index": 43,
+        "person": "jonah",
+        "clue": "s_duckweed",
+        "reason": "false sign s_vera has no reachable, true defeater deeper than it",
+        "director_status": "empty",
+        "outcome": "refused by the kernel solvability audit"
+      },
+      "mixed_plan": {
+        "episode_id": "mk-live-20261003-082809__amateur__methodical__s2",
+        "trace_index": 50,
+        "person": "jonah",
+        "clue": "s_duckweed",
+        "reason": "false sign s_vera has no reachable, true defeater deeper than it",
+        "director_status": "accepted",
+        "surviving_plan": [
+          "hugo"
+        ],
+        "outcome": "this concealment was refused while another person's plan survived and the director status remained accepted"
+      },
+      "accepted_then_executed": {
+        "episode_id": "mk-live-20261003-082809__amateur__chatty__s3",
+        "trace_index": 34,
+        "person": "vera",
+        "clue": "s_burnt",
+        "reason": "still solvable",
+        "director_status": "accepted",
+        "execution_trace_index": 35,
+        "outcome": "accepted by the kernel audit and later observed as a cumulative concealed-set addition"
+      },
+      "selection": "Examples are selected deterministically from parsed records, not by hardcoded episode IDs or trace indexes."
+    }
+  },
+  "data_completeness": [
+    "Compact traces omit raw and revised director proposals.",
+    "Compact traces omit removed closure and before/after solvability certificates.",
+    "Accepted proposal rationale and full agenda steps are unavailable; example reasons therefore use the persisted audit.solvable verdict.",
+    "Browser logs lack session IDs and are excluded rather than heuristically joined.",
+    "Episodes do not embed an immutable case payload; the analysis certifies each currently referenced case file and records its normalized hash so later file drift is detectable but prior payloads cannot be reconstructed.",
+    "Structural quantities describe certified case topology; they are not behavioral difficulty measurements."
+  ]
+}

@@ -1,0 +1,1346 @@
+{
+  "schema_version": 1,
+  "title": "Current typed-claim corpus structural-depth planning report",
+  "scope": {
+    "unique_claims_v2_cases": 15,
+    "classification_counts": {
+      "live": 11,
+      "stable": 4
+    },
+    "manifest_paths": [
+      "dist/cases/generated/index.json",
+      "dist/cases/generated/live/index.json"
+    ],
+    "excluded_cases": 0,
+    "strict_current_certifier_arguments": [
+      true,
+      true
+    ],
+    "normalized_corpus_sha256": "33584a9555fee4a4a772ebe057a04a031d4da63c9fcee00a8c0c28f759d76d00",
+    "network_or_model_calls": false
+  },
+  "definitions": {
+    "instantaneous_solve_depth": "First effective-depth layer at which only the true candidate survives (current certifier solveDepth).",
+    "stable_depth": "Deepest permanent candidate-thread resolution depth: the maximum of current certifier thread depths.",
+    "lies": "False testimony signs among the current certifier's falseSigns; false physical staging or other false signs are reported separately.",
+    "herrings": "Current certifier behavior signs about innocents with a deeper reachable explanation.",
+    "pillar_depths": "Earliest certified opportunity, means, and motive evidence depths; maximum is current certifier mmoDepth."
+  },
+  "distributions": {
+    "instantaneous_solve_depth": {
+      "denominator_cases": 15,
+      "values": [
+        {
+          "value": 3,
+          "count": 3,
+          "denominator": 15,
+          "proportion": 0.2
+        },
+        {
+          "value": 5,
+          "count": 6,
+          "denominator": 15,
+          "proportion": 0.4
+        },
+        {
+          "value": 6,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        },
+        {
+          "value": 7,
+          "count": 3,
+          "denominator": 15,
+          "proportion": 0.2
+        },
+        {
+          "value": 8,
+          "count": 2,
+          "denominator": 15,
+          "proportion": 0.133333
+        }
+      ],
+      "median": 5,
+      "range": [
+        3,
+        8
+      ]
+    },
+    "stable_depth": {
+      "denominator_cases": 15,
+      "values": [
+        {
+          "value": 3,
+          "count": 3,
+          "denominator": 15,
+          "proportion": 0.2
+        },
+        {
+          "value": 5,
+          "count": 6,
+          "denominator": 15,
+          "proportion": 0.4
+        },
+        {
+          "value": 6,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        },
+        {
+          "value": 7,
+          "count": 3,
+          "denominator": 15,
+          "proportion": 0.2
+        },
+        {
+          "value": 8,
+          "count": 2,
+          "denominator": 15,
+          "proportion": 0.133333
+        }
+      ],
+      "median": 5,
+      "range": [
+        3,
+        8
+      ]
+    },
+    "lies": {
+      "denominator_cases": 15,
+      "values": [
+        {
+          "value": 0,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        },
+        {
+          "value": 1,
+          "count": 10,
+          "denominator": 15,
+          "proportion": 0.666667
+        },
+        {
+          "value": 2,
+          "count": 3,
+          "denominator": 15,
+          "proportion": 0.2
+        },
+        {
+          "value": 3,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        }
+      ],
+      "median": 1,
+      "range": [
+        0,
+        3
+      ]
+    },
+    "other_false_signs": {
+      "denominator_cases": 15,
+      "values": [
+        {
+          "value": 0,
+          "count": 12,
+          "denominator": 15,
+          "proportion": 0.8
+        },
+        {
+          "value": 1,
+          "count": 3,
+          "denominator": 15,
+          "proportion": 0.2
+        }
+      ],
+      "median": 0,
+      "range": [
+        0,
+        1
+      ]
+    },
+    "herrings": {
+      "denominator_cases": 15,
+      "values": [
+        {
+          "value": 1,
+          "count": 8,
+          "denominator": 15,
+          "proportion": 0.533333
+        },
+        {
+          "value": 2,
+          "count": 6,
+          "denominator": 15,
+          "proportion": 0.4
+        },
+        {
+          "value": 4,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        }
+      ],
+      "median": 1,
+      "range": [
+        1,
+        4
+      ]
+    },
+    "pillar_opportunity_depth": {
+      "denominator_cases": 15,
+      "values": [
+        {
+          "value": 3,
+          "count": 3,
+          "denominator": 15,
+          "proportion": 0.2
+        },
+        {
+          "value": 5,
+          "count": 6,
+          "denominator": 15,
+          "proportion": 0.4
+        },
+        {
+          "value": 6,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        },
+        {
+          "value": 7,
+          "count": 3,
+          "denominator": 15,
+          "proportion": 0.2
+        },
+        {
+          "value": 8,
+          "count": 2,
+          "denominator": 15,
+          "proportion": 0.133333
+        }
+      ],
+      "median": 5,
+      "range": [
+        3,
+        8
+      ]
+    },
+    "pillar_means_depth": {
+      "denominator_cases": 15,
+      "values": [
+        {
+          "value": 2,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        },
+        {
+          "value": 3,
+          "count": 2,
+          "denominator": 15,
+          "proportion": 0.133333
+        },
+        {
+          "value": 4,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        },
+        {
+          "value": 5,
+          "count": 5,
+          "denominator": 15,
+          "proportion": 0.333333
+        },
+        {
+          "value": 6,
+          "count": 2,
+          "denominator": 15,
+          "proportion": 0.133333
+        },
+        {
+          "value": 7,
+          "count": 2,
+          "denominator": 15,
+          "proportion": 0.133333
+        },
+        {
+          "value": 8,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        },
+        {
+          "value": 9,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        }
+      ],
+      "median": 5,
+      "range": [
+        2,
+        9
+      ]
+    },
+    "pillar_motive_depth": {
+      "denominator_cases": 15,
+      "values": [
+        {
+          "value": 1,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        },
+        {
+          "value": 2,
+          "count": 2,
+          "denominator": 15,
+          "proportion": 0.133333
+        },
+        {
+          "value": 3,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        },
+        {
+          "value": 4,
+          "count": 7,
+          "denominator": 15,
+          "proportion": 0.466667
+        },
+        {
+          "value": 5,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        },
+        {
+          "value": 6,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        },
+        {
+          "value": 7,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        },
+        {
+          "value": 8,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        }
+      ],
+      "median": 4,
+      "range": [
+        1,
+        8
+      ]
+    },
+    "maximum_pillar_depth": {
+      "denominator_cases": 15,
+      "values": [
+        {
+          "value": 3,
+          "count": 3,
+          "denominator": 15,
+          "proportion": 0.2
+        },
+        {
+          "value": 5,
+          "count": 6,
+          "denominator": 15,
+          "proportion": 0.4
+        },
+        {
+          "value": 6,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        },
+        {
+          "value": 7,
+          "count": 2,
+          "denominator": 15,
+          "proportion": 0.133333
+        },
+        {
+          "value": 8,
+          "count": 2,
+          "denominator": 15,
+          "proportion": 0.133333
+        },
+        {
+          "value": 9,
+          "count": 1,
+          "denominator": 15,
+          "proportion": 0.066667
+        }
+      ],
+      "median": 5,
+      "range": [
+        3,
+        9
+      ]
+    }
+  },
+  "instantaneous_stable_disagreements": {
+    "count": 0,
+    "denominator_cases": 15,
+    "case_ids": []
+  },
+  "feasible_strata": {
+    "feasible": true,
+    "criterion": "three contiguous instantaneous-depth strata with at least 3 independent cases each",
+    "selection_rule": "Among feasible observed-depth cut pairs, minimize stratum-size imbalance, then squared deviation from equal thirds, then choose lower cut points.",
+    "balanced_cases_per_stratum": 3,
+    "balanced_total_cases": 9,
+    "strata": [
+      {
+        "label": "lower structural depth",
+        "instantaneous_depth_range": [
+          3,
+          3
+        ],
+        "cases": 3,
+        "denominator_corpus_cases": 15,
+        "case_ids": [
+          "mk-live-20261003-082807",
+          "mk-live-20261003-082809",
+          "mk-live-20261003-130902"
+        ],
+        "classification_counts": {
+          "live": 3
+        },
+        "stable_depth_range": [
+          3,
+          3
+        ],
+        "lies_range": [
+          0,
+          1
+        ],
+        "herrings_range": [
+          1,
+          2
+        ],
+        "maximum_pillar_depth_range": [
+          3,
+          3
+        ]
+      },
+      {
+        "label": "middle structural depth",
+        "instantaneous_depth_range": [
+          5,
+          5
+        ],
+        "cases": 6,
+        "denominator_corpus_cases": 15,
+        "case_ids": [
+          "mk-live-20261002-224855",
+          "mk-live-20261002-225824",
+          "mk-live-20261002-235614",
+          "mk-live-20261003-133036",
+          "mk-live-20261003-135210",
+          "mk-live-20261011-112405"
+        ],
+        "classification_counts": {
+          "live": 3,
+          "stable": 3
+        },
+        "stable_depth_range": [
+          5,
+          5
+        ],
+        "lies_range": [
+          1,
+          3
+        ],
+        "herrings_range": [
+          1,
+          2
+        ],
+        "maximum_pillar_depth_range": [
+          5,
+          5
+        ]
+      },
+      {
+        "label": "higher structural depth",
+        "instantaneous_depth_range": [
+          6,
+          8
+        ],
+        "cases": 6,
+        "denominator_corpus_cases": 15,
+        "case_ids": [
+          "mk-live-20261002-222517",
+          "mk-live-20261003-082813",
+          "mk-live-20261003-085134",
+          "mk-live-20261003-100726",
+          "mk-live-20261003-130906",
+          "mk-live-20261017-223841"
+        ],
+        "classification_counts": {
+          "live": 5,
+          "stable": 1
+        },
+        "stable_depth_range": [
+          6,
+          8
+        ],
+        "lies_range": [
+          1,
+          2
+        ],
+        "herrings_range": [
+          1,
+          4
+        ],
+        "maximum_pillar_depth_range": [
+          6,
+          9
+        ]
+      }
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "mk-live-20261002-222517",
+      "title": "Sealing Wax and Steel",
+      "classification": "stable",
+      "classifications": [
+        "stable"
+      ],
+      "source_paths": [
+        "dist/cases/generated/mk-live-20261002-222517.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "e2ffb5b8b3f742c6490867e64a06b6edd4ce09c446003392d118c9e5bb362753",
+      "signs": 36,
+      "events": 24,
+      "candidates": 4,
+      "instantaneous_solve_depth": 6,
+      "stable_depth": 6,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_ada": 6,
+        "c_clara": 6,
+        "c_edmund": 6,
+        "truth": 4
+      },
+      "pillar_depths": {
+        "opportunity": 6,
+        "means": 6,
+        "motive": 6,
+        "maximum": 6
+      },
+      "lies": {
+        "count": 2,
+        "ids": [
+          "t_ada_cover",
+          "t_dora"
+        ]
+      },
+      "other_false_signs": {
+        "count": 0,
+        "ids": []
+      },
+      "false_signs": {
+        "count": 2,
+        "ids": [
+          "t_ada_cover",
+          "t_dora"
+        ]
+      },
+      "herrings": {
+        "count": 1,
+        "ids": [
+          "b_ada_cash"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261002-224855",
+      "title": "Death at Vale Manor",
+      "classification": "stable",
+      "classifications": [
+        "stable"
+      ],
+      "source_paths": [
+        "dist/cases/generated/mk-live-20261002-224855.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "6592d79c6e7cb273a2d1caf83063878896471f4c203199560427d0fba9463162",
+      "signs": 41,
+      "events": 28,
+      "candidates": 4,
+      "instantaneous_solve_depth": 5,
+      "stable_depth": 5,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_ada": 4,
+        "c_silas": 5,
+        "c_vicar": 4,
+        "truth": 3
+      },
+      "pillar_depths": {
+        "opportunity": 5,
+        "means": 5,
+        "motive": 4,
+        "maximum": 5
+      },
+      "lies": {
+        "count": 2,
+        "ids": [
+          "s_hugo",
+          "s_rowan_denial"
+        ]
+      },
+      "other_false_signs": {
+        "count": 0,
+        "ids": []
+      },
+      "false_signs": {
+        "count": 2,
+        "ids": [
+          "s_hugo",
+          "s_rowan_denial"
+        ]
+      },
+      "herrings": {
+        "count": 1,
+        "ids": [
+          "s_ada_lamp"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261002-225824",
+      "title": "Death at the Post Office",
+      "classification": "stable",
+      "classifications": [
+        "stable"
+      ],
+      "source_paths": [
+        "dist/cases/generated/mk-live-20261002-225824.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "d4b3c2cb3ddb242e8aa828d95f9082767d752954186ae75808079284c5db278e",
+      "signs": 59,
+      "events": 34,
+      "candidates": 4,
+      "instantaneous_solve_depth": 5,
+      "stable_depth": 5,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_clara": 4,
+        "c_hugo": 5,
+        "c_rowan": 4,
+        "truth": 4
+      },
+      "pillar_depths": {
+        "opportunity": 5,
+        "means": 5,
+        "motive": 4,
+        "maximum": 5
+      },
+      "lies": {
+        "count": 1,
+        "ids": [
+          "s_jonah_alibi"
+        ]
+      },
+      "other_false_signs": {
+        "count": 0,
+        "ids": []
+      },
+      "false_signs": {
+        "count": 1,
+        "ids": [
+          "s_jonah_alibi"
+        ]
+      },
+      "herrings": {
+        "count": 2,
+        "ids": [
+          "s_clara_trunk",
+          "s_manor_bolted"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261002-235614",
+      "title": "Paste Pearls at the Pump",
+      "classification": "stable",
+      "classifications": [
+        "stable"
+      ],
+      "source_paths": [
+        "dist/cases/generated/mk-live-20261002-235614.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "b1cf6de709f0bc654b2b3be9938197c2299c896e7a7d40d8acba3071f0469716",
+      "signs": 45,
+      "events": 31,
+      "candidates": 4,
+      "instantaneous_solve_depth": 5,
+      "stable_depth": 5,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_ada": 2,
+        "c_jonah": 3,
+        "c_silas": 2,
+        "truth": 5
+      },
+      "pillar_depths": {
+        "opportunity": 5,
+        "means": 4,
+        "motive": 4,
+        "maximum": 5
+      },
+      "lies": {
+        "count": 1,
+        "ids": [
+          "s_rowan_test"
+        ]
+      },
+      "other_false_signs": {
+        "count": 0,
+        "ids": []
+      },
+      "false_signs": {
+        "count": 1,
+        "ids": [
+          "s_rowan_test"
+        ]
+      },
+      "herrings": {
+        "count": 2,
+        "ids": [
+          "s_ada_evasive",
+          "s_ada_glove"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261003-082807",
+      "title": "Cocoa in the Vestry",
+      "classification": "live",
+      "classifications": [
+        "live"
+      ],
+      "source_paths": [
+        "dist/cases/generated/live/mk-live-20261003-082807.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "3a8d103c3c608037f547e0f0cffa5b3274c497bf40c26048787efc15fdc931ee",
+      "signs": 36,
+      "events": 23,
+      "candidates": 4,
+      "instantaneous_solve_depth": 3,
+      "stable_depth": 3,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "clara": 3,
+        "edmund": 0,
+        "silas": 3,
+        "truth": 1
+      },
+      "pillar_depths": {
+        "opportunity": 3,
+        "means": 3,
+        "motive": 1,
+        "maximum": 3
+      },
+      "lies": {
+        "count": 1,
+        "ids": [
+          "s_ada_alibi"
+        ]
+      },
+      "other_false_signs": {
+        "count": 1,
+        "ids": [
+          "s_watch"
+        ]
+      },
+      "false_signs": {
+        "count": 2,
+        "ids": [
+          "s_ada_alibi",
+          "s_watch"
+        ]
+      },
+      "herrings": {
+        "count": 1,
+        "ids": [
+          "s_clara_post"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261003-082809",
+      "title": "The Millpond Letters",
+      "classification": "live",
+      "classifications": [
+        "live"
+      ],
+      "source_paths": [
+        "dist/cases/generated/live/mk-live-20261003-082809.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "a3a36477ffba5d45c5023f4cf848146916e92eb0efde0ef9531773307a7960af",
+      "signs": 40,
+      "events": 29,
+      "candidates": 4,
+      "instantaneous_solve_depth": 3,
+      "stable_depth": 3,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_hugo": 2,
+        "c_rowan": 2,
+        "c_vicar": 2,
+        "truth": 3
+      },
+      "pillar_depths": {
+        "opportunity": 3,
+        "means": 2,
+        "motive": 2,
+        "maximum": 3
+      },
+      "lies": {
+        "count": 1,
+        "ids": [
+          "s_vera"
+        ]
+      },
+      "other_false_signs": {
+        "count": 0,
+        "ids": []
+      },
+      "false_signs": {
+        "count": 1,
+        "ids": [
+          "s_vera"
+        ]
+      },
+      "herrings": {
+        "count": 1,
+        "ids": [
+          "s_hugo_window"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261003-082813",
+      "title": "The Lamb Asleep Upstairs",
+      "classification": "live",
+      "classifications": [
+        "live"
+      ],
+      "source_paths": [
+        "dist/cases/generated/live/mk-live-20261003-082813.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "a8030f736a50be1b78472f40ae50e17b51da62078ebf63e27e2d14e7e3cc2df5",
+      "signs": 58,
+      "events": 39,
+      "candidates": 4,
+      "instantaneous_solve_depth": 7,
+      "stable_depth": 7,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_clara": 7,
+        "c_edmund": 7,
+        "c_hugo": 7,
+        "truth": 5
+      },
+      "pillar_depths": {
+        "opportunity": 7,
+        "means": 7,
+        "motive": 4,
+        "maximum": 7
+      },
+      "lies": {
+        "count": 1,
+        "ids": [
+          "s_t_vicar"
+        ]
+      },
+      "other_false_signs": {
+        "count": 0,
+        "ids": []
+      },
+      "false_signs": {
+        "count": 1,
+        "ids": [
+          "s_t_vicar"
+        ]
+      },
+      "herrings": {
+        "count": 4,
+        "ids": [
+          "s_clara_hurry",
+          "s_hugo_post",
+          "s_maid_fire",
+          "s_maid_hunt"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261003-085134",
+      "title": "Death Among the Orchids",
+      "classification": "live",
+      "classifications": [
+        "live"
+      ],
+      "source_paths": [
+        "dist/cases/generated/live/mk-live-20261003-085134.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "07abdcb67f5d7b5598a855aabe0c199a0b45aafa3882799a0271b88d62a18f9f",
+      "signs": 47,
+      "events": 42,
+      "candidates": 4,
+      "instantaneous_solve_depth": 8,
+      "stable_depth": 8,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_dora": 5,
+        "c_rowan": 5,
+        "c_vera": 8,
+        "truth": 6
+      },
+      "pillar_depths": {
+        "opportunity": 8,
+        "means": 8,
+        "motive": 4,
+        "maximum": 8
+      },
+      "lies": {
+        "count": 1,
+        "ids": [
+          "s_vicar_t"
+        ]
+      },
+      "other_false_signs": {
+        "count": 1,
+        "ids": [
+          "s_draft"
+        ]
+      },
+      "false_signs": {
+        "count": 2,
+        "ids": [
+          "s_draft",
+          "s_vicar_t"
+        ]
+      },
+      "herrings": {
+        "count": 2,
+        "ids": [
+          "s_dora_stove",
+          "s_rowan_bundle"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261003-100726",
+      "title": "The Last Train to Town",
+      "classification": "live",
+      "classifications": [
+        "live"
+      ],
+      "source_paths": [
+        "dist/cases/generated/live/mk-live-20261003-100726.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "6d4a788f2064b4e001835c313fabe246bd29031753989d0b903e54b1d2813f00",
+      "signs": 52,
+      "events": 29,
+      "candidates": 4,
+      "instantaneous_solve_depth": 7,
+      "stable_depth": 7,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_edmund": 7,
+        "c_hugo": 3,
+        "c_jonah": 5,
+        "truth": 3
+      },
+      "pillar_depths": {
+        "opportunity": 7,
+        "means": 9,
+        "motive": 8,
+        "maximum": 9
+      },
+      "lies": {
+        "count": 2,
+        "ids": [
+          "s_rowan",
+          "s_rowan_lantern"
+        ]
+      },
+      "other_false_signs": {
+        "count": 0,
+        "ids": []
+      },
+      "false_signs": {
+        "count": 2,
+        "ids": [
+          "s_rowan",
+          "s_rowan_lantern"
+        ]
+      },
+      "herrings": {
+        "count": 1,
+        "ids": [
+          "s_edmund_papers"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261003-130902",
+      "title": "The Boathouse at Michaelmas",
+      "classification": "live",
+      "classifications": [
+        "live"
+      ],
+      "source_paths": [
+        "dist/cases/generated/live/mk-live-20261003-130902.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "0751273193b517682e99d2e3947e63e21b9dc7e88a401a1a34a57cd290e4087c",
+      "signs": 34,
+      "events": 34,
+      "candidates": 4,
+      "instantaneous_solve_depth": 3,
+      "stable_depth": 3,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_clara": 2,
+        "c_dora": 3,
+        "c_vicar": 1,
+        "truth": 0
+      },
+      "pillar_depths": {
+        "opportunity": 3,
+        "means": 3,
+        "motive": 2,
+        "maximum": 3
+      },
+      "lies": {
+        "count": 0,
+        "ids": []
+      },
+      "other_false_signs": {
+        "count": 0,
+        "ids": []
+      },
+      "false_signs": {
+        "count": 0,
+        "ids": []
+      },
+      "herrings": {
+        "count": 2,
+        "ids": [
+          "s_clara_blotter",
+          "s_waste_book"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261003-130906",
+      "title": "The Quarter-Past Watch",
+      "classification": "live",
+      "classifications": [
+        "live"
+      ],
+      "source_paths": [
+        "dist/cases/generated/live/mk-live-20261003-130906.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "142e331e21abb10a1e09aa3b4a55b393f5708e0f5572011cdababebc6dad3337",
+      "signs": 50,
+      "events": 40,
+      "candidates": 4,
+      "instantaneous_solve_depth": 7,
+      "stable_depth": 7,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_ada": 7,
+        "c_rowan": 6,
+        "c_vera": 7,
+        "truth": 2
+      },
+      "pillar_depths": {
+        "opportunity": 7,
+        "means": 7,
+        "motive": 5,
+        "maximum": 7
+      },
+      "lies": {
+        "count": 1,
+        "ids": [
+          "t_hugo"
+        ]
+      },
+      "other_false_signs": {
+        "count": 1,
+        "ids": [
+          "s_watch"
+        ]
+      },
+      "false_signs": {
+        "count": 2,
+        "ids": [
+          "s_watch",
+          "t_hugo"
+        ]
+      },
+      "herrings": {
+        "count": 2,
+        "ids": [
+          "b_rowan_smoke",
+          "b_vera_papers"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261003-133036",
+      "title": "A Fall Before Midnight",
+      "classification": "live",
+      "classifications": [
+        "live"
+      ],
+      "source_paths": [
+        "dist/cases/generated/live/mk-live-20261003-133036.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "e48703cc64b6a989a9638b3ea8ed1f0b03cb20252dd63cf5114cc5f36e897182",
+      "signs": 41,
+      "events": 33,
+      "candidates": 4,
+      "instantaneous_solve_depth": 5,
+      "stable_depth": 5,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_clara": 4,
+        "c_edmund": 5,
+        "c_jonah": 5,
+        "truth": 4
+      },
+      "pillar_depths": {
+        "opportunity": 5,
+        "means": 5,
+        "motive": 4,
+        "maximum": 5
+      },
+      "lies": {
+        "count": 3,
+        "ids": [
+          "s_clara",
+          "s_dora",
+          "s_rowan_sluice"
+        ]
+      },
+      "other_false_signs": {
+        "count": 0,
+        "ids": []
+      },
+      "false_signs": {
+        "count": 3,
+        "ids": [
+          "s_clara",
+          "s_dora",
+          "s_rowan_sluice"
+        ]
+      },
+      "herrings": {
+        "count": 1,
+        "ids": [
+          "s_clara_scrub"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261003-135210",
+      "title": "Under the Memorial Lamp",
+      "classification": "live",
+      "classifications": [
+        "live"
+      ],
+      "source_paths": [
+        "dist/cases/generated/live/mk-live-20261003-135210.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "483f0951f7426115fa57a6805b6638728f30b14935e4f07e56c632e315765faf",
+      "signs": 55,
+      "events": 35,
+      "candidates": 4,
+      "instantaneous_solve_depth": 5,
+      "stable_depth": 5,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_dora": 5,
+        "c_rowan": 5,
+        "c_vera": 4,
+        "truth": 4
+      },
+      "pillar_depths": {
+        "opportunity": 5,
+        "means": 5,
+        "motive": 4,
+        "maximum": 5
+      },
+      "lies": {
+        "count": 1,
+        "ids": [
+          "s_ada_lie"
+        ]
+      },
+      "other_false_signs": {
+        "count": 0,
+        "ids": []
+      },
+      "false_signs": {
+        "count": 1,
+        "ids": [
+          "s_ada_lie"
+        ]
+      },
+      "herrings": {
+        "count": 1,
+        "ids": [
+          "b_dora_grate"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261011-112405",
+      "title": "Still Water at Alder Mill",
+      "classification": "live",
+      "classifications": [
+        "live"
+      ],
+      "source_paths": [
+        "dist/cases/generated/live/mk-live-20261011-112405.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "639c5bab93abd949506ef0f2f5664957a4049fb9875cb94d2ca7edff899919d6",
+      "signs": 37,
+      "events": 23,
+      "candidates": 4,
+      "instantaneous_solve_depth": 5,
+      "stable_depth": 5,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_dora": 5,
+        "c_edmund": 5,
+        "c_silas": 5,
+        "truth": 5
+      },
+      "pillar_depths": {
+        "opportunity": 5,
+        "means": 5,
+        "motive": 3,
+        "maximum": 5
+      },
+      "lies": {
+        "count": 1,
+        "ids": [
+          "t_jonah_alibi"
+        ]
+      },
+      "other_false_signs": {
+        "count": 0,
+        "ids": []
+      },
+      "false_signs": {
+        "count": 1,
+        "ids": [
+          "t_jonah_alibi"
+        ]
+      },
+      "herrings": {
+        "count": 1,
+        "ids": [
+          "b_dora_drawer"
+        ]
+      }
+    },
+    {
+      "case_id": "mk-live-20261017-223841",
+      "title": "A Tin from Fortnum's",
+      "classification": "live",
+      "classifications": [
+        "live"
+      ],
+      "source_paths": [
+        "dist/cases/generated/live/mk-live-20261017-223841.json"
+      ],
+      "claims_version": 2,
+      "normalized_sha256": "f14ba5e90c01da8d3144eaddeefdb3de96ac48d3ca032d6d39522bb6b845a37c",
+      "signs": 35,
+      "events": 29,
+      "candidates": 4,
+      "instantaneous_solve_depth": 8,
+      "stable_depth": 8,
+      "instantaneous_equals_stable": true,
+      "thread_depths": {
+        "c_jonah": 6,
+        "c_silas": 6,
+        "c_vicar": 6,
+        "truth": 8
+      },
+      "pillar_depths": {
+        "opportunity": 8,
+        "means": 6,
+        "motive": 7,
+        "maximum": 8
+      },
+      "lies": {
+        "count": 1,
+        "ids": [
+          "t_vera"
+        ]
+      },
+      "other_false_signs": {
+        "count": 0,
+        "ids": []
+      },
+      "false_signs": {
+        "count": 1,
+        "ids": [
+          "t_vera"
+        ]
+      },
+      "herrings": {
+        "count": 2,
+        "ids": [
+          "b_jonah_hands",
+          "b_silas_watch"
+        ]
+      }
+    }
+  ],
+  "interpretation_boundary": "These are structural properties of certified case records. They do not measure or imply behavioral difficulty for agents or people. A future experiment must estimate behavior directly, treat case as the independent unit, and block or randomize nuisance structure such as lies, herrings, pillars, and corpus classification.",
+  "planning_limitations": [
+    "The corpus contains only 15 independent cases; the feasible strata are a sampling frame, not a power analysis.",
+    "Stratum sizes are unequal, so a fully balanced three-stratum comparison can use only the smallest stratum unless new cases are added.",
+    "Stable and live manifest classifications may encode generation-time differences and should be balanced or modeled.",
+    "Repeated runs by an agent or person do not increase the independent case denominator for depth effects."
+  ]
+}

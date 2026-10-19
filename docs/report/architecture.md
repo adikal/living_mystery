@@ -25,6 +25,8 @@ An event includes an ID, index, simulation minute, actor, location, kind, causal
 
 A player command establishes a root event. Dialogue, movement, observations and NPC decisions create descendants, followed by a completion checkpoint. `worldAt` reconstructs a prefix from the base world. It does not run the scheduler, regenerate dialogue, or change the live session. Import validates the event/patch history against the saved world. Selected legacy repairs, such as a completed correction intention, append repair events rather than silently modifying earlier events.
 
+A generated (kernel) case travels inside its saves, and its runtime is bound to the exact records a save carries, identified canonically (keys sorted, undefined members dropped, so a record and its JSON round trip share one identity). `dist/engine.mjs` validates a save by full replay before it adopts or caches the embedded case, so a rejected save leaves no definition and no cache entry behind. Cases bound only by saves are cached least-recently-used, sixteen at a time; a live session keeps its own runtime regardless.
+
 ## 2.3 Nested transactional boundaries
 
 The AI character pipeline prepares a ticket containing the serialized starting session and a restricted context. An accepted proposal runs on a candidate copy; diagnostics must pass before that candidate replaces the live state. If the session changed while the model was working, the ticket is stale and cannot authorize the turn.
@@ -37,7 +39,7 @@ Consequently, a displayed “checking” indicator belongs to pending validation
 
 ## 2.4 Runtime and deployment boundary
 
-The browser loads ES modules and retains the local investigation. A Python proxy serves optional model requests; a separate Python service exposes Z3 on loopback port 8788. The solver service has no need to call an LLM. These local services check request shape and browser-origin conditions, but they are not a production authentication system.
+The browser loads ES modules and retains the local investigation. A Python proxy serves optional model requests; a separate Python service exposes Z3 on loopback port 8788. The solver service has no need to call an LLM. Every local server binds to 127.0.0.1 and answers only its own `Host` (`127.0.0.1:<port>` or `localhost:<port>`), which defeats DNS rebinding; the proxy, solver and generator also require an exact origin from one shared parser of `LM_ALLOWED_ORIGINS` (`server/local_origins.py`) and a custom request header, and the game server never serves dotfiles. Socket reads and writes time out after 30 s, so a client that stalls mid-request cannot hold a thread, while a model call in progress is bounded only by its backend's own timeout. The proxy's optional request ledger (`LM_AUDIT_FILE`) keeps metadata and hashes, never prompt, reply or error text, and a failure to write it never affects the reply. These checks restrict browser pages; they are not a production authentication system against other programs on the machine.
 
 The public player projection and omniscient inspector are presentation boundaries within a local single-player application. Source files and exported saves contain secrets. Preventing a technically curious player from reading the solution is outside the current security model. A future hosted multiplayer or adversarial setting would need a different server-authority and access-control design.
 

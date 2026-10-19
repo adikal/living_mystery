@@ -188,7 +188,8 @@ export function certify(c, requirePillars = true, requireBacking = false) {
   const att = Object.fromEntries(arr(c.attitudes).map(a => [a.id, a]));
   const evs = Object.fromEntries(c.events.map(e => [e.id, e]));
   const signs = Object.fromEntries(c.signs.map(s => [s.id, s]));
-  const ruleIds = new Set(arr(c.rules).map(r => r.id));
+  const rules = Object.fromEntries(arr(c.rules).map(r => [r.id, r]));
+  const ruleIds = new Set(Object.keys(rules));
   const q = c.question, hyps = hypMap(c);
   if (!(q.truth in hyps)) errs.push('question.truth is not one of the candidates');
   if (!(q.crime?.event in evs)) errs.push('question.crime.event does not name an event');
@@ -205,6 +206,11 @@ export function certify(c, requirePillars = true, requireBacking = false) {
   for (const a of arr(c.attitudes)) if (!ppl[a.agent]) errs.push(`attitude ${a.id}: unknown agent ${a.agent}`);
   for (const s of c.signs) {
     if (!SIGN_KINDS.has(s.kind)) errs.push(`sign ${s.id}: unknown kind ${s.kind}`);
+    if (s.kind === 'rule') {
+      const rule = rules[s.rule];
+      if (!rule || rule.knowledge !== 'acquirable') errs.push(`rule sign ${s.id}: rule must name an existing acquirable rule`);
+      if (arr(s.needs).length) errs.push(`rule sign ${s.id}: must have no 'needs'; use 'requires' to model access`);
+    }
     for (const r of arr(s.requires)) if (!(r in signs)) errs.push(`sign ${s.id}: requires unknown sign ${r}`);
     for (const n of arr(s.needs)) if (!(n in signs) && !ruleIds.has(n)) errs.push(`sign ${s.id}: needs unknown sign/rule ${n}`);
     for (const d of arr(s.defeats)) if (!(d in signs)) errs.push(`sign ${s.id}: defeats unknown sign ${d}`);

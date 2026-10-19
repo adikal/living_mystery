@@ -8,8 +8,10 @@ for bugs. Epochs 0–3 have been played (ledger: `tools/playtest/ledger.jsonl`);
 .venv/bin/python tools/playtest/run.py --batch e0-train --split train      # play (cases in tools/playtest/cases.json)
 .venv/bin/python tools/playtest/score.py tools/playtest/runs/e0-train      # objective scorecard and problem records
 .venv/bin/python tools/playtest/judge.py tools/playtest/runs/e0-train      # judged scores and problems
-.venv/bin/python tools/playtest/report.py tools/playtest/runs/e1-heldout --baseline tools/playtest/runs/e0-heldout
-.venv/bin/python tools/playtest/run.py --batch e1-heldout --plan-from e0-heldout   # the same episodes after a change
+.venv/bin/python tools/playtest/report.py tools/playtest/runs/e1-heldout --baseline tools/playtest/runs/e0-heldout \
+    --comparison-registration <registration.json>                          # paired comparison (audit must pass)
+.venv/bin/python tools/playtest/run.py --batch e1-heldout --plan-from e0-heldout \
+    --comparison-registration <registration.json> --registered-arm B       # the same episodes after a change
 node tools/playtest/replay.mjs --root <checkout> --sample 80 tools/playtest/runs/e1-*/*__*.json   # offline check
 node tools/playtest/replay.mjs --targets turns.json ...                    # re-ask given turns ([{file, step}])
 node tools/playtest/replay.mjs --endpoint http://127.0.0.1:8797/ --timeout 300000 --parallel 1 ...   # another proxy
@@ -177,7 +179,7 @@ result is known.
    (`tools/playtest/replay.mjs`), which puts the same recorded questions to the old and the new pipeline. A change
    that fails offline does not go to play.
 6. **Experiment.** Play held-out cases paired with the baseline (same cases, profiles, temperaments, seeds;
-   `run.py --plan-from`), with at least two seeds. Changes are applied cumulatively, one per arm (A, A+B, A+B+C), so
+   `run.py --plan-from` with a comparison registration), with at least two seeds. Changes are applied cumulatively, one per arm (A, A+B, A+B+C), so
    each is compared with the arm before it; two changes are never measured only together.
 7. **Conclude.** Compare the result with the prediction. Keep a change that meets its prediction and passes the gate;
    revert one that does not, and record why, so a later epoch does not propose it again in another form. A result that

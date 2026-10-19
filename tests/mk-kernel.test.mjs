@@ -80,6 +80,23 @@ test('a false alibi is a certified twist, overturned deeper; reading costs a ste
   assert.deepEqual(r.threads, {truth: 2, h_wife: 0, h_cox: 0});
 });
 
+test('rule signs teach only existing acquirable rules without needs', () => {
+  let c = twist();
+  let ruleSign = c.signs.find(x => x.id === 'r_rule');
+  Object.assign(ruleSign, {requires: ['s_key'], unlock: 'the key opens the manual cabinet'});
+  let r = certify(c);
+  assert.ok(r.ok, JSON.stringify(r.errors));
+
+  c = twist();
+  c.signs.find(x => x.id === 'r_rule').rule = 'r_missing';
+  assert.ok(certify(c).errors.includes('rule sign r_rule: rule must name an existing acquirable rule'));
+
+  c = twist();
+  ruleSign = c.signs.find(x => x.id === 'r_rule');
+  Object.assign(ruleSign, {needs: ['r_trim'], reading: 'the manual explains itself'});
+  assert.ok(certify(c).errors.includes("rule sign r_rule: must have no 'needs'; use 'requires' to model access"));
+});
+
 test('a lie needs the speaker’s reason and a deeper defeater', () => {
   let c = twist(); delete c.signs.find(x => x.id === 's_alibi').because;
   assert.ok(certify(c).errors.some(e => e.includes('cites no attitude')));

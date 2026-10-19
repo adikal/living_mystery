@@ -80,6 +80,22 @@ class Checker(unittest.TestCase):
         self.assertEqual(r['solve_depth'], 2)  # key (0) -> log access (1) -> read with the manual rule (+1)
         self.assertIn('s_log', r['key'])
 
+    def test_rule_signs_teach_only_existing_acquirable_rules_without_needs(self):
+        c = self.twist()
+        rule_sign = next(x for x in c['signs'] if x['id'] == 'r_rule')
+        rule_sign.update(requires=['s_key'], unlock='the key opens the manual cabinet')
+        r = certify(c)
+        self.assertTrue(r['ok'], r.get('errors'))
+
+        c = self.twist()
+        next(x for x in c['signs'] if x['id'] == 'r_rule')['rule'] = 'r_missing'
+        self.assertIn('rule sign r_rule: rule must name an existing acquirable rule', certify(c)['errors'])
+
+        c = self.twist()
+        rule_sign = next(x for x in c['signs'] if x['id'] == 'r_rule')
+        rule_sign.update(needs=['r_trim'], reading='the manual explains itself')
+        self.assertIn("rule sign r_rule: must have no 'needs'; use 'requires' to model access", certify(c)['errors'])
+
     def test_thread_depths(self):
         r = certify(self.twist())
         # both innocents are cleared on the surface; the truth only survives once the lie is defeated (depth 2)

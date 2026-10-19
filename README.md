@@ -18,7 +18,7 @@ Living Mystery is built the other way round.
 | **One true history** | Each case is a history of events, motives and clues. It is the only source of facts; everything shown to the player is checked against it. |
 | **A model proposes, critics decide** | At every layer (writing the case, wording it, a character's reply, what the village does) a model proposes and a bank of critics decides: plain code for what can be checked mechanically, a second model for commonsense and wording, and a certifying kernel, cross-checked by the Z3 solver, for the case remaining solvable with a unique answer. |
 | **Cases certified before you play** | A generated case is published only if it is solvable, its answer is unique, and it has real depth: lies and misdirection that the evidence later defeats. Difficulty is computed from the case's structure. |
-| **Characters who speak freely, from what they know** | You can ask anyone anything. They answer in their own voice, but only from what they know; they lie only where the case says they lie, and a lie can always be broken by evidence. |
+| **Characters who speak freely, from what they know** | You can ask anyone anything. They answer in their own voice, but only from what they know; they lie only where the case says they lie, and a lie can always be broken by evidence. Asked plainly where they were last night, they answer with their account of it, true or a lie; with nothing to tell, they decline without adding a time, number or place. |
 | **A living village that cannot trap you** | Each half hour a director plans what people do: they seek each other out, pass on what they heard, and a culprit may hide evidence, but only if the case can still be solved without it. |
 | **A game that improves by playing itself** | Agent players with player profiles play the cases; their games are scored, judged and turned into experiments with registered predictions, and a bug track checks every recorded game against the true history. |
 
@@ -53,6 +53,17 @@ python3 -m venv .venv && .venv/bin/pip install -r server/requirements-solver.txt
 .venv/bin/python server/generator_server.py   # new cases (several minutes) :8789
 ```
 
+**These servers are for this machine only.** Each binds to 127.0.0.1 and answers only requests whose `Host` is its own
+(`127.0.0.1:<port>` or `localhost:<port>`), so a page on another name that resolves to 127.0.0.1 (DNS rebinding) is
+refused. The proxy, director and generator also require an `Origin` from `LM_ALLOWED_ORIGINS` (explicit local
+`http://host:port` origins, parsed once in `server/local_origins.py`; the default is the game's own two) and their own
+`X-Living-Mystery` header. The game server never serves dotfiles. A client that stalls mid-request is dropped after 30 s
+without socket activity; a slow model call is not cut off. These checks keep other web pages out; they are not
+authentication against other programs on the machine, so never expose the servers beyond loopback. With
+`LM_AUDIT_FILE=<path>` the proxy keeps a JSON-lines ledger of its model calls (metadata and hashes, never prompt or
+reply text, and no error messages); a failure to write it never costs a reply. The proxy's module docstring lists its
+request contract and every setting it reads.
+
 **A local open-weight model instead of Bedrock.** Each in-game call has a role (`character`, `checker`, `director`,
 `line_critic`, `autonomy`, `dialogue`), and the proxy sends each role to the backend and model in `LM_ROUTES`; roles not
 named stay on Bedrock. For example, with [Ollama](https://ollama.com) and Gemma 4 for the characters and their
@@ -65,11 +76,14 @@ LM_ROUTES="character=ollama:gemma4:26b,checker=ollama:gemma4:26b" .venv/bin/pyth
 
 The proxy prints its routes on start and reports them at `GET /health`, with the turn timeout the game should use
 (240 s when the character or checker is local, 45 s on Bedrock). Stop it and start it without `LM_ROUTES` to go back.
+`OLLAMA_URL` (a loopback root URL, default `http://127.0.0.1:11434`) is read and checked only when a route uses Ollama.
 Case generation and the playtest tools always use Bedrock.
 
 In the game: choose a case from the menu, or **✨ Generate a new deep case**. Talk to people with the listed questions
-or in your own words, examine what you find, show it to people, and take your case to the constable. The notebook's
-**Hints** tab gives one nudge at a time. **Menu → 🐞 Flag an issue** saves a note and the game state to `logs/game.log`.
+or in your own words, examine what you find, show it to people, and take your case to the constable. The menu never
+offers two questions that ask the same thing. The notebook's **Hints** tab gives one nudge at a time; a hint about
+what someone knows names the question that actually draws it out. **Menu → 🐞 Flag an issue** saves a note and the
+game state to `logs/game.log`.
 
 ## Improving the game by playing it
 
@@ -90,10 +104,24 @@ What it has found so far ([details](docs/self-improvement.md)):
 .venv/bin/python tools/playtest/run.py --batch e0-heldout --split heldout --parallel 9    # play
 .venv/bin/python tools/playtest/score.py tools/playtest/runs/e0-heldout                   # scorecard
 .venv/bin/python tools/playtest/judge.py tools/playtest/runs/e0-heldout                   # judged experience
-.venv/bin/python tools/playtest/report.py tools/playtest/runs/e1-heldout --baseline tools/playtest/runs/e0-heldout
+.venv/bin/python tools/playtest/report.py tools/playtest/runs/e1-heldout --baseline tools/playtest/runs/e0-heldout \
+    --comparison-registration registration.json                                          # audited paired comparison
 node tools/playtest/bugs.mjs --out bugs.json tools/playtest/runs/e*/                      # bug detectors
 .venv/bin/python tools/playtest/correctness.py tools/playtest/runs/e0-heldout             # correctness judge
 ```
+
+A paired comparison is registered before any model call: a JSON file naming Arm A and Arm B, the episodes and the
+budget. Both arms run with `--comparison-registration registration.json`: Arm A with `--registered-arm A`, planned
+independently, and Arm B with `--registered-arm B --plan-from <arm A>`. `report.py --baseline` reports the pair only
+when the offline audit passes; `--legacy-descriptive` describes historical batches that fail it, labelled as
+ineligible for the gate.
+
+Each batch directory holds hash-only provenance (`provenance.json`) and an audit of the harness's own Bedrock calls
+(`direct_requests.jsonl`; the judge appends to the same file). The characters speak through the proxy at `LM_PROXY_URL`
+(default `http://127.0.0.1:8787/`). The harness does not write the proxy's audit: to keep one, start the proxy with
+`LM_AUDIT_FILE=tools/playtest/runs/<batch>/proxy_requests.jsonl`. Provenance records that file as an operator-supplied
+artifact and whether it was present when the batch finished, and every batch ends with a terminal status
+(`completed`, `aborted`, `early_stopped` or `failed`).
 
 ## Documentation
 
@@ -116,11 +144,11 @@ node tools/playtest/bugs.mjs --out bugs.json tools/playtest/runs/e*/            
 | `dist/kernel.mjs`, `dist/engine.mjs`, `dist/engine-runtime.mjs` | Event log, replay, saves and action routing |
 | `dist/mk/kernel.mjs`, `dist/mk/claims.mjs`, `server/case_oracle.py` | The certifying kernel (reachability, depth, certification), the claim semantics it uses (truth in the history, elimination from what the player knows), and the Z3 reference it must agree with |
 | `tools/refine-c/claims.py`, `tools/refine-c/migrate.py` | The Python twin of the claim semantics, and the migration of older cases to the current claims version |
-| `dist/cases/kernel-case.mjs`, `dist/cases/village.mjs` | A generated case in play (accounts, evidence, hints, the constable) and the village setting |
-| `dist/character-turn.mjs` | Free-text conversation: the character's perspective, code checks, the fact-checker and fallbacks |
+| `dist/cases/kernel-case.mjs`, `dist/cases/village.mjs`, `dist/cases/questions.mjs` | A generated case in play (accounts, evidence, hints, the constable), the village setting, and the standard questions with the alias rules shared by play and publishing |
+| `dist/character-turn.mjs` | Free-text conversation: the character's perspective, which accounts a question needs, code checks, the fact-checker and fallbacks |
 | `dist/morning.mjs`, `dist/morning-director.mjs` | The living morning and its director with code, model and kernel critics |
 | `dist/ui.mjs`, `dist/styles.css` | The browser interface |
-| `tools/refine-c/` | Case generation (`premise.py`, `refine.py`) and publishing (`publish.py`, `enrich.py`) |
+| `tools/refine-c/` | Case generation (`premise.py`, `refine.py`) and publishing (`publish.py`, `enrich.py`; `publication_io.py` for crash-safe writes and the shared publication lock) |
 | `tools/playtest/` | Agent playtesting, scoring, judging, experiments and the bug track |
 
 ## Tests and limits
@@ -136,3 +164,9 @@ The guarantees are about the records: solvability, a unique answer, depth, and t
 the history as far as the critics can tell. The fact-checker is a model, so a reply can still slip through; hints and
 difficulty are measured on agent players, not yet calibrated against people. Generating a case takes several minutes.
 The local client, its saves and the inspector expose the hidden truth; the servers are for local use only.
+
+Publishing is crash-safe: a case is written and read back before the index lists it, under one lock shared by every
+tool that writes published cases (generator, `publish.py`, `backfill.py`, difficulty re-rating). An interrupted
+publication is finished by the next run; a recovery marker that cannot be trusted is set aside
+(`.publication-transaction.rejected-*.json` in `dist/cases/generated/live/`) with a warning, and the case it names
+stays unlisted.

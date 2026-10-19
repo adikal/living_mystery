@@ -1,0 +1,2781 @@
+{
+  "format": "living-mystery-e0-committed-concealment-audit-v1",
+  "title": "E0 committed concealment post-commit audit",
+  "scope": {
+    "cohort": "The same schema-selected e3c cohort as playtest_analysis.py: object root, truthy id, and report.trace array; score IDs must match; exactly three cases with nine episodes each.",
+    "episodeCount": 27,
+    "certification": "Direct session-aware certifyConcealments(session, caseRecords, {phase: \"post_commit\"}) on the first observation of every distinct cumulative concealed-root set in each episode.",
+    "planningAssociation": "Persisted audit.solvable rows are historical planning associations only. They are reported but never substituted for direct post-commit certification.",
+    "offline": true
+  },
+  "aggregates": {
+    "episodeCount": 27,
+    "episodeCommittedSetStates": 42,
+    "globallyUniqueRootSets": 8,
+    "nonEmptyStates": 15,
+    "strictCertificatesPassed": 42,
+    "strictCertificatesFailed": 0,
+    "statesWithPriorAcceptedAuditForEveryRoot": 15
+  },
+  "uniqueCommittedSets": [
+    {
+      "roots": [
+        "s_burnt"
+      ],
+      "firstStateObservations": 1,
+      "episodeCount": 1
+    },
+    {
+      "roots": [
+        "s_burnt_pages",
+        "s_envelope"
+      ],
+      "firstStateObservations": 1,
+      "episodeCount": 1
+    },
+    {
+      "roots": [
+        "s_burnt_pages"
+      ],
+      "firstStateObservations": 5,
+      "episodeCount": 5
+    },
+    {
+      "roots": [
+        "s_iou"
+      ],
+      "firstStateObservations": 4,
+      "episodeCount": 4
+    },
+    {
+      "roots": [
+        "s_medical"
+      ],
+      "firstStateObservations": 1,
+      "episodeCount": 1
+    },
+    {
+      "roots": [
+        "s_notebook"
+      ],
+      "firstStateObservations": 1,
+      "episodeCount": 1
+    },
+    {
+      "roots": [
+        "s_vera_letter"
+      ],
+      "firstStateObservations": 2,
+      "episodeCount": 2
+    },
+    {
+      "roots": [],
+      "firstStateObservations": 27,
+      "episodeCount": 27
+    }
+  ],
+  "episodes": [
+    {
+      "episodeId": "mk-live-20261003-082809__amateur__chatty__s3",
+      "caseId": "mk-live-20261003-082809",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-082809.json",
+      "traceCount": 103,
+      "uniqueCommittedSetCount": 2,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_burnt"
+          ],
+          "firstTraceIndex": 35,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window",
+            "s_clara",
+            "s_hugo",
+            "s_hugo_window",
+            "s_iou",
+            "s_medical",
+            "s_medical_iris",
+            "s_slate",
+            "s_surface_hugo",
+            "s_surface_iris",
+            "s_telegram"
+          ],
+          "dependencyClosureRemoved": [
+            "s_burnt"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window",
+              "s_clara",
+              "s_hugo",
+              "s_hugo_window",
+              "s_iou",
+              "s_medical",
+              "s_medical_iris",
+              "s_slate",
+              "s_surface_hugo",
+              "s_surface_iris",
+              "s_telegram"
+            ],
+            "alreadyConcealed": [
+              "s_burnt"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_burnt"
+            ],
+            "removed": [
+              "s_burnt"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 1,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-082809__amateur__chatty__s3",
+                "traceIndex": 34,
+                "actor": "vera",
+                "clue": "s_burnt",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-082809__amateur__literal__s1",
+      "caseId": "mk-live-20261003-082809",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-082809.json",
+      "traceCount": 116,
+      "uniqueCommittedSetCount": 2,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_iou"
+          ],
+          "firstTraceIndex": 45,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window",
+            "s_bell",
+            "s_burnt",
+            "s_cloak",
+            "s_hugo",
+            "s_hugo_window",
+            "s_letters",
+            "s_medical",
+            "s_medical_iris",
+            "s_prints",
+            "s_saw_ada_vera_inn",
+            "s_slate",
+            "s_surface_ada",
+            "s_surface_iris",
+            "s_surface_vera",
+            "s_telegram",
+            "s_vera"
+          ],
+          "dependencyClosureRemoved": [
+            "s_ada_hugo",
+            "s_iou"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window",
+              "s_bell",
+              "s_burnt",
+              "s_cloak",
+              "s_hugo",
+              "s_hugo_window",
+              "s_letters",
+              "s_medical",
+              "s_medical_iris",
+              "s_prints",
+              "s_saw_ada_vera_inn",
+              "s_slate",
+              "s_surface_ada",
+              "s_surface_iris",
+              "s_surface_vera",
+              "s_telegram",
+              "s_vera"
+            ],
+            "alreadyConcealed": [
+              "s_iou"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_iou"
+            ],
+            "removed": [
+              "s_ada_hugo",
+              "s_iou"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 1,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-082809__amateur__literal__s1",
+                "traceIndex": 45,
+                "actor": "hugo",
+                "clue": "s_iou",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-082809__amateur__methodical__s2",
+      "caseId": "mk-live-20261003-082809",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-082809.json",
+      "traceCount": 109,
+      "uniqueCommittedSetCount": 2,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_iou"
+          ],
+          "firstTraceIndex": 68,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window",
+            "s_bell",
+            "s_burnt",
+            "s_cloak",
+            "s_duckweed",
+            "s_hugo_window",
+            "s_letters",
+            "s_medical",
+            "s_medical_iris",
+            "s_morning_iris",
+            "s_morning_jonah",
+            "s_prints",
+            "s_saw_ada_vera_inn",
+            "s_saw_clara_hugo_manor",
+            "s_slate",
+            "s_surface_ada",
+            "s_surface_clara",
+            "s_surface_hugo",
+            "s_surface_iris",
+            "s_surface_jonah",
+            "s_surface_rowan",
+            "s_surface_vera",
+            "s_telegram",
+            "s_vera"
+          ],
+          "dependencyClosureRemoved": [
+            "s_ada_hugo",
+            "s_iou"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window",
+              "s_bell",
+              "s_burnt",
+              "s_cloak",
+              "s_duckweed",
+              "s_hugo_window",
+              "s_letters",
+              "s_medical",
+              "s_medical_iris",
+              "s_morning_iris",
+              "s_morning_jonah",
+              "s_prints",
+              "s_saw_ada_vera_inn",
+              "s_saw_clara_hugo_manor",
+              "s_slate",
+              "s_surface_ada",
+              "s_surface_clara",
+              "s_surface_hugo",
+              "s_surface_iris",
+              "s_surface_jonah",
+              "s_surface_rowan",
+              "s_surface_vera",
+              "s_telegram",
+              "s_vera"
+            ],
+            "alreadyConcealed": [
+              "s_iou"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_iou"
+            ],
+            "removed": [
+              "s_ada_hugo",
+              "s_iou"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 1,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-082809__amateur__methodical__s2",
+                "traceIndex": 63,
+                "actor": "hugo",
+                "clue": "s_iou",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-082809__beginner__literal__s1",
+      "caseId": "mk-live-20261003-082809",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-082809.json",
+      "traceCount": 100,
+      "uniqueCommittedSetCount": 1,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-082809__beginner__literal__s3",
+      "caseId": "mk-live-20261003-082809",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-082809.json",
+      "traceCount": 82,
+      "uniqueCommittedSetCount": 2,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_iou"
+          ],
+          "firstTraceIndex": 49,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window",
+            "s_bell",
+            "s_burnt",
+            "s_cloak",
+            "s_duckweed",
+            "s_exam",
+            "s_hugo_window",
+            "s_letters",
+            "s_medical",
+            "s_medical_iris",
+            "s_prints",
+            "s_rowan",
+            "s_saw_ada_vera_inn",
+            "s_saw_clara_hugo_manor",
+            "s_saw_rowan_iris_surgery",
+            "s_saw_vicar_bell_vestry",
+            "s_slate",
+            "s_surface_ada",
+            "s_surface_clara",
+            "s_surface_rowan",
+            "s_surface_vera",
+            "s_surface_vicar",
+            "s_telegram",
+            "s_vera",
+            "s_vicar"
+          ],
+          "dependencyClosureRemoved": [
+            "s_ada_hugo",
+            "s_iou"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window",
+              "s_bell",
+              "s_burnt",
+              "s_cloak",
+              "s_duckweed",
+              "s_exam",
+              "s_hugo_window",
+              "s_letters",
+              "s_medical",
+              "s_medical_iris",
+              "s_prints",
+              "s_rowan",
+              "s_saw_ada_vera_inn",
+              "s_saw_clara_hugo_manor",
+              "s_saw_rowan_iris_surgery",
+              "s_saw_vicar_bell_vestry",
+              "s_slate",
+              "s_surface_ada",
+              "s_surface_clara",
+              "s_surface_rowan",
+              "s_surface_vera",
+              "s_surface_vicar",
+              "s_telegram",
+              "s_vera",
+              "s_vicar"
+            ],
+            "alreadyConcealed": [
+              "s_iou"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_iou"
+            ],
+            "removed": [
+              "s_ada_hugo",
+              "s_iou"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 1,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-082809__beginner__literal__s3",
+                "traceIndex": 49,
+                "actor": "hugo",
+                "clue": "s_iou",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-082809__beginner__methodical__s2",
+      "caseId": "mk-live-20261003-082809",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-082809.json",
+      "traceCount": 40,
+      "uniqueCommittedSetCount": 1,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-082809__pro__methodical__s3",
+      "caseId": "mk-live-20261003-082809",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-082809.json",
+      "traceCount": 105,
+      "uniqueCommittedSetCount": 1,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-082809__pro__suspicious__s1",
+      "caseId": "mk-live-20261003-082809",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-082809.json",
+      "traceCount": 108,
+      "uniqueCommittedSetCount": 2,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_iou"
+          ],
+          "firstTraceIndex": 29,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window",
+            "s_burnt",
+            "s_clara",
+            "s_cloak",
+            "s_hugo",
+            "s_hugo_window",
+            "s_letters",
+            "s_medical",
+            "s_medical_iris",
+            "s_saw_clara_hugo_manor",
+            "s_slate",
+            "s_surface_iris",
+            "s_surface_vera",
+            "s_telegram",
+            "s_vera"
+          ],
+          "dependencyClosureRemoved": [
+            "s_ada_hugo",
+            "s_iou"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window",
+              "s_burnt",
+              "s_clara",
+              "s_cloak",
+              "s_hugo",
+              "s_hugo_window",
+              "s_letters",
+              "s_medical",
+              "s_medical_iris",
+              "s_saw_clara_hugo_manor",
+              "s_slate",
+              "s_surface_iris",
+              "s_surface_vera",
+              "s_telegram",
+              "s_vera"
+            ],
+            "alreadyConcealed": [
+              "s_iou"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_iou"
+            ],
+            "removed": [
+              "s_ada_hugo",
+              "s_iou"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 1,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-082809__pro__suspicious__s1",
+                "traceIndex": 27,
+                "actor": "hugo",
+                "clue": "s_iou",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-082809__pro__suspicious__s2",
+      "caseId": "mk-live-20261003-082809",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-082809.json",
+      "traceCount": 105,
+      "uniqueCommittedSetCount": 1,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_hugo_foot",
+            "pub_trait_rowan_foot",
+            "pub_trait_vera_foot",
+            "pub_trait_vicar_foot",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_hugo_foot",
+              "pub_trait_rowan_foot",
+              "pub_trait_vera_foot",
+              "pub_trait_vicar_foot",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-130906__amateur__impatient__s1",
+      "caseId": "mk-live-20261003-130906",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-130906.json",
+      "traceCount": 109,
+      "uniqueCommittedSetCount": 1,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_holders_o_veronal",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_o_veronal",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-130906__amateur__literal__s3",
+      "caseId": "mk-live-20261003-130906",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-130906.json",
+      "traceCount": 109,
+      "uniqueCommittedSetCount": 2,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_holders_o_veronal",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_o_veronal",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_medical"
+          ],
+          "firstTraceIndex": 7,
+          "acquiredAtFirstTrace": [
+            "pub_holders_o_veronal",
+            "pub_window",
+            "s_door_notice",
+            "s_medical_iris",
+            "s_morning_dora",
+            "s_surface_dora",
+            "s_surface_iris"
+          ],
+          "dependencyClosureRemoved": [
+            "s_medical"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_o_veronal",
+              "pub_window",
+              "s_door_notice",
+              "s_medical_iris",
+              "s_morning_dora",
+              "s_surface_dora",
+              "s_surface_iris"
+            ],
+            "alreadyConcealed": [
+              "s_medical"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_medical"
+            ],
+            "removed": [
+              "s_medical"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 1,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-130906__amateur__literal__s3",
+                "traceIndex": 6,
+                "actor": "iris",
+                "clue": "s_medical",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-130906__amateur__suspicious__s2",
+      "caseId": "mk-live-20261003-130906",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-130906.json",
+      "traceCount": 106,
+      "uniqueCommittedSetCount": 1,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_holders_o_veronal",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_o_veronal",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-130906__beginner__chatty__s1",
+      "caseId": "mk-live-20261003-130906",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-130906.json",
+      "traceCount": 111,
+      "uniqueCommittedSetCount": 1,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_holders_o_veronal",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_o_veronal",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-130906__beginner__impatient__s2",
+      "caseId": "mk-live-20261003-130906",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-130906.json",
+      "traceCount": 101,
+      "uniqueCommittedSetCount": 2,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_holders_o_veronal",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_o_veronal",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_vera_letter"
+          ],
+          "firstTraceIndex": 11,
+          "acquiredAtFirstTrace": [
+            "pub_holders_o_veronal",
+            "pub_window",
+            "s_door_notice",
+            "s_morning_dora",
+            "s_surface_dora",
+            "s_surface_edmund",
+            "s_surface_hugo",
+            "s_surface_vera"
+          ],
+          "dependencyClosureRemoved": [
+            "s_vera_letter"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_o_veronal",
+              "pub_window",
+              "s_door_notice",
+              "s_morning_dora",
+              "s_surface_dora",
+              "s_surface_edmund",
+              "s_surface_hugo",
+              "s_surface_vera"
+            ],
+            "alreadyConcealed": [
+              "s_vera_letter"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_vera_letter"
+            ],
+            "removed": [
+              "s_vera_letter"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 1,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-130906__beginner__impatient__s2",
+                "traceIndex": 11,
+                "actor": "vera",
+                "clue": "s_vera_letter",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-130906__beginner__methodical__s3",
+      "caseId": "mk-live-20261003-130906",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-130906.json",
+      "traceCount": 70,
+      "uniqueCommittedSetCount": 1,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_holders_o_veronal",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_o_veronal",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-130906__pro__methodical__s1",
+      "caseId": "mk-live-20261003-130906",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-130906.json",
+      "traceCount": 104,
+      "uniqueCommittedSetCount": 2,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_holders_o_veronal",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_o_veronal",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_vera_letter"
+          ],
+          "firstTraceIndex": 13,
+          "acquiredAtFirstTrace": [
+            "pub_holders_o_veronal",
+            "pub_window",
+            "s_door_notice",
+            "s_morning_dora",
+            "s_surface_dora",
+            "t_bell_morning"
+          ],
+          "dependencyClosureRemoved": [
+            "s_vera_letter"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_o_veronal",
+              "pub_window",
+              "s_door_notice",
+              "s_morning_dora",
+              "s_surface_dora",
+              "t_bell_morning"
+            ],
+            "alreadyConcealed": [
+              "s_vera_letter"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_vera_letter"
+            ],
+            "removed": [
+              "s_vera_letter"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 1,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-130906__pro__methodical__s1",
+                "traceIndex": 11,
+                "actor": "vera",
+                "clue": "s_vera_letter",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-130906__pro__methodical__s2",
+      "caseId": "mk-live-20261003-130906",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-130906.json",
+      "traceCount": 105,
+      "uniqueCommittedSetCount": 1,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_holders_o_veronal",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_o_veronal",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-130906__pro__suspicious__s3",
+      "caseId": "mk-live-20261003-130906",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-130906.json",
+      "traceCount": 102,
+      "uniqueCommittedSetCount": 1,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_holders_o_veronal",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_o_veronal",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-135210__amateur__impatient__s2",
+      "caseId": "mk-live-20261003-135210",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-135210.json",
+      "traceCount": 115,
+      "uniqueCommittedSetCount": 2,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_burnt_pages"
+          ],
+          "firstTraceIndex": 22,
+          "acquiredAtFirstTrace": [
+            "b_dora_grate",
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window",
+            "s_bell_note",
+            "s_cordon",
+            "s_dora_saw",
+            "s_label",
+            "s_medical",
+            "s_medical_iris",
+            "s_morning_iris",
+            "s_saw_dora_jonah_square",
+            "s_saw_vera_dora_square",
+            "s_surface_dora",
+            "s_surface_iris",
+            "s_surface_vera"
+          ],
+          "dependencyClosureRemoved": [
+            "s_burnt_pages"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "b_dora_grate",
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window",
+              "s_bell_note",
+              "s_cordon",
+              "s_dora_saw",
+              "s_label",
+              "s_medical",
+              "s_medical_iris",
+              "s_morning_iris",
+              "s_saw_dora_jonah_square",
+              "s_saw_vera_dora_square",
+              "s_surface_dora",
+              "s_surface_iris",
+              "s_surface_vera"
+            ],
+            "alreadyConcealed": [
+              "s_burnt_pages"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_burnt_pages"
+            ],
+            "removed": [
+              "s_burnt_pages"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 2,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-135210__amateur__impatient__s2",
+                "traceIndex": 12,
+                "actor": "dora",
+                "clue": "s_burnt_pages",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              },
+              {
+                "episodeId": "mk-live-20261003-135210__amateur__impatient__s2",
+                "traceIndex": 22,
+                "actor": "dora",
+                "clue": "s_burnt_pages",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-135210__amateur__impatient__s3",
+      "caseId": "mk-live-20261003-135210",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-135210.json",
+      "traceCount": 78,
+      "uniqueCommittedSetCount": 1,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-135210__amateur__methodical__s1",
+      "caseId": "mk-live-20261003-135210",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-135210.json",
+      "traceCount": 84,
+      "uniqueCommittedSetCount": 2,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_burnt_pages"
+          ],
+          "firstTraceIndex": 32,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window",
+            "s_bell_note",
+            "s_card",
+            "s_cordon",
+            "s_envelope",
+            "s_label",
+            "s_medical",
+            "s_medical_iris",
+            "s_morning_bell",
+            "s_notebook",
+            "s_saw_dora_vera_square",
+            "s_saw_vera_dora_square",
+            "s_surface_bell",
+            "s_surface_iris",
+            "s_surface_vera",
+            "s_vera_alibi",
+            "s_wound",
+            "t_vera"
+          ],
+          "dependencyClosureRemoved": [
+            "s_burnt_pages"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window",
+              "s_bell_note",
+              "s_card",
+              "s_cordon",
+              "s_envelope",
+              "s_label",
+              "s_medical",
+              "s_medical_iris",
+              "s_morning_bell",
+              "s_notebook",
+              "s_saw_dora_vera_square",
+              "s_saw_vera_dora_square",
+              "s_surface_bell",
+              "s_surface_iris",
+              "s_surface_vera",
+              "s_vera_alibi",
+              "s_wound",
+              "t_vera"
+            ],
+            "alreadyConcealed": [
+              "s_burnt_pages"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_burnt_pages"
+            ],
+            "removed": [
+              "s_burnt_pages"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 1,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-135210__amateur__methodical__s1",
+                "traceIndex": 31,
+                "actor": "dora",
+                "clue": "s_burnt_pages",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-135210__beginner__chatty__s1",
+      "caseId": "mk-live-20261003-135210",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-135210.json",
+      "traceCount": 96,
+      "uniqueCommittedSetCount": 2,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_notebook"
+          ],
+          "firstTraceIndex": 10,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window",
+            "s_bell_note",
+            "s_cordon",
+            "s_label",
+            "s_medical",
+            "s_medical_iris",
+            "s_surface_iris"
+          ],
+          "dependencyClosureRemoved": [
+            "s_notebook"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window",
+              "s_bell_note",
+              "s_cordon",
+              "s_label",
+              "s_medical",
+              "s_medical_iris",
+              "s_surface_iris"
+            ],
+            "alreadyConcealed": [
+              "s_notebook"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_notebook"
+            ],
+            "removed": [
+              "s_notebook"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 1,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-135210__beginner__chatty__s1",
+                "traceIndex": 9,
+                "actor": "dora",
+                "clue": "s_notebook",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-135210__beginner__literal__s2",
+      "caseId": "mk-live-20261003-135210",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-135210.json",
+      "traceCount": 118,
+      "uniqueCommittedSetCount": 3,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_burnt_pages"
+          ],
+          "firstTraceIndex": 17,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window",
+            "s_ada_jonah",
+            "s_ada_lie",
+            "s_bell_note",
+            "s_card",
+            "s_cordon",
+            "s_label",
+            "s_medical",
+            "s_medical_iris",
+            "s_saw_vera_dora_square",
+            "s_slate",
+            "s_surface_vera"
+          ],
+          "dependencyClosureRemoved": [
+            "s_burnt_pages"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window",
+              "s_ada_jonah",
+              "s_ada_lie",
+              "s_bell_note",
+              "s_card",
+              "s_cordon",
+              "s_label",
+              "s_medical",
+              "s_medical_iris",
+              "s_saw_vera_dora_square",
+              "s_slate",
+              "s_surface_vera"
+            ],
+            "alreadyConcealed": [
+              "s_burnt_pages"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_burnt_pages"
+            ],
+            "removed": [
+              "s_burnt_pages"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 1,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-135210__beginner__literal__s2",
+                "traceIndex": 17,
+                "actor": "dora",
+                "clue": "s_burnt_pages",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        },
+        {
+          "roots": [
+            "s_burnt_pages",
+            "s_envelope"
+          ],
+          "firstTraceIndex": 33,
+          "acquiredAtFirstTrace": [
+            "b_dora_grate",
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window",
+            "s_ada_jonah",
+            "s_ada_lie",
+            "s_bell_note",
+            "s_card",
+            "s_cordon",
+            "s_dora_saw",
+            "s_label",
+            "s_medical",
+            "s_medical_iris",
+            "s_notice",
+            "s_saw_dora_jonah_square",
+            "s_saw_vera_dora_square",
+            "s_slate",
+            "s_surface_dora",
+            "s_surface_jonah",
+            "s_surface_rowan",
+            "s_surface_vera",
+            "s_vera_alibi",
+            "t_dora",
+            "t_rowan",
+            "t_vera"
+          ],
+          "dependencyClosureRemoved": [
+            "s_burnt_pages",
+            "s_envelope"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "b_dora_grate",
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window",
+              "s_ada_jonah",
+              "s_ada_lie",
+              "s_bell_note",
+              "s_card",
+              "s_cordon",
+              "s_dora_saw",
+              "s_label",
+              "s_medical",
+              "s_medical_iris",
+              "s_notice",
+              "s_saw_dora_jonah_square",
+              "s_saw_vera_dora_square",
+              "s_slate",
+              "s_surface_dora",
+              "s_surface_jonah",
+              "s_surface_rowan",
+              "s_surface_vera",
+              "s_vera_alibi",
+              "t_dora",
+              "t_rowan",
+              "t_vera"
+            ],
+            "alreadyConcealed": [
+              "s_burnt_pages",
+              "s_envelope"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_burnt_pages",
+              "s_envelope"
+            ],
+            "removed": [
+              "s_burnt_pages",
+              "s_envelope"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 2,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-135210__beginner__literal__s2",
+                "traceIndex": 17,
+                "actor": "dora",
+                "clue": "s_burnt_pages",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              },
+              {
+                "episodeId": "mk-live-20261003-135210__beginner__literal__s2",
+                "traceIndex": 32,
+                "actor": "vera",
+                "clue": "s_envelope",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-135210__beginner__literal__s3",
+      "caseId": "mk-live-20261003-135210",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-135210.json",
+      "traceCount": 63,
+      "uniqueCommittedSetCount": 2,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_burnt_pages"
+          ],
+          "firstTraceIndex": 17,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window",
+            "s_ada_jonah",
+            "s_ada_lie",
+            "s_bell_note",
+            "s_card",
+            "s_cordon",
+            "s_label",
+            "s_medical",
+            "s_medical_iris",
+            "s_saw_vera_dora_square",
+            "s_slate",
+            "s_surface_vera"
+          ],
+          "dependencyClosureRemoved": [
+            "s_burnt_pages"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window",
+              "s_ada_jonah",
+              "s_ada_lie",
+              "s_bell_note",
+              "s_card",
+              "s_cordon",
+              "s_label",
+              "s_medical",
+              "s_medical_iris",
+              "s_saw_vera_dora_square",
+              "s_slate",
+              "s_surface_vera"
+            ],
+            "alreadyConcealed": [
+              "s_burnt_pages"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_burnt_pages"
+            ],
+            "removed": [
+              "s_burnt_pages"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 1,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-135210__beginner__literal__s3",
+                "traceIndex": 17,
+                "actor": "dora",
+                "clue": "s_burnt_pages",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-135210__pro__impatient__s3",
+      "caseId": "mk-live-20261003-135210",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-135210.json",
+      "traceCount": 101,
+      "uniqueCommittedSetCount": 1,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-135210__pro__methodical__s2",
+      "caseId": "mk-live-20261003-135210",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-135210.json",
+      "traceCount": 103,
+      "uniqueCommittedSetCount": 2,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        },
+        {
+          "roots": [
+            "s_burnt_pages"
+          ],
+          "firstTraceIndex": 29,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window",
+            "s_bell_note",
+            "s_card",
+            "s_cordon",
+            "s_envelope",
+            "s_label",
+            "s_medical",
+            "s_medical_iris",
+            "s_morning_bell",
+            "s_morning_iris",
+            "s_notebook",
+            "s_notice",
+            "s_saw_vera_dora_square",
+            "s_slate",
+            "s_surface_bell",
+            "s_surface_iris",
+            "s_surface_rowan",
+            "s_surface_vera",
+            "s_wound",
+            "t_rowan"
+          ],
+          "dependencyClosureRemoved": [
+            "s_burnt_pages"
+          ],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window",
+              "s_bell_note",
+              "s_card",
+              "s_cordon",
+              "s_envelope",
+              "s_label",
+              "s_medical",
+              "s_medical_iris",
+              "s_morning_bell",
+              "s_morning_iris",
+              "s_notebook",
+              "s_notice",
+              "s_saw_vera_dora_square",
+              "s_slate",
+              "s_surface_bell",
+              "s_surface_iris",
+              "s_surface_rowan",
+              "s_surface_vera",
+              "s_wound",
+              "t_rowan"
+            ],
+            "alreadyConcealed": [
+              "s_burnt_pages"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_burnt_pages"
+            ],
+            "removed": [
+              "s_burnt_pages"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 1,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": true,
+            "matches": [
+              {
+                "episodeId": "mk-live-20261003-135210__pro__methodical__s2",
+                "traceIndex": 29,
+                "actor": "dora",
+                "clue": "s_burnt_pages",
+                "verdict": "still solvable",
+                "accepted": true,
+                "directorStatus": "accepted"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "episodeId": "mk-live-20261003-135210__pro__suspicious__s1",
+      "caseId": "mk-live-20261003-135210",
+      "caseFile": "dist/cases/generated/live/mk-live-20261003-135210.json",
+      "traceCount": 103,
+      "uniqueCommittedSetCount": 1,
+      "states": [
+        {
+          "roots": [],
+          "firstTraceIndex": 0,
+          "acquiredAtFirstTrace": [
+            "pub_trait_dora_handed",
+            "pub_trait_jonah_handed",
+            "pub_trait_rowan_handed",
+            "pub_trait_vera_handed",
+            "pub_window"
+          ],
+          "dependencyClosureRemoved": [],
+          "certificate": {
+            "phase": "post_commit",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_trait_dora_handed",
+              "pub_trait_jonah_handed",
+              "pub_trait_rowan_handed",
+              "pub_trait_vera_handed",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "priorPlanningAssociation": {
+            "classification": "historical planning association; not used as the post-commit certificate",
+            "matchingAuditCount": 0,
+            "hasSameOrPriorAcceptedAuditForEveryRoot": false,
+            "matches": []
+          }
+        }
+      ]
+    }
+  ],
+  "provenance": {
+    "repository": {
+      "commit": "a2716a8643d8177914a5decb94edf474bf9c77f5",
+      "branch": "main",
+      "trackedDirtyPaths": [
+        "dist/cases/kernel-case.mjs",
+        "dist/engine-runtime.mjs",
+        "dist/investigation.mjs",
+        "dist/mk/kernel.mjs",
+        "dist/morning-director.mjs",
+        "dist/morning.mjs",
+        "docs/showcase/MAKING-OF.md",
+        "docs/showcase/make_titles.py",
+        "server/llm_backends.py",
+        "server/llm_proxy.py",
+        "tests/mk-kernel.test.mjs",
+        "tests/morning-director.test.mjs",
+        "tests/morning.test.mjs",
+        "tools/playtest/judge.py",
+        "tools/playtest/llm.py",
+        "tools/playtest/player.py",
+        "tools/playtest/report.py",
+        "tools/playtest/run.py",
+        "tools/refine-c/backfill.py",
+        "tools/refine-c/parity.py",
+        "tools/refine-c/publish.py",
+        "tools/refine-c/refine.py",
+        "tools/refine-c/repair_history.py",
+        "tools/refine-c/test_refine.py"
+      ],
+      "untrackedEvidencePaths": [
+        "tools/paper-evidence/README.md",
+        "tools/paper-evidence/aa_playtest_analysis.py",
+        "tools/paper-evidence/certifier_experiments.mjs",
+        "tools/paper-evidence/committed_concealment_audit.mjs",
+        "tools/paper-evidence/corpus_depth_planning.py",
+        "tools/paper-evidence/e1_gate_ablation.mjs",
+        "tools/paper-evidence/export_representation_fidelity.py",
+        "tools/paper-evidence/generation_funnel.py",
+        "tools/paper-evidence/generation_policy_replay.py",
+        "tools/paper-evidence/paper_evidence_helpers.mjs",
+        "tools/paper-evidence/parity_capture.py",
+        "tools/paper-evidence/playtest_analysis.py",
+        "tools/paper-evidence/results/certifier_experiments.json",
+        "tools/paper-evidence/results/certifier_experiments.md",
+        "tools/paper-evidence/results/committed_concealment_audit.json",
+        "tools/paper-evidence/results/committed_concealment_audit.md",
+        "tools/paper-evidence/results/corpus_depth_planning.json",
+        "tools/paper-evidence/results/corpus_depth_planning.md",
+        "tools/paper-evidence/results/e1_gate_ablation.json",
+        "tools/paper-evidence/results/e1_gate_ablation.md",
+        "tools/paper-evidence/results/e6_aa_preregistration.json",
+        "tools/paper-evidence/results/generation_cohort_pilot.json",
+        "tools/paper-evidence/results/generation_cohort_pilot.md",
+        "tools/paper-evidence/results/generation_funnel.json",
+        "tools/paper-evidence/results/generation_funnel.md",
+        "tools/paper-evidence/results/generation_policy_replay.json",
+        "tools/paper-evidence/results/generation_policy_replay.md",
+        "tools/paper-evidence/results/parity.json",
+        "tools/paper-evidence/results/parity.md",
+        "tools/paper-evidence/results/playtest_analysis.json",
+        "tools/paper-evidence/results/playtest_analysis.md",
+        "tools/paper-evidence/results/publication_critic_adjudication.md",
+        "tools/paper-evidence/results/publication_critic_pilot.json",
+        "tools/paper-evidence/results/publication_critic_pilot.md",
+        "tools/paper-evidence/results/summary.md",
+        "tools/paper-evidence/results/witness_sweep.json",
+        "tools/paper-evidence/results/witness_sweep.md",
+        "tools/paper-evidence/structural_depth.mjs",
+        "tools/paper-evidence/witness_sweep.mjs"
+      ],
+      "worktreeDirty": true,
+      "archivalStatus": "preliminary/non-archival",
+      "archivalReason": "The result was generated from a dirty worktree and must not be treated as an archival repository snapshot."
+    },
+    "environment": {
+      "node": "v22.14.0",
+      "offline": true
+    },
+    "commands": [
+      "node tools/paper-evidence/committed_concealment_audit.mjs"
+    ],
+    "manifests": [
+      {
+        "path": "dist/cases/generated/live/index.json",
+        "sha256": "84cee0f53dd81a88c831b7ae7c67911adcb72ae29c6f091e736095c7af09f394"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/batch.json",
+        "sha256": "d42e9cd347d457bc54c8d48fbc3b59e8676ce2eb727c2f7fba67e9d88c68b98c"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/scores.json",
+        "sha256": "a724fc49efc5ba4f39da79c40b1fe6c8a0b6d259e884ad81af168267042441c5"
+      }
+    ],
+    "inputs": [
+      {
+        "path": "dist/cases/generated/live/mk-live-20261003-082809.json",
+        "sha256": "a179079ec7dcf136d24c24897266386958ba78e04cec350a40c5a26909ebdb72"
+      },
+      {
+        "path": "dist/cases/generated/live/mk-live-20261003-130906.json",
+        "sha256": "7af8a718e71cb85cd8d546c0684807c8dfbb6ed10a0b71d94da0376957b4c00d"
+      },
+      {
+        "path": "dist/cases/generated/live/mk-live-20261003-135210.json",
+        "sha256": "949d7e3fb919eb1364b81f2dcc5d0c0ed2c362d63e7363c38f8db4de74279c0e"
+      },
+      {
+        "path": "dist/mk/kernel.mjs",
+        "sha256": "d4c4c6b883c8fe248071f085025385e81d2941278b0e6d070bfad00f6435baa2"
+      },
+      {
+        "path": "dist/morning.mjs",
+        "sha256": "362e4ae2e79b26a4c6e1ff88903e1b661d29395b7523063e7ca2d76a1f090882"
+      },
+      {
+        "path": "tools/paper-evidence/committed_concealment_audit.mjs",
+        "sha256": "9df30c092707a6ecf052d9faf6cbed2296779543a5deeb2a183229ac7636aae1"
+      },
+      {
+        "path": "tools/paper-evidence/paper_evidence_helpers.mjs",
+        "sha256": "0cc6159311053bb06b622f891b40a82cf0c1d7d68f01a590e118288a36b46343"
+      },
+      {
+        "path": "tools/paper-evidence/playtest_analysis.py",
+        "sha256": "eabb5d32ab31486b75cafc30075bf03e28ec53fb3ca1395aafb58ef98209df2b"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-082809__amateur__chatty__s3.json",
+        "sha256": "924096e43ee58caeddb2bf9d8831b5f22797ca5df23bdceb200c58c7405f4093"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-082809__amateur__literal__s1.json",
+        "sha256": "7f00d0b03bc285db6a8c4a4699e5e7227344ee7d8d37a9fc4ef064871e596c7c"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-082809__amateur__methodical__s2.json",
+        "sha256": "b455df4a3d0cceae9cf49257288c429656bdde9a016d1721ab6d76475c49ea1c"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-082809__beginner__literal__s1.json",
+        "sha256": "2161aa8c1132f5aad9dc687018d955af7b60a03433c4d789289ab7fc5bbff944"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-082809__beginner__literal__s3.json",
+        "sha256": "df8d4e9ee7f9180f6f2b780b6965e88492fad8eda9a10a1de40b8462c6eb49e8"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-082809__beginner__methodical__s2.json",
+        "sha256": "255109a19d1b210d5698ea43b936029d2bcdf7d5e9c870add29e6d9165059811"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-082809__pro__methodical__s3.json",
+        "sha256": "65405722815e8f1479d6f81daf5e9dd3795c1c97249ddceb1b371932146d8a9d"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-082809__pro__suspicious__s1.json",
+        "sha256": "ec4f51a8b8df47b9528db4e10ff2b75cef28dc7afb034930d8ae9cd3e6d0c2d9"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-082809__pro__suspicious__s2.json",
+        "sha256": "3aed95d656d6c808ae18c96ca3fb06b0889fa755c9894a3930608d5824ed3395"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-130906__amateur__impatient__s1.json",
+        "sha256": "44baeca8b767b2956de89a030782590fe3fad9f6361a2a37dd2940ffe7345e49"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-130906__amateur__literal__s3.json",
+        "sha256": "9bb92807c2d73942bbf76d862f202a5c5930bc6baec01c80e2b55e1a9b09f268"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-130906__amateur__suspicious__s2.json",
+        "sha256": "6a4f08369fa6f91d242199c9859b0b0c15535c0b882fc5d1583e1565c65bf7e5"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-130906__beginner__chatty__s1.json",
+        "sha256": "110d0a06cdfb48351b0e3579fd9ce0f5a59ffca5cfa32e8b88b52caef9a8ab95"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-130906__beginner__impatient__s2.json",
+        "sha256": "0a63ff7e3986d7a5d8b78d9fe00f53a77b3f1ef80f578c701f2778b9bc590941"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-130906__beginner__methodical__s3.json",
+        "sha256": "fd964cc86d782060c12e7f5366fb01372c567a6fe6f2b04d01ca834b7520af6e"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-130906__pro__methodical__s1.json",
+        "sha256": "dbf9be2c00e7c5c3ec40a1e67a3a051b992ae0e9460c5d3424cc7c4d38f67c8f"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-130906__pro__methodical__s2.json",
+        "sha256": "e72dc5854f1dcb9a0eb91ee78ce51a866cebb63b897bbef65c9e803fc19b1537"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-130906__pro__suspicious__s3.json",
+        "sha256": "c83360a9c7a6ed693918284d36abbdc63af4e8dc013d6b29febbc8a8c87d8cc9"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-135210__amateur__impatient__s2.json",
+        "sha256": "fa940047190c22fb5f948a7331302ae0a0099dcc078acee420355a6986ff1b79"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-135210__amateur__impatient__s3.json",
+        "sha256": "a52362bec782e1ad00f49baa570f6c9b47731c7f613cda3ecd29af928bd1d2cb"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-135210__amateur__methodical__s1.json",
+        "sha256": "1881ffedf79fe66c6b5057b5b97d739f54ff32f3eaca003d948d3624420d2228"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-135210__beginner__chatty__s1.json",
+        "sha256": "327942797fff5ea186e4ffde98c2db06dafd5ed17bc121275af3d51f52b76616"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-135210__beginner__literal__s2.json",
+        "sha256": "fbc4ba762d8118e95d900e876ae260d29c7f4c9dd0c76ec88ace932d7d097928"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-135210__beginner__literal__s3.json",
+        "sha256": "660d9f1da6bb0d59dd5171214bddc7b6986a2af88ea3faedf59c7306dabdd147"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-135210__pro__impatient__s3.json",
+        "sha256": "c3f6594923aeb2e4e76be392a5e7696687b181b45be08f6ddf4a3bcb08a2a099"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-135210__pro__methodical__s2.json",
+        "sha256": "4302d68fd4469cc65b3541d41242f7014f10fdc20810dd1a9f1e01ab00111db9"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/mk-live-20261003-135210__pro__suspicious__s1.json",
+        "sha256": "c2fdc6a455317f3adf71ef5ce4f07058e8764a99d3a3e9c98f5ffd21c5e907b0"
+      },
+      {
+        "path": "tools/playtest/runs/e3c/scores.json",
+        "sha256": "a724fc49efc5ba4f39da79c40b1fe6c8a0b6d259e884ad81af168267042441c5"
+      }
+    ]
+  },
+  "normalizedSha256": "feb979845194aa90e34c21f8fa69904ae00eb85e9b04ee0c988af2612ffabf8f"
+}

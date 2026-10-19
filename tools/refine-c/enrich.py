@@ -9,7 +9,8 @@ import os
 import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TYPES = json.load(open(os.path.join(HERE, 'settings', 'answer-types.json')))
+with open(os.path.join(HERE, 'settings', 'answer-types.json')) as source:
+    TYPES = json.load(source)
 METHOD_IDS = [m[0] for m in TYPES['methods']]
 MOTIVE_IDS = [m[0] for m in TYPES['motives']]
 
@@ -19,7 +20,8 @@ def truth_actor(case):
     return next(h for h in q['candidates'] if h['id'] == q['truth'])['facts']['actor']
 
 
-SETTING = json.load(open(os.path.join(HERE, 'settings', 'bellweather.json')))
+with open(os.path.join(HERE, 'settings', 'bellweather.json')) as source:
+    SETTING = json.load(source)
 
 
 def role(case, name):

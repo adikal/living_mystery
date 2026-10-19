@@ -1,0 +1,4157 @@
+{
+  "format": "living-mystery-e1-local-gate-ablation-v1",
+  "title": "E1 offline/local kernel-gate mechanism ablation",
+  "scope": {
+    "classification": "Mechanism experiment, not model-policy frequency.",
+    "interpretation": "Fixed captured/synthetic proposals test causal enforcement differences. Counts do not estimate how often a model proposes any behavior.",
+    "identicalInputs": "Within each scenario, all arms clone one starting session and share byte-identical code and fixed local line validation. Only strict kernel-gate enforcement differs.",
+    "isolation": "In-memory experiment only: no directMorning, model, fetch, UI, persistence, import/export, or save path is called; unsafe arms cannot enter ordinary game state or saves.",
+    "offline": true
+  },
+  "modes": [
+    {
+      "id": "planning_execution",
+      "planningGate": true,
+      "executionGate": true,
+      "description": "Strict kernel certification is enforced during planning and immediately before execution."
+    },
+    {
+      "id": "planning_only",
+      "planningGate": true,
+      "executionGate": false,
+      "description": "Strict kernel certification is enforced during planning but only observed, not enforced, at execution."
+    },
+    {
+      "id": "no_kernel_gate",
+      "planningGate": false,
+      "executionGate": false,
+      "description": "Strict kernel certification is observed for measurement but enforced at neither planning nor execution."
+    }
+  ],
+  "scenarioCount": 8,
+  "aggregates": {
+    "planning_execution": {
+      "proposalOpportunities": 7,
+      "planningRefusals": 3,
+      "executionRefusals": 2,
+      "kernelExecutionRefusals": 1,
+      "acquiredClueCancellations": 1,
+      "committedUnsafeStates": 0,
+      "finalStrictCertificatesPassed": 8,
+      "finalStrictCertificatesFailed": 0
+    },
+    "planning_only": {
+      "proposalOpportunities": 7,
+      "planningRefusals": 3,
+      "executionRefusals": 1,
+      "kernelExecutionRefusals": 0,
+      "acquiredClueCancellations": 1,
+      "committedUnsafeStates": 1,
+      "finalStrictCertificatesPassed": 7,
+      "finalStrictCertificatesFailed": 1
+    },
+    "no_kernel_gate": {
+      "proposalOpportunities": 7,
+      "planningRefusals": 0,
+      "executionRefusals": 1,
+      "kernelExecutionRefusals": 0,
+      "acquiredClueCancellations": 1,
+      "committedUnsafeStates": 3,
+      "finalStrictCertificatesPassed": 5,
+      "finalStrictCertificatesFailed": 3
+    }
+  },
+  "scenarios": [
+    {
+      "id": "safe_concealment",
+      "mechanism": "A concealment whose direct strict certificate remains safe.",
+      "caseId": "mk-live-20261002-235614",
+      "syntheticCase": false,
+      "proposal": {
+        "agendas": {
+          "clara": [
+            {
+              "kind": "conceal",
+              "clue": "s_telegram",
+              "because": [
+                "k_att_a_clara_fear"
+              ]
+            }
+          ]
+        }
+      },
+      "beforeExecution": null,
+      "identicalStartingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+      "identicalCodeLineValidationSha256": "b81c0bcafcd8a18391241f409f962533451413e408fe2cf21cacabc784413f43",
+      "arms": [
+        {
+          "mode": "planning_execution",
+          "gatePolicy": "Strict kernel certification is enforced during planning and immediately before execution.",
+          "startingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+          "validationSignature": "b81c0bcafcd8a18391241f409f962533451413e408fe2cf21cacabc784413f43",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_telegram"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_telegram",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_telegram",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_telegram"
+                  ],
+                  "removed": [
+                    "s_telegram"
+                  ],
+                  "ok": true,
+                  "errors": []
+                },
+                "enforcedRefusal": false
+              }
+            ],
+            "enforcedRefusals": 0,
+            "admittedPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_telegram"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_telegram",
+                "refusal": null,
+                "kernelCertificate": {
+                  "phase": "execution",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_telegram",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [
+                    {
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_telegram"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_telegram"
+                  ],
+                  "removed": [
+                    "s_telegram"
+                  ],
+                  "ok": true,
+                  "errors": [],
+                  "checks": {
+                    "actualPostCommit": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_telegram",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [],
+                      "hiddenRoots": [
+                        "s_telegram"
+                      ],
+                      "removed": [
+                        "s_telegram"
+                      ],
+                      "ok": true,
+                      "errors": []
+                    },
+                    "allCommitmentsProjection": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_telegram",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [
+                        {
+                          "actor": "clara",
+                          "stepIndex": 0,
+                          "clue": "s_telegram"
+                        }
+                      ],
+                      "hiddenRoots": [
+                        "s_telegram"
+                      ],
+                      "removed": [
+                        "s_telegram"
+                      ],
+                      "ok": true,
+                      "errors": []
+                    }
+                  }
+                },
+                "postCommitCertificate": {
+                  "phase": "post_commit",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_telegram",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [
+                    "s_telegram"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_telegram"
+                  ],
+                  "removed": [
+                    "s_telegram"
+                  ],
+                  "ok": true,
+                  "errors": []
+                }
+              }
+            ],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [
+              "s_telegram"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_telegram"
+            ],
+            "removed": [
+              "s_telegram"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": [
+            "s_telegram"
+          ]
+        },
+        {
+          "mode": "planning_only",
+          "gatePolicy": "Strict kernel certification is enforced during planning but only observed, not enforced, at execution.",
+          "startingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+          "validationSignature": "b81c0bcafcd8a18391241f409f962533451413e408fe2cf21cacabc784413f43",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_telegram"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_telegram",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_telegram",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_telegram"
+                  ],
+                  "removed": [
+                    "s_telegram"
+                  ],
+                  "ok": true,
+                  "errors": []
+                },
+                "enforcedRefusal": false
+              }
+            ],
+            "enforcedRefusals": 0,
+            "admittedPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_telegram"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_telegram",
+                "refusal": null,
+                "kernelCertificate": {
+                  "phase": "execution",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_telegram",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [
+                    {
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_telegram"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_telegram"
+                  ],
+                  "removed": [
+                    "s_telegram"
+                  ],
+                  "ok": true,
+                  "errors": [],
+                  "checks": {
+                    "actualPostCommit": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_telegram",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [],
+                      "hiddenRoots": [
+                        "s_telegram"
+                      ],
+                      "removed": [
+                        "s_telegram"
+                      ],
+                      "ok": true,
+                      "errors": []
+                    },
+                    "allCommitmentsProjection": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_telegram",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [
+                        {
+                          "actor": "clara",
+                          "stepIndex": 0,
+                          "clue": "s_telegram"
+                        }
+                      ],
+                      "hiddenRoots": [
+                        "s_telegram"
+                      ],
+                      "removed": [
+                        "s_telegram"
+                      ],
+                      "ok": true,
+                      "errors": []
+                    }
+                  }
+                },
+                "postCommitCertificate": {
+                  "phase": "post_commit",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_telegram",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [
+                    "s_telegram"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_telegram"
+                  ],
+                  "removed": [
+                    "s_telegram"
+                  ],
+                  "ok": true,
+                  "errors": []
+                }
+              }
+            ],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [
+              "s_telegram"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_telegram"
+            ],
+            "removed": [
+              "s_telegram"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": [
+            "s_telegram"
+          ]
+        },
+        {
+          "mode": "no_kernel_gate",
+          "gatePolicy": "Strict kernel certification is observed for measurement but enforced at neither planning nor execution.",
+          "startingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+          "validationSignature": "b81c0bcafcd8a18391241f409f962533451413e408fe2cf21cacabc784413f43",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_telegram"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_telegram",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_telegram",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_telegram"
+                  ],
+                  "removed": [
+                    "s_telegram"
+                  ],
+                  "ok": true,
+                  "errors": []
+                },
+                "enforcedRefusal": false
+              }
+            ],
+            "enforcedRefusals": 0,
+            "admittedPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_telegram"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_telegram",
+                "refusal": null,
+                "kernelCertificate": {
+                  "phase": "execution",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_telegram",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [
+                    {
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_telegram"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_telegram"
+                  ],
+                  "removed": [
+                    "s_telegram"
+                  ],
+                  "ok": true,
+                  "errors": [],
+                  "checks": {
+                    "actualPostCommit": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_telegram",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [],
+                      "hiddenRoots": [
+                        "s_telegram"
+                      ],
+                      "removed": [
+                        "s_telegram"
+                      ],
+                      "ok": true,
+                      "errors": []
+                    },
+                    "allCommitmentsProjection": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_telegram",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [
+                        {
+                          "actor": "clara",
+                          "stepIndex": 0,
+                          "clue": "s_telegram"
+                        }
+                      ],
+                      "hiddenRoots": [
+                        "s_telegram"
+                      ],
+                      "removed": [
+                        "s_telegram"
+                      ],
+                      "ok": true,
+                      "errors": []
+                    }
+                  }
+                },
+                "postCommitCertificate": {
+                  "phase": "post_commit",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_telegram",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [
+                    "s_telegram"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_telegram"
+                  ],
+                  "removed": [
+                    "s_telegram"
+                  ],
+                  "ok": true,
+                  "errors": []
+                }
+              }
+            ],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [
+              "s_telegram"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_telegram"
+            ],
+            "removed": [
+              "s_telegram"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": [
+            "s_telegram"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "individually_unsafe_clue",
+      "mechanism": "One code-valid clue is individually required by the strict certificate.",
+      "caseId": "mk-live-20261002-235614",
+      "syntheticCase": false,
+      "proposal": {
+        "agendas": {
+          "clara": [
+            {
+              "kind": "conceal",
+              "clue": "s_letter",
+              "because": [
+                "k_att_a_clara_fear"
+              ]
+            }
+          ]
+        }
+      },
+      "beforeExecution": null,
+      "identicalStartingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+      "identicalCodeLineValidationSha256": "9cab0695314df2694228e04c08535c797819a9be31f05c7abd43018727026bcb",
+      "arms": [
+        {
+          "mode": "planning_execution",
+          "gatePolicy": "Strict kernel certification is enforced during planning and immediately before execution.",
+          "startingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+          "validationSignature": "9cab0695314df2694228e04c08535c797819a9be31f05c7abd43018727026bcb",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "manor",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_letter"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_letter",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_letter",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_letter"
+                  ],
+                  "removed": [
+                    "s_letter",
+                    "s_rowan_retract"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "answer not unique from all reachable evidence: survivors []"
+                  ]
+                },
+                "enforcedRefusal": true
+              }
+            ],
+            "enforcedRefusals": 1,
+            "admittedPlan": {}
+          },
+          "execution": {
+            "decisions": [],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": []
+        },
+        {
+          "mode": "planning_only",
+          "gatePolicy": "Strict kernel certification is enforced during planning but only observed, not enforced, at execution.",
+          "startingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+          "validationSignature": "9cab0695314df2694228e04c08535c797819a9be31f05c7abd43018727026bcb",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "manor",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_letter"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_letter",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_letter",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_letter"
+                  ],
+                  "removed": [
+                    "s_letter",
+                    "s_rowan_retract"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "answer not unique from all reachable evidence: survivors []"
+                  ]
+                },
+                "enforcedRefusal": true
+              }
+            ],
+            "enforcedRefusals": 1,
+            "admittedPlan": {}
+          },
+          "execution": {
+            "decisions": [],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": []
+        },
+        {
+          "mode": "no_kernel_gate",
+          "gatePolicy": "Strict kernel certification is observed for measurement but enforced at neither planning nor execution.",
+          "startingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+          "validationSignature": "9cab0695314df2694228e04c08535c797819a9be31f05c7abd43018727026bcb",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "manor",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_letter"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_letter",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_letter",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_letter"
+                  ],
+                  "removed": [
+                    "s_letter",
+                    "s_rowan_retract"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "answer not unique from all reachable evidence: survivors []"
+                  ]
+                },
+                "enforcedRefusal": false
+              }
+            ],
+            "enforcedRefusals": 0,
+            "admittedPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "manor",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_letter"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_letter",
+                "refusal": null,
+                "kernelCertificate": {
+                  "phase": "execution",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_letter",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [
+                    {
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_letter"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_letter"
+                  ],
+                  "removed": [
+                    "s_letter",
+                    "s_rowan_retract"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "actual post-commit state: false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "actual post-commit state: answer not unique from all reachable evidence: survivors []",
+                    "all commitments projection: false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "all commitments projection: answer not unique from all reachable evidence: survivors []"
+                  ],
+                  "checks": {
+                    "actualPostCommit": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_letter",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [],
+                      "hiddenRoots": [
+                        "s_letter"
+                      ],
+                      "removed": [
+                        "s_letter",
+                        "s_rowan_retract"
+                      ],
+                      "ok": false,
+                      "errors": [
+                        "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                        "answer not unique from all reachable evidence: survivors []"
+                      ]
+                    },
+                    "allCommitmentsProjection": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_letter",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [
+                        {
+                          "actor": "clara",
+                          "stepIndex": 0,
+                          "clue": "s_letter"
+                        }
+                      ],
+                      "hiddenRoots": [
+                        "s_letter"
+                      ],
+                      "removed": [
+                        "s_letter",
+                        "s_rowan_retract"
+                      ],
+                      "ok": false,
+                      "errors": [
+                        "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                        "answer not unique from all reachable evidence: survivors []"
+                      ]
+                    }
+                  }
+                },
+                "postCommitCertificate": {
+                  "phase": "post_commit",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_letter",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [
+                    "s_letter"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_letter"
+                  ],
+                  "removed": [
+                    "s_letter",
+                    "s_rowan_retract"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "answer not unique from all reachable evidence: survivors []"
+                  ]
+                }
+              }
+            ],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [
+            {
+              "actor": "clara",
+              "stepIndex": 0,
+              "clue": "s_letter",
+              "certificate": {
+                "phase": "post_commit",
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_letter",
+                "acquired": [
+                  "pub_holders_doorstop",
+                  "pub_window"
+                ],
+                "alreadyConcealed": [
+                  "s_letter"
+                ],
+                "remainingCommitted": [],
+                "hiddenRoots": [
+                  "s_letter"
+                ],
+                "removed": [
+                  "s_letter",
+                  "s_rowan_retract"
+                ],
+                "ok": false,
+                "errors": [
+                  "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                  "answer not unique from all reachable evidence: survivors []"
+                ]
+              }
+            }
+          ],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [
+              "s_letter"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_letter"
+            ],
+            "removed": [
+              "s_letter",
+              "s_rowan_retract"
+            ],
+            "ok": false,
+            "errors": [
+              "false sign s_rowan_test has no reachable, true defeater deeper than it",
+              "answer not unique from all reachable evidence: survivors []"
+            ]
+          },
+          "finalConcealedRoots": [
+            "s_letter"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cumulative_pair_unsafe_only_together",
+      "mechanism": "Two synthetic redundant means traces are safe individually but unsafe when both commitments coexist.",
+      "caseId": "mk-e1-synthetic-cumulative-pair",
+      "syntheticCase": true,
+      "proposal": {
+        "agendas": {
+          "clara": [
+            {
+              "kind": "conceal",
+              "clue": "s_hound",
+              "because": [
+                "k_att_a_clara_fear"
+              ]
+            }
+          ],
+          "ada": [
+            {
+              "kind": "conceal",
+              "clue": "s_hound_backup",
+              "because": [
+                "k_att_a_ada_work"
+              ]
+            }
+          ]
+        }
+      },
+      "beforeExecution": null,
+      "identicalStartingSessionSha256": "911fa4ebed347d1f0a10fda6ca4aa73ecf6b5dad0e55ab842495bb05651fce27",
+      "identicalCodeLineValidationSha256": "933587e86bbdbeff867fa04b4ac2a371c1108edce789058c73b1abe629e09e23",
+      "arms": [
+        {
+          "mode": "planning_execution",
+          "gatePolicy": "Strict kernel certification is enforced during planning and immediately before execution.",
+          "startingSessionSha256": "911fa4ebed347d1f0a10fda6ca4aa73ecf6b5dad0e55ab842495bb05651fce27",
+          "validationSignature": "933587e86bbdbeff867fa04b4ac2a371c1108edce789058c73b1abe629e09e23",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "manor",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_hound"
+                }
+              ],
+              "ada": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_ada_work"
+                  ],
+                  "clue": "s_hound_backup"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 2,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_hound",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_hound",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_hound"
+                  ],
+                  "removed": [
+                    "s_hound"
+                  ],
+                  "ok": true,
+                  "errors": []
+                },
+                "enforcedRefusal": false
+              },
+              {
+                "actor": "ada",
+                "stepIndex": 0,
+                "clue": "s_hound_backup",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "ada",
+                  "stepIndex": 0,
+                  "clue": "s_hound_backup",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "removed": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                  ]
+                },
+                "enforcedRefusal": true
+              }
+            ],
+            "enforcedRefusals": 1,
+            "admittedPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "manor",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_hound"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_hound",
+                "refusal": null,
+                "kernelCertificate": {
+                  "phase": "execution",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_hound",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [
+                    {
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_hound"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_hound"
+                  ],
+                  "removed": [
+                    "s_hound"
+                  ],
+                  "ok": true,
+                  "errors": [],
+                  "checks": {
+                    "actualPostCommit": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_hound",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [],
+                      "hiddenRoots": [
+                        "s_hound"
+                      ],
+                      "removed": [
+                        "s_hound"
+                      ],
+                      "ok": true,
+                      "errors": []
+                    },
+                    "allCommitmentsProjection": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_hound",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [
+                        {
+                          "actor": "clara",
+                          "stepIndex": 0,
+                          "clue": "s_hound"
+                        }
+                      ],
+                      "hiddenRoots": [
+                        "s_hound"
+                      ],
+                      "removed": [
+                        "s_hound"
+                      ],
+                      "ok": true,
+                      "errors": []
+                    }
+                  }
+                },
+                "postCommitCertificate": {
+                  "phase": "post_commit",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_hound",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [
+                    "s_hound"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_hound"
+                  ],
+                  "removed": [
+                    "s_hound"
+                  ],
+                  "ok": true,
+                  "errors": []
+                }
+              }
+            ],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [
+              "s_hound"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_hound"
+            ],
+            "removed": [
+              "s_hound"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": [
+            "s_hound"
+          ]
+        },
+        {
+          "mode": "planning_only",
+          "gatePolicy": "Strict kernel certification is enforced during planning but only observed, not enforced, at execution.",
+          "startingSessionSha256": "911fa4ebed347d1f0a10fda6ca4aa73ecf6b5dad0e55ab842495bb05651fce27",
+          "validationSignature": "933587e86bbdbeff867fa04b4ac2a371c1108edce789058c73b1abe629e09e23",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "manor",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_hound"
+                }
+              ],
+              "ada": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_ada_work"
+                  ],
+                  "clue": "s_hound_backup"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 2,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_hound",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_hound",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_hound"
+                  ],
+                  "removed": [
+                    "s_hound"
+                  ],
+                  "ok": true,
+                  "errors": []
+                },
+                "enforcedRefusal": false
+              },
+              {
+                "actor": "ada",
+                "stepIndex": 0,
+                "clue": "s_hound_backup",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "ada",
+                  "stepIndex": 0,
+                  "clue": "s_hound_backup",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "removed": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                  ]
+                },
+                "enforcedRefusal": true
+              }
+            ],
+            "enforcedRefusals": 1,
+            "admittedPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "manor",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_hound"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_hound",
+                "refusal": null,
+                "kernelCertificate": {
+                  "phase": "execution",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_hound",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [
+                    {
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_hound"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_hound"
+                  ],
+                  "removed": [
+                    "s_hound"
+                  ],
+                  "ok": true,
+                  "errors": [],
+                  "checks": {
+                    "actualPostCommit": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_hound",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [],
+                      "hiddenRoots": [
+                        "s_hound"
+                      ],
+                      "removed": [
+                        "s_hound"
+                      ],
+                      "ok": true,
+                      "errors": []
+                    },
+                    "allCommitmentsProjection": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_hound",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [
+                        {
+                          "actor": "clara",
+                          "stepIndex": 0,
+                          "clue": "s_hound"
+                        }
+                      ],
+                      "hiddenRoots": [
+                        "s_hound"
+                      ],
+                      "removed": [
+                        "s_hound"
+                      ],
+                      "ok": true,
+                      "errors": []
+                    }
+                  }
+                },
+                "postCommitCertificate": {
+                  "phase": "post_commit",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_hound",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [
+                    "s_hound"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_hound"
+                  ],
+                  "removed": [
+                    "s_hound"
+                  ],
+                  "ok": true,
+                  "errors": []
+                }
+              }
+            ],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [
+              "s_hound"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_hound"
+            ],
+            "removed": [
+              "s_hound"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": [
+            "s_hound"
+          ]
+        },
+        {
+          "mode": "no_kernel_gate",
+          "gatePolicy": "Strict kernel certification is observed for measurement but enforced at neither planning nor execution.",
+          "startingSessionSha256": "911fa4ebed347d1f0a10fda6ca4aa73ecf6b5dad0e55ab842495bb05651fce27",
+          "validationSignature": "933587e86bbdbeff867fa04b4ac2a371c1108edce789058c73b1abe629e09e23",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "manor",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_hound"
+                }
+              ],
+              "ada": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_ada_work"
+                  ],
+                  "clue": "s_hound_backup"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 2,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_hound",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_hound",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_hound"
+                  ],
+                  "removed": [
+                    "s_hound"
+                  ],
+                  "ok": true,
+                  "errors": []
+                },
+                "enforcedRefusal": false
+              },
+              {
+                "actor": "ada",
+                "stepIndex": 0,
+                "clue": "s_hound_backup",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "ada",
+                  "stepIndex": 0,
+                  "clue": "s_hound_backup",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "removed": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                  ]
+                },
+                "enforcedRefusal": false
+              }
+            ],
+            "enforcedRefusals": 0,
+            "admittedPlan": {
+              "clara": [
+                {
+                  "kind": "conceal",
+                  "place": "manor",
+                  "because": [
+                    "k_att_a_clara_fear"
+                  ],
+                  "clue": "s_hound"
+                }
+              ],
+              "ada": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_ada_work"
+                  ],
+                  "clue": "s_hound_backup"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "clara",
+                "stepIndex": 0,
+                "clue": "s_hound",
+                "refusal": null,
+                "kernelCertificate": {
+                  "phase": "execution",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_hound",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [
+                    {
+                      "actor": "ada",
+                      "stepIndex": 0,
+                      "clue": "s_hound_backup"
+                    },
+                    {
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_hound"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "removed": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "all commitments projection: no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                  ],
+                  "checks": {
+                    "actualPostCommit": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_hound",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [],
+                      "hiddenRoots": [
+                        "s_hound"
+                      ],
+                      "removed": [
+                        "s_hound"
+                      ],
+                      "ok": true,
+                      "errors": []
+                    },
+                    "allCommitmentsProjection": {
+                      "phase": "execution",
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_hound",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [
+                        {
+                          "actor": "ada",
+                          "stepIndex": 0,
+                          "clue": "s_hound_backup"
+                        },
+                        {
+                          "actor": "clara",
+                          "stepIndex": 0,
+                          "clue": "s_hound"
+                        }
+                      ],
+                      "hiddenRoots": [
+                        "s_hound",
+                        "s_hound_backup"
+                      ],
+                      "removed": [
+                        "s_hound",
+                        "s_hound_backup"
+                      ],
+                      "ok": false,
+                      "errors": [
+                        "no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                      ]
+                    }
+                  }
+                },
+                "postCommitCertificate": {
+                  "phase": "post_commit",
+                  "actor": "clara",
+                  "stepIndex": 0,
+                  "clue": "s_hound",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [
+                    "s_hound"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_hound"
+                  ],
+                  "removed": [
+                    "s_hound"
+                  ],
+                  "ok": true,
+                  "errors": []
+                }
+              },
+              {
+                "actor": "ada",
+                "stepIndex": 0,
+                "clue": "s_hound_backup",
+                "refusal": null,
+                "kernelCertificate": {
+                  "phase": "execution",
+                  "actor": "ada",
+                  "stepIndex": 0,
+                  "clue": "s_hound_backup",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [
+                    "s_hound"
+                  ],
+                  "remainingCommitted": [
+                    {
+                      "actor": "ada",
+                      "stepIndex": 0,
+                      "clue": "s_hound_backup"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "removed": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "actual post-commit state: no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)",
+                    "all commitments projection: no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                  ],
+                  "checks": {
+                    "actualPostCommit": {
+                      "phase": "execution",
+                      "actor": "ada",
+                      "stepIndex": 0,
+                      "clue": "s_hound_backup",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [
+                        "s_hound"
+                      ],
+                      "remainingCommitted": [],
+                      "hiddenRoots": [
+                        "s_hound",
+                        "s_hound_backup"
+                      ],
+                      "removed": [
+                        "s_hound",
+                        "s_hound_backup"
+                      ],
+                      "ok": false,
+                      "errors": [
+                        "no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                      ]
+                    },
+                    "allCommitmentsProjection": {
+                      "phase": "execution",
+                      "actor": "ada",
+                      "stepIndex": 0,
+                      "clue": "s_hound_backup",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [
+                        "s_hound"
+                      ],
+                      "remainingCommitted": [
+                        {
+                          "actor": "ada",
+                          "stepIndex": 0,
+                          "clue": "s_hound_backup"
+                        }
+                      ],
+                      "hiddenRoots": [
+                        "s_hound",
+                        "s_hound_backup"
+                      ],
+                      "removed": [
+                        "s_hound",
+                        "s_hound_backup"
+                      ],
+                      "ok": false,
+                      "errors": [
+                        "no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                      ]
+                    }
+                  }
+                },
+                "postCommitCertificate": {
+                  "phase": "post_commit",
+                  "actor": "ada",
+                  "stepIndex": 0,
+                  "clue": "s_hound_backup",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "removed": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                  ]
+                }
+              }
+            ],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [
+            {
+              "actor": "ada",
+              "stepIndex": 0,
+              "clue": "s_hound_backup",
+              "certificate": {
+                "phase": "post_commit",
+                "actor": "ada",
+                "stepIndex": 0,
+                "clue": "s_hound_backup",
+                "acquired": [
+                  "pub_holders_doorstop",
+                  "pub_window"
+                ],
+                "alreadyConcealed": [
+                  "s_hound",
+                  "s_hound_backup"
+                ],
+                "remainingCommitted": [],
+                "hiddenRoots": [
+                  "s_hound",
+                  "s_hound_backup"
+                ],
+                "removed": [
+                  "s_hound",
+                  "s_hound_backup"
+                ],
+                "ok": false,
+                "errors": [
+                  "no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                ]
+              }
+            }
+          ],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [
+              "s_hound",
+              "s_hound_backup"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_hound",
+              "s_hound_backup"
+            ],
+            "removed": [
+              "s_hound",
+              "s_hound_backup"
+            ],
+            "ok": false,
+            "errors": [
+              "no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+            ]
+          },
+          "finalConcealedRoots": [
+            "s_hound",
+            "s_hound_backup"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "false_sign_defeater_cancellation_race",
+      "mechanism": "The false sign and defeater are initially both hidden; acquisition retains the false sign immediately before execution.",
+      "caseId": "mk-e1-synthetic-cancellation-race",
+      "syntheticCase": true,
+      "proposal": {
+        "agendas": {
+          "rowan": [
+            {
+              "kind": "conceal",
+              "clue": "s_rowan_retract",
+              "because": [
+                "k_att_a_rowan_duty"
+              ]
+            }
+          ]
+        }
+      },
+      "beforeExecution": {
+        "kind": "acquire",
+        "clue": "s_rowan_test"
+      },
+      "identicalStartingSessionSha256": "7b7b5a669ab14a686a653dbcc6a328b85c4bdcf076a44e3bad095fdfd1bd99dd",
+      "identicalCodeLineValidationSha256": "0644498b72c0162f0ed25bf17bad4792ff6117fd5c09a9cf668adb4a12c33b9c",
+      "arms": [
+        {
+          "mode": "planning_execution",
+          "gatePolicy": "Strict kernel certification is enforced during planning and immediately before execution.",
+          "startingSessionSha256": "7b7b5a669ab14a686a653dbcc6a328b85c4bdcf076a44e3bad095fdfd1bd99dd",
+          "validationSignature": "0644498b72c0162f0ed25bf17bad4792ff6117fd5c09a9cf668adb4a12c33b9c",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "rowan": [
+                {
+                  "kind": "conceal",
+                  "place": "greenhouse",
+                  "because": [
+                    "k_att_a_rowan_duty"
+                  ],
+                  "clue": "s_rowan_retract"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "rowan",
+                "stepIndex": 0,
+                "clue": "s_rowan_retract",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "rowan",
+                  "stepIndex": 0,
+                  "clue": "s_rowan_retract",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [
+                    "s_rowan_test"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_rowan_retract",
+                    "s_rowan_test"
+                  ],
+                  "removed": [
+                    "s_rowan_retract",
+                    "s_rowan_test"
+                  ],
+                  "ok": true,
+                  "errors": []
+                },
+                "enforcedRefusal": false
+              }
+            ],
+            "enforcedRefusals": 0,
+            "admittedPlan": {
+              "rowan": [
+                {
+                  "kind": "conceal",
+                  "place": "greenhouse",
+                  "because": [
+                    "k_att_a_rowan_duty"
+                  ],
+                  "clue": "s_rowan_retract"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "rowan",
+                "stepIndex": 0,
+                "clue": "s_rowan_retract",
+                "refusal": "kernel execution refusal",
+                "kernelCertificate": {
+                  "phase": "execution",
+                  "actor": "rowan",
+                  "stepIndex": 0,
+                  "clue": "s_rowan_retract",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window",
+                    "s_rowan_test"
+                  ],
+                  "alreadyConcealed": [
+                    "s_rowan_test"
+                  ],
+                  "remainingCommitted": [
+                    {
+                      "actor": "rowan",
+                      "stepIndex": 0,
+                      "clue": "s_rowan_retract"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_rowan_retract",
+                    "s_rowan_test"
+                  ],
+                  "removed": [
+                    "s_rowan_retract"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "actual post-commit state: false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "actual post-commit state: answer not unique from all reachable evidence: survivors []",
+                    "all commitments projection: false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "all commitments projection: answer not unique from all reachable evidence: survivors []"
+                  ],
+                  "checks": {
+                    "actualPostCommit": {
+                      "phase": "execution",
+                      "actor": "rowan",
+                      "stepIndex": 0,
+                      "clue": "s_rowan_retract",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window",
+                        "s_rowan_test"
+                      ],
+                      "alreadyConcealed": [
+                        "s_rowan_test"
+                      ],
+                      "remainingCommitted": [],
+                      "hiddenRoots": [
+                        "s_rowan_retract",
+                        "s_rowan_test"
+                      ],
+                      "removed": [
+                        "s_rowan_retract"
+                      ],
+                      "ok": false,
+                      "errors": [
+                        "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                        "answer not unique from all reachable evidence: survivors []"
+                      ]
+                    },
+                    "allCommitmentsProjection": {
+                      "phase": "execution",
+                      "actor": "rowan",
+                      "stepIndex": 0,
+                      "clue": "s_rowan_retract",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window",
+                        "s_rowan_test"
+                      ],
+                      "alreadyConcealed": [
+                        "s_rowan_test"
+                      ],
+                      "remainingCommitted": [
+                        {
+                          "actor": "rowan",
+                          "stepIndex": 0,
+                          "clue": "s_rowan_retract"
+                        }
+                      ],
+                      "hiddenRoots": [
+                        "s_rowan_retract",
+                        "s_rowan_test"
+                      ],
+                      "removed": [
+                        "s_rowan_retract"
+                      ],
+                      "ok": false,
+                      "errors": [
+                        "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                        "answer not unique from all reachable evidence: survivors []"
+                      ]
+                    }
+                  }
+                }
+              }
+            ],
+            "refusals": 1,
+            "kernelRefusals": 1,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window",
+              "s_rowan_test"
+            ],
+            "alreadyConcealed": [
+              "s_rowan_test"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_rowan_test"
+            ],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": [
+            "s_rowan_test"
+          ]
+        },
+        {
+          "mode": "planning_only",
+          "gatePolicy": "Strict kernel certification is enforced during planning but only observed, not enforced, at execution.",
+          "startingSessionSha256": "7b7b5a669ab14a686a653dbcc6a328b85c4bdcf076a44e3bad095fdfd1bd99dd",
+          "validationSignature": "0644498b72c0162f0ed25bf17bad4792ff6117fd5c09a9cf668adb4a12c33b9c",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "rowan": [
+                {
+                  "kind": "conceal",
+                  "place": "greenhouse",
+                  "because": [
+                    "k_att_a_rowan_duty"
+                  ],
+                  "clue": "s_rowan_retract"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "rowan",
+                "stepIndex": 0,
+                "clue": "s_rowan_retract",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "rowan",
+                  "stepIndex": 0,
+                  "clue": "s_rowan_retract",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [
+                    "s_rowan_test"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_rowan_retract",
+                    "s_rowan_test"
+                  ],
+                  "removed": [
+                    "s_rowan_retract",
+                    "s_rowan_test"
+                  ],
+                  "ok": true,
+                  "errors": []
+                },
+                "enforcedRefusal": false
+              }
+            ],
+            "enforcedRefusals": 0,
+            "admittedPlan": {
+              "rowan": [
+                {
+                  "kind": "conceal",
+                  "place": "greenhouse",
+                  "because": [
+                    "k_att_a_rowan_duty"
+                  ],
+                  "clue": "s_rowan_retract"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "rowan",
+                "stepIndex": 0,
+                "clue": "s_rowan_retract",
+                "refusal": null,
+                "kernelCertificate": {
+                  "phase": "execution",
+                  "actor": "rowan",
+                  "stepIndex": 0,
+                  "clue": "s_rowan_retract",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window",
+                    "s_rowan_test"
+                  ],
+                  "alreadyConcealed": [
+                    "s_rowan_test"
+                  ],
+                  "remainingCommitted": [
+                    {
+                      "actor": "rowan",
+                      "stepIndex": 0,
+                      "clue": "s_rowan_retract"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_rowan_retract",
+                    "s_rowan_test"
+                  ],
+                  "removed": [
+                    "s_rowan_retract"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "actual post-commit state: false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "actual post-commit state: answer not unique from all reachable evidence: survivors []",
+                    "all commitments projection: false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "all commitments projection: answer not unique from all reachable evidence: survivors []"
+                  ],
+                  "checks": {
+                    "actualPostCommit": {
+                      "phase": "execution",
+                      "actor": "rowan",
+                      "stepIndex": 0,
+                      "clue": "s_rowan_retract",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window",
+                        "s_rowan_test"
+                      ],
+                      "alreadyConcealed": [
+                        "s_rowan_test"
+                      ],
+                      "remainingCommitted": [],
+                      "hiddenRoots": [
+                        "s_rowan_retract",
+                        "s_rowan_test"
+                      ],
+                      "removed": [
+                        "s_rowan_retract"
+                      ],
+                      "ok": false,
+                      "errors": [
+                        "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                        "answer not unique from all reachable evidence: survivors []"
+                      ]
+                    },
+                    "allCommitmentsProjection": {
+                      "phase": "execution",
+                      "actor": "rowan",
+                      "stepIndex": 0,
+                      "clue": "s_rowan_retract",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window",
+                        "s_rowan_test"
+                      ],
+                      "alreadyConcealed": [
+                        "s_rowan_test"
+                      ],
+                      "remainingCommitted": [
+                        {
+                          "actor": "rowan",
+                          "stepIndex": 0,
+                          "clue": "s_rowan_retract"
+                        }
+                      ],
+                      "hiddenRoots": [
+                        "s_rowan_retract",
+                        "s_rowan_test"
+                      ],
+                      "removed": [
+                        "s_rowan_retract"
+                      ],
+                      "ok": false,
+                      "errors": [
+                        "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                        "answer not unique from all reachable evidence: survivors []"
+                      ]
+                    }
+                  }
+                },
+                "postCommitCertificate": {
+                  "phase": "post_commit",
+                  "actor": "rowan",
+                  "stepIndex": 0,
+                  "clue": "s_rowan_retract",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window",
+                    "s_rowan_test"
+                  ],
+                  "alreadyConcealed": [
+                    "s_rowan_retract",
+                    "s_rowan_test"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_rowan_retract",
+                    "s_rowan_test"
+                  ],
+                  "removed": [
+                    "s_rowan_retract"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "answer not unique from all reachable evidence: survivors []"
+                  ]
+                }
+              }
+            ],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [
+            {
+              "actor": "rowan",
+              "stepIndex": 0,
+              "clue": "s_rowan_retract",
+              "certificate": {
+                "phase": "post_commit",
+                "actor": "rowan",
+                "stepIndex": 0,
+                "clue": "s_rowan_retract",
+                "acquired": [
+                  "pub_holders_doorstop",
+                  "pub_window",
+                  "s_rowan_test"
+                ],
+                "alreadyConcealed": [
+                  "s_rowan_retract",
+                  "s_rowan_test"
+                ],
+                "remainingCommitted": [],
+                "hiddenRoots": [
+                  "s_rowan_retract",
+                  "s_rowan_test"
+                ],
+                "removed": [
+                  "s_rowan_retract"
+                ],
+                "ok": false,
+                "errors": [
+                  "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                  "answer not unique from all reachable evidence: survivors []"
+                ]
+              }
+            }
+          ],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window",
+              "s_rowan_test"
+            ],
+            "alreadyConcealed": [
+              "s_rowan_retract",
+              "s_rowan_test"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_rowan_retract",
+              "s_rowan_test"
+            ],
+            "removed": [
+              "s_rowan_retract"
+            ],
+            "ok": false,
+            "errors": [
+              "false sign s_rowan_test has no reachable, true defeater deeper than it",
+              "answer not unique from all reachable evidence: survivors []"
+            ]
+          },
+          "finalConcealedRoots": [
+            "s_rowan_retract",
+            "s_rowan_test"
+          ]
+        },
+        {
+          "mode": "no_kernel_gate",
+          "gatePolicy": "Strict kernel certification is observed for measurement but enforced at neither planning nor execution.",
+          "startingSessionSha256": "7b7b5a669ab14a686a653dbcc6a328b85c4bdcf076a44e3bad095fdfd1bd99dd",
+          "validationSignature": "0644498b72c0162f0ed25bf17bad4792ff6117fd5c09a9cf668adb4a12c33b9c",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "rowan": [
+                {
+                  "kind": "conceal",
+                  "place": "greenhouse",
+                  "because": [
+                    "k_att_a_rowan_duty"
+                  ],
+                  "clue": "s_rowan_retract"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "rowan",
+                "stepIndex": 0,
+                "clue": "s_rowan_retract",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "rowan",
+                  "stepIndex": 0,
+                  "clue": "s_rowan_retract",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [
+                    "s_rowan_test"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_rowan_retract",
+                    "s_rowan_test"
+                  ],
+                  "removed": [
+                    "s_rowan_retract",
+                    "s_rowan_test"
+                  ],
+                  "ok": true,
+                  "errors": []
+                },
+                "enforcedRefusal": false
+              }
+            ],
+            "enforcedRefusals": 0,
+            "admittedPlan": {
+              "rowan": [
+                {
+                  "kind": "conceal",
+                  "place": "greenhouse",
+                  "because": [
+                    "k_att_a_rowan_duty"
+                  ],
+                  "clue": "s_rowan_retract"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "rowan",
+                "stepIndex": 0,
+                "clue": "s_rowan_retract",
+                "refusal": null,
+                "kernelCertificate": {
+                  "phase": "execution",
+                  "actor": "rowan",
+                  "stepIndex": 0,
+                  "clue": "s_rowan_retract",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window",
+                    "s_rowan_test"
+                  ],
+                  "alreadyConcealed": [
+                    "s_rowan_test"
+                  ],
+                  "remainingCommitted": [
+                    {
+                      "actor": "rowan",
+                      "stepIndex": 0,
+                      "clue": "s_rowan_retract"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_rowan_retract",
+                    "s_rowan_test"
+                  ],
+                  "removed": [
+                    "s_rowan_retract"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "actual post-commit state: false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "actual post-commit state: answer not unique from all reachable evidence: survivors []",
+                    "all commitments projection: false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "all commitments projection: answer not unique from all reachable evidence: survivors []"
+                  ],
+                  "checks": {
+                    "actualPostCommit": {
+                      "phase": "execution",
+                      "actor": "rowan",
+                      "stepIndex": 0,
+                      "clue": "s_rowan_retract",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window",
+                        "s_rowan_test"
+                      ],
+                      "alreadyConcealed": [
+                        "s_rowan_test"
+                      ],
+                      "remainingCommitted": [],
+                      "hiddenRoots": [
+                        "s_rowan_retract",
+                        "s_rowan_test"
+                      ],
+                      "removed": [
+                        "s_rowan_retract"
+                      ],
+                      "ok": false,
+                      "errors": [
+                        "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                        "answer not unique from all reachable evidence: survivors []"
+                      ]
+                    },
+                    "allCommitmentsProjection": {
+                      "phase": "execution",
+                      "actor": "rowan",
+                      "stepIndex": 0,
+                      "clue": "s_rowan_retract",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window",
+                        "s_rowan_test"
+                      ],
+                      "alreadyConcealed": [
+                        "s_rowan_test"
+                      ],
+                      "remainingCommitted": [
+                        {
+                          "actor": "rowan",
+                          "stepIndex": 0,
+                          "clue": "s_rowan_retract"
+                        }
+                      ],
+                      "hiddenRoots": [
+                        "s_rowan_retract",
+                        "s_rowan_test"
+                      ],
+                      "removed": [
+                        "s_rowan_retract"
+                      ],
+                      "ok": false,
+                      "errors": [
+                        "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                        "answer not unique from all reachable evidence: survivors []"
+                      ]
+                    }
+                  }
+                },
+                "postCommitCertificate": {
+                  "phase": "post_commit",
+                  "actor": "rowan",
+                  "stepIndex": 0,
+                  "clue": "s_rowan_retract",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window",
+                    "s_rowan_test"
+                  ],
+                  "alreadyConcealed": [
+                    "s_rowan_retract",
+                    "s_rowan_test"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_rowan_retract",
+                    "s_rowan_test"
+                  ],
+                  "removed": [
+                    "s_rowan_retract"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                    "answer not unique from all reachable evidence: survivors []"
+                  ]
+                }
+              }
+            ],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [
+            {
+              "actor": "rowan",
+              "stepIndex": 0,
+              "clue": "s_rowan_retract",
+              "certificate": {
+                "phase": "post_commit",
+                "actor": "rowan",
+                "stepIndex": 0,
+                "clue": "s_rowan_retract",
+                "acquired": [
+                  "pub_holders_doorstop",
+                  "pub_window",
+                  "s_rowan_test"
+                ],
+                "alreadyConcealed": [
+                  "s_rowan_retract",
+                  "s_rowan_test"
+                ],
+                "remainingCommitted": [],
+                "hiddenRoots": [
+                  "s_rowan_retract",
+                  "s_rowan_test"
+                ],
+                "removed": [
+                  "s_rowan_retract"
+                ],
+                "ok": false,
+                "errors": [
+                  "false sign s_rowan_test has no reachable, true defeater deeper than it",
+                  "answer not unique from all reachable evidence: survivors []"
+                ]
+              }
+            }
+          ],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window",
+              "s_rowan_test"
+            ],
+            "alreadyConcealed": [
+              "s_rowan_retract",
+              "s_rowan_test"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_rowan_retract",
+              "s_rowan_test"
+            ],
+            "removed": [
+              "s_rowan_retract"
+            ],
+            "ok": false,
+            "errors": [
+              "false sign s_rowan_test has no reachable, true defeater deeper than it",
+              "answer not unique from all reachable evidence: survivors []"
+            ]
+          },
+          "finalConcealedRoots": [
+            "s_rowan_retract",
+            "s_rowan_test"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "acquired_clue_cancellation",
+      "mechanism": "The proposed clue is acquired after planning, so identical non-kernel execution validation cancels every arm.",
+      "caseId": "mk-live-20261002-235614",
+      "syntheticCase": false,
+      "proposal": {
+        "agendas": {
+          "iris": [
+            {
+              "kind": "conceal",
+              "clue": "s_medical",
+              "because": [
+                "k_att_a_iris_duty"
+              ]
+            }
+          ]
+        }
+      },
+      "beforeExecution": {
+        "kind": "acquire",
+        "clue": "s_medical"
+      },
+      "identicalStartingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+      "identicalCodeLineValidationSha256": "0ae3abe885b309e0298ec438780d8125dfbfd76d8d9dd08749e6d104ef412fe2",
+      "arms": [
+        {
+          "mode": "planning_execution",
+          "gatePolicy": "Strict kernel certification is enforced during planning and immediately before execution.",
+          "startingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+          "validationSignature": "0ae3abe885b309e0298ec438780d8125dfbfd76d8d9dd08749e6d104ef412fe2",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "iris": [
+                {
+                  "kind": "conceal",
+                  "place": "surgery",
+                  "because": [
+                    "k_att_a_iris_duty"
+                  ],
+                  "clue": "s_medical"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "iris",
+                "stepIndex": 0,
+                "clue": "s_medical",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "iris",
+                  "stepIndex": 0,
+                  "clue": "s_medical",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_medical"
+                  ],
+                  "removed": [
+                    "s_medical"
+                  ],
+                  "ok": true,
+                  "errors": []
+                },
+                "enforcedRefusal": false
+              }
+            ],
+            "enforcedRefusals": 0,
+            "admittedPlan": {
+              "iris": [
+                {
+                  "kind": "conceal",
+                  "place": "surgery",
+                  "because": [
+                    "k_att_a_iris_duty"
+                  ],
+                  "clue": "s_medical"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "iris",
+                "stepIndex": 0,
+                "clue": "s_medical",
+                "refusal": "acquired clue cancellation",
+                "kernelCertificate": null
+              }
+            ],
+            "refusals": 1,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 1
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window",
+              "s_medical"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": []
+        },
+        {
+          "mode": "planning_only",
+          "gatePolicy": "Strict kernel certification is enforced during planning but only observed, not enforced, at execution.",
+          "startingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+          "validationSignature": "0ae3abe885b309e0298ec438780d8125dfbfd76d8d9dd08749e6d104ef412fe2",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "iris": [
+                {
+                  "kind": "conceal",
+                  "place": "surgery",
+                  "because": [
+                    "k_att_a_iris_duty"
+                  ],
+                  "clue": "s_medical"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "iris",
+                "stepIndex": 0,
+                "clue": "s_medical",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "iris",
+                  "stepIndex": 0,
+                  "clue": "s_medical",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_medical"
+                  ],
+                  "removed": [
+                    "s_medical"
+                  ],
+                  "ok": true,
+                  "errors": []
+                },
+                "enforcedRefusal": false
+              }
+            ],
+            "enforcedRefusals": 0,
+            "admittedPlan": {
+              "iris": [
+                {
+                  "kind": "conceal",
+                  "place": "surgery",
+                  "because": [
+                    "k_att_a_iris_duty"
+                  ],
+                  "clue": "s_medical"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "iris",
+                "stepIndex": 0,
+                "clue": "s_medical",
+                "refusal": "acquired clue cancellation",
+                "kernelCertificate": null
+              }
+            ],
+            "refusals": 1,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 1
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window",
+              "s_medical"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": []
+        },
+        {
+          "mode": "no_kernel_gate",
+          "gatePolicy": "Strict kernel certification is observed for measurement but enforced at neither planning nor execution.",
+          "startingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+          "validationSignature": "0ae3abe885b309e0298ec438780d8125dfbfd76d8d9dd08749e6d104ef412fe2",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "iris": [
+                {
+                  "kind": "conceal",
+                  "place": "surgery",
+                  "because": [
+                    "k_att_a_iris_duty"
+                  ],
+                  "clue": "s_medical"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "iris",
+                "stepIndex": 0,
+                "clue": "s_medical",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "iris",
+                  "stepIndex": 0,
+                  "clue": "s_medical",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_medical"
+                  ],
+                  "removed": [
+                    "s_medical"
+                  ],
+                  "ok": true,
+                  "errors": []
+                },
+                "enforcedRefusal": false
+              }
+            ],
+            "enforcedRefusals": 0,
+            "admittedPlan": {
+              "iris": [
+                {
+                  "kind": "conceal",
+                  "place": "surgery",
+                  "because": [
+                    "k_att_a_iris_duty"
+                  ],
+                  "clue": "s_medical"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "iris",
+                "stepIndex": 0,
+                "clue": "s_medical",
+                "refusal": "acquired clue cancellation",
+                "kernelCertificate": null
+              }
+            ],
+            "refusals": 1,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 1
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window",
+              "s_medical"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": []
+        }
+      ]
+    },
+    {
+      "id": "retained_pending_concealment",
+      "mechanism": "A retained pending means concealment combines unsafely with a newly proposed redundant means concealment.",
+      "caseId": "mk-e1-synthetic-retained-pending",
+      "syntheticCase": true,
+      "proposal": {
+        "agendas": {
+          "ada": [
+            {
+              "kind": "conceal",
+              "clue": "s_hound_backup",
+              "because": [
+                "k_att_a_ada_work"
+              ]
+            }
+          ]
+        }
+      },
+      "beforeExecution": null,
+      "identicalStartingSessionSha256": "67157adf533b781b0de2f8588be4a6046e546a9e707102356a1b612d79628566",
+      "identicalCodeLineValidationSha256": "12c6b1441210d7fccda862a24020f7bb5fb7a1ab77a24819ff0623d4fd21f0e6",
+      "arms": [
+        {
+          "mode": "planning_execution",
+          "gatePolicy": "Strict kernel certification is enforced during planning and immediately before execution.",
+          "startingSessionSha256": "67157adf533b781b0de2f8588be4a6046e546a9e707102356a1b612d79628566",
+          "validationSignature": "12c6b1441210d7fccda862a24020f7bb5fb7a1ab77a24819ff0623d4fd21f0e6",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "ada": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_ada_work"
+                  ],
+                  "clue": "s_hound_backup"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "ada",
+                "stepIndex": 0,
+                "clue": "s_hound_backup",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "ada",
+                  "stepIndex": 0,
+                  "clue": "s_hound_backup",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [
+                    {
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_hound"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "removed": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                  ]
+                },
+                "enforcedRefusal": true
+              }
+            ],
+            "enforcedRefusals": 1,
+            "admittedPlan": {}
+          },
+          "execution": {
+            "decisions": [],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": []
+        },
+        {
+          "mode": "planning_only",
+          "gatePolicy": "Strict kernel certification is enforced during planning but only observed, not enforced, at execution.",
+          "startingSessionSha256": "67157adf533b781b0de2f8588be4a6046e546a9e707102356a1b612d79628566",
+          "validationSignature": "12c6b1441210d7fccda862a24020f7bb5fb7a1ab77a24819ff0623d4fd21f0e6",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "ada": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_ada_work"
+                  ],
+                  "clue": "s_hound_backup"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "ada",
+                "stepIndex": 0,
+                "clue": "s_hound_backup",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "ada",
+                  "stepIndex": 0,
+                  "clue": "s_hound_backup",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [
+                    {
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_hound"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "removed": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                  ]
+                },
+                "enforcedRefusal": true
+              }
+            ],
+            "enforcedRefusals": 1,
+            "admittedPlan": {}
+          },
+          "execution": {
+            "decisions": [],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": []
+        },
+        {
+          "mode": "no_kernel_gate",
+          "gatePolicy": "Strict kernel certification is observed for measurement but enforced at neither planning nor execution.",
+          "startingSessionSha256": "67157adf533b781b0de2f8588be4a6046e546a9e707102356a1b612d79628566",
+          "validationSignature": "12c6b1441210d7fccda862a24020f7bb5fb7a1ab77a24819ff0623d4fd21f0e6",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {
+              "ada": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_ada_work"
+                  ],
+                  "clue": "s_hound_backup"
+                }
+              ]
+            }
+          },
+          "proposalOpportunities": 1,
+          "planning": {
+            "decisions": [
+              {
+                "actor": "ada",
+                "stepIndex": 0,
+                "clue": "s_hound_backup",
+                "certificate": {
+                  "phase": "planning",
+                  "actor": "ada",
+                  "stepIndex": 0,
+                  "clue": "s_hound_backup",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [
+                    {
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_hound"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "removed": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                  ]
+                },
+                "enforcedRefusal": false
+              }
+            ],
+            "enforcedRefusals": 0,
+            "admittedPlan": {
+              "ada": [
+                {
+                  "kind": "conceal",
+                  "place": "post",
+                  "because": [
+                    "k_att_a_ada_work"
+                  ],
+                  "clue": "s_hound_backup"
+                }
+              ]
+            }
+          },
+          "execution": {
+            "decisions": [
+              {
+                "actor": "ada",
+                "stepIndex": 0,
+                "clue": "s_hound_backup",
+                "refusal": null,
+                "kernelCertificate": {
+                  "phase": "execution",
+                  "actor": "ada",
+                  "stepIndex": 0,
+                  "clue": "s_hound_backup",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [],
+                  "remainingCommitted": [
+                    {
+                      "actor": "ada",
+                      "stepIndex": 0,
+                      "clue": "s_hound_backup"
+                    },
+                    {
+                      "actor": "clara",
+                      "stepIndex": 0,
+                      "clue": "s_hound"
+                    }
+                  ],
+                  "hiddenRoots": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "removed": [
+                    "s_hound",
+                    "s_hound_backup"
+                  ],
+                  "ok": false,
+                  "errors": [
+                    "all commitments projection: no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                  ],
+                  "checks": {
+                    "actualPostCommit": {
+                      "phase": "execution",
+                      "actor": "ada",
+                      "stepIndex": 0,
+                      "clue": "s_hound_backup",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [],
+                      "hiddenRoots": [
+                        "s_hound_backup"
+                      ],
+                      "removed": [
+                        "s_hound_backup"
+                      ],
+                      "ok": true,
+                      "errors": []
+                    },
+                    "allCommitmentsProjection": {
+                      "phase": "execution",
+                      "actor": "ada",
+                      "stepIndex": 0,
+                      "clue": "s_hound_backup",
+                      "acquired": [
+                        "pub_holders_doorstop",
+                        "pub_window"
+                      ],
+                      "alreadyConcealed": [],
+                      "remainingCommitted": [
+                        {
+                          "actor": "ada",
+                          "stepIndex": 0,
+                          "clue": "s_hound_backup"
+                        },
+                        {
+                          "actor": "clara",
+                          "stepIndex": 0,
+                          "clue": "s_hound"
+                        }
+                      ],
+                      "hiddenRoots": [
+                        "s_hound",
+                        "s_hound_backup"
+                      ],
+                      "removed": [
+                        "s_hound",
+                        "s_hound_backup"
+                      ],
+                      "ok": false,
+                      "errors": [
+                        "no reachable, true evidence of the culprit's MEANS (a had or hasTrait claim about the culprit, or a culpritHad or culpritTrait claim the culprit satisfies)"
+                      ]
+                    }
+                  }
+                },
+                "postCommitCertificate": {
+                  "phase": "post_commit",
+                  "actor": "ada",
+                  "stepIndex": 0,
+                  "clue": "s_hound_backup",
+                  "acquired": [
+                    "pub_holders_doorstop",
+                    "pub_window"
+                  ],
+                  "alreadyConcealed": [
+                    "s_hound_backup"
+                  ],
+                  "remainingCommitted": [],
+                  "hiddenRoots": [
+                    "s_hound_backup"
+                  ],
+                  "removed": [
+                    "s_hound_backup"
+                  ],
+                  "ok": true,
+                  "errors": []
+                }
+              }
+            ],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [
+              "s_hound_backup"
+            ],
+            "remainingCommitted": [],
+            "hiddenRoots": [
+              "s_hound_backup"
+            ],
+            "removed": [
+              "s_hound_backup"
+            ],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": [
+            "s_hound_backup"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "line_validation_control",
+      "mechanism": "A fixed local line refusal truncates a later concealment identically in every arm.",
+      "caseId": "mk-live-20261002-235614",
+      "syntheticCase": false,
+      "proposal": {
+        "agendas": {
+          "clara": [
+            {
+              "kind": "meet",
+              "with": "ada",
+              "place": "manor",
+              "say": "The detective asked after the household.",
+              "because": [
+                "k_said_e_experiment_line"
+              ]
+            },
+            {
+              "kind": "conceal",
+              "clue": "s_hound",
+              "because": [
+                "k_att_a_clara_fear"
+              ]
+            }
+          ]
+        }
+      },
+      "beforeExecution": null,
+      "identicalStartingSessionSha256": "5f5ffcbafa390d258f0906b3b11f2b7754987de30c8c55709930c33ffd75549f",
+      "identicalCodeLineValidationSha256": "4527d74371304d3cb536746e37ef4bd52177c5daeb46c7a1ed3989ff02419f4f",
+      "arms": [
+        {
+          "mode": "planning_execution",
+          "gatePolicy": "Strict kernel certification is enforced during planning and immediately before execution.",
+          "startingSessionSha256": "5f5ffcbafa390d258f0906b3b11f2b7754987de30c8c55709930c33ffd75549f",
+          "validationSignature": "4527d74371304d3cb536746e37ef4bd52177c5daeb46c7a1ed3989ff02419f4f",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {
+              "clara:0": {
+                "speaker": "Clara Vale",
+                "says": "The detective asked after the household.",
+                "to": "Ada Finch",
+                "knowledge": [
+                  "I told the detective: The detective asked after the household."
+                ],
+                "private": [
+                  "19:00 at Vale Manor: Clara and Hugo dine at the manor; he reminds her quietly of Saturday and the three hundred pounds.",
+                  "20:00 at Vale Manor: Clara does the household accounts, then locks the house by half past ten and takes the iron doorstop.",
+                  "23:00 at Village square: Clara hits Hugo with the iron doorstop, takes the pawn ticket from his breast pocket and hurries away.",
+                  "23:15 at Vale Manor: Clara washes the doorstop, puts it back in the hall and burns the pawn ticket.",
+                  "05:20 at The greenhouse: At first light, before the body is found, Clara asks Rowan to say she was with him from 22:50 till past 23:30.",
+                  "10:00 at The post office: On Saturday morning Clara wires her London bank for three hundred pounds; Dora takes the form. No remittance arrives that day.",
+                  "fears: Edmund will learn about the pearls and turn her out of the manor.",
+                  "intends: Silence Hugo for good and take back the pawn ticket.",
+                  "intends: Keep up the household routine so nothing looks amiss.",
+                  "intends: Hide that she left the house that night.",
+                  "intends: Get Rowan to swear she was in the greenhouse with him at the hour of the meeting.",
+                  "intends: Raise three hundred pounds from her bank to buy Hugo's silence."
+                ]
+              }
+            },
+            "lineVerdicts": {
+              "clara:0": "fixed synthetic line refusal"
+            },
+            "survivingPlan": {}
+          },
+          "proposalOpportunities": 0,
+          "planning": {
+            "decisions": [],
+            "enforcedRefusals": 0,
+            "admittedPlan": {}
+          },
+          "execution": {
+            "decisions": [],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": []
+        },
+        {
+          "mode": "planning_only",
+          "gatePolicy": "Strict kernel certification is enforced during planning but only observed, not enforced, at execution.",
+          "startingSessionSha256": "5f5ffcbafa390d258f0906b3b11f2b7754987de30c8c55709930c33ffd75549f",
+          "validationSignature": "4527d74371304d3cb536746e37ef4bd52177c5daeb46c7a1ed3989ff02419f4f",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {
+              "clara:0": {
+                "speaker": "Clara Vale",
+                "says": "The detective asked after the household.",
+                "to": "Ada Finch",
+                "knowledge": [
+                  "I told the detective: The detective asked after the household."
+                ],
+                "private": [
+                  "19:00 at Vale Manor: Clara and Hugo dine at the manor; he reminds her quietly of Saturday and the three hundred pounds.",
+                  "20:00 at Vale Manor: Clara does the household accounts, then locks the house by half past ten and takes the iron doorstop.",
+                  "23:00 at Village square: Clara hits Hugo with the iron doorstop, takes the pawn ticket from his breast pocket and hurries away.",
+                  "23:15 at Vale Manor: Clara washes the doorstop, puts it back in the hall and burns the pawn ticket.",
+                  "05:20 at The greenhouse: At first light, before the body is found, Clara asks Rowan to say she was with him from 22:50 till past 23:30.",
+                  "10:00 at The post office: On Saturday morning Clara wires her London bank for three hundred pounds; Dora takes the form. No remittance arrives that day.",
+                  "fears: Edmund will learn about the pearls and turn her out of the manor.",
+                  "intends: Silence Hugo for good and take back the pawn ticket.",
+                  "intends: Keep up the household routine so nothing looks amiss.",
+                  "intends: Hide that she left the house that night.",
+                  "intends: Get Rowan to swear she was in the greenhouse with him at the hour of the meeting.",
+                  "intends: Raise three hundred pounds from her bank to buy Hugo's silence."
+                ]
+              }
+            },
+            "lineVerdicts": {
+              "clara:0": "fixed synthetic line refusal"
+            },
+            "survivingPlan": {}
+          },
+          "proposalOpportunities": 0,
+          "planning": {
+            "decisions": [],
+            "enforcedRefusals": 0,
+            "admittedPlan": {}
+          },
+          "execution": {
+            "decisions": [],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": []
+        },
+        {
+          "mode": "no_kernel_gate",
+          "gatePolicy": "Strict kernel certification is observed for measurement but enforced at neither planning nor execution.",
+          "startingSessionSha256": "5f5ffcbafa390d258f0906b3b11f2b7754987de30c8c55709930c33ffd75549f",
+          "validationSignature": "4527d74371304d3cb536746e37ef4bd52177c5daeb46c7a1ed3989ff02419f4f",
+          "validation": {
+            "codeErrors": [],
+            "lineItems": {
+              "clara:0": {
+                "speaker": "Clara Vale",
+                "says": "The detective asked after the household.",
+                "to": "Ada Finch",
+                "knowledge": [
+                  "I told the detective: The detective asked after the household."
+                ],
+                "private": [
+                  "19:00 at Vale Manor: Clara and Hugo dine at the manor; he reminds her quietly of Saturday and the three hundred pounds.",
+                  "20:00 at Vale Manor: Clara does the household accounts, then locks the house by half past ten and takes the iron doorstop.",
+                  "23:00 at Village square: Clara hits Hugo with the iron doorstop, takes the pawn ticket from his breast pocket and hurries away.",
+                  "23:15 at Vale Manor: Clara washes the doorstop, puts it back in the hall and burns the pawn ticket.",
+                  "05:20 at The greenhouse: At first light, before the body is found, Clara asks Rowan to say she was with him from 22:50 till past 23:30.",
+                  "10:00 at The post office: On Saturday morning Clara wires her London bank for three hundred pounds; Dora takes the form. No remittance arrives that day.",
+                  "fears: Edmund will learn about the pearls and turn her out of the manor.",
+                  "intends: Silence Hugo for good and take back the pawn ticket.",
+                  "intends: Keep up the household routine so nothing looks amiss.",
+                  "intends: Hide that she left the house that night.",
+                  "intends: Get Rowan to swear she was in the greenhouse with him at the hour of the meeting.",
+                  "intends: Raise three hundred pounds from her bank to buy Hugo's silence."
+                ]
+              }
+            },
+            "lineVerdicts": {
+              "clara:0": "fixed synthetic line refusal"
+            },
+            "survivingPlan": {}
+          },
+          "proposalOpportunities": 0,
+          "planning": {
+            "decisions": [],
+            "enforcedRefusals": 0,
+            "admittedPlan": {}
+          },
+          "execution": {
+            "decisions": [],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": []
+        }
+      ]
+    },
+    {
+      "id": "code_validation_control",
+      "mechanism": "An unknown clue remains code-invalid in every arm before any kernel gate.",
+      "caseId": "mk-live-20261002-235614",
+      "syntheticCase": false,
+      "proposal": {
+        "agendas": {
+          "clara": [
+            {
+              "kind": "conceal",
+              "clue": "s_not_a_clue",
+              "because": [
+                "k_att_a_clara_fear"
+              ]
+            }
+          ]
+        }
+      },
+      "beforeExecution": null,
+      "identicalStartingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+      "identicalCodeLineValidationSha256": "a574b05f3bcfbf0e63060ae4d76f343aa6f18f2ce11147bf4aacf31f94f5f9ed",
+      "arms": [
+        {
+          "mode": "planning_execution",
+          "gatePolicy": "Strict kernel certification is enforced during planning and immediately before execution.",
+          "startingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+          "validationSignature": "a574b05f3bcfbf0e63060ae4d76f343aa6f18f2ce11147bf4aacf31f94f5f9ed",
+          "validation": {
+            "codeErrors": [
+              "clara step 1 (conceal): unknown place undefined"
+            ],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {}
+          },
+          "proposalOpportunities": 0,
+          "planning": {
+            "decisions": [],
+            "enforcedRefusals": 0,
+            "admittedPlan": {}
+          },
+          "execution": {
+            "decisions": [],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": []
+        },
+        {
+          "mode": "planning_only",
+          "gatePolicy": "Strict kernel certification is enforced during planning but only observed, not enforced, at execution.",
+          "startingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+          "validationSignature": "a574b05f3bcfbf0e63060ae4d76f343aa6f18f2ce11147bf4aacf31f94f5f9ed",
+          "validation": {
+            "codeErrors": [
+              "clara step 1 (conceal): unknown place undefined"
+            ],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {}
+          },
+          "proposalOpportunities": 0,
+          "planning": {
+            "decisions": [],
+            "enforcedRefusals": 0,
+            "admittedPlan": {}
+          },
+          "execution": {
+            "decisions": [],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": []
+        },
+        {
+          "mode": "no_kernel_gate",
+          "gatePolicy": "Strict kernel certification is observed for measurement but enforced at neither planning nor execution.",
+          "startingSessionSha256": "d07f86f93ab59e8cb43a998173c530730d7634edcad2b3323a730d0146755382",
+          "validationSignature": "a574b05f3bcfbf0e63060ae4d76f343aa6f18f2ce11147bf4aacf31f94f5f9ed",
+          "validation": {
+            "codeErrors": [
+              "clara step 1 (conceal): unknown place undefined"
+            ],
+            "lineItems": {},
+            "lineVerdicts": {},
+            "survivingPlan": {}
+          },
+          "proposalOpportunities": 0,
+          "planning": {
+            "decisions": [],
+            "enforcedRefusals": 0,
+            "admittedPlan": {}
+          },
+          "execution": {
+            "decisions": [],
+            "refusals": 0,
+            "kernelRefusals": 0,
+            "acquiredClueCancellations": 0
+          },
+          "committedUnsafeStates": [],
+          "finalStrictCertificate": {
+            "phase": "final",
+            "actor": null,
+            "stepIndex": null,
+            "clue": null,
+            "acquired": [
+              "pub_holders_doorstop",
+              "pub_window"
+            ],
+            "alreadyConcealed": [],
+            "remainingCommitted": [],
+            "hiddenRoots": [],
+            "removed": [],
+            "ok": true,
+            "errors": []
+          },
+          "finalConcealedRoots": []
+        }
+      ]
+    }
+  ],
+  "repeatability": {
+    "independentLocalBuilds": 2,
+    "exactSemanticEquality": true,
+    "semanticSha256": "c6c81c4132cf6edaa64bebd744d2b7a910c002bf3a12b315623c36834f4d74d2"
+  },
+  "provenance": {
+    "repository": {
+      "commit": "a2716a8643d8177914a5decb94edf474bf9c77f5",
+      "branch": "main",
+      "trackedDirtyPaths": [
+        "dist/cases/kernel-case.mjs",
+        "dist/engine-runtime.mjs",
+        "dist/investigation.mjs",
+        "dist/mk/kernel.mjs",
+        "dist/morning-director.mjs",
+        "dist/morning.mjs",
+        "docs/showcase/MAKING-OF.md",
+        "docs/showcase/make_titles.py",
+        "server/llm_backends.py",
+        "server/llm_proxy.py",
+        "tests/mk-kernel.test.mjs",
+        "tests/morning-director.test.mjs",
+        "tests/morning.test.mjs",
+        "tools/playtest/judge.py",
+        "tools/playtest/llm.py",
+        "tools/playtest/player.py",
+        "tools/playtest/report.py",
+        "tools/playtest/run.py",
+        "tools/refine-c/backfill.py",
+        "tools/refine-c/parity.py",
+        "tools/refine-c/publish.py",
+        "tools/refine-c/refine.py",
+        "tools/refine-c/repair_history.py",
+        "tools/refine-c/test_refine.py"
+      ],
+      "untrackedEvidencePaths": [
+        "tools/paper-evidence/README.md",
+        "tools/paper-evidence/aa_playtest_analysis.py",
+        "tools/paper-evidence/certifier_experiments.mjs",
+        "tools/paper-evidence/committed_concealment_audit.mjs",
+        "tools/paper-evidence/corpus_depth_planning.py",
+        "tools/paper-evidence/e1_gate_ablation.mjs",
+        "tools/paper-evidence/export_representation_fidelity.py",
+        "tools/paper-evidence/generation_funnel.py",
+        "tools/paper-evidence/generation_policy_replay.py",
+        "tools/paper-evidence/paper_evidence_helpers.mjs",
+        "tools/paper-evidence/parity_capture.py",
+        "tools/paper-evidence/playtest_analysis.py",
+        "tools/paper-evidence/results/certifier_experiments.json",
+        "tools/paper-evidence/results/certifier_experiments.md",
+        "tools/paper-evidence/results/committed_concealment_audit.json",
+        "tools/paper-evidence/results/committed_concealment_audit.md",
+        "tools/paper-evidence/results/corpus_depth_planning.json",
+        "tools/paper-evidence/results/corpus_depth_planning.md",
+        "tools/paper-evidence/results/e1_gate_ablation.json",
+        "tools/paper-evidence/results/e1_gate_ablation.md",
+        "tools/paper-evidence/results/e6_aa_preregistration.json",
+        "tools/paper-evidence/results/generation_cohort_pilot.json",
+        "tools/paper-evidence/results/generation_cohort_pilot.md",
+        "tools/paper-evidence/results/generation_funnel.json",
+        "tools/paper-evidence/results/generation_funnel.md",
+        "tools/paper-evidence/results/generation_policy_replay.json",
+        "tools/paper-evidence/results/generation_policy_replay.md",
+        "tools/paper-evidence/results/parity.json",
+        "tools/paper-evidence/results/parity.md",
+        "tools/paper-evidence/results/playtest_analysis.json",
+        "tools/paper-evidence/results/playtest_analysis.md",
+        "tools/paper-evidence/results/publication_critic_adjudication.md",
+        "tools/paper-evidence/results/publication_critic_pilot.json",
+        "tools/paper-evidence/results/publication_critic_pilot.md",
+        "tools/paper-evidence/results/summary.md",
+        "tools/paper-evidence/results/witness_sweep.json",
+        "tools/paper-evidence/results/witness_sweep.md",
+        "tools/paper-evidence/structural_depth.mjs",
+        "tools/paper-evidence/witness_sweep.mjs"
+      ],
+      "worktreeDirty": true,
+      "archivalStatus": "preliminary/non-archival",
+      "archivalReason": "The result was generated from a dirty worktree and must not be treated as an archival repository snapshot."
+    },
+    "environment": {
+      "node": "v22.14.0",
+      "offline": true
+    },
+    "commands": [
+      "node tools/paper-evidence/e1_gate_ablation.mjs"
+    ],
+    "manifests": [
+      {
+        "path": "dist/cases/generated/index.json",
+        "sha256": "134d144b8b1ca36f21040bcf23a50dc33cbb0e7921ee8c82db9e02f9218feb19"
+      }
+    ],
+    "inputs": [
+      {
+        "path": "dist/cases/generated/mk-live-20261002-235614.json",
+        "sha256": "4022001101abb0ac909bc550d0c4664fa32d5886635b66ea4e3e2e28452b2894"
+      },
+      {
+        "path": "dist/engine.mjs",
+        "sha256": "ac408e806f984fa3d9af0d39f88e960cca83f3bda40729e7a045960a067d5beb"
+      },
+      {
+        "path": "dist/mk/kernel.mjs",
+        "sha256": "d4c4c6b883c8fe248071f085025385e81d2941278b0e6d070bfad00f6435baa2"
+      },
+      {
+        "path": "dist/morning.mjs",
+        "sha256": "362e4ae2e79b26a4c6e1ff88903e1b661d29395b7523063e7ca2d76a1f090882"
+      },
+      {
+        "path": "tools/paper-evidence/e1_gate_ablation.mjs",
+        "sha256": "ef8e11d6a815247d39b7eb13bc2899ba1d2665be3e38e1ef80355635b3a3345e"
+      },
+      {
+        "path": "tools/paper-evidence/paper_evidence_helpers.mjs",
+        "sha256": "0cc6159311053bb06b622f891b40a82cf0c1d7d68f01a590e118288a36b46343"
+      }
+    ]
+  },
+  "normalizedSha256": "d1400f9ed4e535ea3164c2b33406ea16b27d2fcf904d3225f88337f51014371d"
+}

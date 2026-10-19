@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createSession,dispatch,exportSession,importSession,diagnostics,worldAt} from '../dist/engine.mjs';
+import {readFileSync} from 'node:fs';
+import {createSession,dispatch,exportSession,importSession,diagnostics,worldAt,registerKernelCase,caseTables} from '../dist/engine.mjs';
 import {prepareCharacterTurn,validateCharacterProposal,proposeCharacterTurn,applyCharacterTurn,CHARACTER_CRITIC} from '../dist/character-turn.mjs';
 import {setLlmConfig} from '../dist/llm.mjs';
 const active=()=>{const m=new Map(),store={getItem:k=>m.get(k),setItem:(k,v)=>m.set(k,v)};setLlmConfig({endpoint:'http://127.0.0.1:8787',enabled:true},store);return store;};
@@ -243,4 +244,102 @@ test('Name guard: naming a place in the reply itself does not license naming its
     character: {name: 'Silas Voss', roster, plans: [], history: []}}};
   const p = u => ({plan: null, intent: 'answer', account: 'ask:night', utterance: u, claims: [], sources: [], trust: 'unchanged', belief: 'remember_only', engagement: 'continue', rationale: 'x'});
   assert.match(validateCharacterProposal(t, p('I saw nothing. Mrs Finch at the Rook & Lantern took it.')).reason, /wrong_or_new_name/);
+});
+
+
+const cordial=()=>{const kc=JSON.parse(readFileSync(new URL('./fixtures/mk-cordial.json',import.meta.url),'utf8'));
+ const s=createSession(3,registerKernelCase(kc));return {kc,s,T:caseTables(s)};};
+const beside=(s,person)=>{if(s.world.player.location!==s.world.npcs[person].location)dispatch(s,{type:'move',to:s.world.npcs[person].location});return s;};
+const nullReply=(intent,utterance)=>({plan:null,intent,account:null,utterance,claims:[],sources:[],trust:'unchanged',belief:'remember_only',engagement:'continue',rationale:'x'});
+
+test('A plain question about last night requires an account of last night; any other free question is never forced',()=>{
+ const {s,T}=cordial();beside(s,'iris');
+ const t=prepareCharacterTurn(s,{person:'iris',text:'Where were you last night, Doctor?'});
+ const required=t.context.player.requiredAccounts;
+ assert.ok(required?.length,'a plain whereabouts question requires a night account');
+ assert.ok(required.every(id=>{const a=t.context.accounts.find(x=>x.id===id);return T.behavior.nightAccount('iris',a.topic)||T.behavior.nightAccount('iris',a.accountTopic);}));
+ assert.match(validateCharacterProposal(t,nullReply('refuse','I would rather not say.')).reason,/night_question/);
+ assert.ok(validateCharacterProposal(t,proposal(t,required[0])).ok);
+ for(const text of ['What did you do with the key after supper last night?','Where were you when the bell rang last night?','What happened at the surgery?'])
+  assert.equal(prepareCharacterTurn(s,{person:'iris',text}).context.player.requiredAccounts,undefined,text);
+});
+
+test('A follow-up to the account just given is advised, never enforced',()=>{
+ const {s}=cordial();beside(s,'iris');
+ dispatch(s,{type:'ask',person:'iris',topic:'night'});
+ const told=s.events.findLast(e=>e.kind==='speech'&&e.actor==='iris').data.topic;
+ const t=prepareCharacterTurn(s,{person:'iris',text:'And when was that?'});
+ const relevant=t.context.player.relevantAccounts??[];
+ assert.ok(relevant.length,'the account just given is suggested');
+ assert.ok(relevant.every(id=>{const a=t.context.accounts.find(x=>x.id===id);return a.accountTopic===told||caseTables(s).behavior.canonicalTopic('iris',a.accountTopic)===caseTables(s).behavior.canonicalTopic('iris',told);}));
+ const other=t.context.accounts.find(a=>!relevant.includes(a.id));
+ if(other)assert.ok(validateCharacterProposal(t,proposal(t,other.id)).ok,'another account still passes code validation');
+ assert.ok(validateCharacterProposal(t,nullReply('clarify','Which part do you mean?')).ok,'and so may a question back');
+ // once the conversation has moved on (someone else spoke since), it is no longer a follow-up to that account
+ dispatch(s,{type:'move',to:s.world.npcs.bell.location});dispatch(s,{type:'ask',person:'bell',topic:'case'});beside(s,'iris');
+ assert.equal(prepareCharacterTurn(s,{person:'iris',text:'And when was that?'}).context.player.relevantAccounts,undefined);
+});
+
+test('Account details are only the account\'s own typed claim, in every case',()=>{
+ const files=[new URL('./fixtures/mk-cordial.json',import.meta.url),new URL('./fixtures/mk-rook.json',import.meta.url),
+  ...JSON.parse(readFileSync(new URL('../dist/cases/generated/index.json',import.meta.url),'utf8')).map(e=>new URL(`../dist/cases/generated/${e.file}`,import.meta.url))];
+ for(const f of files){
+  const kc=JSON.parse(readFileSync(f,'utf8')),s=createSession(1,registerKernelCase(kc)),B=caseTables(s).behavior,hh=m=>`${String(Math.floor(m/60)%24).padStart(2,'0')}:${String(Math.round(m)%60).padStart(2,'0')}`;
+  for(const x of kc.signs.filter(x=>x.kind==='testimony')){
+   const d=B.claimDetails(x.speaker,x.id),c=x.claim;
+   if(c?.pred==='wasAt'&&Number.isFinite(c.from)&&Number.isFinite(c.to))assert.deepEqual([d[0]?.from,d[0]?.to],[hh(c.from),hh(c.to)],`${kc.id}:${x.id}`);
+   else if(c?.pred==='crimeBetween')assert.equal(d[0]?.claim,'time of death',`${kc.id}:${x.id}`);
+   else assert.deepEqual(d,[],`${kc.id}:${x.id}: no claim, no details (evening summaries say only their words)`);
+  }
+ }
+ assert.doesNotMatch(CHARACTER_CRITIC,/sourceDetails/);
+});
+
+test('A reply with no account may not give a time, number or place the detective has not mentioned',async()=>{
+ const s=here('manor'),t=ticket(s,'clara','Can you add anything else?');
+ for(const u of ['I was at the vestry, if you must know.','It was nine o’clock, I think.','There were 3 of them.'])
+  assert.match(validateCharacterProposal(t,nullReply('evade',u)).reason,/no_account_fact/,u);
+ const asked=ticket(s,'clara','Were you at the vestry at nine o’clock?');
+ assert.ok(validateCharacterProposal(asked,nullReply('challenge','The vestry at nine o’clock? Why would I have been?')).ok,'echoing the question is not new');
+ const p=nullReply('clarify','Which evening do you mean, exactly?');
+ const r=await accepted(t,p);assert.equal(r.audit.status,'accepted');
+ applyCharacterTurn(s,t,r);
+ assert.equal(s.events.findLast(e=>e.kind==='speech'&&e.actor==='clara').data.assertion,p.utterance,'an accepted question back keeps its own words');
+});
+
+test('A plain night question whose replies are all rejected is answered with the published account the model chose',async()=>{
+ const s=here('manor'),t=ticket(s,'clara','Where were you last night?');
+ assert.ok(t.context.player.requiredAccounts?.length);
+ const p={...proposal(t,t.context.player.requiredAccounts[0]),utterance:'Something embellished beyond the account.'};
+ const r=await proposeCharacterTurn(t,{store:active(),fetchImpl:async(_url,init)=>({ok:true,json:async()=>({text:JSON.parse(init.body).system===CHARACTER_CRITIC?'{"verdict":"reject","violations":["embellished"]}':JSON.stringify(p)})})});
+ assert.equal(r.proposal,null);applyCharacterTurn(s,t,r);
+ const said=s.events.findLast(e=>e.kind==='speech'&&e.actor==='clara').data.assertion;
+ assert.equal(said,t.context.accounts.find(a=>a.id===p.account).statement,'the published account, never the rejected wording');
+});
+
+test('Rejected free-text accounts are not salvaged as unrelated fallback answers',async()=>{
+ const s=here('manor'),t=ticket(s,'clara','What happened at the inn?'),p=proposal(t,'ask:alibi');
+ let calls=0;const r=await proposeCharacterTurn(t,{store:active(),fetchImpl:async(_url,init)=>{calls++;return {ok:true,json:async()=>({text:JSON.parse(init.body).system===CHARACTER_CRITIC?'{"verdict":"reject","violations":["unrelated account"]}':JSON.stringify(p)})};}});
+ assert.equal(r.proposal,null);applyCharacterTurn(s,t,r);
+ const said=s.events.findLast(e=>e.kind==='speech'&&e.actor==='clara').data.assertion;
+ assert.notEqual(said,p.utterance);assert.ok(!s.world.player.evidence.some(e=>e.clue==='alibi'));
+});
+
+
+test('A no-account answer to a plain night question is told to use a night account, not to decline',()=>{
+ const s=here('manor'),t=ticket(s,'clara','Where were you last night?');
+ assert.match(validateCharacterProposal(t,{...nullReply('answer','I was at home.')}).reason,/night_question/);
+ assert.match(CHARACTER_CRITIC,/unless the selected account is itself a permitted lie/);
+});
+
+test('A repeated plain night question whose replies are all rejected still answers, with the account\'s recap',async()=>{
+ const s=here('manor');
+ dispatch(s,{type:'ask',person:'clara',topic:'alibi'});
+ const t=ticket(s,'clara','Where were you last night?'),id=t.context.player.requiredAccounts[0];
+ const p={...proposal(t,id),utterance:'Something embellished beyond the account.'};
+ const r=await proposeCharacterTurn(t,{store:active(),fetchImpl:async(_url,init)=>({ok:true,json:async()=>({text:JSON.parse(init.body).system===CHARACTER_CRITIC?'{"verdict":"reject","violations":["embellished"]}':JSON.stringify(p)})})});
+ applyCharacterTurn(s,t,r);
+ const said=s.events.findLast(e=>e.kind==='speech'&&e.actor==='clara').data.assertion;
+ assert.notEqual(said,p.utterance);
+ assert.ok(!caseTables(s).behavior.isDecline?.('clara',said),'not a decline');
 });

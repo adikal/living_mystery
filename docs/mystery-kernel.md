@@ -546,7 +546,9 @@ retired piece by piece. The suite stays green at every phase.
 - **Parity until one checker remains.** The harness still carries a Python mirror of the checker for its
   scheduler; `tools/refine-c/parity.py` certifies every generated case with both and must report zero
   mismatches. The mirror goes away when the scheduler moves onto the JS kernel.
-- **Saves store full case records** rather than a regeneration seed, so LLM-authored cases survive reload.
+- **Saves store full case records** rather than a regeneration seed, so LLM-authored cases survive reload. The runtime
+  is bound to the exact records a save carries (canonical identity), and the case is adopted or cached only after the
+  save passes full replay.
 - **The Last Bell** stays as a legacy authored case until porting it is worth the effort.
 
 ### Phases
@@ -596,8 +598,10 @@ accounts and phrases one in their voice; validation and an independent critic re
 detective from the case frame and navigation only.
 
 The admission guard (which re-runs the bounded investigation search after each action) accepts kernel cases on their
-certificate: evidence access is monotone and no character plan can move or destroy evidence, so solvability cannot be
-lost during play. Cases with non-monotone mechanics will need the step check again.
+certificate: evidence access is monotone, and the only plan that moves evidence is a morning concealment, which is
+admitted and executed only if the case still certifies on the projection of what is gone (one projection shared with
+the engine's hints, menus and accounts; docs/living-village.md), so solvability cannot be lost during play. Cases with
+other non-monotone mechanics will need the step check again.
 
 Tests: `tests/mk-kernel.test.mjs` (kernel), `tests/kernel-case.test.mjs` (every published case certifies, starts gated,
 is solved only by the truth, rejects every wrong suspect, and survives save/reload), a UI test for the chooser and
@@ -617,11 +621,15 @@ spoiler section. On completion the case is published to `dist/cases/generated/li
 
 Conversation topics never reveal an account's content: a character's ungated accounts come one at a time through the
 night question and "anything else?", and an account earned by a clue is asked about in terms of that clue. Every
-character has a claimless evening account.
+character has a claimless evening account. An account whose own question asks the same as another is aliased
+(`same_as`) to the question that delivers it, so the menu never shows both; the rules (alias targets, the
+plain-whereabouts question) live in `dist/cases/questions.mjs` (docs/living-village.md, "Questions").
 
 Hints (`hints()` in the bridge) pick the shallowest thing the player can do next — an account someone will now give,
 an object to examine, a lead that points elsewhere, or the accusation — and phrase it at three levels: a nudge, a
-clue, and the plain answer.
+clue, and the plain answer. A testimony hint names the question that actually leads to the account, found by trying
+it on a copy of the game (one question, two in a row, or the same one repeated), or else tells the player to talk to
+the person again in their own words.
 
 ### Play-time refinements (September 2026)
 
@@ -637,8 +645,14 @@ clue, and the plain answer.
 - **Stationary people.** Generated cases disable the wandering routines; everyone keeps to their own place, and the
   notebook says where each person is usually found.
 - **Free-text dialogue.** A question may draw on every account the character can give now; a character's own observed
-  behaviour can be put to them. After two rejected replies, a guarded third attempt keeps untold memories private in
-  character; the rejection message says why in story terms.
+  behaviour can be put to them. A plain "where were you last night?" must be answered with a night account (lie or
+  truth; `player.requiredAccounts`); other routing is advisory (`player.relevantAccounts`). Accounts carry
+  `claimDetails`, exactly the time window and place of their own typed claim. A reply with no account may state no
+  time, number or place the detective has not mentioned (checked by code). When the fact-checker has rejected a reply, a
+  guarded third attempt keeps untold memories private in character; after three rejections a menu question gives its
+  published account, a plain night question the published night account the model chose (if that attempt passed every
+  code check), and any other question a decline in the person's own published words. The notebook keeps the published
+  account; the spoken words stay in the conversation. See the report, §4.8.
 - **Inspector.** The canonical crime history is every true event in order, with the culprit, time and motive.
 - **Debugging.** The browser logs actions, dialogue turns (with audit detail), toasts, generation events and errors to
   `logs/game.log` via the game server; the generator and proxy log to `logs/generator.log` and `logs/proxy.log`.
@@ -664,10 +678,11 @@ clue, and the plain answer.
   "Last night" questions never give the morning summary; every other account has its own question or comes with
   "anything else". A question already answered is answered "As I told you: …", or with what was admitted once a story
   has fallen.
-- **The fact-checker** compares a reply with the selected account and everything the character can say (their true
-  accounts, and the stories they tell). It allows restating any of them, what an account plainly implies, and, with
+- **The fact-checker** compares a reply with the selected account (a permitted lie included) and the character's true
+  accounts (`ownAccounts`). It allows restating any of them, what an account plainly implies, and, with
   nothing to go on, saying "I don't know" or asking back; it rejects invented facts, names nobody has mentioned (role
-  words and a shown clue's title and subject count as mentions), and contradictions of their own accounts. It knows the
+  words and a shown clue's title and subject count as mentions), contradictions of their own accounts, and a reply
+  that leaves unanswered a part of the question the selected account covers. It knows the
   game time, so "quarter to seven" is this morning. The accusation accepts every method and motive the held
   evidence fairly supports (`answer.methods`, `answer.motives`).
 - Motive evidence must connect the culprit and the victim (a relation with the victim on either side); a secret about

@@ -194,5 +194,7 @@ function playerView(s) {
 }
 const publicPerson = (id) => ({ name: PEOPLE[id].name, initials: PEOPLE[id].initials, role: PEOPLE[id].role, color: PEOPLE[id].color, public: PEOPLE[id].public });
 
-return {CASE,LOCATIONS,PEOPLE,CLUES,OBJECTS,objectsAt,gates:ActiveCase.model.gates,SUSPECTS,PILLARS,baseWorld,commit,distance,worldAt,diagnostics,exportSession,importSession,parseCommand,followupOptions,playerClaims,checkCase,caseHealth,characterPlans,scheduleCharacterPlan,createSession,dispatch,dispatchCharacter,playerView,publicPerson,kernel:K,behavior:B};
+return {CASE,LOCATIONS,PEOPLE,CLUES,OBJECTS,objectsAt,gates:ActiveCase.model.gates,
+ investigationGates:ActiveCase.model.investigationGates,testimonyClues:ActiveCase.model.testimonyClues,
+ investigationSupport:ActiveCase.model.investigationSupport,SUSPECTS,PILLARS,baseWorld,commit,distance,worldAt,diagnostics,exportSession,importSession,parseCommand,followupOptions,playerClaims,checkCase,caseHealth,characterPlans,scheduleCharacterPlan,createSession,dispatch,dispatchCharacter,playerView,publicPerson,kernel:K,behavior:B};
 }

@@ -22,10 +22,11 @@ sys.path.insert(0, HERE)
 import enrich  # noqa: E402
 import premise as P  # noqa: E402
 import publish  # noqa: E402
+import publication_io as pubio  # noqa: E402
 from refine import travel_table, presence, unbacked_accounts, llm_json, CRITIC_MODEL  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
-SETTING = json.load(open(os.path.join(HERE, 'settings', 'bellweather.json')))
+SETTING = pubio.read_json(os.path.join(HERE, 'settings', 'bellweather.json'))
 
 
 def part(e, p):
@@ -165,11 +166,15 @@ if __name__ == '__main__':
     dry = '--dry-run' in sys.argv
     files = sorted(glob.glob(f'{ROOT}/dist/cases/archive/mk-*.json') + glob.glob(f'{ROOT}/dist/cases/archive/live/mk-*.json'))
     for f in files:
-        case = json.load(open(f))
+        case = pubio.read_json(f)
         log = repair(case)
-        g = publish.gate(case)
+        publish.mark_duplicate_questions(case, judge=False)   # network-free alias repair: legacy cases meet the alias gate
+        g = publish.deterministic_gate(case)  # explicit archived-repair bypass, never an ordinary publication path
         problems = P.morning_errors(case)
         ok = g['ok'] and not problems
         print(os.path.basename(f), 'OK' if ok else 'NOT WRITTEN', log, (g['errors'] + problems)[:2], flush=True)
         if ok and not dry:
-            json.dump(case, open(f, 'w'), indent=1)
+            # Archived deterministic-only repair cannot claim an ordinary whole-case publication review.
+            case.pop('publication_review', None)
+            with pubio.publication_lock(pubio.PUBLICATION_ROOT):
+                pubio.atomic_json(f, case)

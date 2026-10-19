@@ -6,10 +6,13 @@ sign kinds, and this file computes eliminations, truth, reachability, depth and 
 
 Usage: python tools/refine-c/refine.py [--steps 8] [--depth 5] [--only NAME] [--model ID]
 """
-import argparse, concurrent.futures as cf, copy, datetime, json, os, re, sys, time, traceback
+import argparse, concurrent.futures as cf, copy, datetime, json, os, re, sys, threading, time, traceback
+from dataclasses import dataclass
+from enum import Enum
 import boto3
 from botocore.config import Config
 import difficulty as DF
+import provenance
 from migrate import public_knowledge
 from claims import (CLAIMS_VERSION, PREDICATES, CULPRIT_PREDICATES, History, claim_errors, claim_of, consistent, defeat_free_sets,
                     instance_claims, record_errors, relation_reader, survivors_of, travel_table, truth_of, victim_of, actor_of)
@@ -253,6 +256,7 @@ def certify(case, require_pillars=True, require_backing=False):
     att = {a['id']: a for a in case.get('attitudes', [])}
     evs = {e['id']: e for e in case['events']}
     signs = {s['id']: s for s in case['signs']}
+    rules = {r['id']: r for r in case.get('rules', [])}
     q = case['question']
     hyps = hyp_map(case)
     if q.get('truth') not in hyps:
@@ -281,11 +285,17 @@ def certify(case, require_pillars=True, require_backing=False):
     for s in case['signs']:
         if s.get('kind') not in SIGN_KINDS:
             errs.append(f"sign {s['id']}: unknown kind {s.get('kind')}")
+        if s.get('kind') == 'rule':
+            rule = rules.get(s.get('rule'))
+            if not rule or rule.get('knowledge') != 'acquirable':
+                errs.append(f"rule sign {s['id']}: rule must name an existing acquirable rule")
+            if s.get('needs'):
+                errs.append(f"rule sign {s['id']}: must have no 'needs'; use 'requires' to model access")
         for r in s.get('requires', []):
             if r not in signs:
                 errs.append(f"sign {s['id']}: requires unknown sign {r}")
         for n in s.get('needs', []):
-            if n not in signs and n not in {r['id'] for r in case.get('rules', [])}:
+            if n not in signs and n not in rules:
                 errs.append(f"sign {s['id']}: needs unknown sign/rule {n}")
         for d in s.get('defeats', []):
             if d not in signs:
@@ -430,52 +440,192 @@ def _js(v):
 
 _client = None
 USAGE = {'in': 0, 'out': 0, 'calls': 0}
+_USAGE_LOCK = threading.Lock()
 
-def llm(system, user, max_tokens=9000, model=None):
+
+def _add_usage(usage):
+    """Preserve the historical aggregate while making concurrent updates safe."""
+    with _USAGE_LOCK:
+        USAGE['in'] += usage.get('inputTokens', 0)
+        USAGE['out'] += usage.get('outputTokens', 0)
+        USAGE['calls'] += 1
+
+
+_CLIENT_LOCK = threading.Lock()
+
+
+def _ensure_client():
+    """Create the shared Bedrock client once, even when the first calls come from several threads at once."""
     global _client
     if _client is None:
-        _client = boto3.client('bedrock-runtime', region_name='us-west-2',
-                               config=Config(read_timeout=300, retries={'max_attempts': 2}, max_pool_connections=64))
-    # the static system prompt (principles, schema, library, checklist) is cached across calls
-    r = _client.converse(modelId=model or MODEL, system=[{'text': system}, {'cachePoint': {'type': 'default'}}],
-                         messages=[{'role': 'user', 'content': [{'text': user}]}], inferenceConfig={'maxTokens': max_tokens})
-    USAGE['in'] += r['usage']['inputTokens']; USAGE['out'] += r['usage']['outputTokens']; USAGE['calls'] += 1
+        with _CLIENT_LOCK:
+            if _client is None:
+                _client = boto3.client('bedrock-runtime', region_name=provenance.REGION,
+                                       config=Config(read_timeout=300, retries={'max_attempts': 2}, max_pool_connections=64))
+    return _client
+
+
+def llm(system, user, max_tokens=9000, model=None):
+    """Legacy text call. Structured generation uses the fully audited path below."""
+    r = _ensure_client().converse(modelId=model or MODEL,
+                                  system=[{'text': system}, {'cachePoint': {'type': 'default'}}],
+                                  messages=[{'role': 'user', 'content': [{'text': user}]}],
+                                  inferenceConfig={'maxTokens': max_tokens})
+    _add_usage(r.get('usage', {}))
     return ''.join(b.get('text', '') for b in r['output']['message']['content'])
 
 
-FORCED_OK = {}
+FORCED_OK = {MODEL: False, CRITIC_MODEL: False}  # these inference profiles reject forced tool choice; use audited auto directly
 
 
-def llm_json(system, user, max_tokens=9000, model=None, schema=None):
-    """Structured output: force a 'submit' tool call so the reply is a parsed object, never free-form JSON text."""
-    global _client
-    if _client is None:
-        _client = boto3.client('bedrock-runtime', region_name='us-west-2',
-                               config=Config(read_timeout=300, retries={'max_attempts': 2}, max_pool_connections=64))
+@dataclass(frozen=True)
+class LLMJSONResponse:
+    """A structured model reply plus provider metadata available at the inference-profile boundary."""
+    payload: object
+    inference_profile: str
+    request_ids: tuple[str, ...] = ()
+    logical_request_id: str | None = None
+
+
+class LLMJSONResponseError(ValueError):
+    """A completed provider response whose structured payload could not be recovered."""
+    def __init__(self, message, raw_response, inference_profile, request_ids=(), logical_request_id=None):
+        super().__init__(message)
+        self.raw_response = raw_response
+        self.inference_profile = inference_profile
+        self.request_ids = tuple(request_ids)
+        self.logical_request_id = logical_request_id
+
+
+def _request_id(response):
+    metadata = response.get('ResponseMetadata') if isinstance(response, dict) else None
+    request_id = metadata.get('RequestId') if isinstance(metadata, dict) else None
+    return str(request_id) if request_id else None
+
+
+def _exception_request_ids(error):
+    if getattr(error, 'request_ids', None):
+        return tuple(str(request_id) for request_id in error.request_ids)
+    request_id = _request_id(getattr(error, 'response', None))
+    return (request_id,) if request_id else ()
+
+
+def _audit_metadata(metadata=None):
+    if metadata:
+        return metadata
+    try:
+        caller = sys._getframe(2).f_code.co_name
+    except (AttributeError, ValueError):
+        caller = 'unknown'
+    return {'purpose': caller}
+
+
+def _schedule_audit_request(system, user, max_tokens, model, schema, metadata=None):
+    audit = provenance.current_audit()
+    if not audit:
+        return None
+    return audit.schedule(system, user, schema, model or MODEL, max_tokens, _audit_metadata(metadata))
+
+
+def llm_json_audited(system, user, max_tokens=9000, model=None, schema=None, _prior_request_ids=(),
+                     _audit_request_id=None, audit_metadata=None):
+    """Structured output with complete per-logical-request provider provenance."""
+    audit = provenance.current_audit()
+    m = model or MODEL
+    inherited_request_id = provenance.semantic_context().get('_audit_request_id')
+    logical_request_id = _audit_request_id or inherited_request_id or _schedule_audit_request(system, user, max_tokens, m, schema, audit_metadata)
+    if audit and logical_request_id:
+        audit.start(logical_request_id)
     tool = {'toolSpec': {'name': 'submit', 'description': 'Submit the requested JSON object.',
                          'inputSchema': {'json': schema or {'type': 'object', 'additionalProperties': True}}}}
-    m = model or MODEL
     forced = FORCED_OK.get(m, True)
-    kw = dict(modelId=m, system=[{'text': system + ('' if forced else '\n\nAlways answer by calling the submit tool.')},
-                                  {'cachePoint': {'type': 'default'}}],
-              messages=[{'role': 'user', 'content': [{'text': user}]}], inferenceConfig={'maxTokens': max_tokens},
-              toolConfig={'tools': [tool], 'toolChoice': {'tool': {'name': 'submit'}} if forced else {'auto': {}}})
-    try:
-        r = _client.converse(**kw)
-    except Exception as e:
-        if forced and 'tool_choice' in str(e):
-            FORCED_OK[m] = False
-            return llm_json(system, user, max_tokens, model, schema)
-        raise
-    USAGE['in'] += r['usage']['inputTokens']; USAGE['out'] += r['usage']['outputTokens']; USAGE['calls'] += 1
-    text = ''
-    for b in r['output']['message']['content']:
-        if 'toolUse' in b:
-            return b['toolUse']['input']
-        text += b.get('text', '')
-    if text.strip():
-        return parse_json(text)
-    raise ValueError('model did not call submit')
+    request_ids = tuple(_prior_request_ids)
+    while True:
+        kw = dict(modelId=m,
+                  system=[{'text': system + ('' if forced else '\n\nAlways answer by calling the submit tool.')},
+                          {'cachePoint': {'type': 'default'}}],
+                  messages=[{'role': 'user', 'content': [{'text': user}]}],
+                  inferenceConfig={'maxTokens': max_tokens},
+                  toolConfig={'tools': [tool], 'toolChoice': {'tool': {'name': 'submit'}} if forced else {'auto': {}}})
+        try:
+            r = _ensure_client().converse(**kw)
+            if audit and logical_request_id:
+                audit.provider_attempt(logical_request_id, response=r)
+        except Exception as e:
+            if forced and 'tool_choice' in str(e):
+                FORCED_OK[m] = False
+                request_ids += _exception_request_ids(e)
+                if audit and logical_request_id:
+                    audit.provider_attempt(logical_request_id, error=e, semantic_repair='forced-tool-choice-to-auto')
+                forced = False
+                continue
+            if audit and logical_request_id:
+                audit.provider_attempt(logical_request_id, error=e)
+                audit.error(logical_request_id, e)
+            raise
+        request_id = _request_id(r)
+        request_ids += ((request_id,) if request_id else ())
+        _add_usage(r.get('usage', {}))
+        content = r['output']['message']['content']
+        text = ''
+        for block in content:
+            if 'toolUse' in block:
+                payload = block['toolUse']['input']
+                if audit and logical_request_id:
+                    audit.response(logical_request_id, r, content, payload,
+                                   {'ok': True, 'mode': 'tool-use', 'object': isinstance(payload, dict)})
+                return LLMJSONResponse(payload, m, request_ids, logical_request_id)
+            text += block.get('text', '')
+        if text.strip():
+            try:
+                payload = parse_json(text)
+            except Exception as e:
+                if audit and logical_request_id:
+                    audit.response(logical_request_id, r, text, None,
+                                   {'ok': False, 'mode': 'text-json', 'error': f'{type(e).__name__}: {e}'})
+                raise LLMJSONResponseError(str(e), text, m, request_ids, logical_request_id) from e
+            if audit and logical_request_id:
+                audit.response(logical_request_id, r, text, payload,
+                               {'ok': True, 'mode': 'text-json', 'object': isinstance(payload, dict)})
+            return LLMJSONResponse(payload, m, request_ids, logical_request_id)
+        if audit and logical_request_id:
+            audit.response(logical_request_id, r, content, None,
+                           {'ok': False, 'mode': 'empty', 'error': 'model did not call submit'})
+        raise LLMJSONResponseError('model did not call submit', content, m, request_ids, logical_request_id)
+
+
+def schedule_llm_json_audited(executor, system, user, max_tokens=9000, model=None, schema=None, audit_metadata=None):
+    """Pre-register a logical request, then schedule it with the active audit context."""
+    logical_request_id = _schedule_audit_request(system, user, max_tokens, model or MODEL, schema, audit_metadata)
+    with provenance.semantics(_audit_request_id=logical_request_id):
+        future = provenance.submit_with_context(executor, llm_json_audited, system, user, max_tokens, model, schema)
+    return future, logical_request_id
+
+
+def cancel_audited_future(future, logical_request_id):
+    audit = provenance.current_audit()
+    if not audit or not logical_request_id:
+        return future.cancel()
+    if future.cancel():
+        audit.cancelled_before_start(logical_request_id)
+        return True
+    if not future.done():
+        audit.cancel_requested(logical_request_id)
+    return False
+
+
+def schedule_llm_json(executor, system, user, max_tokens=9000, model=None, schema=None, audit_metadata=None):
+    """Pre-register a payload-only compatibility call before scheduling it."""
+    logical_request_id = _schedule_audit_request(system, user, max_tokens, model or MODEL, schema, audit_metadata)
+    with provenance.semantics(_audit_request_id=logical_request_id):
+        future = provenance.submit_with_context(executor, llm_json, system, user, max_tokens, model, schema)
+    return future, logical_request_id
+
+
+def llm_json(system, user, max_tokens=9000, model=None, schema=None, audit_metadata=None, _audit_request_id=None):
+    """Payload-only compatibility wrapper; provenance remains active for all structured callers."""
+    return llm_json_audited(system, user, max_tokens, model, schema, _audit_request_id=_audit_request_id,
+                            audit_metadata=audit_metadata).payload
 
 
 def parse_json(text):
@@ -721,11 +871,66 @@ Reply with ONE JSON object: {"verdict":"pass"|"fail","issues":["<sign id>: <CHEC
 CRITIC_SCHEMA = {'type': 'object', 'properties': {'verdict': {'type': 'string', 'enum': ['pass', 'fail']},
                                                   'issues': {'type': 'array', 'items': {'type': 'string'}}},
                  'required': ['verdict', 'issues']}
+CRITIC_UNAVAILABLE_REASON = 'plausibility review: unavailable'
+CRITIC_CHECKS = ('LOCK', 'READING', 'CHARACTER', 'LOOSE END', 'GIVEAWAY', 'CONTRADICTION')
+
+
+class CriticStatus(str, Enum):
+    PASS = 'PASS'
+    FAIL = 'FAIL'
+    UNAVAILABLE = 'UNAVAILABLE'
+
+
+@dataclass(frozen=True)
+class CriticAttempt:
+    raw_response: object
+    request_ids: tuple[str, ...] = ()
+    error: str | None = None
+
+    def history(self):
+        row = {'raw_response': self.raw_response, 'request_ids': list(self.request_ids)}
+        if self.error:
+            row['error'] = self.error
+        return row
+
+
+@dataclass(frozen=True)
+class CriticOutcome:
+    status: CriticStatus
+    issues: tuple[str, ...]
+    raw_response: object
+    attempts: tuple[CriticAttempt, ...]
+    request_ids: tuple[str, ...] = ()
+    inference_profile: str = CRITIC_MODEL
+
+    def history(self, candidate_id=None):
+        """Persist enough evidence to distinguish a substantive verdict from reviewer unavailability."""
+        row = {'status': self.status.value, 'pass': self.status is CriticStatus.PASS,
+               'issues': list(self.issues), 'raw': self.raw_response, 'raw_response': self.raw_response,
+               'attempts': [a.history() for a in self.attempts], 'request_ids': list(self.request_ids),
+               'inference_profile': self.inference_profile, 'model': self.inference_profile}
+        if candidate_id is not None:
+            row['candidate_id'] = candidate_id
+        return row
 
 
 def compact_sign(x):
     keep = ('id', 'kind', 'title', 'at', 'speaker', 'about', 'text', 'requires', 'unlock', 'needs', 'reading', 'claim', 'defeats', 'explainedBy', 'source')
     return {k: x[k] for k in keep if x.get(k) not in (None, [], '')}
+
+
+def _critic_shape(raw):
+    """Return a terminal typed verdict, or None only for a schema-valid fail without a usable reason."""
+    if not isinstance(raw, dict):
+        return CriticStatus.UNAVAILABLE, ()
+    verdict, supplied = raw.get('verdict'), raw.get('issues')
+    if verdict not in ('pass', 'fail') or not isinstance(supplied, list) or any(not isinstance(i, str) for i in supplied):
+        return CriticStatus.UNAVAILABLE, ()
+    if verdict == 'pass':
+        return (CriticStatus.PASS, ()) if not supplied else (CriticStatus.UNAVAILABLE, ())
+    issue_pattern = re.compile(r'^\S[^:]*:\s*(?:' + '|'.join(re.escape(check) for check in CRITIC_CHECKS) + r'):\s*\S', re.I)
+    issues = tuple(i.strip() for i in supplied if i.strip() and issue_pattern.match(i.strip()))[:6]
+    return (CriticStatus.FAIL, issues) if issues else None
 
 
 def critic(case, patch):
@@ -738,17 +943,60 @@ def critic(case, patch):
            'signs_touched': [compact_sign(x) for x in case['signs'] if x['id'] in ids],
            'other_signs': [compact_sign(x) for x in case['signs'] if x['id'] not in ids]}
     prompt = f"STORY OF THIS STEP: {patch.get('story')}\n\nCASE:\n{json.dumps(ctx, separators=(',', ':'))}"
-    try:
-        for _ in range(2):
-            out = llm_json(CRITIC, prompt, 2500, model=CRITIC_MODEL, schema=CRITIC_SCHEMA)
-            issues = [str(i) for i in out.get('issues', []) if str(i).strip()][:6]
-            if out.get('verdict') == 'pass':
-                return True, [], out
-            if issues:          # a failure without reasons gives the redraft nothing to act on: ask again
-                return False, issues, out
-        return True, ['reviewer failed without giving a reason twice; accepted'], out
-    except Exception as e:
-        return True, [f'critic unavailable: {e}'], {'error': str(e)}
+    attempts = []
+    for semantic_attempt in range(2):
+        try:
+            response = llm_json_audited(CRITIC, prompt, 2500, model=CRITIC_MODEL, schema=CRITIC_SCHEMA,
+                                        audit_metadata={'purpose': 'typed-model-critic',
+                                                        'semantic_retry': semantic_attempt})
+        except Exception as e:
+            error = f'{type(e).__name__}: {e}'
+            raw_response = getattr(e, 'raw_response', {'error': error})
+            attempts.append(CriticAttempt(raw_response, _exception_request_ids(e), error))
+            request_ids = tuple(rid for item in attempts for rid in item.request_ids)
+            inference_profile = getattr(e, 'inference_profile', CRITIC_MODEL)
+            audit = provenance.current_audit()
+            if audit and getattr(e, 'logical_request_id', None):
+                audit.annotate(e.logical_request_id, typed_critic_outcome='UNAVAILABLE')
+            return CriticOutcome(CriticStatus.UNAVAILABLE, (), raw_response, tuple(attempts), request_ids,
+                                 inference_profile)
+        attempt = CriticAttempt(response.payload, response.request_ids)
+        attempts.append(attempt)
+        shaped = _critic_shape(response.payload)
+        if shaped is None:       # a reasonless fail gets one semantic retry so a redraft can receive useful feedback
+            audit = provenance.current_audit()
+            if audit and response.logical_request_id:
+                audit.annotate(response.logical_request_id, typed_critic_outcome='UNAVAILABLE_REASONLESS_RETRY')
+            continue
+        status, issues = shaped
+        audit = provenance.current_audit()
+        if audit and response.logical_request_id:
+            audit.annotate(response.logical_request_id, typed_critic_outcome=status.value,
+                           critic_issues=list(issues))
+        request_ids = tuple(rid for item in attempts for rid in item.request_ids)
+        return CriticOutcome(status, issues, response.payload, tuple(attempts), request_ids, response.inference_profile)
+    audit = provenance.current_audit()
+    if audit and response.logical_request_id:
+        audit.annotate(response.logical_request_id, typed_critic_outcome='UNAVAILABLE')
+    request_ids = tuple(rid for item in attempts for rid in item.request_ids)
+    return CriticOutcome(CriticStatus.UNAVAILABLE, (), attempts[-1].raw_response, tuple(attempts), request_ids,
+                         response.inference_profile)
+
+def critic_feedback(outcome):
+    """Only a substantive PASS accepts a candidate; every other status gives deterministic redraft feedback."""
+    if outcome.status is CriticStatus.PASS:
+        return True, []
+    if outcome.status is CriticStatus.FAIL:
+        return False, ['plausibility review: ' + issue for issue in outcome.issues]
+    return False, [CRITIC_UNAVAILABLE_REASON]
+
+
+def final_case_review_status(history):
+    """Explicitly report the current review boundary; layer reviews are not a final whole-case review certificate."""
+    rows = [row for step in history for row in (step.get('critic') or [])]
+    return {'status': 'NOT_REVIEWED', 'final_whole_case_reviewed': False,
+            'layer_candidate_reviews': len(rows),
+            'layer_candidate_passes': sum(row.get('status') == CriticStatus.PASS.value for row in rows)}
 
 
 def normalise(case):
@@ -1012,7 +1260,7 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
     pool = cf.ThreadPoolExecutor(max_workers=CANDIDATES * 2)
 
     # SEED: CANDIDATES in parallel per round; first that certifies wins
-    case, fb, best_case, seen = None, None, None, []
+    case, fb, best_case, seen, seed_candidates = None, None, None, [], []
     send('phase', phase='seed', message='Writing the setting, cast, secrets and what really happened')
     for rnd in range(SEED_ROUNDS):
         check_stop()
@@ -1023,13 +1271,23 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
             'everything that was right, change only what these need:\n- ' + '\n- '.join(fb)
             + ('\n\nRULES BROKEN IN EARLIER DRAFTS (keep them too):\n- ' + '\n- '.join(x for x in seen if x not in fb)[:3000] if any(x not in fb for x in seen) else '')
             + ('\n\nTHE PREVIOUS DRAFT:\n' + json.dumps(best_case)[:60000] if best_case else ''))
-        futs = [pool.submit(llm_json, SYSTEM_GEN, seed_prompt(brief, premise) + extra, 20000) for _ in range(CANDIDATES)]
+        prompt = seed_prompt(brief, premise) + extra
+        futs = {}
+        for candidate_index in range(1, CANDIDATES + 1):
+            future, logical_request_id = schedule_llm_json(
+                pool, SYSTEM_GEN, prompt, 20000, MODEL,
+                audit_metadata={'purpose': 'seed-generation', 'phase': 'seed', 'round': rnd + 1,
+                                'candidate': candidate_index})
+            futs[future] = {'candidate_id': f'seed.{rnd + 1}.{candidate_index}',
+                            'logical_request_id': logical_request_id}
         send('drafting', round=rnd + 1, drafts=CANDIDATES)
-        best = None
+        best, winner_future = None, None
         for f in cf.as_completed(futs):
-            raw = None
+            raw, response = None, None
+            meta = futs[f]
             try:
-                raw = f.result()
+                response = f.result()
+                raw = response.payload if isinstance(response, LLMJSONResponse) else response
                 cand = lock_setting(unwrap_case(parse_json(raw))); rep = certify(cand, False)
                 pe = premise_errors(cand, premise) + history_errors(cand)
                 if pe or (rep['ok'] and setting_errors(cand)):
@@ -1040,25 +1298,45 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
                 except Exception:
                     pass
                 cand, rep = None, {'ok': False, 'errors': [f'the case JSON was incomplete or malformed ({type(e).__name__}: {e}); return ONE complete case with every top-level list (people, attitudes, events, signs, question) and keep texts short']}
+            candidate_row = {'candidate_id': meta['candidate_id'], 'round': rnd + 1,
+                             'logical_request_id': meta['logical_request_id'],
+                             'candidate_hash': provenance.sha256(raw) if raw is not None else None,
+                             'parseable': raw is not None, 'code_verdict': 'PASS' if rep['ok'] else 'FAIL',
+                             'code_errors': list(rep.get('errors') or []), 'selected': False}
+            seed_candidates.append(candidate_row)
+            audit = provenance.current_audit()
+            if audit and meta['logical_request_id']:
+                audit.annotate(meta['logical_request_id'], candidate_hash=candidate_row['candidate_hash'],
+                               code_verdict=candidate_row['code_verdict'], code_errors=candidate_row['code_errors'],
+                               selection='not-selected')
             send('draft_checked', ok=rep['ok'], errors=(rep.get('errors') or [])[:2])
             if rep['ok']:
-                case = cand; break
+                case, winner_future = cand, f
+                candidate_row['selected'] = True
+                if audit and meta['logical_request_id']:
+                    audit.annotate(meta['logical_request_id'], selection='selected')
+                break
             if best is None or len(rep['errors']) < len(best):
                 best = rep['errors']
                 if cand is not None:
                     best_case = cand
         if case:
+            for future, meta in futs.items():
+                if future is not winner_future:
+                    cancel_audited_future(future, meta['logical_request_id'])
             break
         fb = (best or [])[:12]; seen += [x for x in fb if x not in seen]; log(f'[{name}] seed round {rnd+1} rejected: {fb[:2]}')
         send('seed_rejected', round=rnd + 1, errors=fb)
     if case is None:
         pool.shutdown(wait=False, cancel_futures=True)
         send('failed', message='The first draft of the case never passed the checks', errors=fb)
-        return {'name': name, 'ok': False, 'reason': 'seed never certified', 'last_errors': fb, 'seconds': round(time.time() - t0)}
+        return {'name': name, 'ok': False, 'reason': 'seed never certified', 'last_errors': fb,
+                'seed_candidates': seed_candidates, 'seconds': round(time.time() - t0)}
     if premise:
         case['premise'] = premise
     report = certify(case, False)
-    json.dump(case, open(f'{outdir}/00-seed.json', 'w'), indent=1)
+    with open(f'{outdir}/00-seed.json', 'w') as output:
+        json.dump(case, output, indent=1)
     send('seed', case=case, metrics=metrics_of(report))
     log(f"[{name}] seed ok at {time.time()-t0:.0f}s: surface {report['surface']} solve {report['solve_depth']} threads {report['threads']} "
         f"twist {report['twist']} motive {bool(report['motive'])} means {bool(report['means'])} herring {bool(report['herrings'])}")
@@ -1098,29 +1376,77 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
             # drafts from two models in parallel; the first one that passes the code checks AND the review wins,
             # so a step waits only for the fastest good draft (the slower one is cancelled)
             models = ([MODEL, CRITIC_MODEL] * CANDIDATES)[:CANDIDATES]
-            gens = {pool.submit(llm_json, SYSTEM_GEN, prompt, 9000, m): m for m in models}
+            gens = {}
+            for candidate_index, inference_profile in enumerate(models, start=1):
+                candidate_id = f'{step}.{rnd + 1}.{candidate_index}'
+                future, logical_request_id = schedule_llm_json_audited(
+                    pool, SYSTEM_GEN, prompt, 9000, inference_profile,
+                    audit_metadata={'purpose': 'refinement-candidate', 'phase': 'refinement',
+                                    'step': step, 'round': rnd + 1, 'candidate': candidate_id,
+                                    'mode': mode, 'target': target})
+                gens[future] = {'candidate_id': candidate_id,
+                                'inference_profile': inference_profile,
+                                'logical_request_id': logical_request_id}
             send('drafting', step=step, round=rnd + 1, drafts=CANDIDATES)
-            results, winner = [], None
+            results, winner, winner_future = [], None, None
             for g in cf.as_completed(gens):
+                meta, response, generation_request_ids, generation_error_raw_response = gens[g], None, (), None
                 try:
-                    r = evaluate(g.result(), mode, target, thread, tdepth)
+                    response = g.result()
+                    generation_request_ids = response.request_ids
+                    r = evaluate(response.payload, mode, target, thread, tdepth)
                 except Exception as e:
+                    generation_request_ids = response.request_ids if response else _exception_request_ids(e)
+                    generation_error_raw_response = getattr(e, 'raw_response', None)
                     r = (None, None, None, [f'model call failed: {e}'])
                 results.append(r)
+                candidate = {'candidate_id': meta['candidate_id'], 'round': rnd + 1,
+                             'logical_request_id': meta['logical_request_id'],
+                             'generation_inference_profile': meta['inference_profile'],
+                             'generation_request_ids': list(generation_request_ids),
+                             'candidate_hash': provenance.sha256(response.payload) if response else None,
+                             'parseable': response is not None,
+                             'code_errors': list(r[3]), 'selected': False}
+                if generation_error_raw_response is not None:
+                    candidate['generation_error_raw_response'] = generation_error_raw_response
+                entry.setdefault('candidates', []).append(candidate)
                 entry['attempts'].append(r[3])
+                audit = provenance.current_audit()
+                if audit and meta['logical_request_id']:
+                    audit.annotate(meta['logical_request_id'], candidate_hash=candidate['candidate_hash'],
+                                   code_verdict='PASS' if not r[3] else 'FAIL', code_errors=list(r[3]),
+                                   selection='not-selected')
                 send('draft_checked', step=step, ok=not r[3], errors=r[3][:2])
                 if r[3]:
+                    candidate['status'] = 'CODE_REJECTED'
                     continue
                 send('reviewing', step=step, drafts=1)
-                ok, issues, raw = critic(r[1], r[0])
-                entry.setdefault('critic', []).append({'pass': ok, 'issues': issues, 'raw': raw, 'model': gens[g]})
-                log(f"[{name}] step {step} review ({gens[g]}): {'pass' if ok else 'FAIL'} {issues[:3]}")
-                if ok:
+                with provenance.semantics(parent_operation='refinement-critic', phase='refinement', step=step,
+                                          round=rnd + 1, candidate=meta['candidate_id'], mode=mode, target=target):
+                    outcome = critic(r[1], r[0])
+                review = outcome.history(meta['candidate_id'])
+                entry.setdefault('critic', []).append(review)
+                candidate['critic'] = review
+                accepted, review_errors = critic_feedback(outcome)
+                candidate['status'] = outcome.status.value
+                if audit and meta['logical_request_id']:
+                    audit.annotate(meta['logical_request_id'], typed_critic_outcome=outcome.status.value,
+                                   critic_issues=list(outcome.issues),
+                                   code_verdict='PASS', refinement_verdict='PASS' if accepted else 'FAIL')
+                log(f"[{name}] step {step} review ({meta['inference_profile']} candidate; {outcome.inference_profile} critic): "
+                    f"{outcome.status.value} {list(outcome.issues)[:3]}")
+                if accepted:
+                    candidate['selected'] = True
+                    if audit and meta['logical_request_id']:
+                        audit.annotate(meta['logical_request_id'], selection='selected')
                     winner = r
+                    winner_future = g
                     break
-                r[3].extend('plausibility review: ' + i for i in (issues or ['failed']))
-            for g in gens:
-                g.cancel()
+                r[3].extend(review_errors)
+                candidate['code_errors'] = list(r[3])
+            for future, meta in gens.items():
+                if future is not winner_future:
+                    cancel_audited_future(future, meta['logical_request_id'])
             if winner:
                 patch, new, rep, _ = winner
                 case, report = new, rep
@@ -1135,17 +1461,27 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
              operator=entry.get('operator'), blocks=entry.get('blocks'), story=entry.get('story'),
              attempts=[a[:4] for a in entry['attempts']], critic=entry.get('critic', []), seconds=entry['seconds'],
              added=case_added(before, case) if entry['accepted'] else {}, metrics=metrics_of(report))
-        json.dump(case, open(f'{outdir}/{step:02d}-case.json', 'w'), indent=1)
+        with open(f'{outdir}/{step:02d}-case.json', 'w') as output:
+            json.dump(case, output, indent=1)
         log(f"[{name}] step {step} {mode}:{target} -> {'OK ' + str(entry.get('operator')) if entry['accepted'] else 'REJECTED'}"
             f" ({len(entry['attempts'])} candidates, {entry['seconds']}s, solve {report['solve_depth']})")
     pool.shutdown(wait=False, cancel_futures=True)
     final = certify(case, False)
-    result = {'name': name, 'brief': brief, 'ok': final['ok'], 'history': hist, 'seconds': round(time.time() - t0),
+    result = {'name': name, 'brief': brief, 'ok': final['ok'], 'history': hist,
+              'seed_candidates': seed_candidates,
+              'requested_difficulty_profile': copy.deepcopy(profile),
+              'generation_certificate': {'ok': final['ok'], 'errors': list(final.get('errors') or []),
+                                         'semantic_sha256': provenance.sha256(metrics_of(final))},
+              'requested_target_deficits': DF.targets_met(case, final, profile) if profile else [],
+              'generation_review': final_case_review_status(hist), 'seconds': round(time.time() - t0),
               'metrics': {k: final.get(k) for k in ('solve_depth', 'max_depth', 'surface', 'twist', 'key', 'herrings', 'false_signs', 'threads', 'motive', 'means', 'pillars', 'mmo_depth')},
               'signs': len(case['signs']), 'events': len(case['events']), 'people': len(case['people'])}
-    json.dump(case, open(f'{outdir}/final-case.json', 'w'), indent=1)
-    json.dump(result, open(f'{outdir}/result.json', 'w'), indent=1)
-    open(f'{outdir}/report.md', 'w').write(render(case, final, result))
+    with open(f'{outdir}/final-case.json', 'w') as output:
+        json.dump(case, output, indent=1)
+    with open(f'{outdir}/result.json', 'w') as output:
+        json.dump(result, output, indent=1)
+    with open(f'{outdir}/report.md', 'w') as output:
+        output.write(render(case, final, result))
     log(f"[{name}] DONE in {result['seconds']}s: solve {final.get('solve_depth')} threads {final.get('threads')}")
     result['case'] = case
     send('generated', metrics=metrics_of(final), seconds=result['seconds'])

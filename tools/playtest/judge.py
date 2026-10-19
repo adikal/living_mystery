@@ -12,7 +12,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from game import ROOT  # noqa: E402
-from llm import JUDGE_MODEL, USAGE, call_json  # noqa: E402
+from llm import JUDGE_MODEL, USAGE, call_json, request_context  # noqa: E402
 
 DIMENSIONS = ['challenge', 'frustration', 'confusion', 'character_quality', 'fairness', 'liveliness', 'fun']
 LAYERS = ['generation', 'publishing', 'dialogue', 'director', 'hints', 'interface', 'engine', 'player']
@@ -50,6 +50,10 @@ what characters do on their own; hints; interface = what the game shows or allow
 mistake), "severity" (1 minor, 2 noticeable, 3 spoils the game), and "why" (one sentence). Only real problems.
 
 Return {"scores": {"<dimension>": {"score": n, "reason": "..."}}, "problems": [...], "summary": "<two sentences>"}."""
+BRIEF_RETRY = '\n\nKeep it brief: at most 8 problems, one sentence each.'
+MAX_TOKENS = 8000
+TEMPERATURE = None    # this model takes no temperature: the provider default applies
+AUDIT_NAME = 'direct_requests.jsonl'   # the batch's direct request audit, shared with run.py
 
 
 def transcript(ep, limit=9000):
@@ -86,13 +90,15 @@ def normal(v):
     return v
 
 
-def judge(ep, card):
+def judge(ep, card, audit_file=None):
     user = json.dumps({'solution': solution(ep['case']), 'player': {'profile': ep['profile'], 'temperament': ep['temperament']},
                        'outcome': ep['outcome'], 'metrics': card.get('metrics'), 'diary': ep['diary'],
                        'questionnaire': ep['questionnaire'], 'transcript': transcript(ep)})
     for attempt in range(2):          # an answer cut short (too many problems listed) is asked for again, briefer
-        out = call_json(RUBRIC + ('' if not attempt else '\n\nKeep it brief: at most 8 problems, one sentence each.'),
-                        user, JUDGE_MODEL, max_tokens=8000, schema=SCHEMA)   # this model takes no temperature
+        with request_context(episode_id=ep['id'], case=ep['case'], profile=ep['profile'],
+                             temperament=ep['temperament'], seed=ep['seed']):
+            out = call_json(RUBRIC + ('' if not attempt else BRIEF_RETRY), user, JUDGE_MODEL, max_tokens=MAX_TOKENS,
+                            temperature=TEMPERATURE, schema=SCHEMA, role='judge', audit_file=audit_file)
         raw = out.get('scores') if isinstance(out.get('scores'), dict) else {}
         scores = {d: normal(raw.get(d)) for d in DIMENSIONS}
         if all(v['score'] is not None for v in scores.values()):
@@ -102,11 +108,12 @@ def judge(ep, card):
 
 
 def judge_batch(folder, parallel=6):
+    audit_file = os.path.join(folder, AUDIT_NAME)
     cards = {c['id']: c for c in json.load(open(os.path.join(folder, 'scores.json')))}
     eps = [json.load(open(os.path.join(folder, f))) for f in sorted(os.listdir(folder)) if '__' in f and f.endswith('.json')]
     eps = [e for e in eps if not e.get('failure')]
     with cf.ThreadPoolExecutor(parallel) as ex:
-        verdicts = list(ex.map(lambda e: judge(e, cards[e['id']]), eps))
+        verdicts = list(ex.map(lambda e: judge(e, cards[e['id']], audit_file), eps))
     json.dump(verdicts, open(os.path.join(folder, 'judged.json'), 'w'), indent=1)
     return verdicts
 

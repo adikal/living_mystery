@@ -1,0 +1,517 @@
+{
+  "blinding": {
+    "critic_hidden_fields": [
+      "id",
+      "difficulty",
+      "difficulty_target",
+      "publication_review"
+    ],
+    "deterministic_gate_outcome_hidden": true,
+    "note": "Blinding applies to the model prompt; requested level is restored only in this report after each verdict.",
+    "requested_level_hidden": true
+  },
+  "cases": [
+    {
+      "audit_manifest_sha256": "6b1130ef5b2c3017c04a92bd57a6fafb52c6c6a55755e5b39a747fb7b776f3c1",
+      "audit_semantic_sha256": "d7a918928118ab954674ab6cee6f2ca3415363775ebb4a028b3e636d81cad402",
+      "blind_case_id": "case-01",
+      "candidate_sha256": "385de3e5d1f9b7680917d0e1bef1af2dc9d34c853d080ad0edde480280d8347d",
+      "canonical_case_sha256": "3b06f3a1e84a3d6b56d02d761efd6a3cf11a743ab03f8398f50448c66eab2fff",
+      "certificate_digest": "13e185f778996192284b49a21af8d1691eb0d2366d625a78cf12c1ff6397c50f",
+      "certificate_timestamp": "2026-10-18T15:12:55.330Z",
+      "cohort_recorded_case_sha256": "3b06f3a1e84a3d6b56d02d761efd6a3cf11a743ab03f8398f50448c66eab2fff",
+      "issues": [],
+      "logical_requests": 1,
+      "prompt_sha256": "028308c51a8725a21b37cbc31c2382a02eeb176b0dedacea8307a8fc460185ed",
+      "prompt_version": "whole-case-publication-review-v1",
+      "provider_attempts": 1,
+      "request_ids": [
+        "1edca293-beb5-40f3-9923-3d015c8d8a97"
+      ],
+      "requested_inference_profile": "us.anthropic.claude-sonnet-5",
+      "requested_level": "easy",
+      "schema_sha256": "8ad324ac2fc4fe106507aeaa8d5c7fd0ee3104c37a5af11b7e170abbe4934624",
+      "schema_version": "whole-case-publication-review-schema-v1",
+      "sdk_retry_attempts": 0,
+      "selection_outcome": "completed-strictly-gateable",
+      "semantic_repairs": [],
+      "slot_id": "slot-01-easy",
+      "slot_ordinal": 1,
+      "source_file_sha256": "9810755acad502e924a5c2c025e0340ec5dafba6bcd7145befe10497576a6298",
+      "status": "PASS",
+      "usage": {
+        "cacheReadInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "calls": 1,
+        "inputTokens": 20033,
+        "outputTokens": 58,
+        "totalTokens": 20091
+      }
+    },
+    {
+      "audit_manifest_sha256": "8d6b1305f837363a05faa3dc6edc2697239b67b492bdf3f938cda15280de73c1",
+      "audit_semantic_sha256": "4cd2fa9619423c32796cd5bed9881acc9d76cc3866a26c715cc06eeefb5b70b4",
+      "blind_case_id": "case-02",
+      "candidate_sha256": "837366dad53dbd2205df3edb1c3ee572d4da81b4d8b97f211fe748aeb516479c",
+      "canonical_case_sha256": "c33aaa6d69576ead2c68448ea1d67e325bc86dc6349da887476964aa71e63d42",
+      "certificate_digest": "4d81b90b8c6799aa1865735ff3ca207e63c442617e26c262773edf5fbddcd6fb",
+      "certificate_timestamp": "2026-10-18T15:13:11.519Z",
+      "cohort_recorded_case_sha256": "c33aaa6d69576ead2c68448ea1d67e325bc86dc6349da887476964aa71e63d42",
+      "issues": [
+        "s_medical/s_medical_iris vs e_crime/s_clock: CONTRADICTION: The medical notes and Dr Marsh's testimony state death occurred 'between half past ten and quarter to eleven' (1350-1365), matching the true crime window, but s_exam (Dr Marsh's actual case notes) states a much wider 'death between ten and midnight' with watch glass cracked. The two medical sources give materially different time-of-death windows (one narrow and exact, one broad), which is internally inconsistent for the same examination.",
+        "pub_window: READING: The clue text states the watch's hands stopped at a quarter to eleven, and the unlock reasoning (reading) claims 'his own watch broke in the struggle at a quarter to eleven' - but the true crime window is 1350-1365 (10:50-11:05), so a watch stopping at 10:45 would be BEFORE the murder window started, not during the struggle. This reading does not actually line up with the established crime window, undermining the logic the player is meant to infer.",
+        "s_clock: CONTRADICTION: The staged clock is set to 'ten past eleven' (1370) by Dora immediately after the murder (e_dora_stage, 1365-1368), but the true crime window per premise/s_medical is 1350-1365. The clock-staging is supposed to mislead investigators about time of death, but if the real medical window (1350-1365) is already narrow and accurate, the staged clock at 1370 doesn't contradict or displace that window - it's unclear what alibi benefit the staged time ten-past-eleven actually provides over the real death time of ~10:50-11:05, making the staging's purpose murky.",
+        "a_dora_alibi/e_dora_stage: CRAFT: Dora's clock-staging is meant to shift blame away from her own timeline, but her own testified alibi (t_dora) places her at the halt from 1385-1400 (23:05-23:20), which is AFTER even the staged clock time of 1370 (23:10). The staged time of 11:10 doesn't actually clear her, since she claims to still be sorting post until later - the staged clock seems to not meaningfully serve her alibi, as the true murder window (10:50-11:05) already falls when she was sorting post before heading to the halt, raising craft confusion about what the staging accomplishes.",
+        "e_jonah_takes/a_jonah_hide: LOOSE END: Jonah's theft of the notebook and his cover-up (hiding it under the boathouse floor, lying about his evening) make him appear suspicious of the murder itself, but the resolution only explains his unrelated motive (hiding his own blackmail payments) without the text ever clearly establishing to the player that Bell or the detective confirms Jonah had no hand in the actual killing - the solution hinges on accepting his account at face value with no decisive clearing evidence (e.g., no alibi witness for the exact 1350-1365 murder window, since he's still rowing Hugo back until 1395 but was that before or during the window - the ferry event 1330-1395 overlaps the crime window 1350-1365, meaning Jonah's whereabouts during the actual murder are not firmly fixed away from the inn)."
+      ],
+      "logical_requests": 1,
+      "prompt_sha256": "028308c51a8725a21b37cbc31c2382a02eeb176b0dedacea8307a8fc460185ed",
+      "prompt_version": "whole-case-publication-review-v1",
+      "provider_attempts": 1,
+      "request_ids": [
+        "9ac586b4-eac0-4b2b-8123-89e7cc52c215"
+      ],
+      "requested_inference_profile": "us.anthropic.claude-sonnet-5",
+      "requested_level": "medium",
+      "schema_sha256": "8ad324ac2fc4fe106507aeaa8d5c7fd0ee3104c37a5af11b7e170abbe4934624",
+      "schema_version": "whole-case-publication-review-schema-v1",
+      "sdk_retry_attempts": 0,
+      "selection_outcome": "completed-strictly-gateable",
+      "semantic_repairs": [],
+      "slot_id": "slot-02-medium",
+      "slot_ordinal": 2,
+      "source_file_sha256": "1f035d86d646693e1934c4fe26b627cb98a1611293e38d9d3cf3a4a38f14057e",
+      "status": "FAIL",
+      "usage": {
+        "cacheReadInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "calls": 1,
+        "inputTokens": 21698,
+        "outputTokens": 1108,
+        "totalTokens": 22806
+      }
+    },
+    {
+      "audit_manifest_sha256": "8e975b5ead669fac669f1ddfba3981948a4db1743c25321b775bd774aa321af9",
+      "audit_semantic_sha256": "c2e96786fa62e21e8ce49ba40dcdccaa9d27bce9746f9a2ceb862fb974af94de",
+      "blind_case_id": "case-03",
+      "candidate_sha256": "d1a88cc3e1cfdc75689c8dcc29242e2793a4a8524b07e5067569bdb4a383d5db",
+      "canonical_case_sha256": "5c8b3f0f0a356d8a2a48cf9095d1c8d36c1c9125f09be22f4b76e39adfe85b37",
+      "certificate_digest": "28e31b0574a4df44f2cd872cfb89b82e076b20f14e817a6a2e44f95674574afa",
+      "certificate_timestamp": "2026-10-18T15:13:13.555Z",
+      "cohort_recorded_case_sha256": "5c8b3f0f0a356d8a2a48cf9095d1c8d36c1c9125f09be22f4b76e39adfe85b37",
+      "issues": [],
+      "logical_requests": 1,
+      "prompt_sha256": "028308c51a8725a21b37cbc31c2382a02eeb176b0dedacea8307a8fc460185ed",
+      "prompt_version": "whole-case-publication-review-v1",
+      "provider_attempts": 1,
+      "request_ids": [
+        "278e88a7-2113-4a30-8b45-5b447163d728"
+      ],
+      "requested_inference_profile": "us.anthropic.claude-sonnet-5",
+      "requested_level": "hard",
+      "schema_sha256": "8ad324ac2fc4fe106507aeaa8d5c7fd0ee3104c37a5af11b7e170abbe4934624",
+      "schema_version": "whole-case-publication-review-schema-v1",
+      "sdk_retry_attempts": 0,
+      "selection_outcome": "completed-strictly-gateable",
+      "semantic_repairs": [],
+      "slot_id": "slot-03-hard",
+      "slot_ordinal": 3,
+      "source_file_sha256": "e04867e5aed6e3adb6e58a69e0a82ea5c4162431dbd7d1508c88f674f00ae546",
+      "status": "PASS",
+      "usage": {
+        "cacheReadInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "calls": 1,
+        "inputTokens": 30301,
+        "outputTokens": 58,
+        "totalTokens": 30359
+      }
+    },
+    {
+      "audit_manifest_sha256": "1fe39aa08b52a25f337192960a22ed8c37fcfa1b25d2d59a4942739cc52e8629",
+      "audit_semantic_sha256": "5a7a3112bcfb6399f8d92c239ea57ffa087f3b16266c6111e62f8ac252b2a748",
+      "blind_case_id": "case-04",
+      "candidate_sha256": "d33983fafb189cca964524fc7f093b1c65fcb0e8660b5dc0c2094db7533af197",
+      "canonical_case_sha256": "c47b509c2e14518db2ea459eb893fe1a02a60ce390792a7f9ddb780451a70106",
+      "certificate_digest": "87d30fc1e72b42ad7551103b98296ee1350ed36572733cc68bb72016c57f41f9",
+      "certificate_timestamp": "2026-10-18T15:13:24.739Z",
+      "cohort_recorded_case_sha256": "c47b509c2e14518db2ea459eb893fe1a02a60ce390792a7f9ddb780451a70106",
+      "issues": [
+        "s_envelope/s_dora_hide: CONTRADICTION: The envelope's complaint is said to be against Dora for opening private letters, but the relation 'clara reported dora' and the GPO envelope's described content ('a copy of a complaint against Dora Pruett') imply Clara filed a complaint that was then delivered to Dora via GPO addressed to Dora herself, which is implausible: a GPO complaint against someone would not be mailed to that same person as a steamed-open circular she then hides from herself. The provenance of how Dora obtained/steamed open a complaint about her own conduct is not coherently explained.",
+        "s_dora/a_dora_shame: FAIRNESS: The surface claim text for Dora ('nothing out of the ordinary') is judged deceptive solely because she hid an envelope in her own drawer out of shame; but hiding one's own old shameful mail is not clearly 'out of the ordinary' in a way the player can fairly deduce as a lie distinct from innocent embarrassment, risking an unfair LOOSE END suspicion on Dora who is never otherwise resolved as a serious suspect.",
+        "GLOBAL: LOOSE END: Vera Lacey has a stated grudge against Clara (a_vera_grudge, relation vera-grudge_against-clara) and is a listed suspect/candidate, but no clue chain or sign materially investigates or resolves her grudge beyond her own alibi testimony; her motive and backstory are introduced but never meaningfully explored or cleared on-page, leaving her implication thin and unresolved relative to the weight given to Dora and Silas.",
+        "GLOBAL: LOOSE END: Silas Voss's embezzlement from Clara (silas-embezzling_from-clara, a_silas_fear, a_silas_drink) is set up as a strong motive and fear but is never surfaced as a clue, confronted, or resolved anywhere in the signs; the player has no way to learn this fact in play despite it being established as true backstory, making Silas an unresolved suspect thread existing only in hidden author data."
+      ],
+      "logical_requests": 1,
+      "prompt_sha256": "028308c51a8725a21b37cbc31c2382a02eeb176b0dedacea8307a8fc460185ed",
+      "prompt_version": "whole-case-publication-review-v1",
+      "provider_attempts": 1,
+      "request_ids": [
+        "444edfee-b511-4831-be58-a683c1133a22"
+      ],
+      "requested_inference_profile": "us.anthropic.claude-sonnet-5",
+      "requested_level": "easy",
+      "schema_sha256": "8ad324ac2fc4fe106507aeaa8d5c7fd0ee3104c37a5af11b7e170abbe4934624",
+      "schema_version": "whole-case-publication-review-schema-v1",
+      "sdk_retry_attempts": 0,
+      "selection_outcome": "completed-strictly-gateable",
+      "semantic_repairs": [],
+      "slot_id": "slot-04-easy",
+      "slot_ordinal": 4,
+      "source_file_sha256": "153a918a8568e9af3c9c9e0e19b1b4eb680672d387abe2c329442637dd8f2030",
+      "status": "FAIL",
+      "usage": {
+        "cacheReadInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "calls": 1,
+        "inputTokens": 21203,
+        "outputTokens": 742,
+        "totalTokens": 21945
+      }
+    },
+    {
+      "audit_manifest_sha256": "b541a5ae82c74827f9cbeaeba90f24162b61ca2b83a3dbe00c5afb59a86172f6",
+      "audit_semantic_sha256": "ce1cb3a699c08d4f0363406a9e9026a570f836aa59740dbd43ef5f2b7f2d2c96",
+      "blind_case_id": "case-05",
+      "candidate_sha256": "a3207d7bb31942cb7c18784d29e8940b5670c43ca471a8eebd6658171d2260b5",
+      "canonical_case_sha256": "84ecb2e6bd7748621a63bbf6104af45f4970971ac58f4d9539565bb10cd0e80e",
+      "certificate_digest": "9cc15fbb0f24e3e337cdc9f360b0fc62c2fd3e06f030590a75d3511a558e939c",
+      "certificate_timestamp": "2026-10-18T15:13:40.669Z",
+      "cohort_recorded_case_sha256": "84ecb2e6bd7748621a63bbf6104af45f4970971ac58f4d9539565bb10cd0e80e",
+      "issues": [
+        "t_ada_hugo: CONTRADICTION: Ada's unlocked testimony claims Hugo arrived at the Rook 'as the church clock struck ten,' but the staging/events show Hugo's crime window ends at 1295 (21:35) and he needs to travel from boathouse to inn (6 minutes per links) before arriving; the concede text has Ada say he arrived 'right as the church clock struck ten' which is consistent, but s_saw_vicar_hugo_inn (unlocked, non-deceptive) has the vicar independently say he saw Hugo at the inn 'at about quarter past ten,' not ten o'clock - these two corroborating testimonies disagree on Hugo's arrival time by 15 minutes, undermining the alibi-breaking logic and creating an internal contradiction in the solution chain.",
+        "hugo_inn/t_hugo: CONTRADICTION: Hugo's own alibi testimony (t_hugo) states he arrived at the Rook 'there by ten past [ten]' and the event hugo_inn starts at 1320 (22:00), but his testimony says 'ten past' which could be read as 22:10, while the vicar's sighting (s_saw_vicar_hugo_inn) places him at 'about quarter past ten' (22:15) - these near-but-not-exact figures compound confusion with Ada's claim of exactly ten o'clock (22:00), leaving three slightly different times (22:00 staged event start, 22:00 per Ada, 22:10 per Hugo, 22:15 per vicar) for the same arrival without narrative acknowledgment of the discrepancy, which could confuse players about which time is the 'true' deceptive gap versus honest imprecision.",
+        "s_pellets/hugo_shot: CRAFT: The staging requires Hugo to scatter manor birdshot at the boathouse to frame a fowling piece, but Hugo has no established access motive or opportunity cue in his attitudes/knowledge entries explaining why he specifically chose birdshot (versus any other red herring) at the moment of panic right after dinner (hugo_pellets occurs at 1265, before the meeting with Vera at 1272-1290, meaning he preplanned the framing with birdshot pocketed at dinner before any confirmed need), which slightly strains the fairness of inferring premeditated framing of the fowling piece given the chronology is tight but not clearly signaled to the player as deliberate advance planning versus opportunistic improvisation."
+      ],
+      "logical_requests": 1,
+      "prompt_sha256": "028308c51a8725a21b37cbc31c2382a02eeb176b0dedacea8307a8fc460185ed",
+      "prompt_version": "whole-case-publication-review-v1",
+      "provider_attempts": 1,
+      "request_ids": [
+        "5381c121-5a2c-48f1-a25c-6bb553aed65c"
+      ],
+      "requested_inference_profile": "us.anthropic.claude-sonnet-5",
+      "requested_level": "medium",
+      "schema_sha256": "8ad324ac2fc4fe106507aeaa8d5c7fd0ee3104c37a5af11b7e170abbe4934624",
+      "schema_version": "whole-case-publication-review-schema-v1",
+      "sdk_retry_attempts": 0,
+      "selection_outcome": "completed-strictly-gateable",
+      "semantic_repairs": [],
+      "slot_id": "slot-05-medium",
+      "slot_ordinal": 5,
+      "source_file_sha256": "79a0548c90b57bf3bce2085e3a025cae3d5eacdb228f30f2aca7a9473fcd53f3",
+      "status": "FAIL",
+      "usage": {
+        "cacheReadInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "calls": 1,
+        "inputTokens": 23875,
+        "outputTokens": 880,
+        "totalTokens": 24755
+      }
+    },
+    {
+      "audit_manifest_sha256": "c5b5dde856ee52366b078d6b375791dbfd4e38f6849c45f6362e3a483b8da901",
+      "audit_semantic_sha256": "b1f34ab467e66c432a753b4229eeb8a6f9916247020d42932a1303706b033ed5",
+      "blind_case_id": "case-06",
+      "candidate_sha256": "be677e059c23c932a4f7de1e4d19d667672d614d1996eb88c7044d77f8a0d8e5",
+      "canonical_case_sha256": "8200de3878150e198d1e79bfe8c8ee50930f80e628778c6bbf8636f06496cc93",
+      "certificate_digest": "8b863687b35b69b17f565472c0094052c8c43122303d720defa06deec37ec5f5",
+      "certificate_timestamp": "2026-10-18T15:13:42.661Z",
+      "cohort_recorded_case_sha256": "8200de3878150e198d1e79bfe8c8ee50930f80e628778c6bbf8636f06496cc93",
+      "issues": [],
+      "logical_requests": 1,
+      "prompt_sha256": "028308c51a8725a21b37cbc31c2382a02eeb176b0dedacea8307a8fc460185ed",
+      "prompt_version": "whole-case-publication-review-v1",
+      "provider_attempts": 1,
+      "request_ids": [
+        "ae6b3fa6-852f-4ee1-8a4e-009ead307ec3"
+      ],
+      "requested_inference_profile": "us.anthropic.claude-sonnet-5",
+      "requested_level": "hard",
+      "schema_sha256": "8ad324ac2fc4fe106507aeaa8d5c7fd0ee3104c37a5af11b7e170abbe4934624",
+      "schema_version": "whole-case-publication-review-schema-v1",
+      "sdk_retry_attempts": 0,
+      "selection_outcome": "completed-strictly-gateable",
+      "semantic_repairs": [],
+      "slot_id": "slot-06-hard",
+      "slot_ordinal": 6,
+      "source_file_sha256": "58daaaf48d604d133ac0fb5d6026e279ee29f119a4284e5de8913b4e795d4290",
+      "status": "PASS",
+      "usage": {
+        "cacheReadInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "calls": 1,
+        "inputTokens": 27709,
+        "outputTokens": 58,
+        "totalTokens": 27767
+      }
+    },
+    {
+      "audit_manifest_sha256": "4c58b92ff20c342fe39ef884e530640dc4c39db355c84dad80f293e90521ab28",
+      "audit_semantic_sha256": "f804bcb7a2a1dea7780265f7e1153b1e9925943898f57bd7a4d84efa909e24cc",
+      "blind_case_id": "case-07",
+      "candidate_sha256": "a556353b19ddac8c4cd627411ff514bb04153e726eb25832a22e5c1afc5e7077",
+      "canonical_case_sha256": "831d167d9695bded1ac3e1d97768f7f69471bdf2d62a1f273d1de259a5c77a96",
+      "certificate_digest": "f245c815ef5a86b82cb32f4462f5b3ffbfb99b860fc087d1b890a56bff3fa400",
+      "certificate_timestamp": "2026-10-18T15:14:07.495Z",
+      "cohort_recorded_case_sha256": "831d167d9695bded1ac3e1d97768f7f69471bdf2d62a1f273d1de259a5c77a96",
+      "issues": [
+        "s_clara_silas|silas: CONTRADICTION: Silas's reaction here says 'I did not stay, as Miss Vale rightly says' and implies he merely glanced in and left without disturbing anything, consistent with Clara's innocent framing — but the true events (e_silas_visit) have him finding Dora dead, taking the letter, and shutting the tap. The confrontation line for s_tap should force him to reconcile the clean patch/tap evidence with his story, yet his canned reaction at s_clara_silas never acknowledges this discrepancy, leaving the gating of his guilt-adjacent cover-up thin and only surfaced via s_tap's reaction, which itself denies the act outright (see above).",
+        "GLOBAL: FAIRNESS: The gas tap being found shut (s_exam, s_tap) is a key physical clue, but both the true culprit's method (Jonah leaves the tap OPEN per e_crime/a_jonah_kill) and Silas's cover-up (he shuts it) must be disentangled by the player. Nothing in accepted clues explicitly tells the player it was Silas who closed it rather than Jonah returning or someone else; the only route is inference from timing and the handbag clean-patch, but Silas's own testimony denies touching anything, and Clara's testimony says she didn't close it either, creating a logical gap unless the detective independently reasons that only Silas's visit window (1380-1395) fits — which is fair, but Silas's explicit denial of touching the tap in his reaction creates a direct and ungated contradiction with ground truth that undermines the fairness of resolving this sub-mystery through dialogue."
+      ],
+      "logical_requests": 2,
+      "prompt_sha256": "028308c51a8725a21b37cbc31c2382a02eeb176b0dedacea8307a8fc460185ed",
+      "prompt_version": "whole-case-publication-review-v1",
+      "provider_attempts": 2,
+      "request_ids": [
+        "f02f3c0a-ee55-48da-ae4f-cdc380cb4b6a",
+        "dd156925-9ea2-4d10-9e72-7751d84b33b5"
+      ],
+      "requested_inference_profile": "us.anthropic.claude-sonnet-5",
+      "requested_level": "medium",
+      "schema_sha256": "8ad324ac2fc4fe106507aeaa8d5c7fd0ee3104c37a5af11b7e170abbe4934624",
+      "schema_version": "whole-case-publication-review-schema-v1",
+      "sdk_retry_attempts": 0,
+      "selection_outcome": "completed-strictly-gateable",
+      "semantic_repairs": [],
+      "slot_id": "slot-08-medium",
+      "slot_ordinal": 8,
+      "source_file_sha256": "4451ea75f3c4dea3909c245576afb91aa3a1892e7b6a9f9816fa8125b88d4ffc",
+      "status": "FAIL",
+      "usage": {
+        "cacheReadInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "calls": 2,
+        "inputTokens": 44508,
+        "outputTokens": 1740,
+        "totalTokens": 46248
+      }
+    },
+    {
+      "audit_manifest_sha256": "42696f3dce66cf85016ed9e74dab08cfc5879307b6d3b200f3a29681dc51883f",
+      "audit_semantic_sha256": "a0e47989f392f91f3e9afa7c431deea28c53a0c8c070b74622ee53b2e693a1ca",
+      "blind_case_id": "case-08",
+      "candidate_sha256": "ad6db06bf682d305fb14d4bef6d05789b0fb7ba5b5f7c9dd466d3abf47e2e2d2",
+      "canonical_case_sha256": "11f1fb394ed6307b5ef2c63a70992b947430b3b644c6fc4cd6e9eef4c1dce8d0",
+      "certificate_digest": "be6eabd752a1b6775c340abb64c0c5e7b3c0c77bb3f39afbf6c6c8f15a7c3281",
+      "certificate_timestamp": "2026-10-18T15:14:09.494Z",
+      "cohort_recorded_case_sha256": "11f1fb394ed6307b5ef2c63a70992b947430b3b644c6fc4cd6e9eef4c1dce8d0",
+      "issues": [],
+      "logical_requests": 1,
+      "prompt_sha256": "028308c51a8725a21b37cbc31c2382a02eeb176b0dedacea8307a8fc460185ed",
+      "prompt_version": "whole-case-publication-review-v1",
+      "provider_attempts": 1,
+      "request_ids": [
+        "d8b33078-ba39-4b77-9b63-eca3c970212d"
+      ],
+      "requested_inference_profile": "us.anthropic.claude-sonnet-5",
+      "requested_level": "hard",
+      "schema_sha256": "8ad324ac2fc4fe106507aeaa8d5c7fd0ee3104c37a5af11b7e170abbe4934624",
+      "schema_version": "whole-case-publication-review-schema-v1",
+      "sdk_retry_attempts": 0,
+      "selection_outcome": "completed-strictly-gateable",
+      "semantic_repairs": [],
+      "slot_id": "slot-09-hard",
+      "slot_ordinal": 9,
+      "source_file_sha256": "286fd880ad1197aec3fca9996be475a5bb98312b2c10e7f64bebee0cb7937e5b",
+      "status": "PASS",
+      "usage": {
+        "cacheReadInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "calls": 1,
+        "inputTokens": 28093,
+        "outputTokens": 58,
+        "totalTokens": 28151
+      }
+    },
+    {
+      "audit_manifest_sha256": "8e5c9648132086a59e21836a8d8a4878f519330613ad43c87f028d1b6fff5199",
+      "audit_semantic_sha256": "731d26b076958da8c5ca4bb03209b90f293b498314a4e8f9e8878df1cd704f4c",
+      "blind_case_id": "case-09",
+      "candidate_sha256": "811e3145d587d61733d06ce6444da49e0759293fe8dd86e25f4157538a8833fe",
+      "canonical_case_sha256": "a74d1beae773e3881b351c8cd7e75103650ef700d3dc2e9b612739e73228bf8a",
+      "certificate_digest": "29ebaaac125d5d3ae870058565a6ab99b747d655f6930623881a890d663d71b8",
+      "certificate_timestamp": "2026-10-18T15:14:22.554Z",
+      "cohort_recorded_case_sha256": "a74d1beae773e3881b351c8cd7e75103650ef700d3dc2e9b612739e73228bf8a",
+      "issues": [
+        "e_rowan_home/s_rowan_door: CONTRADICTION: Rowan is said to unlock the greenhouse door (already locked by clara after the murder) and go to bed in the potting shed inside the greenhouse at 1430 (summary: 'Rowan unlocks the locked greenhouse door with his key and goes to bed in the potting shed'), yet he does not discover the body until 1770 (first light) despite sleeping in the potting shed within the same locked greenhouse as the corpse for hours. This is physically very implausible (a body lying among the vines a few feet from where he sleeps for 5+ hours) and stretches CRAFT/plausibility, though not impossible if the greenhouse is large; still a notable craft weakness.",
+        "a_rowan_wary/s_rowan_door: CRAFT: Rowan's fear of being 'first man suspected' due to holding one of two keys is used as the lock gate, but Rowan also openly discovered the body and reported it immediately (a_rowan_report), and his own holding of a greenhouse key is public knowledge (s_keys). Given he was the one who found and reported the body, his motivation to conceal the state of the lock conflicts somewhat with his cooperative, forthcoming behavior otherwise (he readily tells Bell and stands watch); the concealment motive is thin given he's otherwise a transparent, cooperative witness.",
+        "s_case_notes/a_iris_confidence: CHARACTER: Iris's stated attitude is to keep confidences 'unless silence would let an innocent man be suspected of murder' (a_iris_confidence), but she disclose Edmund's casebook entry seemingly just because the detective mentions the wrist plaster (s_edmund_wrist unlock), not because Edmund is specifically about to be wrongly accused of murder at that point - this is a reasonable judgement call but borders on her breaking confidence prematurely relative to her stated principle, which could be seen as a minor CHARACTER tension."
+      ],
+      "logical_requests": 1,
+      "prompt_sha256": "028308c51a8725a21b37cbc31c2382a02eeb176b0dedacea8307a8fc460185ed",
+      "prompt_version": "whole-case-publication-review-v1",
+      "provider_attempts": 1,
+      "request_ids": [
+        "e301cc2f-fb8d-48cc-8e1b-8ec905b53c18"
+      ],
+      "requested_inference_profile": "us.anthropic.claude-sonnet-5",
+      "requested_level": "easy",
+      "schema_sha256": "8ad324ac2fc4fe106507aeaa8d5c7fd0ee3104c37a5af11b7e170abbe4934624",
+      "schema_version": "whole-case-publication-review-schema-v1",
+      "sdk_retry_attempts": 0,
+      "selection_outcome": "completed-strictly-gateable",
+      "semantic_repairs": [],
+      "slot_id": "slot-10-easy",
+      "slot_ordinal": 10,
+      "source_file_sha256": "a7b226708d5e71784592bc0cce4a1db20a9606cd608d745e03f97dd63949a1fd",
+      "status": "FAIL",
+      "usage": {
+        "cacheReadInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "calls": 1,
+        "inputTokens": 17845,
+        "outputTokens": 910,
+        "totalTokens": 18755
+      }
+    },
+    {
+      "audit_manifest_sha256": "e0ad1f34280b590c93371b18779b1107ce9eaa1a087ada6b4e53407eb301e748",
+      "audit_semantic_sha256": "8c244867ca7080c811d5c95e01bde290d86c92d683be4974a7d9c58e3dc5043a",
+      "blind_case_id": "case-10",
+      "candidate_sha256": "78993c46cb270ec3d5cff89f7e8a4bc441c3652c3f194da34660d6badde204d5",
+      "canonical_case_sha256": "64ce64f1b806340f4bbf03d088ba68dd16d9a41d09e9dd698a64dd4da0003c9b",
+      "certificate_digest": "a044b1a2ca5f96f46955e4e262b20686fe535ca473519e0b4eb4ed99039e4390",
+      "certificate_timestamp": "2026-10-18T15:14:36.303Z",
+      "cohort_recorded_case_sha256": "64ce64f1b806340f4bbf03d088ba68dd16d9a41d09e9dd698a64dd4da0003c9b",
+      "issues": [
+        "s_dora_box/s_dora_clock: CONTRADICTION: Dora's surface testimony (s_surface_dora) states she had the taproom clock in view 'the whole while' and is marked surface_checked honest, yet her later testimony concedes she misreported the time by 15 minutes (five to eleven vs twenty to eleven) and the clock-check record frames this as a correction rather than a contradiction of her 'honest' surface claim - if she was watching the clock continuously and keeping good ledgers, misreading/misreporting the exact time by a full quarter hour undermines the 'honest' tag and the established characterization of her as someone who 'forgets nothing' and has a 'keen... memory', making the discrepancy feel unmotivated rather than a fair clue.",
+        "e_crime/s_medical: FAIRNESS: The medical examination fixes death between 22:30-22:45, but Ada's own posting errand (e_post) is timed 1374-1376 (22:54-22:56), after the stated death window, while Dora's corrected clock time places Ada at the post office at 22:40 (within the murder window per pub_window). This means Ada's alibi-building post office trip overlaps with the actual murder window, creating a timeline where she could not have been both committing the murder (ending 1360) and arriving at the post office by the time Dora's corrected clock shows (1360-1376 gap for locking parlour, calling goodnight at 1410-1415, then posting at 1374 is inconsistent with event ordering - e_lock ends 1370, e_stage is 1410-1415, but e_post is 1374-1376, meaning the posting trip is sandwiched before the staged goodnight call, yet Ada's testimony (t_ada) claims she called goodnight at half past eleven i.e. ~1410, posted around half ten (1370ish) - the posting event time (1374) falls awkwardly between the lock (1370) and the stage (1410), and does not clearly align with the 'half ten' Ada claims in her testimony, nor with Dora's corrected 'twenty to eleven' (1360) sighting, creating minor but confusing internal inconsistency in exact minute alignment that could confuse a careful player reconstructing the night.",
+        "GLOBAL: CRAFT: The chain of unlocks for s_vera_glance -> t_vera_door -> s_dora_box -> s_dora_clock -> t_vera_voices is quite long and intricate; while individually each gating makes sense, the overall dependency chain relies on the player noticing Vera's behavioral tell before asking about the key, then pinning the post office time via Dora, then returning to pin Vera's voices testimony - this is intricate but not clearly unfair; flagged only as a minor craft concern, not necessarily a hard fail on its own."
+      ],
+      "logical_requests": 1,
+      "prompt_sha256": "028308c51a8725a21b37cbc31c2382a02eeb176b0dedacea8307a8fc460185ed",
+      "prompt_version": "whole-case-publication-review-v1",
+      "provider_attempts": 1,
+      "request_ids": [
+        "bba57058-de31-42f9-97ed-c2ed0ea9aeec"
+      ],
+      "requested_inference_profile": "us.anthropic.claude-sonnet-5",
+      "requested_level": "medium",
+      "schema_sha256": "8ad324ac2fc4fe106507aeaa8d5c7fd0ee3104c37a5af11b7e170abbe4934624",
+      "schema_version": "whole-case-publication-review-schema-v1",
+      "sdk_retry_attempts": 0,
+      "selection_outcome": "completed-strictly-gateable",
+      "semantic_repairs": [],
+      "slot_id": "slot-11-medium",
+      "slot_ordinal": 11,
+      "source_file_sha256": "e710ca18c65a2647becfc1b2b8036e879b4ca2726498b4a68b986dfd39884a09",
+      "status": "FAIL",
+      "usage": {
+        "cacheReadInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "calls": 1,
+        "inputTokens": 20628,
+        "outputTokens": 974,
+        "totalTokens": 21602
+      }
+    },
+    {
+      "audit_manifest_sha256": "821f1a34e52543e753a8d58974ee023d8f2da5b2e5652a2a648b4a12dbf88ae2",
+      "audit_semantic_sha256": "6382beaa14ec3d7eb2ec12e305adc6be5995b1e8ba8eb36d3600b05baad100b4",
+      "blind_case_id": "case-11",
+      "candidate_sha256": "635ebdc9d4738ee04c66f49b637c175f96c40dd2454e22db6081f83333557ecd",
+      "canonical_case_sha256": "18de1953ea3e3465db8ffb945df4126d13a7b890d2d74f0927283a70ea7ede70",
+      "certificate_digest": "967caa56b20761f4523527ef41fee7c03848cdebc01e99168308155f2c33540d",
+      "certificate_timestamp": "2026-10-18T15:14:38.216Z",
+      "cohort_recorded_case_sha256": "18de1953ea3e3465db8ffb945df4126d13a7b890d2d74f0927283a70ea7ede70",
+      "issues": [],
+      "logical_requests": 1,
+      "prompt_sha256": "028308c51a8725a21b37cbc31c2382a02eeb176b0dedacea8307a8fc460185ed",
+      "prompt_version": "whole-case-publication-review-v1",
+      "provider_attempts": 1,
+      "request_ids": [
+        "b51ec3af-9859-4c68-8868-a5ae3f13864d"
+      ],
+      "requested_inference_profile": "us.anthropic.claude-sonnet-5",
+      "requested_level": "hard",
+      "schema_sha256": "8ad324ac2fc4fe106507aeaa8d5c7fd0ee3104c37a5af11b7e170abbe4934624",
+      "schema_version": "whole-case-publication-review-schema-v1",
+      "sdk_retry_attempts": 0,
+      "selection_outcome": "completed-strictly-gateable",
+      "semantic_repairs": [],
+      "slot_id": "slot-12-hard",
+      "slot_ordinal": 12,
+      "source_file_sha256": "807d6edc4eca6522994bc0b3ff1cb77de1bff92e46281f8acd45bd229cf224c9",
+      "status": "PASS",
+      "usage": {
+        "cacheReadInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "calls": 1,
+        "inputTokens": 26538,
+        "outputTokens": 58,
+        "totalTokens": 26596
+      }
+    }
+  ],
+  "claims_boundary": [
+    "This is an availability-selected pilot over the 11 completed strictly gateable E2 cases, not accuracy evidence.",
+    "Every selected case is retained regardless of PASS, FAIL or UNAVAILABLE outcome.",
+    "The critic was blinded to requested level and deterministic gate outcome; no model verdict was retried beyond normal critic policy.",
+    "No reviewed case or pilot provenance was made playable; raw prompts and responses remain in the ignored cohort tree."
+  ],
+  "cohort_id": "c3-e2-pilot-20261018-135950",
+  "execution": {
+    "aws_resource_mutations": 0,
+    "hard_wall_seconds": 3600,
+    "normal_policy": "one structured call; one semantic retry only for a schema-valid fail without an actionable issue; normal SDK policy unchanged",
+    "playable_publication": false,
+    "region": "us-west-2",
+    "review_operations_per_case": 1,
+    "wall_seconds": 107.207
+  },
+  "generated_at": "2026-10-18T15:14:38.220Z",
+  "normalized_sha256": "7e7cd106684719ce3bbcd24109a2257da5293cadc3aa8ad56c9f78aed3649437",
+  "outcomes": {
+    "FAIL": 6,
+    "PASS": 5
+  },
+  "prompt": {
+    "schema_sha256": "8ad324ac2fc4fe106507aeaa8d5c7fd0ee3104c37a5af11b7e170abbe4934624",
+    "schema_version": "whole-case-publication-review-schema-v1",
+    "sha256": "028308c51a8725a21b37cbc31c2382a02eeb176b0dedacea8307a8fc460185ed",
+    "version": "whole-case-publication-review-v1"
+  },
+  "repository": {
+    "branch": "main",
+    "commit": "a2716a8643d8177914a5decb94edf474bf9c77f5",
+    "worktree_dirty": true
+  },
+  "request_totals": {
+    "logical_requests": 12,
+    "provider_attempts": 12,
+    "request_ids": 12,
+    "sdk_retry_attempts": 0
+  },
+  "schema_version": "publication-critic-pilot-v1",
+  "selection": {
+    "availability_selected": true,
+    "excluded_slots": [
+      "slot-07-easy"
+    ],
+    "replacement_policy": "none",
+    "retained": 11,
+    "rule": "all cases whose frozen slot result is completed-strictly-gateable and has a serialized final case",
+    "selected": 11
+  },
+  "usage_by_requested_inference_profile": {
+    "us.anthropic.claude-sonnet-5": {
+      "cacheReadInputTokens": 0,
+      "cacheWriteInputTokens": 0,
+      "calls": 12,
+      "inputTokens": 282431,
+      "outputTokens": 6644,
+      "totalTokens": 289075
+    }
+  },
+  "usage_totals": {
+    "cacheReadInputTokens": 0,
+    "cacheWriteInputTokens": 0,
+    "calls": 12,
+    "inputTokens": 282431,
+    "outputTokens": 6644,
+    "totalTokens": 289075
+  }
+}

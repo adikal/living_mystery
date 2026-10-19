@@ -21,11 +21,13 @@ from urllib.parse import urlparse, parse_qs
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 sys.path.insert(0, os.path.join(ROOT, 'tools', 'refine-c'))
 import difficulty  # noqa: E402
+from local_origins import DEFAULT_ALLOWED_ORIGINS, allowed_hosts, parse_allowed_origins  # noqa: E402
 
 HOST = os.environ.get('LM_GENERATOR_HOST', '127.0.0.1')
 PORT = int(os.environ.get('LM_GENERATOR_PORT', '8789'))
-ALLOWED_ORIGINS = frozenset(os.environ.get('LM_ALLOWED_ORIGINS', 'http://127.0.0.1:8000,http://localhost:8000').split(','))
-ALLOWED_HOSTS = {f'127.0.0.1:{PORT}', f'localhost:{PORT}'}
+ALLOWED_ORIGINS = parse_allowed_origins(os.environ.get('LM_ALLOWED_ORIGINS', DEFAULT_ALLOWED_ORIGINS))
+ALLOWED_HOSTS = allowed_hosts(PORT)
+SOCKET_TIMEOUT = 30   # seconds per socket read or write on a client connection
 TIME_LIMIT = int(os.environ.get('LM_GENERATOR_TIME_LIMIT', str(12 * 60)))   # beyond the profile's own budget
 STEPS, DEPTH = int(os.environ.get('LM_GENERATOR_STEPS', '16')), int(os.environ.get('LM_GENERATOR_DEPTH', '5'))
 if HOST not in ('127.0.0.1', 'localhost'):
@@ -47,8 +49,6 @@ def summarize(event):
     if k in ('draft_checked',):
         return f"draft checked ok={event.get('ok')} errors={event.get('errors')}"
     return f"{k}: " + json.dumps({x: y for x, y in event.items() if x not in ('kind', 'case', 'added')})[:400]
-if '*' in ALLOWED_ORIGINS or 'null' in ALLOWED_ORIGINS:
-    raise ValueError('Configure explicit game origins, not wildcard or null')
 
 
 class Job:
@@ -182,6 +182,7 @@ def start_job(level='medium'):
 
 class Handler(BaseHTTPRequestHandler):
     server_version = 'LivingMysteryGenerator/1.0'
+    timeout = SOCKET_TIMEOUT   # a client that declares a body and stalls cannot hold a thread
 
     def log_message(self, fmt, *args):  # keep polling quiet
         pass
@@ -204,8 +205,11 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _host_allowed(self):
+        return self.headers.get('Host') in ALLOWED_HOSTS
+
     def _allowed(self):
-        return self.headers.get('Host') in ALLOWED_HOSTS and self.headers.get('Origin') in ALLOWED_ORIGINS
+        return self._host_allowed() and self.headers.get('Origin') in ALLOWED_ORIGINS
 
     def do_OPTIONS(self):
         if not self._allowed() or self.headers.get('Access-Control-Request-Method') not in ('GET', 'POST'):
@@ -214,6 +218,8 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         url = urlparse(self.path)
+        if not self._host_allowed():
+            self._send(403, {'error': 'host_not_allowed'}); return
         if url.path.rstrip('/') in ('', '/health'):
             self._send(200, {'ok': True}); return
         if not self._allowed():

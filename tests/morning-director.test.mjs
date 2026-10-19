@@ -135,7 +135,7 @@ test('a concealment the kernel refused is not offered to the director again', as
   const needed = kc.signs.find(x => ['document', 'item', 'record', 'trace'].includes(x.kind) && !stillSolvable(kc, [x.id]).ok);
   const owner = Morning.actors(s, kc, caseTables(s).behavior.morningCtx.roles, caseTables(s).behavior.morningCtx.victim).find(p => Morning.concealable(s, kc, p).includes(needed.id));
   if (!owner) return;   // nobody here could hide it
-  Morning.install(caseTables(s).kernel, s, {}, s.events.at(-1).id, {solvable: {[`${owner}:${needed.id}`]: 'the case needs it'}}, []);
+  Morning.install(caseTables(s).kernel, s, {}, s.events.at(-1).id, {refused: [needed.id]}, []);
   assert.ok(!Morning.concealable(s, kc, owner).includes(needed.id));
 });
 
@@ -150,4 +150,154 @@ test('the line critic is shown what the speaker must not let slip: their private
   if (!item) return assert.fail('the meeting reached the line critic');
   assert.deepEqual(item.private, ka.private.map(y => y.text));
   assert.deepEqual(item.knowledge, [ka.sayable[0].text]);
+});
+
+
+test('committed availability includes only pending and active concealments outside replanned actors', () => {
+  const {kc, s} = questioned();
+  s.world.flags.morning = {
+    ...(s.world.flags.morning ?? {}), concealed: ['s_telegram'], agendas: {
+      clara: [{kind: 'conceal', clue: 's_letter', state: 'pending'}],
+      ada: [{kind: 'conceal', clue: 's_regbook', state: 'active'}],
+      silas: [
+        {kind: 'conceal', clue: 's_phone', state: 'done'},
+        {kind: 'conceal', clue: 's_notebook', state: 'missed'},
+      ],
+    },
+  };
+  const available = Morning.concealmentAvailability(s, kc, {replanned: ['clara']});
+  assert.deepEqual(available.alreadyConcealed, ['s_telegram']);
+  assert.deepEqual(available.remainingCommitted, [{actor: 'ada', stepIndex: 0, clue: 's_regbook'}]);
+  assert.deepEqual(available.hiddenRoots, ['s_regbook', 's_telegram']);
+  const expectedAcquired = [...new Set([
+    ...kc.signs.filter(x => x.kind === 'public').map(x => x.id),
+    ...s.world.player.evidence.map(x => x.clue),
+  ])].sort();
+  assert.deepEqual(available.acquired, expectedAcquired);
+});
+
+test('every same-round concealment is checked cumulatively and failure cuts only that actor', async () => {
+  const {s} = questioned();
+  const proposal = {agendas: {
+    clara: [
+      {kind: 'conceal', clue: 's_telegram', because: ['k_att_a_clara_fear']},
+      {kind: 'conceal', clue: 's_letter', because: ['k_att_a_clara_fear']},
+    ],
+    ada: [{kind: 'conceal', clue: 's_regbook', because: ['k_att_a_ada_work']}],
+  }};
+  const {plan, audit} = await criticise(s, proposal, {lineCritic: async () => assert.fail('no meetings to criticise')});
+  assert.equal(audit.solvable['clara:s_telegram'], 'still solvable');
+  assert.match(audit.solvable['clara:s_letter'], /false sign s_rowan_test has no reachable, true defeater/);
+  assert.equal(audit.solvable['ada:s_regbook'], 'still solvable');
+  assert.deepEqual(plan.clara.map(x => x.clue), ['s_telegram']);
+  assert.deepEqual(plan.ada.map(x => x.clue), ['s_regbook']);
+});
+
+test('retained pending concealments constrain planning, while a replanned actor\'s old concealments do not', async () => {
+  const {s} = questioned();
+  s.world.flags.morning = {...(s.world.flags.morning ?? {}), agendas: {
+    clara: [{kind: 'conceal', clue: 's_letter', state: 'pending'}],
+  }};
+  const retained = await criticise(s, {agendas: {
+    ada: [{kind: 'conceal', clue: 's_regbook', because: ['k_att_a_ada_work']}],
+  }}, {lineCritic: async () => assert.fail('no meetings to criticise')});
+  assert.equal(retained.plan.ada, undefined);
+  assert.match(retained.audit.solvable['ada:s_regbook'], /false sign s_rowan_test has no reachable, true defeater/);
+
+  const replaced = await criticise(s, {agendas: {
+    clara: [{kind: 'conceal', clue: 's_telegram', because: ['k_att_a_clara_fear']}],
+  }}, {lineCritic: async () => assert.fail('no meetings to criticise')});
+  assert.deepEqual(replaced.replanned, ['clara']);
+  assert.equal(replaced.audit.solvable['clara:s_telegram'], 'still solvable');
+  assert.deepEqual(replaced.plan.clara.map(x => x.clue), ['s_telegram']);
+});
+
+test('line-critic truncation runs before the concealment gate', async () => {
+  const {kc, s, ctx} = questioned();
+  const speaker = 'clara', listener = 'ada';
+  const k = Morning.knowledge(s, kc, speaker, ctx.people, ctx.places);
+  const proposal = {agendas: {[speaker]: [
+    {kind: 'meet', with: listener, place: s.world.npcs[listener].location, say: 'The detective asked where I was.', because: [k.sayable[0].id]},
+    {kind: 'conceal', clue: 's_telegram', because: ['k_att_a_clara_fear']},
+  ]}};
+  const {plan, audit} = await criticise(s, proposal, {lineCritic: async items => ({verdicts: Object.fromEntries(
+    Object.keys(items).map(id => [id, {ok: false, why: 'unfounded'}]))})});
+  assert.equal(plan.clara, undefined);
+  assert.equal(audit.lines['clara:0'], 'unfounded');
+  assert.equal(audit.solvable['clara:s_telegram'], undefined, 'the truncated concealment never reaches certification');
+});
+
+
+test('operational director failures leave state untouched and immediately retryable', async t => {
+  const cases = [
+    ['director transport', ({director}) => async () => { throw Error('offline'); }],
+    ['director revision transport', ({invalidDirector}) => {
+      let calls = 0;
+      return async (url, init) => {
+        if (++calls > 1) throw Error('revision offline');
+        const body = JSON.parse(init.body);
+        return {ok: true, json: async () => ({text: JSON.stringify(invalidDirector(JSON.parse(body.prompt)))})};
+      };
+    }],
+    ['director timeout', () => async () => new Promise(() => {})],
+    ['malformed director JSON', () => async () => ({ok: true, json: async () => ({text: '{not json'})})],
+    ['malformed line-critic JSON', ({director}) => async (url, init) => {
+      const body = JSON.parse(init.body);
+      return body.system === DIRECTOR_PROMPT
+        ? {ok: true, json: async () => ({text: JSON.stringify(director(JSON.parse(body.prompt)))})}
+        : {ok: true, json: async () => ({text: '{not json'})};
+    }],
+    ['line-critic transport', ({director}) => async (url, init) => {
+      const body = JSON.parse(init.body);
+      if (body.system !== DIRECTOR_PROMPT) throw Error('critic offline');
+      return {ok: true, json: async () => ({text: JSON.stringify(director(JSON.parse(body.prompt)))})};
+    }],
+  ];
+  for (const [label, failingFetch] of cases) await t.test(label, async () => {
+    const {s, a, b} = questioned();
+    s.world.minute = Math.max(s.world.minute, s.world.caseRecords.setting.day.start);
+    const K = caseTables(s).kernel;
+    Morning.install(K, s, {[b]: [{kind: 'stay', place: s.world.npcs[b].location, until: s.world.minute + 120, because: []}]}, s.events.at(-1)?.id);
+    dispatch(s, {type: 'wait', minutes: 15});
+    const director = c => ({agendas: {[a]: [{kind: 'meet', with: b, place: c.people[b].at, say: 'They asked me where I was.', because: [c.people[a].sayable[0].id]}]}, why: 'test'});
+    const invalidDirector = c => ({agendas: {[a]: [{kind: 'meet', with: b, place: c.people[b].at, say: 'They asked me where I was.', because: [c.people[a].private[0].id]}]}, why: 'invalid'});
+    const before = exportSession(s), morningBefore = structuredClone(s.world.flags.morning);
+    const result = await directMorning(s, {fetchImpl: failingFetch({director, invalidDirector}), endpoint: 'x', timeoutMs: label.includes('timeout') ? 2 : 20});
+    assert.equal(result.status, 'error');
+    assert.match(result.error, /offline|timed out|malformed/i);
+    assert.equal(exportSession(s), before, 'no event or world state is committed');
+    assert.deepEqual(s.world.flags.morning, morningBefore, 'cadence and prior agendas are unchanged');
+    assert.ok(s.world.flags.morning.agendas[b].some(x => x.state === 'pending'), 'the prior agenda remains pending');
+
+    let retried = 0;
+    const healthy = proxy(() => { retried++; return {agendas: {}, why: 'quiet'}; });
+    const retry = await directMorning(s, {fetchImpl: healthy, endpoint: 'x', timeoutMs: 20});
+    assert.equal(retry.status, 'empty');
+    assert.ok(retried > 0, 'failure does not consume retry eligibility');
+  });
+});
+
+test('an aborted director round remains stale without changing state', async () => {
+  const {s} = questioned();
+  s.world.minute = Math.max(s.world.minute, s.world.caseRecords.setting.day.start);
+  const controller = new AbortController();
+  controller.abort();
+  const before = exportSession(s);
+  const result = await directMorning(s, {fetchImpl: proxy(() => ({agendas: {}, why: 'quiet'})), signal: controller.signal, endpoint: 'x', timeoutMs: 20});
+  assert.equal(result.status, 'stale');
+  assert.equal(exportSession(s), before);
+});
+
+test('an intentional empty plan advances cadence without replacing prior agendas', async () => {
+  const {s, b} = questioned();
+  s.world.minute = Math.max(s.world.minute, s.world.caseRecords.setting.day.start);
+  const K = caseTables(s).kernel;
+  Morning.install(K, s, {[b]: [{kind: 'stay', place: s.world.npcs[b].location, until: s.world.minute + 120, because: []}]}, s.events.at(-1)?.id);
+  dispatch(s, {type: 'wait', minutes: 15});
+  const prior = structuredClone(s.world.flags.morning.agendas[b]);
+  const result = await directMorning(s, {fetchImpl: proxy(() => ({agendas: {}, why: 'quiet'})), endpoint: 'x', timeoutMs: 20});
+  assert.equal(result.status, 'empty');
+  assert.equal(s.world.flags.morning.last, s.world.minute);
+  assert.deepEqual(s.world.flags.morning.agendas[b], prior);
+  assert.equal((await directMorning(s, {fetchImpl: proxy(() => ({agendas: {}, why: 'quiet'})), endpoint: 'x', timeoutMs: 20})).status, 'not_needed');
 });

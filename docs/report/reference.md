@@ -32,7 +32,7 @@ These paths are relative to the repository root. The report build checks their e
 | Repository path | Responsibility | Chapter |
 | --- | --- | --- |
 | `dist/kernel.mjs` | Event commits, replay, time, travel, perception, import checks | [Architecture](architecture.md) |
-| `dist/engine.mjs` | Case assembly, action routing, transactional character execution | [Architecture](architecture.md) |
+| `dist/engine.mjs` | Case assembly, action routing, transactional character execution; kernel cases bound to the records a save carries | [Architecture](architecture.md#2-2-state-as-a-fold-of-events) |
 | `dist/engine-runtime.mjs` | Case-bound command runtime and kernel assembly | [Architecture](architecture.md) |
 | `dist/prehistory.mjs` | Executable evening events and evidence origins | [Generation](generation.md) |
 | `dist/cases/bellweather-configs.mjs` | Three authored case specifications | [Worked examples](case-study.md) |
@@ -45,7 +45,7 @@ These paths are relative to the repository root. The report build checks their e
 | `dist/knowledge.mjs` | Belief revisions, explicit supports, retirement, intention completion | [Knowledge](knowledge.md) |
 | `dist/claims.mjs` | Structured claims and bounded comparison | [Knowledge](knowledge.md) |
 | `dist/cases/last-bell-claims.mjs` | Authored case-night claim annotations | [Knowledge](knowledge.md) |
-| `dist/character-turn.mjs` | Tickets, model proposal, critic and application checks | [Character turns](characters.md) |
+| `dist/character-turn.mjs` | Tickets (required and advisory accounts, claim details), model proposal, the no-account screen, critic, fallback and application checks | [Character turns](characters.md#4-8-free-text-questions-hints-and-the-notebook-in-generated-cases) |
 | `dist/modules/` | Composable narrative bricks: `contract.mjs`, `index.mjs` (registry + `activeModules`), and `misdirection`/`correction`/`secret-affair`/`concealment`/`manner-of-death`/`poisoning`/`icicle`/`scarf`/`chandelier` | [Generation](generation.md) |
 | `dist/casegen.mjs` | Case-general validator (four obligations + module invariants + forced-insight) and the seeded validated sampler | [Generation](generation.md) |
 | `dist/primitives.mjs` | The versioned primitive algebra (entity ontology, CONSTRAINT primitives, claim-predicate compilers, occurrence facts) and the affordance grammar | [Generation](generation.md#10-10-the-primitive-algebra-and-the-composition-compiler) |
@@ -61,16 +61,17 @@ These paths are relative to the repository root. The report build checks their e
 | `dist/cases/kernel-case.mjs` | Bridge from certified kernel records to the runtime case interface (history, beliefs, gated signs, accounts, grading) | Mystery kernel note (docs/mystery-kernel.md) |
 | `tools/refine-c/refine.py` | Refinement harness: code-scheduled, model-written, code-certified generation with a plausibility critic | Mystery kernel note (docs/mystery-kernel.md) |
 | `tools/refine-c/publish.py` | Selects certified cases, adds questions and evening accounts, publishes to `dist/cases/generated/` | Mystery kernel note (docs/mystery-kernel.md) |
+| `tools/refine-c/publication_io.py` | Durable JSON replacement and the shared publication lock (reentrant, cross-process, legacy lock, temporary sweep) | [Generation](generation.md#10-18-committing-a-published-case) |
 | `tools/mk-certify.mjs` | Command-line certification with the JS kernel (used by the harness and parity check) | Mystery kernel note (docs/mystery-kernel.md) |
 | `docs/visual-world.md` | The visible village: design, plan and the layout as built | Technical report (index) |
 | `tools/refine-c/repair_history.py` | One-off repair of cases published before the history-only rule (typed morning events, backing) | Technical report (generation) |
 | `tools/refine-c/difficulty.py` | Difficulty features, model, targets and fitting | docs/difficulty.md |
 | `tools/refine-c/batch.py` | Generate several cases in parallel and report how they came out | docs/difficulty.md |
 | `tools/e2e_dialogue.mjs` | Ask every character a standard question set with the real AI; report fallbacks | Technical report (generation) |
-| `dist/morning.mjs` | The living morning: knowledge, the code critic, execution, news | docs/living-village.md |
+| `dist/morning.mjs` | The living morning: knowledge, the code critic, the concealment projection, execution, news | [Director](director.md#6-11-the-living-morning-in-generated-cases) |
 | `dist/morning-director.mjs` | The morning director: context, critics, detached planning | docs/living-village.md |
 | `tools/play.mjs` | Play a case turn by turn from the command line, with the director | docs/living-village.md |
-| `dist/cases/questions.mjs` | The standard questions (one source for the game and for publishing) | docs/living-village.md |
+| `dist/cases/questions.mjs` | The standard questions, the topics an alias may target and the plain-whereabouts rule (one source for the game and for publishing) | [Generation](generation.md#10-17-the-history-is-the-only-source-of-facts) |
 | `dist/places.mjs` | Place names mid-sentence (uses a place's own phrase from the setting) | docs/living-village.md |
 | `server/case_oracle.py` | Z3 case oracle: feasibility, per-candidate satisfiability with unsat cores, alternative stories; publish gate | Technical report (generation) |
 | `tools/refine-c/premise.py` | Premise deck: victim, culprit, suspects, method, motive, scene and shape with rotation and seed checks | Technical report (generation) |
@@ -78,7 +79,10 @@ These paths are relative to the repository root. The report build checks their e
 | `dist/cases/village.mjs` | Bellweather for generated cases: ten places, eleven people with character sheets | Architecture |
 | `tests/test_case_oracle.py` | Z3 oracle agrees with the kernel at every depth; endpoint boundary | Technical report (evaluation) |
 | `server/generator_server.py` | Loopback generation server: one job at a time, incremental progress events, publish on completion | Mystery kernel note (docs/mystery-kernel.md) |
-| `server/static_server.py` | Game server for `dist/` with no-cache headers; accepts the browser's debug log at `POST /__log` | Mystery kernel note (docs/mystery-kernel.md) |
+| `server/static_server.py` | Game server for `dist/` with no-cache headers; accepts the browser's debug log at `POST /__log`; only its own Host, no dotfiles | Mystery kernel note (docs/mystery-kernel.md) |
+| `server/local_origins.py` | The one parser of `LM_ALLOWED_ORIGINS` and the Host values each loopback server accepts | [Architecture](architecture.md) |
+| `tests/test_local_servers.py` | Host checks, hidden paths, the shared origin parser and socket timeouts of every local server | [Evaluation](evaluation.md) |
+| `tools/playtest/test_harness.py` | Playtest audit and provenance: billed-but-unparsed replies, audit write failures, terminal status, proxy endpoint | [Playtesting](playtest.md) |
 | `logs/` (not committed) | `game.log` (browser actions, dialogue audits, toasts, generation events, errors, flagged issues), `generator.log`, `proxy.log` | Mystery kernel note (docs/mystery-kernel.md) |
 | `dist/life.mjs` | Persistent daily goals, timed activities, social commitments and replanning | [Characters](characters.md) |
 | `dist/cases/bellweather-life.mjs` | Public work and personal interests independent of culprit assignment | [Characters](characters.md) |
@@ -94,7 +98,7 @@ These paths are relative to the repository root. The report build checks their e
 | `dist/director-turn.mjs` | Optional solver boundary and acquisition witness validation | [Director](director.md) |
 | `server/symbolic_solver.py` | Bounded Z3 translation and solving | [Symbolic layer](symbolic.md) |
 | `server/director_server.py` | Loopback solver endpoint | [Director](director.md) |
-| `server/llm_proxy.py` | Optional model request proxy | [Character turns](characters.md) |
+| `server/llm_proxy.py` | Optional model request proxy; its docstring is the request contract and lists every setting | [Character turns](characters.md) |
 | `dist/inspector.mjs` | Prefix-limited perspective and missed-opportunity projections | [Experience](experience.md) |
 | `dist/ui.mjs` | Browser interaction, pending status and rendered views | [Experience](experience.md) |
 | `dist/dialogue-save.mjs` | Saved dialogue and reasoning-board envelope | [Architecture](architecture.md) |

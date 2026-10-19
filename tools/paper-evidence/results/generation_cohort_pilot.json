@@ -1,0 +1,3364 @@
+{
+  "aggregate_usage": {
+    "cacheReadInputTokens": 1011714,
+    "cacheWriteInputTokens": 24736,
+    "calls": 739,
+    "inputTokens": 5371669,
+    "outputTokens": 1310767,
+    "totalTokens": 7718886
+  },
+  "claims_boundary": [
+    "This is a prospective bounded generation pilot, not a publication set; no case or manifest was made playable.",
+    "Dirty-worktree evidence is preliminary/non-archival.",
+    "Unfinished slots remain in the denominator."
+  ],
+  "cohort": {
+    "cohort_id": "c3-e2-pilot-20261018-135950",
+    "design": {
+      "denominator": 12,
+      "draw_seed_prefix": "sleuthcraft-c3-e2-pilot-v1",
+      "effective_serving_model_policy": "unknown unless response metadata states it",
+      "fixed_order": [
+        "easy",
+        "medium",
+        "hard",
+        "easy",
+        "medium",
+        "hard",
+        "easy",
+        "medium",
+        "hard",
+        "easy",
+        "medium",
+        "hard"
+      ],
+      "hard_wall_seconds": 3600,
+      "levels": {
+        "easy": 4,
+        "hard": 4,
+        "medium": 4
+      },
+      "manual_inclusion_policy": "none",
+      "max_parallel": 3,
+      "playable_publication": false,
+      "region": "us-west-2",
+      "replacement_policy": "none",
+      "requested_models": {
+        "alternate_and_critic": "us.anthropic.claude-sonnet-5",
+        "fast_checks": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+        "generation": "us.anthropic.claude-opus-5-5"
+      }
+    },
+    "finished_at": "2026-10-18T14:55:04.400Z",
+    "started_at": "2026-10-18T13:59:59.918Z",
+    "status": "complete",
+    "wall_seconds": 3304.219
+  },
+  "denominator": {
+    "by_requested_level": {
+      "easy": {
+        "achieved_levels": {
+          "easy": 3
+        },
+        "attempted": 4,
+        "completed_strictly_gateable": 3,
+        "other_outcomes": {
+          "crash": 1
+        }
+      },
+      "hard": {
+        "achieved_levels": {
+          "hard": 4
+        },
+        "attempted": 4,
+        "completed_strictly_gateable": 4,
+        "other_outcomes": {}
+      },
+      "medium": {
+        "achieved_levels": {
+          "medium": 4
+        },
+        "attempted": 4,
+        "completed_strictly_gateable": 4,
+        "other_outcomes": {}
+      }
+    },
+    "outcomes": {
+      "completed-strictly-gateable": 11,
+      "crash": 1
+    },
+    "predeclared_slots": 12,
+    "retained_slots": 12
+  },
+  "generated_at": "2026-10-18T15:01:23.550Z",
+  "normalized_sha256": "0d4b02dbb7e516b0a7bd9f0be6ed11535e8c958c811dbc385c0359b9ab588369",
+  "provenance": {
+    "cohort_manifest_sha256": "abc4516fc151754c22fc8f11c9e539dd15b69a588440a24f7ee2a084bca5301d",
+    "environment": {
+      "aws_profile_name": null,
+      "boto3": "1.43.90",
+      "botocore": "1.43.90",
+      "machine": "arm64",
+      "platform": "macOS-26.7.1-arm64-arm-64bit",
+      "python": "3.12.10",
+      "region": "us-west-2"
+    },
+    "finish": {
+      "archival_status": "preliminary/non-archival",
+      "branch": "main",
+      "commit": "a2716a8643d8177914a5decb94edf474bf9c77f5",
+      "input_files": [
+        {
+          "path": "tools/refine-c/refine.py",
+          "sha256": "74bc7b85c7158d19d1a891dbfba93461f9390c9524a09291ebb65161c7df0685"
+        },
+        {
+          "path": "tools/refine-c/provenance.py",
+          "sha256": "ddac1f6a0a4d8f1311726811d7add527a7711e613407f3c982dee07279ed9394"
+        },
+        {
+          "path": "tools/refine-c/publish.py",
+          "sha256": "70e203279c3484461e8dd38fed8d98ea07eca36db67baaf0d8a0d97e831904b5"
+        },
+        {
+          "path": "tools/refine-c/enrich.py",
+          "sha256": "19f84fc50c2241076142b612b586156b6668143c8d9d6f2921080f4294a5c0c7"
+        },
+        {
+          "path": "tools/refine-c/premise.py",
+          "sha256": "91cf5f2cbcbbd87870ac3abfc8577583f7e0f57f1d5d19a7f9553184c8869e58"
+        },
+        {
+          "path": "tools/refine-c/difficulty.py",
+          "sha256": "d2bb9f4f999bc42127eb78301147447aedd821858d580bf63a27d1391f3b15ed"
+        },
+        {
+          "path": "tools/refine-c/settings/bellweather.json",
+          "sha256": "dff6115da1f91e87bcf27088f0cac339261d4ce5929cbd6a2ccc882ef03cd741"
+        },
+        {
+          "path": "tools/refine-c/settings/difficulty.json",
+          "sha256": "3b58da93eb8301f8c7d9e64af1659c6e1fc8d22d8388f033aa74827a6a82a4ef"
+        }
+      ],
+      "tracked_diff_sha256": "a85f1e13a13c92196ce136740ddda720403a7d968d3d18e9074f6960c400251e",
+      "tracked_dirty_paths": [
+        "dist/cases/kernel-case.mjs",
+        "dist/engine-runtime.mjs",
+        "dist/investigation.mjs",
+        "dist/morning-director.mjs",
+        "dist/morning.mjs",
+        "docs/showcase/MAKING-OF.md",
+        "docs/showcase/make_titles.py",
+        "tests/morning-director.test.mjs",
+        "tests/morning.test.mjs",
+        "tools/refine-c/publish.py",
+        "tools/refine-c/refine.py"
+      ],
+      "untracked_content_sha256": "5df49b03a3c3eb7edb12cdd5a06d31fcc5b8c03b57ce0cb8a2998e7ac06ec86c",
+      "untracked_paths": [
+        "results/representation_fidelity_codebook.md",
+        "results/representation_fidelity_items.jsonl",
+        "results/representation_fidelity_key.json",
+        "results/representation_fidelity_report.json",
+        "results/representation_fidelity_report.md",
+        "tests/investigation-kernel.test.mjs",
+        "tests/paper-evidence.test.mjs",
+        "tests/test_playtest_analysis.py",
+        "tests/test_representation_fidelity.py",
+        "tools/paper-evidence/README.md",
+        "tools/paper-evidence/certifier_experiments.mjs",
+        "tools/paper-evidence/committed_concealment_audit.mjs",
+        "tools/paper-evidence/corpus_depth_planning.py",
+        "tools/paper-evidence/e1_gate_ablation.mjs",
+        "tools/paper-evidence/export_representation_fidelity.py",
+        "tools/paper-evidence/generation_funnel.py",
+        "tools/paper-evidence/generation_policy_replay.py",
+        "tools/paper-evidence/paper_evidence_helpers.mjs",
+        "tools/paper-evidence/parity_capture.py",
+        "tools/paper-evidence/playtest_analysis.py",
+        "tools/paper-evidence/results/certifier_experiments.json",
+        "tools/paper-evidence/results/certifier_experiments.md",
+        "tools/paper-evidence/results/committed_concealment_audit.json",
+        "tools/paper-evidence/results/committed_concealment_audit.md",
+        "tools/paper-evidence/results/corpus_depth_planning.json",
+        "tools/paper-evidence/results/corpus_depth_planning.md",
+        "tools/paper-evidence/results/e1_gate_ablation.json",
+        "tools/paper-evidence/results/e1_gate_ablation.md",
+        "tools/paper-evidence/results/generation_funnel.json",
+        "tools/paper-evidence/results/generation_funnel.md",
+        "tools/paper-evidence/results/parity.json",
+        "tools/paper-evidence/results/parity.md",
+        "tools/paper-evidence/results/playtest_analysis.json",
+        "tools/paper-evidence/results/playtest_analysis.md",
+        "tools/paper-evidence/results/summary.md",
+        "tools/paper-evidence/results/witness_sweep.json",
+        "tools/paper-evidence/results/witness_sweep.md",
+        "tools/paper-evidence/structural_depth.mjs",
+        "tools/paper-evidence/witness_sweep.mjs",
+        "tools/refine-c/generation_cohort.py",
+        "tools/refine-c/provenance.py",
+        "tools/refine-c/test_c3_provenance.py",
+        "tools/refine-c/test_generation_policy_replay.py",
+        "tools/refine-c/test_generation_review.py"
+      ],
+      "worktree_dirty": true
+    },
+    "private_cohort_directory": "tools/refine-c/runs/experiments/c3-e2-pilot-20261018-135950",
+    "start": {
+      "archival_status": "preliminary/non-archival",
+      "branch": "main",
+      "commit": "a2716a8643d8177914a5decb94edf474bf9c77f5",
+      "input_files": [
+        {
+          "path": "tools/refine-c/refine.py",
+          "sha256": "74bc7b85c7158d19d1a891dbfba93461f9390c9524a09291ebb65161c7df0685"
+        },
+        {
+          "path": "tools/refine-c/provenance.py",
+          "sha256": "ddac1f6a0a4d8f1311726811d7add527a7711e613407f3c982dee07279ed9394"
+        },
+        {
+          "path": "tools/refine-c/publish.py",
+          "sha256": "70e203279c3484461e8dd38fed8d98ea07eca36db67baaf0d8a0d97e831904b5"
+        },
+        {
+          "path": "tools/refine-c/enrich.py",
+          "sha256": "19f84fc50c2241076142b612b586156b6668143c8d9d6f2921080f4294a5c0c7"
+        },
+        {
+          "path": "tools/refine-c/premise.py",
+          "sha256": "91cf5f2cbcbbd87870ac3abfc8577583f7e0f57f1d5d19a7f9553184c8869e58"
+        },
+        {
+          "path": "tools/refine-c/difficulty.py",
+          "sha256": "d2bb9f4f999bc42127eb78301147447aedd821858d580bf63a27d1391f3b15ed"
+        },
+        {
+          "path": "tools/refine-c/settings/bellweather.json",
+          "sha256": "dff6115da1f91e87bcf27088f0cac339261d4ce5929cbd6a2ccc882ef03cd741"
+        },
+        {
+          "path": "tools/refine-c/settings/difficulty.json",
+          "sha256": "3b58da93eb8301f8c7d9e64af1659c6e1fc8d22d8388f033aa74827a6a82a4ef"
+        }
+      ],
+      "tracked_diff_sha256": "a85f1e13a13c92196ce136740ddda720403a7d968d3d18e9074f6960c400251e",
+      "tracked_dirty_paths": [
+        "dist/cases/kernel-case.mjs",
+        "dist/engine-runtime.mjs",
+        "dist/investigation.mjs",
+        "dist/morning-director.mjs",
+        "dist/morning.mjs",
+        "docs/showcase/MAKING-OF.md",
+        "docs/showcase/make_titles.py",
+        "tests/morning-director.test.mjs",
+        "tests/morning.test.mjs",
+        "tools/refine-c/publish.py",
+        "tools/refine-c/refine.py"
+      ],
+      "untracked_content_sha256": "5df49b03a3c3eb7edb12cdd5a06d31fcc5b8c03b57ce0cb8a2998e7ac06ec86c",
+      "untracked_paths": [
+        "results/representation_fidelity_codebook.md",
+        "results/representation_fidelity_items.jsonl",
+        "results/representation_fidelity_key.json",
+        "results/representation_fidelity_report.json",
+        "results/representation_fidelity_report.md",
+        "tests/investigation-kernel.test.mjs",
+        "tests/paper-evidence.test.mjs",
+        "tests/test_playtest_analysis.py",
+        "tests/test_representation_fidelity.py",
+        "tools/paper-evidence/README.md",
+        "tools/paper-evidence/certifier_experiments.mjs",
+        "tools/paper-evidence/committed_concealment_audit.mjs",
+        "tools/paper-evidence/corpus_depth_planning.py",
+        "tools/paper-evidence/e1_gate_ablation.mjs",
+        "tools/paper-evidence/export_representation_fidelity.py",
+        "tools/paper-evidence/generation_funnel.py",
+        "tools/paper-evidence/generation_policy_replay.py",
+        "tools/paper-evidence/paper_evidence_helpers.mjs",
+        "tools/paper-evidence/parity_capture.py",
+        "tools/paper-evidence/playtest_analysis.py",
+        "tools/paper-evidence/results/certifier_experiments.json",
+        "tools/paper-evidence/results/certifier_experiments.md",
+        "tools/paper-evidence/results/committed_concealment_audit.json",
+        "tools/paper-evidence/results/committed_concealment_audit.md",
+        "tools/paper-evidence/results/corpus_depth_planning.json",
+        "tools/paper-evidence/results/corpus_depth_planning.md",
+        "tools/paper-evidence/results/e1_gate_ablation.json",
+        "tools/paper-evidence/results/e1_gate_ablation.md",
+        "tools/paper-evidence/results/generation_funnel.json",
+        "tools/paper-evidence/results/generation_funnel.md",
+        "tools/paper-evidence/results/parity.json",
+        "tools/paper-evidence/results/parity.md",
+        "tools/paper-evidence/results/playtest_analysis.json",
+        "tools/paper-evidence/results/playtest_analysis.md",
+        "tools/paper-evidence/results/summary.md",
+        "tools/paper-evidence/results/witness_sweep.json",
+        "tools/paper-evidence/results/witness_sweep.md",
+        "tools/paper-evidence/structural_depth.mjs",
+        "tools/paper-evidence/witness_sweep.mjs",
+        "tools/refine-c/generation_cohort.py",
+        "tools/refine-c/provenance.py",
+        "tools/refine-c/test_c3_provenance.py",
+        "tools/refine-c/test_generation_policy_replay.py",
+        "tools/refine-c/test_generation_review.py"
+      ],
+      "worktree_dirty": true
+    }
+  },
+  "request_lifecycle": {
+    "scheduled_requests": 739,
+    "terminal_statuses": {
+      "completed-after-cancel": 19,
+      "response": 720
+    },
+    "unfinished": 0
+  },
+  "retry_taxonomy": {
+    "provider_attempt_http_statuses": {
+      "200": 739,
+      "400": 24
+    },
+    "sdk_retry_attempts": 0,
+    "semantic_repairs": {
+      "forced-tool-choice-to-auto": 24
+    }
+  },
+  "schema_version": "e2-generation-cohort-v1",
+  "slots": [
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 3,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 0,
+          "lies_on_path": 1,
+          "lies_other": 0
+        },
+        "level": "easy",
+        "score": 5.25,
+        "target": "easy",
+        "v": 1
+      },
+      "audit_manifest_sha256": "a19c3e7cc7007dc8d4064879788ebd1cfdc5dac93eebf943422ded1e8e2c67bf",
+      "audit_semantic_sha256": "dbdc17dab5b8e53006087a9f97db6aa4f5eb1eab9a7cd96286f01c66afea0479",
+      "bedrock_request_ids": [
+        "fcf111d3-8e50-46e4-b384-08e180183d73",
+        "3b3e2144-e8fb-45b1-8bee-be5c0ca5f1d6",
+        "cf689eb8-3c56-4667-8714-d7720b875c1c",
+        "927da6f7-03cb-4412-a037-51fe34b5f09f",
+        "dc37f977-a4c4-4ee0-83a8-9570c7102539",
+        "d9fb1c6a-843c-4929-9f48-018ddb7e1bc5",
+        "b7934336-d490-4d0f-ba83-0bb301e17273",
+        "3cca6aac-2495-4d5f-9e60-2daa8fc56509",
+        "840718d9-ed08-4454-aee8-c5115f53678d",
+        "6668a7b7-8c11-420b-8ba2-47cdc9b685f2",
+        "92e823ea-7a62-4705-a3ef-028810a0af33",
+        "9714ea14-ef44-49de-934d-1fa317519a98",
+        "d0f16691-7a3d-4c39-aca5-8aafb12bcd7b",
+        "99a16851-652b-41fe-84de-ead5e7bc4b94",
+        "097ad794-3883-4974-954b-707c9ac06461",
+        "77ca9f20-2873-4d5d-9c8b-f466d48b5bfd",
+        "1629fab6-2e14-4b75-8c34-af8185c5d223",
+        "7ef865d2-f82a-4c4a-be3e-40e251f5c487",
+        "0c74d346-dcb3-41b0-9279-49d3f896ab07",
+        "bbc2b8cc-bbdc-4849-91bc-225fed35b7a0",
+        "ce78bfac-0e8a-4192-8997-b87dbe845ad8",
+        "85ec6725-d19f-4cdd-b6c0-3bb357059952",
+        "84c6a2ad-6aae-41e8-8dc3-704036036809",
+        "9e09f371-4603-4a55-bf5c-eab1ce0e6b02",
+        "12bbf361-0597-435a-941d-0ce775a542f5",
+        "9b7b6410-8ad4-404f-9ac0-f66494976277",
+        "5397431b-fe92-41a1-86d4-e0692da28a64",
+        "39b2e8fa-8574-42b4-8dcd-885c25bb0cac",
+        "563e9e4a-f3f0-41a0-868e-b69c6838ec35",
+        "8ec5ca47-08e9-4d49-9d9f-d200404fad04",
+        "fb7d80da-1db1-4602-99aa-34147e3d4b5e",
+        "13c1b094-998c-49f8-b75c-02a50e654eb8",
+        "3ba5c567-524a-43dc-86a8-100d2cfce5be",
+        "789ee42a-aa94-4f50-93eb-561d63b60729",
+        "b3ef92ff-46ae-448c-b0a2-7c1081557ba2",
+        "defa204d-81e1-4a29-85b9-cf8ca0b812a8",
+        "9f0b5283-8102-4a2f-86ad-a0d7f311c88c",
+        "392dc183-27e0-411f-80df-bb251be63f26",
+        "fd36ce50-c249-43db-bc32-4523438fd853",
+        "928f88f2-7f60-4d7d-a4ba-2c65e2d42337",
+        "644bfbb6-1d79-40ce-ab9b-c37abecfbbaf"
+      ],
+      "case_sha256": "3b06f3a1e84a3d6b56d02d761efd6a3cf11a743ab03f8398f50448c66eab2fff",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:01",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "e7b43266c10100bd83d0ed98643b2860f90eb808a426e73c455385f45afd88c6",
+        "metrics": {
+          "false_signs": [
+            "t_ada"
+          ],
+          "herrings": [
+            "b_clara_hand"
+          ],
+          "max_depth": 3,
+          "means": [
+            "s_tip"
+          ],
+          "mmo_depth": 3,
+          "motive": [],
+          "pillars": {
+            "means": 3,
+            "motive": 1,
+            "opportunity": 3
+          },
+          "solve_depth": 3,
+          "surface": [
+            "c_clara",
+            "c_silas",
+            "c_vicar"
+          ],
+          "threads": {
+            "c_clara": 3,
+            "c_silas": 3,
+            "c_vicar": 3,
+            "truth": 3
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 41,
+        "in": 222816,
+        "out": 56236
+      },
+      "ordinal": 1,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "7245a54991115528d517cb07bf37ac3993e6fda11a1304bb60628bcd57bedff0",
+        "javascript": {
+          "maxDepth": 3,
+          "ok": true,
+          "pillars": {
+            "means": 3,
+            "motive": 1,
+            "opportunity": 3
+          },
+          "solveDepth": 3,
+          "threads": {
+            "c_clara": 3,
+            "c_silas": 3,
+            "c_vicar": 3,
+            "truth": 3
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 3,
+          "means": [
+            "s_tip"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 3,
+            "motive": 1,
+            "opportunity": 3
+          },
+          "solve_depth": 3,
+          "threads": {
+            "c_clara": 3,
+            "c_silas": 3,
+            "c_vicar": 3,
+            "truth": 3
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "ef753ba4620ac04a43f325a6b07b39540be0d7458099e9b8257104df0461b7da",
+        "javascript": {
+          "maxDepth": 3,
+          "ok": true,
+          "pillars": {
+            "means": 3,
+            "motive": 1,
+            "opportunity": 3
+          },
+          "solveDepth": 3,
+          "threads": {
+            "c_clara": 3,
+            "c_silas": 3,
+            "c_vicar": 3,
+            "truth": 3
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 3,
+          "means": [
+            "s_tip"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 3,
+            "motive": 1,
+            "opportunity": 3
+          },
+          "solve_depth": 3,
+          "threads": {
+            "c_clara": 3,
+            "c_silas": 3,
+            "c_vicar": 3,
+            "truth": 3
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "911ccdb6f6f902520aaf84747c351dd5d319cae74f9659250e3a4db9d4d88d82",
+      "request_count": 41,
+      "request_statuses": {
+        "response": 41
+      },
+      "requested_difficulty_profile": {
+        "depth": 3,
+        "herrings": [
+          0,
+          1
+        ],
+        "herrings_aimed": 0,
+        "innocents": 0,
+        "level": "easy",
+        "seconds": 480,
+        "steps": 8,
+        "truth": 0,
+        "twist": false
+      },
+      "requested_level": "easy",
+      "requested_target_deficits": [],
+      "seconds": 391.201,
+      "slot_id": "slot-01-easy",
+      "usage": {
+        "cacheReadInputTokens": 31950,
+        "cacheWriteInputTokens": 10632,
+        "calls": 41,
+        "inputTokens": 222816,
+        "outputTokens": 56236,
+        "totalTokens": 321634
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 6,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 1,
+          "lies_on_path": 0,
+          "lies_other": 1
+        },
+        "level": "medium",
+        "score": 6.75,
+        "target": "medium",
+        "v": 1
+      },
+      "audit_manifest_sha256": "96bd4c0d4f9c8580bb51f51cba04b2911799a88072f1b1e59e3d34cc6e6171af",
+      "audit_semantic_sha256": "a9e75b93978e0d0704b87aca5b68f21b6385dd546ee55cf2dc147543cd527eee",
+      "bedrock_request_ids": [
+        "fcb946cd-b095-4ed3-b11e-b61df7b4600a",
+        "84dd4190-d2f1-48f0-b310-fb92fd6fa7b9",
+        "19e758da-e0e7-4896-9c15-6a0a3016d21a",
+        "a35ea57c-445c-4600-81d4-b174b8fc9490",
+        "5eeb98d1-1a96-45fa-a088-a37f4de96090",
+        "ab6ce869-6084-43d2-b259-17c1db799412",
+        "aabf07d9-d09e-46ce-a427-cb9ff36a3320",
+        "d653fa47-8674-4d9a-9ea1-dffff55e3921",
+        "46af5181-f16d-456b-bae8-5591a7786654",
+        "2aaf2452-308c-4150-b143-eb3cbd7cf38d",
+        "bd480ff3-80be-4351-83db-b8cf7ba428dc",
+        "fc37f450-a94b-47e3-874c-e053e56a67a7",
+        "3047c6c3-bd87-4d19-acce-0d6ff5d4b25d",
+        "87ee8228-4906-4d94-9997-84fb4b75351b",
+        "304ecf08-d968-43d7-bca8-e925d43eaa7f",
+        "6c47bc47-27e8-4b6d-a918-ae8ff0fe5f02",
+        "ccf37b1d-e7f4-40b5-a9db-a65f97feb379",
+        "d578737d-657c-422a-8030-221656546978",
+        "a762e571-54ae-4bdc-a950-9df67b25037f",
+        "7ee63771-5fbe-467f-aa7a-db1a74e7e455",
+        "ddb0ca66-8fd9-4a1e-9f6f-5c60e5d27f2d",
+        "2726a7a9-50f5-45c4-a587-523faa7772be",
+        "9f7aaa79-53fe-4a67-9e29-ebfc5f05cdc0",
+        "02332708-24af-44d5-94d3-b0481539655b",
+        "8379ffdd-7d09-4166-86a0-a3ac6e81f315",
+        "55f27d0b-d0ee-4e13-a42f-4742a5ce6cfc",
+        "6a645177-6c0b-4c5a-98be-737bfd2d3979",
+        "f9379689-d9fe-4094-8bcf-7f2923bd8810",
+        "845f5925-3d68-4057-8f82-03b97ee9ffa7",
+        "58ca52b9-25a6-475c-87b0-95a6d31639f4",
+        "d7500b39-5773-4c2a-8649-3163246caca4",
+        "1d1edd56-2e54-4df7-8878-23a276c72713",
+        "9c793c0f-a88f-4a4e-8aa5-557c6b488916",
+        "e437622a-b9c7-46c9-8114-8b14fc17d643",
+        "9c050817-d9a6-427d-8dc7-ae229f5fa7a1",
+        "7cedd4fa-309e-499b-bd51-faa697c5e22f",
+        "5cfa3d9b-1bd1-4fc3-9d05-f80f16ad31f0",
+        "084cb3aa-3bed-4b42-8b7e-3b92dcb43618",
+        "6e6d8d22-6d34-4d8f-baef-07a8ab3ede9d",
+        "e101da30-532d-49b2-9584-4686621cf7c6",
+        "be697e1c-c661-44bb-b6bf-4d74669f5bcd",
+        "4d94a907-a5be-43e7-bd8b-39c3cea14c41",
+        "ebbc17ed-5e01-49b0-815e-5f3eabde0bce",
+        "713e2f76-2293-4826-a283-fb2437f0e144",
+        "8814f2ee-b803-4652-a532-e67ca638fc26",
+        "363a3647-8faa-4afb-974d-759ff582961b",
+        "0cfecb1a-7bf9-42d0-9e9a-a66ce1542225",
+        "dead1d1e-1da2-47ec-ac68-060b416ead53",
+        "6dbb08ec-bedb-4b7c-a84c-c1136ff560ec",
+        "bf19e6b8-7d1d-4ce6-a27f-93d6761a3217",
+        "c2316c0b-a55f-479c-aa0c-af0f24a6e5fe",
+        "a6d5ca41-856b-413e-b6b6-55ad5db04419",
+        "5e0be5cf-0a49-433b-8d31-fbf38508d3da",
+        "1566d224-8384-4b89-8cda-d705718dfd5a",
+        "51c6e979-de99-4ff0-9919-12a0e477485a",
+        "38af94f5-e139-43dc-aab9-c73ee4742799",
+        "a1973097-1d5f-4075-89fc-444bde763100",
+        "2abf10f8-0a66-4535-8a01-09d7e03decdc",
+        "eb5fb3e7-a90c-4475-b1bf-8d1d89db7ca7",
+        "a00802f7-6533-4ff6-9069-edbbbab6db31"
+      ],
+      "case_sha256": "c33aaa6d69576ead2c68448ea1d67e325bc86dc6349da887476964aa71e63d42",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:02",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "1de6aff8f5b5f4c6f9624a82abef1a2ebfd10156f53dae57736d9b0a5de103b6",
+        "metrics": {
+          "false_signs": [
+            "s_clock"
+          ],
+          "herrings": [
+            "b_ada_apron"
+          ],
+          "max_depth": 6,
+          "means": [
+            "s_fibres"
+          ],
+          "mmo_depth": 6,
+          "motive": [],
+          "pillars": {
+            "means": 5,
+            "motive": 2,
+            "opportunity": 6
+          },
+          "solve_depth": 6,
+          "surface": [
+            "ada",
+            "jonah",
+            "silas"
+          ],
+          "threads": {
+            "ada": 6,
+            "jonah": 6,
+            "silas": 6,
+            "truth": 6
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 60,
+        "in": 412125,
+        "out": 121251
+      },
+      "ordinal": 2,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "095b6101dd89647a5246604e9847c3a62d9865b4c46be30c2bb2ace86d8d5543",
+        "javascript": {
+          "maxDepth": 6,
+          "ok": true,
+          "pillars": {
+            "means": 5,
+            "motive": 2,
+            "opportunity": 6
+          },
+          "solveDepth": 6,
+          "threads": {
+            "ada": 6,
+            "jonah": 6,
+            "silas": 6,
+            "truth": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 6,
+          "means": [
+            "s_fibres"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 5,
+            "motive": 2,
+            "opportunity": 6
+          },
+          "solve_depth": 6,
+          "threads": {
+            "ada": 6,
+            "jonah": 6,
+            "silas": 6,
+            "truth": 0
+          },
+          "twist": false
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "7f930ceef78c22da75d87daed654e9a28364b95f820e90cfc7ef3dbc30042c71",
+        "javascript": {
+          "maxDepth": 6,
+          "ok": true,
+          "pillars": {
+            "means": 5,
+            "motive": 2,
+            "opportunity": 6
+          },
+          "solveDepth": 6,
+          "threads": {
+            "ada": 6,
+            "jonah": 6,
+            "silas": 6,
+            "truth": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 6,
+          "means": [
+            "s_fibres"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 5,
+            "motive": 2,
+            "opportunity": 6
+          },
+          "solve_depth": 6,
+          "threads": {
+            "ada": 6,
+            "jonah": 6,
+            "silas": 6,
+            "truth": 0
+          },
+          "twist": false
+        }
+      },
+      "premise_sha256": "d6eded4b8e6515dce4861886a28d5169cb059e0076c937885dee931d9cc8f62c",
+      "request_count": 60,
+      "request_statuses": {
+        "completed-after-cancel": 1,
+        "response": 59
+      },
+      "requested_difficulty_profile": {
+        "depth": 5,
+        "herrings": [
+          1,
+          2
+        ],
+        "herrings_aimed": 0,
+        "innocents": 2,
+        "level": "medium",
+        "seconds": 900,
+        "steps": 16,
+        "truth": 3,
+        "twist": true
+      },
+      "requested_level": "medium",
+      "requested_target_deficits": [
+        "the truth is clear by layer 0 (< 3)",
+        "no twist"
+      ],
+      "seconds": 796.152,
+      "slot_id": "slot-02-medium",
+      "usage": {
+        "cacheReadInputTokens": 71006,
+        "cacheWriteInputTokens": 7052,
+        "calls": 60,
+        "inputTokens": 412125,
+        "outputTokens": 121251,
+        "totalTokens": 611434
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 7,
+          "herrings_aimed": 2,
+          "herrings_other": 0,
+          "lenient_motives": 1,
+          "lies_on_path": 1,
+          "lies_other": 0
+        },
+        "level": "hard",
+        "score": 9.5,
+        "target": "hard",
+        "v": 1
+      },
+      "audit_manifest_sha256": "bcac382a0329c15e820aa95c6193fa626806751c6e657cfe0e9c33cd10f07bc7",
+      "audit_semantic_sha256": "fd27cf3ad4688e8236c57b89f717d2e638df65e678279559253d491d9cc4b641",
+      "bedrock_request_ids": [
+        "67162424-e4b8-45c6-8d5b-2707d124f400",
+        "0b71baf2-3dfd-4308-8f01-721054ddc6c2",
+        "d01ef6ab-ef67-48f1-83ae-91572d2b157b",
+        "c2f255ac-a6b7-42bb-b02f-c922ce3d44e3",
+        "fe3ce8b2-f08e-4b71-96b8-bbdfe797d36b",
+        "e9630700-0bb4-4311-8478-81206dc90b46",
+        "9f23c410-89f9-40e8-9873-4f643c01e294",
+        "ea709a16-8fc7-40a6-9339-9dd299fb0675",
+        "c709c038-e79d-4191-ae69-66a72365020b",
+        "3b0504fc-d299-489e-b469-460520a3a4cd",
+        "7ccf0cd9-ad9d-45d8-b5e9-9d21b403c4d0",
+        "31271b7a-f874-4880-91db-70e9b3601965",
+        "be4122e0-07f7-4005-9122-3ed2146d887a",
+        "dcb5fee2-9a84-4687-8f53-5b4495e0889e",
+        "a2c1eec4-ee15-406c-8e48-eb35edc4a641",
+        "feecd0f4-e072-40d7-9274-530edbb00ec6",
+        "56b5e10d-51e7-4b9a-8097-230f3330b1ee",
+        "0bf57070-232d-414d-a3fa-7700a764079b",
+        "988a48b8-8c1e-45fb-b634-e9389a0a657f",
+        "6dcd69c5-2696-4865-9371-0f2bfa454431",
+        "2d370c50-f72e-48ea-a410-1f1648e321dd",
+        "8a6f0ee5-2f47-49cb-b298-5ff7e2c67f37",
+        "3fa54238-1d8a-4046-b2ca-56aff019e34b",
+        "4d90446b-196d-4eab-971d-c1b58cf38c40",
+        "2282c136-b518-465b-a5e6-a55d6df366a5",
+        "d9674f3e-6c74-4c68-8c27-1ba100eb9118",
+        "ab4e69b5-92bf-49a6-8eeb-2ce1ae665211",
+        "b01c41f3-8a60-4cdf-a3b3-dffe0e2fcb98",
+        "d696acbf-7c51-440f-992c-412fe8dc6b72",
+        "898ca560-f452-4080-869b-55cda61f1a01",
+        "f56f84bc-7bb9-4994-a4bd-55d4f4a012c8",
+        "ef50f06f-bb21-44f9-b6ec-e3956c6e643b",
+        "20f3fcab-0d95-4896-b38c-b1c46166cf4d",
+        "cc28c0d1-f998-41e4-a2bd-c9b1a78d5549",
+        "74cbdebc-8da7-44e7-8dbf-20db97719b71",
+        "fcbb90b5-20c4-4727-9e86-74e0db54e06a",
+        "e82c7043-0b02-4c7e-a0a4-4d0c67feb016",
+        "01bbd9dd-ecf4-4128-b3f9-fed71b1d9471",
+        "33fb3af0-8b36-4e5b-8c0b-4416f4eae1dd",
+        "ff7cdbd4-8b43-4127-a5cf-475f38c84f14",
+        "9d484d39-2e51-4f44-b897-232f6a7c46ac",
+        "475604ea-e45d-445c-9434-896e251e1f54",
+        "5d383e69-401f-4962-97d2-63c6a0458c38",
+        "fd6b366a-0c7d-4551-b4fc-a6341e574ca1",
+        "bc837eb1-e597-4b3e-83f7-426e86ee5bdd",
+        "5316a407-d939-457c-a916-b6e2496a80a8",
+        "592f2b6f-5d34-45a8-bec0-6a771d9ad299",
+        "ad55c513-2c7a-4564-897f-e658047e233b",
+        "7987dac8-2cf1-4ff2-b52f-93cdbfd04741",
+        "981995f8-b6e4-4be7-9336-a266eedf79e7",
+        "ea432a7a-cb23-498a-a373-bbaf38315500",
+        "009edea5-4579-4fad-bdde-7cc2e3542482",
+        "bd936bfd-4975-4661-a03a-172414df37f0",
+        "1990a9b4-f843-4bee-8dc8-47ac12851894",
+        "870acb71-d256-4de4-9337-1a733a19105b",
+        "67cc87f2-4063-4efa-9dcd-c4ee8efef5da",
+        "c076101a-eb58-4715-af04-3d068a60eeb5",
+        "8ff240e2-3763-4953-854e-4b479da62ae0",
+        "7f3c7df2-8369-4743-9625-c6f491aadde4",
+        "e4378fab-8d62-4e1a-b91f-c0943f66223e",
+        "a0c55088-8470-4a21-b367-7c7fa44fea60",
+        "c92bb8d8-73fa-43c4-b963-3de290338d2f",
+        "86d95fed-411b-46f3-837b-3353ee0faa13",
+        "052c5e67-03c6-45c6-b7f9-44030c489924",
+        "616eac82-3fe7-4b6f-a5bf-7bc29da45e03",
+        "c8dd53ff-8b58-417e-b2a4-6298389d6129",
+        "4a891ce9-173a-419a-a705-39f3a70e147b",
+        "db6cd8f2-dee0-4c74-9651-a2529fd3ffa5",
+        "a8c60a62-aa80-4292-a6cf-284ab3cd1577",
+        "ec8a624f-68cf-44e5-bcb9-e5fa20f49c1a",
+        "0dabb068-f094-4156-9a5f-0c2145625194",
+        "1059d61c-8742-4c47-9c3f-60f1d77f0963",
+        "26a4bb9b-20bf-4290-b0c3-c2d7109c865c",
+        "5a794f87-32eb-4c64-8741-d2c34fa2ce74"
+      ],
+      "case_sha256": "5c8b3f0f0a356d8a2a48cf9095d1c8d36c1c9125f09be22f4b76e39adfe85b37",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:03",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "b8ca2a190140dae9580bc74e226e2a3a1541fbe383c72815e9dc26b283036215",
+        "metrics": {
+          "false_signs": [
+            "t_rowan"
+          ],
+          "herrings": [
+            "b_ada",
+            "b_jonah"
+          ],
+          "max_depth": 7,
+          "means": [
+            "s_grit"
+          ],
+          "mmo_depth": 7,
+          "motive": [],
+          "pillars": {
+            "means": 6,
+            "motive": 5,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "surface": [
+            "c_ada",
+            "c_jonah",
+            "c_silas"
+          ],
+          "threads": {
+            "c_ada": 6,
+            "c_jonah": 6,
+            "c_silas": 6,
+            "truth": 7
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 74,
+        "in": 690122,
+        "out": 154235
+      },
+      "ordinal": 3,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "7840a150500564d444c293d0a8a25d8ae560e6f5a7e5cdf9cd5192554a35e011",
+        "javascript": {
+          "maxDepth": 7,
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 5,
+            "opportunity": 7
+          },
+          "solveDepth": 7,
+          "threads": {
+            "c_ada": 6,
+            "c_jonah": 6,
+            "c_silas": 6,
+            "truth": 7
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 7,
+          "means": [
+            "s_grit"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 5,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "threads": {
+            "c_ada": 6,
+            "c_jonah": 6,
+            "c_silas": 6,
+            "truth": 7
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "44ace4bab49889f7c5d72a7d56e4ded5e8dd9170b70df46ec4672c04435ec977",
+        "javascript": {
+          "maxDepth": 7,
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 5,
+            "opportunity": 7
+          },
+          "solveDepth": 7,
+          "threads": {
+            "c_ada": 6,
+            "c_jonah": 6,
+            "c_silas": 6,
+            "truth": 7
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 7,
+          "means": [
+            "s_grit"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 5,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "threads": {
+            "c_ada": 6,
+            "c_jonah": 6,
+            "c_silas": 6,
+            "truth": 7
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "72c4d168bf5639d5adb16cc0e027e1dcd87c9da24a143aa6607f23d71a112e38",
+      "request_count": 74,
+      "request_statuses": {
+        "completed-after-cancel": 1,
+        "response": 73
+      },
+      "requested_difficulty_profile": {
+        "depth": 7,
+        "herrings": [
+          2,
+          3
+        ],
+        "herrings_aimed": 1,
+        "innocents": 3,
+        "level": "hard",
+        "seconds": 1500,
+        "steps": 28,
+        "truth": 4,
+        "twist": true
+      },
+      "requested_level": "hard",
+      "requested_target_deficits": [],
+      "seconds": 981.436,
+      "slot_id": "slot-03-hard",
+      "usage": {
+        "cacheReadInputTokens": 127854,
+        "cacheWriteInputTokens": 7052,
+        "calls": 74,
+        "inputTokens": 690122,
+        "outputTokens": 154235,
+        "totalTokens": 979263
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 3,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 1,
+          "lies_on_path": 1,
+          "lies_other": 0
+        },
+        "level": "easy",
+        "score": 4.75,
+        "target": "easy",
+        "v": 1
+      },
+      "audit_manifest_sha256": "c55d0340cb706ddf2ecc99a6177bc6a8c30b4215059051de9390b7f1b6acd79b",
+      "audit_semantic_sha256": "5a74a66b93f34b0ae7bd475d49a203ac87f78cb38caa5cfe014962bd1c6fcaa8",
+      "bedrock_request_ids": [
+        "2fa01012-39ee-4fcc-ac0a-0304aa49c3fa",
+        "8633a092-6572-45f4-871a-667c95c410e2",
+        "14f0f8b3-0c6d-4c31-8991-92baa018f12d",
+        "daf1e702-e1f4-4368-9959-f0e240c20509",
+        "760abc1c-e798-4414-9743-49c7ddabcc5e",
+        "364c18a7-f253-4d9e-992e-c85a060df12f",
+        "b6ab0d01-1381-43da-85f9-eb730364ac71",
+        "3f93c55b-dd2c-45bd-a6ec-e571b6ea8b1d",
+        "7ed5894a-ef84-4b00-9718-7f91a21b55e2",
+        "1db1dee8-f13b-40fb-96fd-a1b08210205d",
+        "042af416-1df8-48c5-8c61-5786bf8d7354",
+        "2193bfdc-9bbb-4217-bc83-2053c19f0683",
+        "1978cd32-4f91-4ebc-870f-362ad2b0621b",
+        "6cecccdf-ffaa-4646-984d-8627bef67be8",
+        "460c2971-76b8-4fe9-a955-c336626af926",
+        "7c37d4d4-5c64-4def-90b4-fabf9772c63d",
+        "5476f424-2bcb-42ad-a732-597d3553b14c",
+        "ded160c7-884a-4509-8176-00155232ba53",
+        "be8ef91f-62b7-41b3-ada1-0e7a74391021",
+        "f48087a1-337c-4b52-874a-de09626fbce6",
+        "6054b0d3-f812-475d-a5e0-611f7dbe41d8",
+        "19f69e57-a7a0-4127-beba-c6aa9d828372",
+        "307fe8c0-92da-44dd-bb19-8484c6759e0e",
+        "459e7526-8156-4e5b-8a16-41d93c705705",
+        "065d7643-5f49-41e0-9651-97138fa22465",
+        "19cca02a-9517-4f6a-8a90-7a5c3a306906",
+        "a2338aac-c592-4988-9e71-ee9665465b06",
+        "732a8e5f-21e3-4eb7-8de1-dc6517294def",
+        "a1cb9cc6-3192-44f3-9904-b606b7009c3a",
+        "d1359329-2cb7-4160-9c6e-4c49fc5eff28",
+        "b82cdfb5-a3c2-4dcb-af4b-8098f5ab7d53",
+        "26135064-9d19-46c5-a5c0-24ab6c1617f9",
+        "f4b2d19c-6625-43d9-addb-ea682461e8ec",
+        "7373e876-89f6-42cc-a717-061188c53175",
+        "b2a13e81-f553-4bb3-be73-c9a9235dd4fd",
+        "a729ec50-0565-4bbd-8384-358ed591905c",
+        "f3592542-ba89-437a-a0a1-f1468a746aab",
+        "600d7ca7-4297-4a95-a571-33556a38119c",
+        "a3336635-45f7-43eb-8b54-55d1d2ab259c",
+        "b01dd8e8-528f-4f46-b5ff-1207ab640d1c",
+        "4e93f53a-3944-4e6c-a32c-4b2b46a79943",
+        "ec0f6039-8903-4591-9f59-2265d5acb354",
+        "8bf1a7b1-3775-4ecd-924c-fc724b4793e8",
+        "1104cad6-0f8c-44ac-b336-db865065be91",
+        "c24f8a0a-a666-4744-8fd8-32b908a41828",
+        "7e10d89b-f792-4aa8-82ef-3eac63ef923b",
+        "e587061c-ed84-4e13-a535-2157dde12351",
+        "a2c0da14-3ba7-499c-b415-1b28e2bdd28c",
+        "2e320409-f14a-449e-a5d7-520749ed8aae",
+        "f4b67701-e23c-466e-bec0-14fe0413fc52"
+      ],
+      "case_sha256": "c47b509c2e14518db2ea459eb893fe1a02a60ce390792a7f9ddb780451a70106",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:04",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "129a4940b7755b405c9d47b9fac5b27dd1d277f2789e560e0e812980fb2a8d83",
+        "metrics": {
+          "false_signs": [
+            "s_vicar"
+          ],
+          "herrings": [
+            "s_dora_flinch"
+          ],
+          "max_depth": 3,
+          "means": [
+            "s_doors"
+          ],
+          "mmo_depth": 3,
+          "motive": [],
+          "pillars": {
+            "means": 3,
+            "motive": 1,
+            "opportunity": 3
+          },
+          "solve_depth": 3,
+          "surface": [
+            "c_dora",
+            "c_silas",
+            "c_vera"
+          ],
+          "threads": {
+            "c_dora": 3,
+            "c_silas": 3,
+            "c_vera": 3,
+            "truth": 2
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 50,
+        "in": 308046,
+        "out": 95923
+      },
+      "ordinal": 4,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "c304d8f91c35e9afa47cc751d4d9c41874dc4272d6f016c8319e6ba253986594",
+        "javascript": {
+          "maxDepth": 3,
+          "ok": true,
+          "pillars": {
+            "means": 3,
+            "motive": 1,
+            "opportunity": 3
+          },
+          "solveDepth": 3,
+          "threads": {
+            "c_dora": 3,
+            "c_silas": 3,
+            "c_vera": 3,
+            "truth": 2
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 3,
+          "means": [
+            "s_doors"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 3,
+            "motive": 1,
+            "opportunity": 3
+          },
+          "solve_depth": 3,
+          "threads": {
+            "c_dora": 3,
+            "c_silas": 3,
+            "c_vera": 3,
+            "truth": 2
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "6822299129235ed309e99cbf2e47b41983abfff0e6d8cf176008703670920659",
+        "javascript": {
+          "maxDepth": 3,
+          "ok": true,
+          "pillars": {
+            "means": 3,
+            "motive": 1,
+            "opportunity": 3
+          },
+          "solveDepth": 3,
+          "threads": {
+            "c_dora": 3,
+            "c_silas": 3,
+            "c_vera": 3,
+            "truth": 2
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 3,
+          "means": [
+            "s_doors"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 3,
+            "motive": 1,
+            "opportunity": 3
+          },
+          "solve_depth": 3,
+          "threads": {
+            "c_dora": 3,
+            "c_silas": 3,
+            "c_vera": 3,
+            "truth": 2
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "06ab25af521515ba1e74e24934a39874fecbeb6bc3c64b99032f9151b7def957",
+      "request_count": 50,
+      "request_statuses": {
+        "completed-after-cancel": 2,
+        "response": 48
+      },
+      "requested_difficulty_profile": {
+        "depth": 3,
+        "herrings": [
+          0,
+          1
+        ],
+        "herrings_aimed": 0,
+        "innocents": 0,
+        "level": "easy",
+        "seconds": 480,
+        "steps": 8,
+        "truth": 0,
+        "twist": false
+      },
+      "requested_level": "easy",
+      "requested_target_deficits": [],
+      "seconds": 552.035,
+      "slot_id": "slot-04-easy",
+      "usage": {
+        "cacheReadInputTokens": 63846,
+        "cacheWriteInputTokens": 0,
+        "calls": 50,
+        "inputTokens": 308046,
+        "outputTokens": 95923,
+        "totalTokens": 467815
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 5,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 1,
+          "lies_on_path": 1,
+          "lies_other": 1
+        },
+        "level": "medium",
+        "score": 7.25,
+        "target": "medium",
+        "v": 1
+      },
+      "audit_manifest_sha256": "ab0af20f150a0f24e2c40d00854c618ab3f52b59f6ad124dbf95d4d45b6b8c8e",
+      "audit_semantic_sha256": "f33e88811a888b8b16c1d086f82047cde9c280fed8070bcf9cd2b2283d81c3b3",
+      "bedrock_request_ids": [
+        "bd5c9465-7701-4133-8111-e4fa6c06b51f",
+        "a26c0304-8f2c-4280-8206-64ed7e7d6bdf",
+        "24457cc6-12c4-4e08-ad30-578661a3b761",
+        "8116fbf3-8a28-420e-85df-90910a2c4605",
+        "c93f91e2-6d6b-419b-8f84-3645edad67ab",
+        "e9030319-d00b-4419-9ca4-54f922f2bda3",
+        "6e6ff069-1f57-462e-aa02-21ebc8aa4349",
+        "fa97c143-2fb1-4d73-91b9-6d8fcb141806",
+        "583f57ed-eef0-4523-a13f-63eef00dff0d",
+        "aa3068c3-bd2e-433c-a3ec-f23bf6457057",
+        "542b497f-0a53-4da3-b5e1-e34bb92b863f",
+        "8540a829-760a-47ee-a1df-c26bcf76923d",
+        "3cbf6f85-ac96-4e55-b265-00a1c2b75daa",
+        "3b68bb3f-72be-4f93-a9b8-a9e10b1c2621",
+        "c23f5328-1f46-4da4-9527-bd9f41c3c61c",
+        "50e2af8f-93d0-4808-87ce-a124d4fa745d",
+        "f9e71a42-b2fa-44b0-93fa-9ee83ead6532",
+        "438186d8-33a0-45cf-817d-b9db17054495",
+        "3ebea337-6d88-4755-b76c-a1fe558e4adc",
+        "ce8312c8-0351-4dbc-9415-516c4a8d8463",
+        "cc040d28-5003-4bc3-be2c-50af310c6c5f",
+        "e191b0bb-3491-4967-b408-c1dd9ccb047c",
+        "5be8a162-35a6-4edd-a72c-b65e841510c1",
+        "15310d68-22d6-4695-b566-41310da6f43a",
+        "bb3eb248-149f-41c5-b16e-7b0255ceffd1",
+        "0638d741-bffc-4221-a8b1-460715cd7de9",
+        "1ad5898b-69f7-494e-be76-7ba324a1258a",
+        "7573a1ef-6633-4438-b111-95f84d711779",
+        "467efa5f-bf3e-49c9-b825-8397b9cb7f33",
+        "885c6a7e-5753-43db-819c-f5dc01f6ac0e",
+        "53639a78-8ca0-4a66-9e1d-2099beb9b528",
+        "bafa53e2-076e-4ea6-b477-f2d2c5eeb239",
+        "321b99c6-6f3e-432e-a8e0-716d44d41a50",
+        "15956c5f-0574-40f3-982a-e583ca83ffca",
+        "091162a3-a140-42b8-95bb-b8885e1c6074",
+        "7ec30675-9f7e-4b68-abe5-7c06400ef941",
+        "c918d1d3-47cc-42ad-b012-13defac8e2ac",
+        "e7c7d931-0802-4db2-9a50-915d014766b5",
+        "0d758360-b264-4a5a-bbfa-6f9dc428eae6",
+        "555a79f1-0377-4091-94af-9c8fb8061612",
+        "c789e132-8036-4c16-9295-7cc552370551",
+        "6e466d33-56b3-48bd-aa92-5374165ee1ac",
+        "9c4bddbe-3f47-49d7-aa1d-2b064731ef2f",
+        "90dc2e05-24bf-48eb-adee-17c51005c56b",
+        "32f292d8-272d-4842-8276-f13a88bd7eeb",
+        "4a967e56-00e4-4f4d-8caf-7e9a82bb94dc",
+        "7cc88bd5-1934-421f-8ab7-60678479fc38",
+        "c744158f-fe6f-4e3b-a24b-8dbff157c091",
+        "7079c57f-4b05-4495-9762-1f73baf8db5f",
+        "ac8a588a-4599-4627-8f0f-403caa3c180f",
+        "ced596e9-ece6-42ef-8821-af4e985166f9",
+        "29752ac3-6611-4f98-af6c-66ee388e22d5",
+        "4807273a-afe0-4ddd-bfb8-5abe3b114bba",
+        "7124d53a-61e4-48c4-a692-32f3bc964eb7",
+        "bb745281-30ed-4663-a757-d6fd2e4cd87c",
+        "1a516525-b557-4ae6-a559-1cf8f56f2c6b",
+        "b9ce5d80-ad95-4675-becb-cbf509d9d44c",
+        "8ce677b6-7f3a-4754-ae1e-55a942cb4f07",
+        "610d1ff9-0baf-479a-b877-24c4bdd96854",
+        "f70a54ed-ae34-4833-8cda-45b40b0789e4",
+        "84b277db-c64b-4cd0-b939-44c36531cc12",
+        "3c59aff8-ebe4-42b0-a3ba-248224046f56",
+        "1ddc2322-96c9-4963-ba8e-f5abe2c4052f",
+        "3e3e1fa6-5174-4703-8546-12f583625a22",
+        "2926e355-06be-4ded-821f-92a3c6caa2fb",
+        "e28e6893-7872-4a95-a846-ddc25f3f8aae",
+        "28bbe274-e2c8-4cc5-9ef4-b0d45f32334a",
+        "5272698a-aae4-4f8e-aca1-ca96a8b4bc81",
+        "f9d5f7ed-9ff7-4b15-a04b-c829448b33ef",
+        "fad4e039-ecad-4dff-88b7-88034ca76dd3",
+        "13b3c29e-19b0-49d7-b911-959d14215518",
+        "6a4d1c74-7841-4a69-88ca-886f701fb4eb",
+        "1caa6dbe-6d4e-4e8b-8715-26e400ec9a93",
+        "108bab5a-cc68-40c0-a457-2f1284cd0b31",
+        "a2694fcb-69f6-4275-93f1-406b6a9a682d",
+        "929c7956-0c0d-4f3f-b487-f9d56a5b741e",
+        "bdd0d83d-6cbf-40ca-b85d-3772875532f5",
+        "c22b98d0-3418-45c6-8510-1d266172bb48"
+      ],
+      "case_sha256": "84ecb2e6bd7748621a63bbf6104af45f4970971ac58f4d9539565bb10cd0e80e",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:05",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "9ab537a33a3a2c6b2774e4c33d0858917f47296e725e3df041e018c418671a54",
+        "metrics": {
+          "false_signs": [
+            "s_pellets",
+            "t_hugo"
+          ],
+          "herrings": [
+            "b_ada_wary"
+          ],
+          "max_depth": 5,
+          "means": [
+            "s_bullet"
+          ],
+          "mmo_depth": 5,
+          "motive": [],
+          "pillars": {
+            "means": 5,
+            "motive": 2,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "surface": [
+            "c_ada",
+            "c_dora",
+            "c_edmund"
+          ],
+          "threads": {
+            "c_ada": 5,
+            "c_dora": 5,
+            "c_edmund": 5,
+            "truth": 4
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 78,
+        "in": 600550,
+        "out": 136229
+      },
+      "ordinal": 5,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "92ff2d788228bafd501694904b915552c245a5ecdf33bdd0278524b2fc27a50e",
+        "javascript": {
+          "maxDepth": 5,
+          "ok": true,
+          "pillars": {
+            "means": 5,
+            "motive": 2,
+            "opportunity": 5
+          },
+          "solveDepth": 5,
+          "threads": {
+            "c_ada": 5,
+            "c_dora": 5,
+            "c_edmund": 5,
+            "truth": 4
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 5,
+          "means": [
+            "s_bullet"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 5,
+            "motive": 2,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "threads": {
+            "c_ada": 5,
+            "c_dora": 5,
+            "c_edmund": 5,
+            "truth": 4
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "d85a0e7cdf86bb0be049b1b8b2c64eac3801f7b07e39d3304208913d551bff42",
+        "javascript": {
+          "maxDepth": 5,
+          "ok": true,
+          "pillars": {
+            "means": 5,
+            "motive": 2,
+            "opportunity": 5
+          },
+          "solveDepth": 5,
+          "threads": {
+            "c_ada": 5,
+            "c_dora": 5,
+            "c_edmund": 5,
+            "truth": 4
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 5,
+          "means": [
+            "s_bullet"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 5,
+            "motive": 2,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "threads": {
+            "c_ada": 5,
+            "c_dora": 5,
+            "c_edmund": 5,
+            "truth": 4
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "cae89962169ef15a5ae06fc96ab9e7233abb719e7dc06c43a150ca2dc3436eb8",
+      "request_count": 78,
+      "request_statuses": {
+        "completed-after-cancel": 3,
+        "response": 75
+      },
+      "requested_difficulty_profile": {
+        "depth": 5,
+        "herrings": [
+          1,
+          2
+        ],
+        "herrings_aimed": 0,
+        "innocents": 2,
+        "level": "medium",
+        "seconds": 900,
+        "steps": 16,
+        "truth": 3,
+        "twist": true
+      },
+      "requested_level": "medium",
+      "requested_target_deficits": [],
+      "seconds": 946.794,
+      "slot_id": "slot-05-medium",
+      "usage": {
+        "cacheReadInputTokens": 142066,
+        "cacheWriteInputTokens": 0,
+        "calls": 78,
+        "inputTokens": 600550,
+        "outputTokens": 136229,
+        "totalTokens": 878845
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 9,
+          "herrings_aimed": 3,
+          "herrings_other": 0,
+          "lenient_motives": 0,
+          "lies_on_path": 2,
+          "lies_other": 0
+        },
+        "level": "hard",
+        "score": 14.25,
+        "target": "hard",
+        "v": 1
+      },
+      "audit_manifest_sha256": "e5cf23e11914490844c36249fa049035b7f895e19a6dabe7adf7ee41ec51a177",
+      "audit_semantic_sha256": "d4f3fdcb79a1886de118ed33831c60878880432cc160f78c659291fbf38411b0",
+      "bedrock_request_ids": [
+        "b4d73896-4930-47bf-8d0b-a5d75f07201b",
+        "b4b3db69-c060-4250-89db-e84412033fae",
+        "846342ef-be2d-41b8-926f-c031a657c512",
+        "6f9ffcdd-3d3a-479f-a262-57dac1f842aa",
+        "c9088ab1-d117-4d95-b76b-bb2415ed9c72",
+        "a1706190-4a03-4ed0-9eb3-e4b914191c80",
+        "6b317184-206e-4254-ba2d-e21828957b2d",
+        "b9b4029b-f06a-4593-af12-f7720f8df86e",
+        "a3d71153-5573-4d23-bba6-7d810b414b80",
+        "99808407-9229-4867-bb93-63badc568253",
+        "e05ca265-a2e7-49b3-879f-1745971da3ac",
+        "69889133-927d-43a9-98c2-c5733a5d1cf3",
+        "7939ad61-1873-4559-b772-837e409527a1",
+        "7a7eadb4-9c7d-4d89-b697-b264f0922e12",
+        "1c5c7350-f592-47f8-9e83-c502c9f9832e",
+        "0301655f-f066-40eb-a13d-6f4671ef0b8a",
+        "8113eb60-e672-47b6-949b-7d39d0a30a14",
+        "f8d91645-2454-4240-be41-c25faacf7f23",
+        "52ddf574-fe28-4ae1-85d7-4f728204e9f8",
+        "a6caf4b2-d110-4b84-8f52-23716c5c7880",
+        "550dbfcd-e680-48cd-9c6e-235f4f0a5c08",
+        "b95f396d-ff18-467a-8b98-a7fb205626d8",
+        "8659570d-7ae0-4f70-a54d-e7a3033483b7",
+        "65a0f42b-0740-4291-93e8-84a5247e2888",
+        "8861a8ef-4f23-4f6e-96d8-d2b9cf969165",
+        "2fba8cb8-2f4b-49dd-895f-7eb96fb30021",
+        "c39ae74a-409c-4a2a-a93e-c1bf70534568",
+        "24b1e9a0-93e5-43cc-bbbf-6945908c8a08",
+        "c8e5e20f-1308-4858-b82b-70208228d0a1",
+        "0aee505c-97ff-44fb-9163-efcca191f73c",
+        "859e3ea3-1303-4292-9432-273c3a622078",
+        "e2f46fd5-7b4b-4bc5-8ed4-e64e21f0db15",
+        "1b28bbe0-c452-4677-83a7-656e6c7fd776",
+        "5cba5baa-b27e-43d2-a8e0-d4f6296d8ad2",
+        "a17c5407-a67f-4bb6-a3d3-49443711cbcc",
+        "8d934a93-f573-422a-8788-35a372d8a6af",
+        "7c2b2188-8eaf-4114-831f-3cfd1f184fb6",
+        "dfd3a19c-930d-457f-a0b2-61bb6af74dd7",
+        "59054cc1-d588-4518-9337-00ea61ee85a3",
+        "0da4c288-f929-47d3-846f-934b89c5a12f",
+        "daa9cc1f-87ed-4a8d-a415-a0044f9e732f",
+        "cbc33032-3a33-4562-ba6f-af7837442993",
+        "560d3f0e-1e14-4d26-8297-f8b5e2bcd759",
+        "09d60083-5490-429d-a923-54cc86e8b982",
+        "2c0a2dd9-7326-42b4-8b38-348ac349055a",
+        "e415c5eb-9993-4eac-8f91-e0d4dd045123",
+        "f8c0f464-3e2a-4ebf-8533-0c3de6acb424",
+        "535393d4-e1b4-4cec-87cd-c3b7125012b4",
+        "eb514974-20c4-48cd-b99f-51f860d945ec",
+        "5e0e4281-df9a-41a6-a5fd-fa91ace74259",
+        "b59805fe-2570-4670-86cf-a8dfd16cde81",
+        "ce92c7b1-d020-450a-b51f-d6e87cad3868",
+        "e947675f-de46-4e09-8b5b-cfae55911c44",
+        "c4c0fedc-f337-4305-8761-d3a8ebf4824f",
+        "9f00cf82-4e4c-4648-828b-c526060c16ad",
+        "f4d4f7e5-8591-40b3-b404-07a0aa3ac1ab",
+        "ef874a03-ecb4-43a5-a2e1-1e1e941ee338",
+        "d7b48b2e-9858-47e0-915d-d6cd3c7b4e77",
+        "0e550631-bb61-4755-9ad4-d7b55d9ab569",
+        "b6867026-bfd9-4b33-bfa7-feb46ea6865f",
+        "04af7ecb-6e4b-4def-a8bb-bd17be0a66aa",
+        "4a082378-09bb-46da-a397-cb86aa1ed929",
+        "6290fe24-f311-40bd-9929-aa3a3b91b245",
+        "8f579456-282c-4ac8-84a7-9156b612b99b",
+        "f583d685-31e2-488c-921e-0fb0add47264",
+        "47336124-c1cf-4ca9-bbc8-b64a44c29466",
+        "9ae4214c-3fa3-47fe-8f96-ba48e2fe3613",
+        "08f46a2f-5101-49db-a613-881bd27594d2",
+        "de10d970-4e7a-4862-8d74-2231dee05c8f",
+        "698ead00-f225-4452-a2b4-009330f87dcd",
+        "49f957a3-26f5-47b2-92b0-149f74768348",
+        "33632002-62bf-4664-abd2-1c059a75b4d4",
+        "be4e9be1-41cd-4d44-9b51-3f3c7af7dea1",
+        "b0f58a2e-b9df-42b0-8602-2d9cee223d00",
+        "911e552b-ea61-4e28-8a7a-5f083b301841",
+        "6fb5ef24-38c9-467d-bfb8-fac8fbd6b7b4",
+        "c1a60030-03ba-4507-8d46-a51a404b2fe4",
+        "556b798c-c775-43fe-8887-23a9a38e4389",
+        "dc38363d-e02f-422b-a586-05e66fc40146",
+        "76cc42e6-1d3d-4313-8911-b8bb68b6672b",
+        "6d85185a-17d9-4fdb-b377-6102b7cc21b3",
+        "ce422619-33e3-4aaf-8b46-ce2fb82f2b9d",
+        "6523f2df-b506-4c32-b47e-2a75178b8d13",
+        "46a51455-ce11-4f48-b76a-23f306a8c77c",
+        "61637edb-d163-4364-98bf-3e2dbff1b1a4",
+        "acccb67a-571d-4046-86bb-95cda458206e",
+        "dcc4741d-8321-45b0-bf19-6e59682a1c6a",
+        "48658919-988e-4f4b-bf10-dc2cbe7be8d3",
+        "58423c6f-4ae6-4739-b1f6-a756425b8666",
+        "721c1bc0-d8f4-474a-8dca-007820e45d46",
+        "78a293bc-73b6-45c3-b19e-696e5be4d564",
+        "df7c667d-60e5-409f-a486-1dd633824727",
+        "346af538-b2c7-404b-93e9-d28a6980554f",
+        "39e111fb-7afd-49e2-8286-40cdba61d700",
+        "03b4c3d7-1164-41ae-ba4e-c9c043655c38",
+        "ab44b9f7-f791-4ec6-82f2-cb7036fbf078"
+      ],
+      "case_sha256": "8200de3878150e198d1e79bfe8c8ee50930f80e628778c6bbf8636f06496cc93",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:06",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "e101495c8f5a8bc7bc2bbc37b7ab6521b548fa9c5f42bf0ee44bbd02160258ce",
+        "metrics": {
+          "false_signs": [
+            "t_clara_alibi",
+            "t_rowan_key"
+          ],
+          "herrings": [
+            "b_rowan_hand",
+            "b_silas_ledger",
+            "b_rowan_chest"
+          ],
+          "max_depth": 9,
+          "means": [
+            "s_lamp"
+          ],
+          "mmo_depth": 9,
+          "motive": [
+            "s_memo"
+          ],
+          "pillars": {
+            "means": 8,
+            "motive": 9,
+            "opportunity": 8
+          },
+          "solve_depth": 8,
+          "surface": [
+            "c_rowan",
+            "c_silas",
+            "c_vera"
+          ],
+          "threads": {
+            "c_rowan": 8,
+            "c_silas": 8,
+            "c_vera": 8,
+            "truth": 8
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 96,
+        "in": 858686,
+        "out": 138728
+      },
+      "ordinal": 6,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "d6fa7939407d991490553ac010411e3a6ff78905c962d0b51b852f5a8200b7f5",
+        "javascript": {
+          "maxDepth": 9,
+          "ok": true,
+          "pillars": {
+            "means": 8,
+            "motive": 9,
+            "opportunity": 8
+          },
+          "solveDepth": 8,
+          "threads": {
+            "c_rowan": 8,
+            "c_silas": 8,
+            "c_vera": 8,
+            "truth": 8
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 9,
+          "means": [
+            "s_lamp"
+          ],
+          "motive": [
+            "s_memo"
+          ],
+          "ok": true,
+          "pillars": {
+            "means": 8,
+            "motive": 9,
+            "opportunity": 8
+          },
+          "solve_depth": 8,
+          "threads": {
+            "c_rowan": 8,
+            "c_silas": 8,
+            "c_vera": 8,
+            "truth": 8
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "59264a2e6d1b5e644a56a95cac2ef5033fd5562d17fbd61585f434303ac2fd79",
+        "javascript": {
+          "maxDepth": 9,
+          "ok": true,
+          "pillars": {
+            "means": 8,
+            "motive": 9,
+            "opportunity": 8
+          },
+          "solveDepth": 8,
+          "threads": {
+            "c_rowan": 8,
+            "c_silas": 8,
+            "c_vera": 8,
+            "truth": 8
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 9,
+          "means": [
+            "s_lamp"
+          ],
+          "motive": [
+            "s_memo"
+          ],
+          "ok": true,
+          "pillars": {
+            "means": 8,
+            "motive": 9,
+            "opportunity": 8
+          },
+          "solve_depth": 8,
+          "threads": {
+            "c_rowan": 8,
+            "c_silas": 8,
+            "c_vera": 8,
+            "truth": 8
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "aec81c56457b4bb77a6929e4d09ec81a1837b1257a49ec85564daf35695d5e55",
+      "request_count": 96,
+      "request_statuses": {
+        "completed-after-cancel": 3,
+        "response": 93
+      },
+      "requested_difficulty_profile": {
+        "depth": 7,
+        "herrings": [
+          2,
+          3
+        ],
+        "herrings_aimed": 1,
+        "innocents": 3,
+        "level": "hard",
+        "seconds": 1500,
+        "steps": 28,
+        "truth": 4,
+        "twist": true
+      },
+      "requested_level": "hard",
+      "requested_target_deficits": [],
+      "seconds": 979.066,
+      "slot_id": "slot-06-hard",
+      "usage": {
+        "cacheReadInputTokens": 149172,
+        "cacheWriteInputTokens": 0,
+        "calls": 96,
+        "inputTokens": 858686,
+        "outputTokens": 138728,
+        "totalTokens": 1146586
+      }
+    },
+    {
+      "achieved_difficulty": null,
+      "audit_manifest_sha256": "8aef14b07faa0047292cedd78cd5143a2d69ee3b94d2025ee1b4131b84447d68",
+      "audit_semantic_sha256": "f1c2feaa25f8f9041c5e0e3e9006a188834a151aaab9fe76495c7040b19bbb2e",
+      "bedrock_request_ids": [
+        "f790e1e3-cbed-4cba-b1a5-f6f7878af11f",
+        "19de860c-0d9d-43a4-b982-72757fdd58d3",
+        "f45851a6-197f-48a1-b371-cbc868d258c5",
+        "756fea24-9d1c-49e7-a0cc-669acee37b7e",
+        "66eed519-cb9f-407c-bec7-e25d9bfe12af",
+        "8bc1cc38-b039-4b94-91b4-68a06c124c79",
+        "58cfb94c-2ba1-4da2-aeda-64e9671c2138",
+        "b78632c6-a7c7-44c8-a0c4-3baaea7211e0",
+        "bbc77f4f-5bfc-4947-bb1d-8e9cf48d0c15",
+        "39a60c88-5fdd-445b-b790-2722580ea5f2",
+        "d93a6a63-a75e-49e2-ae27-44ca52e46eea",
+        "f6e0fad5-c914-4946-9749-fd93eab878e7",
+        "364ace45-a4e4-4dde-b156-d1f8012272f1",
+        "942062b1-1638-49a3-b72e-5b2b3416c947",
+        "cd17f04f-8e84-4f92-91e3-ee3bf893fe66",
+        "b3775767-ec24-4f48-bb8e-3e2db427c28e",
+        "827e4ae2-284e-4a2a-ac05-e2060877f5c7",
+        "17f667bd-414c-435f-a150-98fae785dd67",
+        "5924a7c0-b2eb-4d28-948e-81497b2ba896",
+        "0b4ca0cf-f4bc-4174-8947-5d0036d4df7e",
+        "e765a34b-7458-483e-b842-926c7a334009",
+        "c5344755-11f2-4863-954a-c6e1e1f1b09a",
+        "cd4f10e7-bbf4-468a-8b5f-c24ead279483",
+        "b15c76d5-6e8c-4468-b2cb-92eacae17998",
+        "519df603-fa30-4a6f-9acb-fcade266d770",
+        "8439eedb-e727-404d-8b7c-19d122e791f6",
+        "16283ce3-b889-4dbf-889c-7fc6d3a62d20",
+        "614887de-8b48-42ce-963f-5e34135c5877",
+        "c53b770e-0c04-428d-a57f-a3335ed213b3",
+        "61fb0db7-276f-4360-8728-21845e9677c0",
+        "f63d9bbf-064c-43c9-ae4d-50fe03775b0e",
+        "ff0c600e-3ab0-4959-8d27-a0b73bc3a57e",
+        "87141ad8-cd64-41d0-934b-784622595b0b",
+        "62148895-9da1-4d06-a372-c77489d775de",
+        "ee8cde82-b883-446b-9b49-15d448722866",
+        "6be09d01-cb59-4bc8-86da-69b423f4d12c",
+        "da490c75-02e5-4389-bb6b-22f4be108716",
+        "8d619033-ec03-415f-861d-2175f504799d",
+        "fd22ac5a-731b-4f98-8604-3ff42dc26e97",
+        "38e53fc8-f7f7-42eb-a4a2-ec58e44a7a75"
+      ],
+      "case_sha256": null,
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:07",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": "KeyError: 'false_signs'",
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "766b0ac8c354424c5205054ea93c8f89fb8bbf71a4369d2020457c3272395c7e",
+        "metrics": {
+          "false_signs": [
+            "s_silas_t"
+          ],
+          "herrings": [
+            "s_dora_hand"
+          ],
+          "max_depth": 2,
+          "means": [],
+          "mmo_depth": 1,
+          "motive": [],
+          "pillars": {
+            "means": null,
+            "motive": 1,
+            "opportunity": 1
+          },
+          "solve_depth": 1,
+          "surface": [
+            "c_dora"
+          ],
+          "threads": {
+            "c_dora": 1,
+            "c_hugo": 0,
+            "c_rowan": 0,
+            "truth": 1
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 40,
+        "in": 178631,
+        "out": 106077
+      },
+      "ordinal": 7,
+      "outcome": "crash",
+      "post_serialization_certificate": null,
+      "pre_publication_certificate": null,
+      "premise_sha256": "5183af80f7f40f6276457ef2d58ccbca510a77c9ce82fcaf8e1790cab7a54044",
+      "request_count": 40,
+      "request_statuses": {
+        "completed-after-cancel": 1,
+        "response": 39
+      },
+      "requested_difficulty_profile": {
+        "depth": 3,
+        "herrings": [
+          0,
+          1
+        ],
+        "herrings_aimed": 0,
+        "innocents": 0,
+        "level": "easy",
+        "seconds": 480,
+        "steps": 8,
+        "truth": 0,
+        "twist": false
+      },
+      "requested_level": "easy",
+      "requested_target_deficits": null,
+      "seconds": 677.999,
+      "slot_id": "slot-07-easy",
+      "usage": {
+        "cacheReadInputTokens": 42528,
+        "cacheWriteInputTokens": 0,
+        "calls": 40,
+        "inputTokens": 178631,
+        "outputTokens": 106077,
+        "totalTokens": 327236
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 5,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 0,
+          "lies_on_path": 1,
+          "lies_other": 0
+        },
+        "level": "medium",
+        "score": 7.25,
+        "target": "medium",
+        "v": 1
+      },
+      "audit_manifest_sha256": "80b224d0073a1ba89ea4fcc634333723dd3effd1493d1d526358e4d82e9faf9f",
+      "audit_semantic_sha256": "1e484663b0d6b16cc427489947f3348f7ca306f34c0c1e2ead99cc02c37b946f",
+      "bedrock_request_ids": [
+        "b500a748-1554-489b-b444-7e4240c37f5f",
+        "d1968193-2f57-49ca-8b67-3cc72d91df41",
+        "57bdea79-370c-4cd8-8a6a-d9648b409eb3",
+        "dfab6b27-aff5-4adb-a9f6-e43e9e246154",
+        "8e30035f-ee6b-4a4c-ad6f-3999aa634931",
+        "4ee8a35d-7811-446f-9eeb-687daf8bcc7f",
+        "4f79d762-27c6-4566-96f5-9b74fc84cc22",
+        "a59b8673-153d-4c0f-a636-23fb6c86b15f",
+        "e4a03f13-d3b2-4126-b779-a6cbd7e8cca3",
+        "82fbe7a4-b649-468b-8210-ab2c6c55abc8",
+        "93e39994-1a23-4158-bc55-d6a672f2a436",
+        "9978f716-4ba0-4611-9138-dee640228582",
+        "75b3dcb7-9c32-44a8-98ba-111a05595780",
+        "f9f326a5-083d-4bb5-ac26-00eb1644fc65",
+        "160c08ed-11e9-4d3d-8829-f97d6ad46501",
+        "e1d352da-76d4-4a12-b960-2e2525f67b6c",
+        "b0f031c0-e1f8-438f-a86c-08ab230b95e3",
+        "c43d68d4-7559-470d-a88c-7e2fdd479e9a",
+        "cdc400bb-9f5c-4e3b-97b3-ee239bc199d3",
+        "ae621d15-85c5-41e5-8e11-a2ca4b3ea689",
+        "fe1b1336-81b1-4e4e-8957-2fd64c09be9d",
+        "2fbb1da8-8f32-43a0-9e1e-1a47dca0a357",
+        "e8f22b7b-ee68-4902-bbd2-36eb69a3eb91",
+        "a280daa2-43dc-4e95-ada4-861f6d528c0e",
+        "8288f47d-862f-444f-93dc-b7c3a818d9cb",
+        "76c5d524-1852-48b9-ab6e-335d22bda532",
+        "de38044f-03bf-439e-bbb1-6ed12a9d71c0",
+        "e0109743-570f-418d-8056-300a5aa59cbf",
+        "8d2fac1e-014a-4b47-aa28-19de9d7903c0",
+        "449754c1-b2a7-4c03-b989-f8b62302860f",
+        "0c9505eb-e19c-4d3f-812c-0794806b541f",
+        "eef1384d-c4a7-472b-9cd1-3d360b68bcad",
+        "c34bdec1-2219-41dd-b048-00c5c3540a62",
+        "50b565da-d81a-4b26-a015-5afec2ea63a6",
+        "67239da0-b838-44e5-b2bc-76dc0c7f9e8e",
+        "9437a2bb-ddb4-4c61-aaca-df5fcd94b966",
+        "3cf08dec-e81f-468a-a20e-0544d3553cda",
+        "f9a70ea2-c441-45d4-b753-d0a0ae33e1cd",
+        "fb94d548-2cb4-4042-878c-53483ea089f6",
+        "f0fceeb4-55ba-4479-ade4-64069d2d6b49",
+        "0f5ef536-d74c-4117-9f21-04ed1de98ce2",
+        "32d19684-e67c-48fb-b104-ffad64b7b1c3",
+        "ec196c2b-6405-4962-8b2a-b397773c29a0",
+        "17e03b9f-7011-4743-af4c-c4df2450a4fd",
+        "23e0719d-934d-4408-add6-c122ecbda9b0",
+        "60efecde-0ad3-46bd-ad94-9748757a64e8",
+        "9115dc43-c162-4128-9f6c-5db7054a6652",
+        "2a475845-cc77-4e9b-9a9b-db7bbe8f642d",
+        "b3725a55-af8e-45fd-bf90-fc154d752287",
+        "5730ace0-3a86-4ece-9941-1e414d4aaaf6",
+        "4b2b0f58-27dd-4148-80cd-65c34ca4efe6",
+        "4cdcf709-f7cf-4149-bcab-8a4566d94939",
+        "4fe7b29b-6e0e-4484-a6af-ac8564c0076d",
+        "226e1bfe-650c-4f63-aa82-559f89477990",
+        "88c02707-92b0-45b2-8ad1-3f11eb4ae815",
+        "ab7047ab-fc40-438c-891f-bdc78cb04010"
+      ],
+      "case_sha256": "831d167d9695bded1ac3e1d97768f7f69471bdf2d62a1f273d1de259a5c77a96",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:08",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "42d43cba921d561067e386b5b7eb8d5e557cc98de851a970416e10ffb69a7316",
+        "metrics": {
+          "false_signs": [
+            "s_jonah_t"
+          ],
+          "herrings": [
+            "s_ada_soot"
+          ],
+          "max_depth": 5,
+          "means": [
+            "s_door"
+          ],
+          "mmo_depth": 5,
+          "motive": [
+            "s_letter"
+          ],
+          "pillars": {
+            "means": 4,
+            "motive": 5,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "surface": [
+            "c_ada",
+            "c_silas",
+            "c_vicar"
+          ],
+          "threads": {
+            "c_ada": 5,
+            "c_silas": 5,
+            "c_vicar": 5,
+            "truth": 5
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 56,
+        "in": 375550,
+        "out": 83676
+      },
+      "ordinal": 8,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "dadcb30c6968ad447ce58e3d491b03175523d7bc3dfbeced7520515503d37af3",
+        "javascript": {
+          "maxDepth": 5,
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 5,
+            "opportunity": 5
+          },
+          "solveDepth": 5,
+          "threads": {
+            "c_ada": 5,
+            "c_silas": 5,
+            "c_vicar": 5,
+            "truth": 5
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 5,
+          "means": [
+            "s_door"
+          ],
+          "motive": [
+            "s_letter"
+          ],
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 5,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "threads": {
+            "c_ada": 5,
+            "c_silas": 5,
+            "c_vicar": 5,
+            "truth": 5
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "574893e1a2361871346a259ec4ec450d8bb2f8b29a446c0906216be9758805c4",
+        "javascript": {
+          "maxDepth": 5,
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 5,
+            "opportunity": 5
+          },
+          "solveDepth": 5,
+          "threads": {
+            "c_ada": 5,
+            "c_silas": 5,
+            "c_vicar": 5,
+            "truth": 5
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 5,
+          "means": [
+            "s_door"
+          ],
+          "motive": [
+            "s_letter"
+          ],
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 5,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "threads": {
+            "c_ada": 5,
+            "c_silas": 5,
+            "c_vicar": 5,
+            "truth": 5
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "f2e673db30a92aaca9596e6528951260fe2318db1822b0456e6c2a46fea49124",
+      "request_count": 56,
+      "request_statuses": {
+        "completed-after-cancel": 3,
+        "response": 53
+      },
+      "requested_difficulty_profile": {
+        "depth": 5,
+        "herrings": [
+          1,
+          2
+        ],
+        "herrings_aimed": 0,
+        "innocents": 2,
+        "level": "medium",
+        "seconds": 900,
+        "steps": 16,
+        "truth": 3,
+        "twist": true
+      },
+      "requested_level": "medium",
+      "requested_target_deficits": [],
+      "seconds": 552.684,
+      "slot_id": "slot-08-medium",
+      "usage": {
+        "cacheReadInputTokens": 71006,
+        "cacheWriteInputTokens": 0,
+        "calls": 56,
+        "inputTokens": 375550,
+        "outputTokens": 83676,
+        "totalTokens": 530232
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 8,
+          "herrings_aimed": 3,
+          "herrings_other": 0,
+          "lenient_motives": 0,
+          "lies_on_path": 1,
+          "lies_other": 0
+        },
+        "level": "hard",
+        "score": 11.75,
+        "target": "hard",
+        "v": 1
+      },
+      "audit_manifest_sha256": "46ccd0bed5d0da6a67b65f9c6b4b6f1c9ee5348e945204e8a61466532b50f0a9",
+      "audit_semantic_sha256": "53ad9f69487b409cfad630e7edb4f353c4cde8d5a53c60d4e119841b4347ccb9",
+      "bedrock_request_ids": [
+        "b4b17a93-618d-47fa-aa2e-5b56710533cf",
+        "dbf007e2-b44f-4806-8879-e2dba4590e3e",
+        "725684f9-88b9-4b24-9e29-ed0713576a74",
+        "990cdcaa-2a51-434b-8d68-529887cadbb2",
+        "ad3d1860-bcf3-43a8-ae8d-758a9fea452c",
+        "d2ac62b7-b7e6-406c-8059-fa5631ca6926",
+        "8fbacdfb-e118-4fba-ad39-9d8dfad874bb",
+        "66478edd-5fc0-49dc-b5c4-68feb5fc3d99",
+        "4c1c4656-1dfe-4ed4-b324-96c54a1b1210",
+        "ef2bad73-b6cb-4ce3-be29-dc5e565b6d12",
+        "56ef0c53-af88-4d3c-a172-963fea99c27a",
+        "2a2e8a5b-d412-455b-8b77-452d69a2a56d",
+        "37e3fd3e-d17c-4edf-bdbb-802f7d046e07",
+        "303a7de1-687d-49f5-85bb-7e3295eabfa1",
+        "2ae01951-1b09-4074-9323-a5eed1480d41",
+        "9b4b39f1-aa88-4e90-a797-e2946809fb7a",
+        "33b4b61b-7256-45f2-804f-7ba6bf84c770",
+        "5966cc9f-5be5-4077-a80e-a7fb5c122e06",
+        "e275fd52-ee73-47d4-a8ab-d3ef7389ffc9",
+        "abdc09ea-a26a-494d-aff3-fbc656471ef5",
+        "0e72dddc-1295-4850-b56e-8d7aa54d1a5b",
+        "26110add-3566-495c-8bfe-8819ee5aae3a",
+        "a890e393-df0f-403b-96fe-1ed1d8a5d6cd",
+        "11c54e70-dae6-4b48-ba9f-c1719f10ff90",
+        "7890b5a4-3b68-48d9-8991-f9ab07828efb",
+        "55699d7f-13b4-4488-adfb-91ea8a9585a6",
+        "77306721-0d6e-4bf0-8ca1-7e60e340aa4b",
+        "fc36132f-eb37-4fa4-abd3-a79e2ad428d6",
+        "56386213-d394-406c-8d72-8edc9a15d022",
+        "a081bbd7-f162-4538-a59d-79539f04b2e0",
+        "261dea77-e132-45ee-94b1-04f051c6fa46",
+        "4ec37ca4-b780-4448-a9ac-c4a3d0a1a7dc",
+        "35907648-34da-4745-b7b7-8a548f22df62",
+        "dda5e45c-1422-484e-b680-68e550f78030",
+        "f5cafbe2-a878-47ff-a039-d7c8b9b25940",
+        "38013451-bf62-4917-b35e-2be9182f829a",
+        "843369b1-1b1c-4de0-80bc-5ad402f936ab",
+        "aa5327ce-c8d9-4f38-9e26-a6691d21d70f",
+        "1b1010ef-182b-427c-9d38-c99c364f44fb",
+        "c7dc3fb6-9cb8-4055-ab12-a05b5ac8afcc",
+        "99532a7c-16fb-4085-bcf6-a1c003bb5f1a",
+        "243f1116-d1e0-4dbf-a17a-fa86b59eae68",
+        "6cc4128e-dc01-4a83-a694-ee751a382636",
+        "591140ba-be60-4b35-9290-1a657db787d5",
+        "98290b85-aa7a-416d-b001-4e6395b38ad0",
+        "1ecd72e2-517d-4b1d-9910-445fe65398dd",
+        "5dd4a155-b810-437b-98fd-71c24fbeecad",
+        "e614151b-4a97-45dc-afeb-6ff2fbc0d54b",
+        "9f39e36e-6918-4d5e-bc28-b367ef353ce1",
+        "04ffe35c-6ac5-498c-a104-8143d886473d",
+        "4e9f4bd7-e2c5-44d0-a4c1-bb2b047dda6f",
+        "3310ad9f-5722-44ed-b356-ca2cb99eaef9",
+        "c55102e5-2727-4417-8070-aa94906cffb4",
+        "b8256d2c-b7cd-4a56-ba52-946419e03b40",
+        "9324feb4-a24c-4d3f-b9d1-1790bbedd224",
+        "3edbb2aa-3e30-46c8-8f51-754c3f604477",
+        "582ad9d3-c4fb-41ed-bc43-32c005aae6d9",
+        "fbbf27ae-7003-4d0c-b088-e67c0e10c7ea",
+        "bd51943e-62c4-41ab-8790-de2daea5a401",
+        "ea63f69f-0ab6-4d8e-bd05-c0e4c4c0ad99",
+        "8d4cecfe-c0f4-4781-bf98-8d5610e40357",
+        "c6d0b01c-07f6-469e-a5f7-3d7da1ac41d4",
+        "683cd832-9db7-4be2-85ab-dfe309887b3a",
+        "ba4fbfd4-f2d4-4d33-bd6d-91fc66eff321",
+        "f8198b65-85a7-4efb-a8cc-3a9097223521",
+        "e8182bd0-6c1d-48de-8041-f9aa2f62a519",
+        "02529066-efec-4c2c-8500-74270fb097b8",
+        "dbea9ed3-3e1b-4f54-8dbc-f7e9c587ed01",
+        "b3570ae1-56f0-4226-9cfe-9a0e1008cb83",
+        "c0fbddc8-d2c8-40c4-a65f-cb1a5bb93890",
+        "72e1a812-b3d7-4f5e-8880-ee80bb28801e",
+        "2b73750d-7e61-4c1d-9061-e375e13d6d8a",
+        "3494ca73-5257-4d31-a765-6ad90bbb255a",
+        "75d5f816-bf8f-4ff0-9cf2-b2dbc4d46709",
+        "c830ba17-942e-43d5-96d6-ba6917147c81",
+        "8c70c424-f95e-41de-9567-fc964179fc12",
+        "a28d87a5-059a-4a9b-8740-15a3400eb2d7",
+        "de2c61fb-d98e-4f11-a5fd-4b29fc9b4060",
+        "f466009e-025a-4036-ae85-76945abebc59",
+        "67f0cae5-0417-49b7-b7be-7bc64b45df82",
+        "bb888744-b13c-4dc3-a9a7-1e4ffcd98197",
+        "b6c2b553-5473-4f5d-8c53-b41c87b2559c",
+        "e437655d-f874-4e72-b607-223a74fe8f23",
+        "56160148-aa71-4191-8fb2-1b1b51dd6922",
+        "237ebffc-c1f3-4d2e-a740-a0c973167a34"
+      ],
+      "case_sha256": "11f1fb394ed6307b5ef2c63a70992b947430b3b644c6fc4cd6e9eef4c1dce8d0",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:09",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "d8d9749bbf0b491c6a37fb56144891f9b8ba98021cba5cb6e35c64771c4e4d7e",
+        "metrics": {
+          "false_signs": [
+            "s_watch"
+          ],
+          "herrings": [
+            "b_jonah_eels",
+            "b_rowan_hands",
+            "b_jonah_tar"
+          ],
+          "max_depth": 9,
+          "means": [
+            "s_case_notes"
+          ],
+          "mmo_depth": 8,
+          "motive": [
+            "s_cutting",
+            "s_note"
+          ],
+          "pillars": {
+            "means": 8,
+            "motive": 7,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "surface": [
+            "c_jonah",
+            "c_rowan",
+            "c_vicar"
+          ],
+          "threads": {
+            "c_jonah": 7,
+            "c_rowan": 7,
+            "c_vicar": 7,
+            "truth": 6
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 85,
+        "in": 719099,
+        "out": 124694
+      },
+      "ordinal": 9,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "8cc1958da9c6febfacc3998e7bb50abd760a864cac14850c9f1d39de84d26986",
+        "javascript": {
+          "maxDepth": 9,
+          "ok": true,
+          "pillars": {
+            "means": 8,
+            "motive": 7,
+            "opportunity": 7
+          },
+          "solveDepth": 7,
+          "threads": {
+            "c_jonah": 7,
+            "c_rowan": 7,
+            "c_vicar": 7,
+            "truth": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 9,
+          "means": [
+            "s_case_notes"
+          ],
+          "motive": [
+            "s_cutting",
+            "s_note"
+          ],
+          "ok": true,
+          "pillars": {
+            "means": 8,
+            "motive": 7,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "threads": {
+            "c_jonah": 7,
+            "c_rowan": 7,
+            "c_vicar": 7,
+            "truth": 0
+          },
+          "twist": false
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "0d72bc40568ef0c17742aceca9e06f9b9d6ff67513ebc57189889a4d771753d0",
+        "javascript": {
+          "maxDepth": 9,
+          "ok": true,
+          "pillars": {
+            "means": 8,
+            "motive": 7,
+            "opportunity": 7
+          },
+          "solveDepth": 7,
+          "threads": {
+            "c_jonah": 7,
+            "c_rowan": 7,
+            "c_vicar": 7,
+            "truth": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 9,
+          "means": [
+            "s_case_notes"
+          ],
+          "motive": [
+            "s_cutting",
+            "s_note"
+          ],
+          "ok": true,
+          "pillars": {
+            "means": 8,
+            "motive": 7,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "threads": {
+            "c_jonah": 7,
+            "c_rowan": 7,
+            "c_vicar": 7,
+            "truth": 0
+          },
+          "twist": false
+        }
+      },
+      "premise_sha256": "1c62b35bd957d13220efe1cd9c364ad8d4acd0b3496eb5aaf1300a94af4526a8",
+      "request_count": 85,
+      "request_statuses": {
+        "response": 85
+      },
+      "requested_difficulty_profile": {
+        "depth": 7,
+        "herrings": [
+          2,
+          3
+        ],
+        "herrings_aimed": 1,
+        "innocents": 3,
+        "level": "hard",
+        "seconds": 1500,
+        "steps": 28,
+        "truth": 4,
+        "twist": true
+      },
+      "requested_level": "hard",
+      "requested_target_deficits": [
+        "the truth is clear by layer 0 (< 4)",
+        "no twist"
+      ],
+      "seconds": 967.741,
+      "slot_id": "slot-09-hard",
+      "usage": {
+        "cacheReadInputTokens": 120748,
+        "cacheWriteInputTokens": 0,
+        "calls": 85,
+        "inputTokens": 719099,
+        "outputTokens": 124694,
+        "totalTokens": 964541
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 1,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 0,
+          "lies_on_path": 0,
+          "lies_other": 0
+        },
+        "level": "easy",
+        "score": 1.75,
+        "target": "easy",
+        "v": 1
+      },
+      "audit_manifest_sha256": "539f82a54a78c9fc867bbfae44f67225e8951bbbe9ed210a4786e96c683e6ed5",
+      "audit_semantic_sha256": "e5d9d3a1858095dfbdfc86c3cd5265a4120a317c5ba6fb5a62fb10e8e0e3190b",
+      "bedrock_request_ids": [
+        "98bc28af-8b9d-4f5a-bfe3-a795dccd0250",
+        "38dc340e-a2fa-4227-a9f6-447c382ccdbb",
+        "5e73f460-5b6a-49f5-a247-b19ef3a29869",
+        "71e242aa-4638-4055-84c0-42cf1aaeabc0",
+        "6fd3ff60-e14f-4a77-aa7f-890202c11601",
+        "a427d07f-e6ea-4ffb-8d49-af331aac480b",
+        "87cefc0b-0e52-4225-9793-69d599486eb0",
+        "b32d0956-0cee-4270-8427-d6a6959a5075",
+        "2dc997f8-7c71-4948-be78-044dac3a9e07",
+        "7ef278ea-85a6-48dd-bd33-5fd5b1836fd2",
+        "dfec1ada-6c7f-4abc-80ed-eb3348a82eb9",
+        "7d5858a0-6005-47f8-aca6-29d87cf3a593",
+        "8224c034-7579-460c-b1ef-8f45d5dc8731",
+        "12640a65-b30e-4032-a8d3-e47717614020",
+        "d0b1f34e-81de-44bb-9c92-f730fcc040df",
+        "ff798361-2e49-43ee-8839-eb4f8c7cf5a6",
+        "651477cd-cdd3-4c28-81cf-6770e6acf1ba",
+        "f6ccab7a-c497-4ac3-a7af-e83fea281116",
+        "5c74e3d8-2a8d-4845-b6e8-59e78b9a799d",
+        "e148c143-8b29-4560-9027-893661cbf27e",
+        "47a3d1f0-cd0c-4e48-b501-414da7080d05",
+        "52f9ef86-ce03-4b25-856b-ccb48b4e00af",
+        "6b6b201a-5663-4771-a164-a6d12e92203f",
+        "25f06154-27eb-4a31-8c9e-1c4865c78f38",
+        "71849e0b-f9ab-4fc1-abab-128076440ae7",
+        "9b02143d-4a14-4961-b9e1-d857e654a7d2",
+        "62043213-fef5-4990-a79f-b257ea1dfe40",
+        "254712fe-f135-40f2-a5f6-d2c98100869e",
+        "094e9e45-a72f-4680-8040-66e1dac5c69b",
+        "16bf6afd-4fc0-4408-9964-cdb6bf10ce26",
+        "adf9d68d-c6dd-4487-abc9-079f86a04893",
+        "b3bbb1a2-c20b-454e-b9b0-0a2b1907a659",
+        "6f739c67-4786-4cc7-ae5f-510ad71acdee",
+        "834e02c4-c1f8-4761-86a3-d819c3900bd4",
+        "6f92aff4-c095-49c1-bebd-a15db67ed757",
+        "27c29c71-6660-49d4-80ca-ffa0c92afc22",
+        "c11e9de5-edfd-47da-b2dc-c283dee895e7",
+        "85f6cbb0-aae9-456d-ba16-e2f665b77a0e",
+        "b96effc4-75ae-4ecf-af06-e6ac71cb4412",
+        "fe91a99e-8b44-487c-a45f-6b87d7e1c48d",
+        "b31bb300-aa2b-4a3d-b3eb-8d2e0e133bf0",
+        "a38ebfb8-11d5-4659-8e23-e8103092f443",
+        "ad05f292-9232-40cc-945e-d475cf4e704d",
+        "0ba78815-858c-4b5a-916a-b1c3b2fb9538",
+        "2157f23a-ba54-492f-b18e-399307f50255",
+        "efe2dcb2-dbd3-402a-adda-6cb0df00759d",
+        "47de486d-6c2e-4de7-bf6b-12cfd3220691",
+        "a2ebcfe5-8830-4123-9275-af8e341e9ea1",
+        "9511bea2-183a-477b-904d-28922a533b7a",
+        "b8c44c88-f201-4b22-a25e-4100e4d51ec3",
+        "0df02d40-7f1c-4614-8260-0320102baefb",
+        "c13c1b65-4b14-4c47-88b6-4a4a1912bfca"
+      ],
+      "case_sha256": "a74d1beae773e3881b351c8cd7e75103650ef700d3dc2e9b612739e73228bf8a",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:10",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "18fdc01084633638fcb665ce3db98eeeab2bbaba0e03de9b5189d02f907075d5",
+        "metrics": {
+          "false_signs": [],
+          "herrings": [
+            "s_edmund_wrist"
+          ],
+          "max_depth": 1,
+          "means": [
+            "s_rowan_door"
+          ],
+          "mmo_depth": 1,
+          "motive": [],
+          "pillars": {
+            "means": 1,
+            "motive": 1,
+            "opportunity": 1
+          },
+          "solve_depth": 1,
+          "surface": [
+            "c_clara",
+            "c_edmund",
+            "c_silas",
+            "c_vicar"
+          ],
+          "threads": {
+            "c_edmund": 1,
+            "c_silas": 1,
+            "c_vicar": 1,
+            "truth": 0
+          },
+          "twist": false
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 52,
+        "in": 297704,
+        "out": 94594
+      },
+      "ordinal": 10,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "7b79201a7e1c025682a3a63dc4486872fc28d315c6649b23e60505ea629451fd",
+        "javascript": {
+          "maxDepth": 1,
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 1,
+            "opportunity": 1
+          },
+          "solveDepth": 1,
+          "threads": {
+            "c_edmund": 1,
+            "c_silas": 1,
+            "c_vicar": 1,
+            "truth": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 1,
+          "means": [
+            "s_rowan_door"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 1,
+            "opportunity": 1
+          },
+          "solve_depth": 1,
+          "threads": {
+            "c_edmund": 1,
+            "c_silas": 1,
+            "c_vicar": 1,
+            "truth": 0
+          },
+          "twist": false
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "28fb7fb85cb6c924a33ece6877f9a8c2a8e0452569ef0864dd167b66970312e9",
+        "javascript": {
+          "maxDepth": 1,
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 1,
+            "opportunity": 1
+          },
+          "solveDepth": 1,
+          "threads": {
+            "c_edmund": 1,
+            "c_silas": 1,
+            "c_vicar": 1,
+            "truth": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 1,
+          "means": [
+            "s_rowan_door"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 1,
+            "opportunity": 1
+          },
+          "solve_depth": 1,
+          "threads": {
+            "c_edmund": 1,
+            "c_silas": 1,
+            "c_vicar": 1,
+            "truth": 0
+          },
+          "twist": false
+        }
+      },
+      "premise_sha256": "46efce6752d6c97b196aba7bb3754b2e0f1c6087c95e2666f69752a294a3882c",
+      "request_count": 52,
+      "request_statuses": {
+        "completed-after-cancel": 1,
+        "response": 51
+      },
+      "requested_difficulty_profile": {
+        "depth": 3,
+        "herrings": [
+          0,
+          1
+        ],
+        "herrings_aimed": 0,
+        "innocents": 0,
+        "level": "easy",
+        "seconds": 480,
+        "steps": 8,
+        "truth": 0,
+        "twist": false
+      },
+      "requested_level": "easy",
+      "requested_target_deficits": [
+        "solve depth 1 < 3"
+      ],
+      "seconds": 608.219,
+      "slot_id": "slot-10-easy",
+      "usage": {
+        "cacheReadInputTokens": 70952,
+        "cacheWriteInputTokens": 0,
+        "calls": 52,
+        "inputTokens": 297704,
+        "outputTokens": 94594,
+        "totalTokens": 463250
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 5,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 1,
+          "lies_on_path": 1,
+          "lies_other": 0
+        },
+        "level": "medium",
+        "score": 6.75,
+        "target": "medium",
+        "v": 1
+      },
+      "audit_manifest_sha256": "8419ef864c90c7f1a7a7e0666c6fb6dea973c453b8fc140ca89f2c74dada4ba2",
+      "audit_semantic_sha256": "45d3d382d7a3248ecc22df31d8effab122189835392cfdbee04c001063dbe30c",
+      "bedrock_request_ids": [
+        "0fefa650-51c1-4997-8b35-58f5dadb8040",
+        "25e54d4a-2acf-41be-9d9f-720e6ba5557c",
+        "b1766f8f-8286-4e34-9eb4-0076d8462812",
+        "9706c6ce-09da-46e3-bcab-a6400b4559c2",
+        "4032a6bc-d273-41c5-a981-ddc0cacac5d2",
+        "3ea70575-1fbf-4816-8fb8-cba0a390de40",
+        "431aad4d-ed47-451d-b191-ca248cd09315",
+        "37b6aaa2-22c4-4d77-8f15-005346a86342",
+        "90f97957-92d3-4637-b362-6d9e8674eaf8",
+        "d7dc85d3-8a01-4391-ad89-29e544a4e222",
+        "f50415c8-ae2d-490d-86cd-fa9c642bfb1d",
+        "120f3f80-7b6c-4595-b968-d250acca7dcb",
+        "a6875190-d0d8-47ad-a252-b367bb4cb3eb",
+        "544b9e53-cfea-48fd-97d5-28a3c9ee5be9",
+        "df670c3f-3bde-4b19-b517-11debb5afb60",
+        "dcd2ca12-70b4-4200-ac68-fd4a55708203",
+        "25fd4f41-b2c6-40f6-86d8-8e95cbe5beee",
+        "1fbb00e7-ea08-472e-b47f-3d9cf97856c7",
+        "687f1c0e-bdd9-40e7-a915-2142a7c11825",
+        "d6c32f6a-df3f-4929-9d77-51e0bfe2de2f",
+        "2fefc14c-b176-4b6b-ada0-7d4726714959",
+        "a5a39058-32d5-4747-afeb-44c86cf66a83",
+        "b6d2f7d9-d62f-4f57-945e-d1805ac32de3",
+        "0a338cbf-fa20-443a-87e2-edbac6da66b9",
+        "dd497b33-5bbc-4dc3-ac37-691baf5dca75",
+        "3afeba36-e307-47d9-b6b8-c02986ccf2be",
+        "13e199e0-38bf-47ad-ba14-babe8b08b46b",
+        "f94ea1c3-2d17-4e36-a636-2ff741658136",
+        "4e4c6bc2-b33d-46a8-85f3-540e7db435f5",
+        "c202adf4-5852-4ec5-aa33-576b4ae6830b",
+        "da48328e-4a26-4dd4-91e3-80db9ede33fa",
+        "237d09db-f604-4a36-a751-87b5d70242b4",
+        "b97e9c8f-2821-400c-bfe9-7e3d51693112",
+        "87f3393a-9c15-42c5-92d7-767f85149909",
+        "9da302e2-5b50-44b3-a19d-2828780dc0ad",
+        "2dc51aec-fb2e-434a-8ba1-e5050e253deb",
+        "102e38d3-26aa-4b03-b842-54e43acd72bc",
+        "829a7178-8a1f-40d3-9fde-10211d1e9b28",
+        "6e0fc4ab-03b1-436e-8dbd-c7d3fb76f0ec",
+        "c148d443-570d-43d6-a687-1cd42acbc01c",
+        "54f2dc1c-70b7-4819-9192-858147ee1017",
+        "7c478f35-e2ee-4c2c-9d00-40982ddf88ce",
+        "ae2df564-8ac5-4cec-838f-9d08120ed2fc",
+        "58eeb095-f51f-46bc-80fc-04a46ed0e261",
+        "30d6e9cf-3eb6-453d-8858-20a02ceb6dce",
+        "d6ac5e10-5a33-4d2b-b1b7-7fe9018f6158",
+        "c540dbdd-eb70-480c-ae00-6b25963b2e37"
+      ],
+      "case_sha256": "64ce64f1b806340f4bbf03d088ba68dd16d9a41d09e9dd698a64dd4da0003c9b",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:11",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "f00c39c2c36055a2848f5e04c1bc0b3b5c129b3504e8173429cef61349e11b54",
+        "metrics": {
+          "false_signs": [
+            "t_ada"
+          ],
+          "herrings": [
+            "s_vera_glance"
+          ],
+          "max_depth": 5,
+          "means": [
+            "s_locked"
+          ],
+          "mmo_depth": 5,
+          "motive": [
+            "s_letter"
+          ],
+          "pillars": {
+            "means": 4,
+            "motive": 0,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "surface": [
+            "jonah",
+            "silas",
+            "vera"
+          ],
+          "threads": {
+            "jonah": 5,
+            "silas": 5,
+            "truth": 3,
+            "vera": 5
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 47,
+        "in": 232650,
+        "out": 82658
+      },
+      "ordinal": 11,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "5e19f79b7ad9f9f6bf528c06aec416174671e5c6973bfcff604b36b85614a2e6",
+        "javascript": {
+          "maxDepth": 5,
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 0,
+            "opportunity": 5
+          },
+          "solveDepth": 5,
+          "threads": {
+            "jonah": 5,
+            "silas": 5,
+            "truth": 3,
+            "vera": 5
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 5,
+          "means": [
+            "s_locked"
+          ],
+          "motive": [
+            "s_letter"
+          ],
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 0,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "threads": {
+            "jonah": 5,
+            "silas": 5,
+            "truth": 3,
+            "vera": 5
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "1f0ed6ddbb12d73cc711cd073526276d095a272950c1de7bef2835c2b430e2b4",
+        "javascript": {
+          "maxDepth": 5,
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 0,
+            "opportunity": 5
+          },
+          "solveDepth": 5,
+          "threads": {
+            "jonah": 5,
+            "silas": 5,
+            "truth": 3,
+            "vera": 5
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 5,
+          "means": [
+            "s_locked"
+          ],
+          "motive": [
+            "s_letter"
+          ],
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 0,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "threads": {
+            "jonah": 5,
+            "silas": 5,
+            "truth": 3,
+            "vera": 5
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "9f998648940ebce5cc3cb362fdf1289df65a7be943cd3db26be645961c322ff7",
+      "request_count": 47,
+      "request_statuses": {
+        "completed-after-cancel": 2,
+        "response": 45
+      },
+      "requested_difficulty_profile": {
+        "depth": 5,
+        "herrings": [
+          1,
+          2
+        ],
+        "herrings_aimed": 0,
+        "innocents": 2,
+        "level": "medium",
+        "seconds": 900,
+        "steps": 16,
+        "truth": 3,
+        "twist": true
+      },
+      "requested_level": "medium",
+      "requested_target_deficits": [],
+      "seconds": 528.046,
+      "slot_id": "slot-11-medium",
+      "usage": {
+        "cacheReadInputTokens": 42528,
+        "cacheWriteInputTokens": 0,
+        "calls": 47,
+        "inputTokens": 232650,
+        "outputTokens": 82658,
+        "totalTokens": 357836
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 7,
+          "herrings_aimed": 2,
+          "herrings_other": 0,
+          "lenient_motives": 1,
+          "lies_on_path": 1,
+          "lies_other": 1
+        },
+        "level": "hard",
+        "score": 10.0,
+        "target": "hard",
+        "v": 1
+      },
+      "audit_manifest_sha256": "295e16dc251d8a4004c1905036767909a2155abce735ab259d9a7a4e210a1cff",
+      "audit_semantic_sha256": "46e618480197b150dbd92078b8bab04c0477d68ddc99fa7cd49fdca65b4e8579",
+      "bedrock_request_ids": [
+        "2134c4d6-d3fd-48f8-9912-1029bea78013",
+        "96758a71-3796-40ac-a652-67b610a27e47",
+        "6cfd4422-2281-4b18-ba93-4a05038b54cf",
+        "fe9380f0-44f6-4a56-962e-e9b88d320317",
+        "fce7c04a-8dc8-4f3e-9fe8-5f927e1299e8",
+        "8244e262-432b-47b4-9301-3d9e4a1b3c16",
+        "73f101ad-00ba-4fe9-b2df-973d39194959",
+        "aa304018-e95d-4ccf-8c56-bff19ea97151",
+        "846d5b48-138b-42c3-bdd4-eaa74f8b02c8",
+        "b2789dd4-0fd3-4edd-aa74-5e1b1640a478",
+        "cd13d60a-2753-4112-a336-ae118186d9b7",
+        "c4334db4-4093-49fd-983a-1cab18fbe8cd",
+        "d1dde3cd-2be2-4630-bd5f-096b724a15a8",
+        "121640db-69b0-49fa-97ce-1135b40f33f6",
+        "70c1f2a4-f1dd-4ac0-83f2-239d69fc2b73",
+        "6a8816ce-d2a5-4e4c-8215-aa7f2d62c654",
+        "2cd05d47-ba63-4296-a438-aadd492db6c9",
+        "45fa9fb4-e0e1-4639-8f3e-744086af5162",
+        "315ecd2a-d562-4fd9-b134-0fb37a47ca1a",
+        "227a7ef5-0879-45cb-95aa-34143d04ad1b",
+        "0b29a042-4f89-486f-ab35-d0047601e3c2",
+        "3976d3e7-51ca-4ba3-967a-c8fbe095d4de",
+        "865b906a-1e94-4c68-9128-7b11dfe6a0f1",
+        "4dd8e204-f34c-4d05-877f-9810dbe221f5",
+        "bb58b728-181e-4108-9728-6c2025e34d88",
+        "38be5a23-ef91-48ee-a4b3-392ed33effa2",
+        "88ab23fd-ff3d-4f1d-ad68-fe4fad74dd9f",
+        "dcc2c799-9810-4320-bf65-a5b600b300b8",
+        "bd169d8e-14eb-4fe1-8e72-c20020b9eaf2",
+        "3d8875c7-17fd-4649-aec9-ce16a2b6ad13",
+        "6a1f6d31-acb8-4184-9128-e3de170a5eb9",
+        "1f901cb0-463b-496c-8d7c-9b4b0d0d0b7c",
+        "f9ace702-9b0e-4993-953c-3d67a9ce7e16",
+        "ea572f19-303f-4983-b9c8-6857c34654dd",
+        "e6fdc407-945f-471d-8746-e1f57d91b603",
+        "f5eef1f3-3449-4e16-a52d-d560c5495fd8",
+        "fe10c70b-d7a5-47f8-b8ae-bf49e0346626",
+        "942ad4f3-1396-4ba9-9df2-a2cd67c59831",
+        "2c19b520-b9c0-4126-bd4d-736d21d6c105",
+        "821b11b0-2059-47bf-bb03-5b8cf18feb69",
+        "e60a2456-9f2a-4f6c-a7d2-4d3d834563bd",
+        "dd5dee98-b580-400a-bfbc-7ede21a69686",
+        "113aaba1-6315-4c9d-ac83-61291f14b8bd",
+        "d8573f11-cf15-47a3-8bbd-40b90fe6be9e",
+        "d3987422-defc-4d7b-b687-ab1afe7ec5e8",
+        "27aec968-fa6c-4924-8303-72605deff5d9",
+        "ec78c36f-3609-47f5-8644-9e3b6eb4b724",
+        "85e98616-84f8-469b-9bbb-734b6354fc81",
+        "11f9961c-64a0-4cfa-a251-25e01743f172",
+        "15f253ff-9665-4ca8-92bb-4af4ec588d30",
+        "4a5fe4db-b231-435c-8e7b-160b40e0944a",
+        "b7cd862b-7d9e-4d15-9715-30b1050c0d51",
+        "d3b46943-b49d-4ad0-badc-a8451d6250cb",
+        "f5400c7e-e12a-4614-b90a-3459b50d514e",
+        "0555812e-96ce-4a20-9926-90157ed20f15",
+        "2520398a-ed38-4b94-bb45-0f109481ccf3",
+        "e133c4a8-4061-4cfd-a941-fe22508933e6",
+        "260f3ed2-499b-4c46-95eb-f6495702a660",
+        "e5731f32-8a01-4e44-832e-6bdd52d8f717",
+        "578d7b62-32a2-44f0-9a15-423d40538271"
+      ],
+      "case_sha256": "18de1953ea3e3465db8ffb945df4126d13a7b890d2d74f0927283a70ea7ede70",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:12",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "b06c74184948ab5a4be90c8c7f4a61b4b78f8f537db1b73c92a20987a226c6d7",
+        "metrics": {
+          "false_signs": [
+            "pub_window",
+            "s_jonah"
+          ],
+          "herrings": [
+            "s_ada_hand",
+            "s_edmund_hand"
+          ],
+          "max_depth": 7,
+          "means": [
+            "s_doorstop"
+          ],
+          "mmo_depth": 7,
+          "motive": [],
+          "pillars": {
+            "means": 6,
+            "motive": 5,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "surface": [
+            "c_ada",
+            "c_edmund",
+            "c_vicar"
+          ],
+          "threads": {
+            "c_ada": 6,
+            "c_edmund": 6,
+            "c_vicar": 6,
+            "truth": 7
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 60,
+        "in": 475690,
+        "out": 116466
+      },
+      "ordinal": 12,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "9fd47fa4113ea2da63b3e32d2c1bbec4e5d589705a9ee2ccc739233c240de34b",
+        "javascript": {
+          "maxDepth": 7,
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 5,
+            "opportunity": 7
+          },
+          "solveDepth": 7,
+          "threads": {
+            "c_ada": 6,
+            "c_edmund": 6,
+            "c_vicar": 6,
+            "truth": 7
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 7,
+          "means": [
+            "s_doorstop"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 5,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "threads": {
+            "c_ada": 6,
+            "c_edmund": 6,
+            "c_vicar": 6,
+            "truth": 7
+          },
+          "twist": false
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "1172fd94d415334619ebb7ff7841b974ed392933bffec1b8bc06c9695f90a65f",
+        "javascript": {
+          "maxDepth": 7,
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 5,
+            "opportunity": 7
+          },
+          "solveDepth": 7,
+          "threads": {
+            "c_ada": 6,
+            "c_edmund": 6,
+            "c_vicar": 6,
+            "truth": 7
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 7,
+          "means": [
+            "s_doorstop"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 5,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "threads": {
+            "c_ada": 6,
+            "c_edmund": 6,
+            "c_vicar": 6,
+            "truth": 7
+          },
+          "twist": false
+        }
+      },
+      "premise_sha256": "60926e6cda977c447a1a851a0a859ba9e35c2285b7333052601b8df19a3197c9",
+      "request_count": 60,
+      "request_statuses": {
+        "completed-after-cancel": 2,
+        "response": 58
+      },
+      "requested_difficulty_profile": {
+        "depth": 7,
+        "herrings": [
+          2,
+          3
+        ],
+        "herrings_aimed": 1,
+        "innocents": 3,
+        "level": "hard",
+        "seconds": 1500,
+        "steps": 28,
+        "truth": 4,
+        "twist": true
+      },
+      "requested_level": "hard",
+      "requested_target_deficits": [
+        "no twist"
+      ],
+      "seconds": 769.524,
+      "slot_id": "slot-12-hard",
+      "usage": {
+        "cacheReadInputTokens": 78058,
+        "cacheWriteInputTokens": 0,
+        "calls": 60,
+        "inputTokens": 475690,
+        "outputTokens": 116466,
+        "totalTokens": 670214
+      }
+    }
+  ],
+  "usage_by_requested_inference_profile": {
+    "us.anthropic.claude-opus-5-5": {
+      "cacheReadInputTokens": 560634,
+      "cacheWriteInputTokens": 21156,
+      "calls": 165,
+      "inputTokens": 1890315,
+      "outputTokens": 991574,
+      "totalTokens": 3463679
+    },
+    "us.anthropic.claude-sonnet-5": {
+      "cacheReadInputTokens": 451080,
+      "cacheWriteInputTokens": 3580,
+      "calls": 574,
+      "inputTokens": 3481354,
+      "outputTokens": 319193,
+      "totalTokens": 4255207
+    }
+  }
+}

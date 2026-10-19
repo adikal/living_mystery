@@ -12,7 +12,7 @@ Its target obligation is to preserve physical, temporal and epistemic constraint
 
 `assessPlan` constructs local constraints; `recordPlan` emits an inspectable decision; `executePlanStep` rechecks immediate conditions before calling the executor or case consequence handler. With Z3 enabled, `verifyDirectorTurn` collects new locally allowed plans from a candidate turn and requests symbolic verification. Rejected local plans do not make an otherwise harmless waiting command fail solely because an NPC considered an impossible action. The capability catalog now includes a **fetch** shape (travel to a location the actor legitimately knows an object is kept, take it, then conceal it) and an **inform** shape (travel to a recipient and communicate a held belief); narrative modules use these so the culprit's concealment and the witness's in-person correction both run as validated live plans through this same admission path, rather than as scripted one-offs.
 
-Turns with take, store, give or conceal steps also trigger `investigateReachability`. It now searches acquisition actions derived from case locations, evidence and prerequisites, with a 180-minute horizon, 32-command limit, 16,000-node budget and at most five replay attempts. Each candidate acquires evidence and submits the case-authored hypothesis. A route succeeds only if actual engine execution reaches a solved state and passes integrity checks. The three new configurations additionally apply mandatory local admission to every public dispatch and relevant intermediate object/access/deadline effects, independently of the optional solver.
+Turns with take, store, give or conceal steps also trigger `investigateReachability`. It now searches acquisition actions derived from case locations, evidence and prerequisites, with a 180-minute horizon, 32-command limit, 16,000-node budget and at most five replay attempts. Each candidate acquires evidence and submits the case-authored hypothesis. A route succeeds only if actual engine execution reaches a solved state and passes integrity checks. A testimony clue that a hand-authored case names only as a plain string (without speaker or route) has no acquisition action of its own; it stays outside the searchable catalog and is not counted as an incomplete catalog entry. The three new configurations additionally apply mandatory local admission to every public dispatch and relevant intermediate object/access/deadline effects, independently of the optional solver.
 
 ```text
 candidate turn
@@ -152,3 +152,18 @@ expanding the agent's freedom. Three executed prehistories now provide reference
 Accepted personal appointments now constrain all represented plans for their participants. Physical activity uses the shared time/location IR; meeting presence and actual fulfillment are rechecked in the engine. Optional social failure is allowed because these appointments are not required by the investigation rubric. Source-linked invitations and responses do not silently create testimony about the crime.
 
 A living town can produce many short plans during a wait. Optional solver verification sends sequential batches of at most twelve queries, with a whole-turn timeout and a 96-query ceiling. Any failed batch leaves the candidate uncommitted. This preserves the service's bounded request format while supporting ordinary multi-NPC activity. The earlier finite acquisition-search limitations remain unchanged.
+
+
+## 6.11 The living morning in generated cases
+
+**Status: implemented for generated (kernel) cases.** The design and its critics are in `docs/living-village.md`; this section states the concealment contract.
+
+**One projection.** A concealment is certified on a projection of the case (`projectAvailability` in `dist/morning.mjs`). Evidence the detective already holds is a retained root: moving its physical source cannot take it away. A held sign keeps its place, so a requirement on a concealed sign is dropped; a need is kept, so a held sign that needs a concealed sign can no longer be read. Unheld signs that require or need a concealed sign go with it, transitively. The engine's hints, menus and accounts use the same function (`Morning.unavailableSigns`), so what the game offers and what the certificate assumes agree.
+
+**One clue, one concealment.** Nobody may plan a clue that is already in another person's pending plan; the person who holds the plan may re-plan it. When two plans in one round name the same clue, only the first is kept. At execution a clue that is already gone is recorded as missed ("already gone").
+
+**Deadlines.** A concealment must be reachable before its plan's deadline. Deadlines are absolute and fixed when the step is planned; saved steps without one take it from the round that made them. A person who lingered because the detective or the constable stayed is recorded as blocked by them when the chance passes.
+
+**Refusals.** A clue is refused for good only when the case as it actually stands cannot spare it. A failure that depends on another person's still-pending concealment cuts the plan for that round only, and the clue may be planned again once that concealment resolves.
+
+**Director failures.** A transport error, a timeout or malformed output changes nothing and leaves the round due. The browser then waits before trying again: 30 seconds, doubling to at most five minutes, held in memory only. The error audit keeps the code critic's reasons when a revision call fails, so it shows what the revision was mending.

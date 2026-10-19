@@ -3,7 +3,10 @@ import json
 import os
 import random
 import sys
+import tempfile
 import unittest
+from pathlib import Path
+from unittest import mock
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -14,7 +17,8 @@ FIXTURE = os.path.join(HERE, '..', '..', 'tests', 'fixtures', 'mk-rook.json')
 
 class Difficulty(unittest.TestCase):
     def setUp(self):
-        self.case = json.load(open(FIXTURE))
+        with open(FIXTURE, encoding='utf-8') as source:
+            self.case = json.load(source)
         self.model = D.load_model()
 
     def test_features_from_the_certifier(self):
@@ -51,6 +55,29 @@ class Difficulty(unittest.TestCase):
         model = {'kind': 'logistic', 'bias': bias, 'weights': dict(zip(D.FEATURES, w))}
         easy, hard = dict(zip(D.FEATURES, [2, 0, 0, 0, 0, 0])), dict(zip(D.FEATURES, [8, 0, 0, 0, 0, 0]))
         self.assertLess(D.score(easy, model), D.score(hard, model))
+
+    def test_rate_all_preserves_target_in_case_and_index(self):
+        with tempfile.TemporaryDirectory() as root:
+            base = Path(root)
+            case_path = base / 'case.json'
+            index_path = base / 'index.json'
+            case_path.write_text(json.dumps({'difficulty': {'target': 'hard'}}), encoding='utf-8')
+            index_path.write_text(json.dumps([{'id': 'case', 'file': 'case.json',
+                                              'difficulty': {'level': 'easy', 'score': 0.1, 'target': 'hard'}}]),
+                                  encoding='utf-8')
+            fresh = {'v': 2, 'score': 0.75, 'level': 'medium', 'features': {'depth': 3}}
+            with mock.patch.object(D, 'published', return_value=[(str(index_path), str(base))]), \
+                    mock.patch.object(D, 'load_model', return_value={'v': 2}), \
+                    mock.patch.object(D, 'rate', return_value=fresh):
+                D.rate_all(log=lambda *_: None)
+            saved_case = json.loads(case_path.read_text(encoding='utf-8'))
+            saved_index = json.loads(index_path.read_text(encoding='utf-8'))
+        self.assertEqual(saved_case['difficulty'], {**fresh, 'target': 'hard'})
+        self.assertEqual(saved_index[0]['difficulty'], {'level': 'medium', 'score': 0.75, 'target': 'hard'})
+
+    def test_rate_with_target_omits_absent_target(self):
+        with mock.patch.object(D, 'rate', return_value={'v': 1, 'score': 0.2, 'level': 'easy', 'features': {}}):
+            self.assertNotIn('target', D.rate_with_target({}))
 
     def test_targets_by_level(self):
         from refine import certify

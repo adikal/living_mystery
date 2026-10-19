@@ -8,7 +8,8 @@ from migrate import migrate
 
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 files = sorted(glob.glob(f'{HERE}/runs/*/*/*.json'))
-files = [f for f in files if not f.endswith('result.json')]
+files = [f for f in files if not f.endswith('result.json')
+         and os.path.relpath(f, os.path.join(HERE, 'runs')).split(os.sep)[0] != 'experiments']
 tmp = tempfile.mkdtemp(prefix='parity-')
 migrated = []
 for i, f in enumerate(files):

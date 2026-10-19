@@ -30,7 +30,8 @@ test('a rejected free-text turn ends with the person\'s own decline, rotating', 
   assert.ok(caseTables(s).behavior.isDecline(pid, said[0]));
 });
 
-// The critics rejected the wording, but the model chose an account the person may give: that account is given as written.
+// A rejected free-text account choice is audit evidence only. The safe fallback declines rather than promoting an
+// account whose relevance or wording did not pass review.
 const rejectedChoosing = (s, pid, text, pick) => {
   const t = prepareCharacterTurn(s, {person: pid, text, action: null});
   const account = pick(t.context.accounts);
@@ -41,12 +42,13 @@ const rejectedChoosing = (s, pid, text, pick) => {
   return {account, said: s.events.findLast(e => e.kind === 'speech' && e.actor === pid).data.assertion};
 };
 
-test('a rejected free-text turn gives the account the model chose, as written, and declines once it is told', () => {
+test('a rejected free-text account choice declines without committing that account', () => {
   const lines = ['Couldn\'t say, I\'m sure.'];
   const {s, pid} = setup(p => ({[p]: lines}));
   const first = rejectedChoosing(s, pid, 'Tell me about last night, in detail.', accounts => accounts[0]);
-  assert.equal(first.said, first.account.statement, 'the published account, not the rejected wording');
+  assert.equal(first.said, lines[0]);
+  assert.ok(!s.world.player.evidence.some(e => e.clue === first.account.accountTopic));
   const again = rejectedChoosing(s, pid, 'And once more?', accounts => accounts.find(a => a.id === first.account.id) ?? accounts[0]);
   assert.equal(again.account.id, first.account.id);
-  assert.equal(again.said, lines[0], 'an account already told is not given again');
+  assert.equal(again.said, lines[0]);
 });

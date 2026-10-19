@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync, existsSync} from 'node:fs';
 import {certify} from '../dist/mk/kernel.mjs';
-import {exportSession, importSession, caseTables, dispatch} from '../dist/engine.mjs';
+import {registerKernelCase, createSession, exportSession, importSession, caseTables, dispatch} from '../dist/engine.mjs';
 import {autoplay} from './kernel-autoplay.mjs';
 
 // Every published generated case (dist/cases/generated) must certify and play through the real engine.
@@ -11,6 +11,44 @@ const index = existsSync(new URL('index.json', dir)) ? JSON.parse(readFileSync(n
 const load = f => JSON.parse(readFileSync(new URL(f, dir), 'utf8'));
 
 test('generated cases are published', () => { assert.ok(index.length >= 1, 'at least one generated case in dist/cases/generated'); });
+
+function caseVariant(id, title) {
+  const records = structuredClone(load(index[0].file));
+  records.id = id;
+  records.title = title;
+  records.synopsis = `${title} synopsis`;
+  return records;
+}
+
+test('an imported kernel save uses its embedded records when the same case id is already loaded', () => {
+  const id = 'mk-test-import-record-identity';
+  const savedRecords = caseVariant(id, 'Saved payload');
+  const source = createSession(41, registerKernelCase(savedRecords));
+  const saved = exportSession(source);
+
+  const registeredRecords = caseVariant(id, 'Previously registered payload');
+  const registered = createSession(41, registerKernelCase(registeredRecords));
+  assert.equal(caseTables(registered).CASE.title, registeredRecords.title);
+
+  const restored = importSession(saved);
+  assert.deepEqual(restored, source);
+  assert.equal(restored.world.caseRecords.title, savedRecords.title);
+  assert.equal(caseTables(restored).CASE.title, savedRecords.title);
+});
+
+test('simultaneous kernel sessions with the same case id keep their own record payloads', () => {
+  const id = 'mk-test-simultaneous-record-identity';
+  const firstRecords = caseVariant(id, 'First session payload');
+  const first = createSession(42, registerKernelCase(firstRecords));
+  const secondRecords = caseVariant(id, 'Second session payload');
+  const second = createSession(42, registerKernelCase(secondRecords));
+
+  assert.equal(caseTables(first).CASE.title, firstRecords.title);
+  assert.equal(caseTables(second).CASE.title, secondRecords.title);
+  assert.equal(caseTables(first).CASE.title, firstRecords.title);
+  assert.equal(caseTables(first).diagnostics(first).ok, true);
+  assert.equal(caseTables(second).diagnostics(second).ok, true);
+});
 
 for (const entry of index) {
   test(`${entry.id}: certified, gated, solvable only with the truth, and save-safe`, () => {
@@ -330,4 +368,69 @@ test('a hint to ask someone names the question that gives the account it is abou
       assert.ok(s.world.player.evidence.some(e => e.clue === x.id), `${kc.id}: asking “${q}” gives ${x.id}`);
     }
   }
+});
+
+
+test('legacy synonymous night questions collapse to one action and hints advance through anything else', async () => {
+  const kc = JSON.parse(readFileSync(new URL('./fixtures/mk-cordial.json', import.meta.url), 'utf8'));
+  kc.id = 'mk-test-night-alias-compatibility';
+  const duplicate = {id: 't_duplicate_night', kind: 'testimony', speaker: 'iris', source: 'e_chess',
+    title: 'Dr Marsh on the chess game', text: 'The vicar arrived for chess at nine o’clock, and we played at my surgery.',
+    ask: 'Where were you last night?'};
+  kc.signs.push(duplicate);
+  const s = createSession(1, registerKernelCase(kc)), T = caseTables(s), B = T.behavior;
+  if (s.world.player.location !== s.world.npcs.iris.location) dispatch(s, {type: 'move', to: s.world.npcs.iris.location});
+  let menu = [...T.CASE.topicsFor.iris, ...B.followupOptions(s, 'iris')];
+  assert.equal(menu.filter(([, label]) => /where were you last night|account of last night/i.test(label)).length, 1);
+  dispatch(s, {type: 'ask', person: 'iris', topic: 'night'});
+  menu = [...T.CASE.topicsFor.iris, ...B.followupOptions(s, 'iris')];
+  assert.ok(menu.some(([topic]) => topic === 'more'));
+  assert.ok(!menu.some(([topic]) => topic === duplicate.id), 'the synonymous own question stays hidden');
+  const hintSession=structuredClone(s),existing = new Set(hintSession.world.player.evidence.map(e => e.clue));
+  for (const sign of kc.signs) if (sign.kind !== 'public' && sign.id !== duplicate.id && !existing.has(sign.id))
+    hintSession.world.player.evidence.push({clue: sign.id});
+  const hint = B.hints(hintSession);
+  assert.equal(hint.id, duplicate.id);
+  assert.match(hint.levels[1], /anything else you remember/i);
+  assert.doesNotMatch(hint.levels[1], /where were you last night/i);
+  for(let attempt=0;attempt<8&&!s.world.player.evidence.some(e => e.clue === duplicate.id);attempt++)
+    dispatch(s, {type: 'ask', person: 'iris', topic: 'more'});
+  assert.ok(s.world.player.evidence.some(e => e.clue === duplicate.id));
+});
+
+
+test('an alias that would not deliver its account is ignored, and a specific question is never collapsed', () => {
+  const kc = JSON.parse(readFileSync(new URL('./fixtures/mk-cordial.json', import.meta.url), 'utf8'));
+  kc.id = 'mk-test-alias-targets';
+  const other = kc.signs.find(x => x.kind === 'testimony' && x.speaker !== 'iris');
+  const add = (id, ask, extra = {}) => kc.signs.push({id, kind: 'testimony', speaker: 'iris', source: 'e_chess', title: id, text: `${id} text`, ask, ...extra});
+  add('t_seen_alias', 'Did you notice anybody about the lane?', {same_as: 'seen'});          // 'seen' delivers sightings only
+  add('t_cross_alias', 'What did the rector want with you?', {same_as: other.id});           // another speaker's account
+  add('t_specific', 'What did you do with the chess set after supper last night?');            // not a plain whereabouts question
+  add('t_plain', 'Tell me, Doctor, where were you last night?');                              // plain, with a vocative
+  const s = createSession(1, registerKernelCase(kc)), B = caseTables(s).behavior;
+  assert.equal(B.canonicalTopic('iris', 't_seen_alias'), 't_seen_alias');
+  assert.equal(B.canonicalTopic('iris', 't_cross_alias'), 't_cross_alias');
+  assert.equal(B.canonicalTopic('iris', 't_specific'), 't_specific');
+  assert.equal(B.canonicalTopic('iris', 't_plain'), 'night');
+  if (s.world.player.location !== s.world.npcs.iris.location) dispatch(s, {type: 'move', to: s.world.npcs.iris.location});
+  const topics = B.followupOptions(s, 'iris').map(([t]) => t);
+  for (const id of ['t_seen_alias', 't_cross_alias', 't_specific']) assert.ok(topics.includes(id), `${id} keeps its own question`);
+  assert.ok(!topics.includes('t_plain'), 'the plain one is asked through the night question');
+});
+
+test('a hint never quotes a question that no longer leads to the account', () => {
+  const kc = JSON.parse(readFileSync(new URL('./fixtures/mk-cordial.json', import.meta.url), 'utf8'));
+  kc.id = 'mk-test-hint-fallback';
+  // three accounts behind "anything else": the third is several askings away
+  for (const n of [1, 2, 3]) kc.signs.push({id: `t_more_${n}`, kind: 'testimony', speaker: 'iris', source: 'e_chess', title: `more ${n}`,
+    text: `Further detail number ${n}.`, ask: 'Where were you last night?'});
+  const s = createSession(1, registerKernelCase(kc)), B = caseTables(s).behavior;
+  if (s.world.player.location !== s.world.npcs.iris.location) dispatch(s, {type: 'move', to: s.world.npcs.iris.location});
+  dispatch(s, {type: 'ask', person: 'iris', topic: 'night'});
+  const t = structuredClone(s), have = new Set(t.world.player.evidence.map(e => e.clue));
+  for (const x of kc.signs) if (x.kind !== 'public' && x.id !== 't_more_3' && !have.has(x.id)) t.world.player.evidence.push({clue: x.id});
+  const h = B.hints(t);
+  assert.equal(h.id, 't_more_3');
+  assert.doesNotMatch(h.levels[1], /account of last night/i, 'the completed night question is not quoted again');
 });

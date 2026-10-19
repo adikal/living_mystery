@@ -1,5 +1,6 @@
 """Re-run publish-time wording steps on cases already published, so they gain what new cases get (wording only: each
-step adds no fact, and every case must still pass publish.gate before it is written).
+step adds no fact, and every case must still pass the explicitly deterministic-only
+maintenance gate before it is written; this tool does not use the ordinary publication entry points).
 
     .venv/bin/python tools/refine-c/backfill.py sightings [--dry-run] [files...]
 
@@ -8,13 +9,14 @@ thread-safe); with no files, every case in dist/cases/generated and its live/ fo
 """
 import concurrent.futures as cf
 import glob
-import json
 import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
+PUBLICATION_ROOT = os.path.join(ROOT, 'dist', 'cases', 'generated')
 sys.path.insert(0, HERE)
+import publication_io as pubio  # noqa: E402
 
 
 def steps():
@@ -29,18 +31,27 @@ def one(args):
     path, names, dry = args
     import difficulty
     import enrich
+    import provenance
     import publish
-    case = json.load(open(path))
+    case = pubio.read_json(path)
+    read_sha256 = provenance.sha256(case)        # optimistic concurrency: the steps below run outside the lock
     done = {n: steps()[n](case) for n in names}
     publish.add_show_lines(case)                 # lines for anything added
     enrich.review_publish(case)
     publish.finish_wording(case)                 # lines checked against their clue; forms of address
-    g = publish.gate(case)
+    publish.mark_duplicate_questions(case, judge=False)   # network-free alias repair: legacy cases meet the alias gate
+    g = publish.deterministic_gate(case)  # explicit repair-only bypass; ordinary publication requires model review
+    errors = g['errors'][:2]
     if g['ok'] and not dry:
+        # A deterministic-only maintenance write must not retain a now-stale PASS certificate.
+        case.pop('publication_review', None)
         target = (case.get('difficulty') or {}).get('target')
-        case['difficulty'] = {**difficulty.rate(case), 'target': target}
-        json.dump(case, open(path, 'w'), indent=1)
-    return os.path.relpath(path, ROOT), done, g['ok'], g['errors'][:2]
+        case['difficulty'] = difficulty.rate_with_target(case, target=target)
+        with pubio.publication_lock(PUBLICATION_ROOT):
+            if publish.disk_sha256(path) != read_sha256:
+                return os.path.relpath(path, ROOT), done, False, ['it changed on disk while the steps ran; run again']
+            pubio.atomic_json(path, case)
+    return os.path.relpath(path, ROOT), done, g['ok'], errors
 
 
 if __name__ == '__main__':
@@ -50,6 +61,8 @@ if __name__ == '__main__':
                                                           + glob.glob(f'{ROOT}/dist/cases/generated/live/mk-*.json'))
     if not names:
         sys.exit(__doc__)
+    import publish
+    publish.recover_live_publication()   # finish (or quarantine) an interrupted live commit before touching live files
     with cf.ProcessPoolExecutor(4) as ex:
         for path, done, ok, errs in ex.map(one, [(f, names, '--dry-run' in sys.argv) for f in files]):
             print(path, done, 'OK' if ok else f'NOT WRITTEN {errs}', flush=True)

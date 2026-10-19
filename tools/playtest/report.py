@@ -1,17 +1,24 @@
 """Batch report: objective metrics and judged scores by profile and case, and problems grouped for the optimizer.
 
     .venv/bin/python tools/playtest/report.py tools/playtest/runs/<batch>
-    .venv/bin/python tools/playtest/report.py tools/playtest/runs/<after> --baseline tools/playtest/runs/<before>
+    .venv/bin/python tools/playtest/report.py tools/playtest/runs/<after> --baseline tools/playtest/runs/<before> \
+        --comparison-registration path/to/registration.json
+    .venv/bin/python tools/playtest/report.py tools/playtest/runs/<historical-after> \
+        --baseline tools/playtest/runs/<historical-before> --legacy-descriptive
 
-Writes report.md and report.json in the batch folder. With a baseline, episodes are paired by case, profile and seed,
-and each metric's change is reported with a bootstrap 90% interval, so a change is judged on matched play.
+Writes report.md and report.json in the batch folder. Paired gate-eligible output requires a passing offline comparison
+preflight. Historical output is allowed only in explicitly labelled legacy/descriptive mode and is never a gate result.
 """
 import argparse
 import json
 import os
 import random
 import statistics as st
+import sys
 from collections import defaultdict
+from pathlib import Path
+
+from comparison_audit import ComparisonAuditError, audit_comparison
 
 METRICS = ['solved', 'correct', 'actions', 'first_progress', 'hints', 'hints_that_helped', 'longest_stall', 'loops', 'character_fallbacks', 'neutral_replies', 'pressed_after_decline', 'refused_inconsistent',
            'character_rejections', 'refused_actions', 'wrong_accusations', 'witnessed_village_per_hour', 'exceptions']
@@ -62,6 +69,22 @@ def compare(after, before):
     return {'pairs': len(pairs), 'deltas': out}
 
 
+def comparison_preflight(after_folder, before_folder, registration_path=None, legacy_descriptive=False):
+    """Return comparison mode and typed local audit, or fail closed for gate-eligible reporting."""
+    audit = audit_comparison(Path(before_folder), Path(after_folder),
+                             Path(registration_path) if registration_path else None)
+    if not audit.passed and not legacy_descriptive:
+        raise ComparisonAuditError(audit)
+    descriptive = bool(legacy_descriptive)
+    return {
+        'mode': 'legacy_descriptive' if descriptive else 'audited_paired',
+        'label': ('Legacy descriptive comparison — not a gate result' if descriptive
+                  else 'Audited paired comparison — eligible for gate interpretation'),
+        'gate_result_allowed': audit.passed and not descriptive,
+        'audit': audit.to_dict(),
+    }
+
+
 def clusters(cards):
     """Problems grouped by (layer, kind), with how many episodes and profiles they touch, and examples."""
     groups = defaultdict(list)
@@ -88,7 +111,9 @@ def markdown(name, cards, by_profile, by_case, groups, comparison):
     out = [f'# Playtest report: {name}', '', f'{len(cards)} episodes.', '']
     out += table('By profile', by_profile) + table('By case', by_case)
     if comparison:
-        out += [f"### Change against the baseline ({comparison['pairs']} matched pairs; mean, 90% interval)", '',
+        out += [f"### {comparison['label']}", '',
+                f"{comparison['pairs']} matched pairs; mean change and bootstrap 90% interval. "
+                f"Audit status: **{comparison['audit']['status']}**.", '',
                 '| metric | mean change | interval |', '|---|---|---|']
         out += [f'| {k} | {v[0]} | [{v[1]}, {v[2]}] |' for k, v in comparison['deltas'].items() if v]
         out.append('')
@@ -104,12 +129,27 @@ def main():
     a = argparse.ArgumentParser()
     a.add_argument('folder')
     a.add_argument('--baseline')
+    a.add_argument('--comparison-registration')
+    a.add_argument('--legacy-descriptive', action='store_true',
+                   help='allow an explicitly labelled historical description when strict audit fails')
     args = a.parse_args()
+    if args.legacy_descriptive and not args.baseline:
+        a.error('--legacy-descriptive requires --baseline')
+    if args.comparison_registration and not args.baseline:
+        a.error('--comparison-registration requires --baseline')
+    comparison = None
+    if args.baseline:
+        try:
+            metadata = comparison_preflight(args.folder, args.baseline, args.comparison_registration,
+                                            args.legacy_descriptive)
+        except ComparisonAuditError as exc:
+            print(json.dumps(exc.audit.to_dict(), ensure_ascii=False, indent=2, sort_keys=True), file=sys.stderr)
+            raise SystemExit(2) from None
+        comparison = {**compare(load(args.folder), load(args.baseline)), **metadata}
     cards = load(args.folder)
     by = lambda key: {k: row([c for c in cards.values() if c.get(key) == k]) for k in sorted({c.get(key) for c in cards.values() if c.get(key)})}
     by_case = {os.path.basename(k)[:-5]: v for k, v in by('case').items()}
     groups = clusters(cards)
-    comparison = compare(cards, load(args.baseline)) if args.baseline else None
     name = os.path.basename(os.path.normpath(args.folder))
     json.dump({'by_profile': by('profile'), 'by_case': by_case, 'clusters': groups, 'comparison': comparison},
               open(os.path.join(args.folder, 'report.json'), 'w'), indent=1)

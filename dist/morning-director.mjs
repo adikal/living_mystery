@@ -6,7 +6,6 @@
 //      depends on it), so at least one playable solution remains
 // What fails is dropped (that person keeps to their routine); what passes is installed as an event and replays exactly.
 import {runtimeFor, copy, exportSession, diagnostics} from './engine.mjs';
-import {certify} from './mk/kernel.mjs';
 import {llmConfig, parseJsonLoose} from './llm.mjs';
 import * as Morning from './morning.mjs';
 
@@ -27,8 +26,6 @@ Nobody hides anything in front of the detective or the constable. People react o
 Return ONLY JSON: {"agendas": {"<person id>": [steps]}, "why": "<one short line>"}.`;
 
 export const LINE_CRITIC = `You check what people say to each other in a village mystery. Each item gives the speaker, whom they speak to, what they say, and the knowledge it rests on: all of it is what the speaker knows, and telling it to someone who has not heard it yet is the point (that is how news travels). Reject an item if it states a fact not in that knowledge, claims to know something the speaker could not know, or tells a lie better than the speaker's own story. Each item also lists what the speaker knows privately (their secrets, their reasons, what they did and arranged): reject an item that reveals or hints at any of it, even to a confidant, because whatever is said is passed on. Repeating, paraphrasing, guessing aloud, worrying, or asking are fine. Return ONLY JSON: {"verdicts": {"<id>": {"ok": true|false, "why": "<short>"}}}.`;
-
-const arr = v => Array.isArray(v) ? v : [];
 
 // Everything the model sees: the story, each person's knowledge with ids, the map, where everyone is.
 export function context(s) {
@@ -56,19 +53,8 @@ export function context(s) {
     earlierThisMorning: earlier, places, people};
 }
 
-// Critic 3: a concealment is allowed only if the case still certifies without the clue and what depends on it.
-export function stillSolvable(kc, clues) {
-  const gone = new Set(clues);
-  for (let more = true; more;) {
-    more = false;
-    for (const x of kc.signs) if (!gone.has(x.id) && [...arr(x.requires), ...arr(x.needs)].some(r => gone.has(r))) { gone.add(x.id); more = true; }
-  }
-  const d = structuredClone(kc);
-  d.signs = d.signs.filter(x => !gone.has(x.id));
-  for (const x of d.signs) for (const f of ['defeats', 'explainedBy']) if (x[f]) x[f] = x[f].filter(r => !gone.has(r));
-  const r = certify(d, true, true);
-  return {ok: r.ok, errors: r.errors ?? [], removed: [...gone]};
-}
+// Compatibility export for static callers; live planning and execution use Morning.certifyConcealments.
+export function stillSolvable(kc, clues) { return Morning.stillSolvable(kc, clues); }
 
 // Apply all three critics; return the plan that survives (dropping only what failed) and an audit.
 export async function criticise(s, proposal, {lineCritic}) {
@@ -76,17 +62,10 @@ export async function criticise(s, proposal, {lineCritic}) {
   const code = Morning.check(s, kc, ctx, proposal);
   // keep each person's steps up to the first that fails the code critic (check already does this per person)
   const plan = copy(code.plan), audit = {code: code.errors, lines: {}, solvable: {}};
-  // critic 3: concealments, cumulatively with ones already done
-  const done = s.world.flags.morning?.concealed ?? [];
-  let hidden = [...done];
-  for (const [pid, steps] of Object.entries(plan)) {
-    const i = steps.findIndex(x => x.kind === 'conceal');
-    if (i < 0) continue;
-    const v = stillSolvable(kc, [...hidden, steps[i].clue]);
-    audit.solvable[`${pid}:${steps[i].clue}`] = v.ok ? 'still solvable' : v.errors[0];
-    if (v.ok) hidden.push(steps[i].clue); else plan[pid] = steps.slice(0, i);
-  }
-  // critic 2: what is said
+  // everyone the director planned for who can act, whatever survived. Their pending plans will be replaced.
+  const free = new Set(Morning.actors(s, kc, ctx.roles, ctx.victim));
+  const replanned = Object.keys(proposal?.agendas && typeof proposal.agendas === 'object' ? proposal.agendas : {}).filter(p => free.has(p));
+  // critic 2: what is said. Prune rejected meetings before evaluating concealments in the final plan.
   const items = {};
   for (const [pid, steps] of Object.entries(plan)) for (const [i, x] of steps.entries()) if (x.kind === 'meet') {
     const k = Morning.knowledge(s, kc, pid, ctx.people, ctx.places), all = [...k.private, ...k.sayable];
@@ -97,16 +76,38 @@ export async function criticise(s, proposal, {lineCritic}) {
   }
   if (Object.keys(items).length) {
     const verdicts = (await lineCritic(items))?.verdicts ?? {};
-    for (const [key, v] of Object.entries(items)) {
+    for (const [key] of Object.entries(items)) {
       const ok = verdicts[key]?.ok === true;
       audit.lines[key] = ok ? 'ok' : (verdicts[key]?.why ?? 'no verdict');
       if (!ok) { const [pid, i] = key.split(':'); plan[pid] = plan[pid].slice(0, Number(i)); }
     }
   }
+  // critic 3: certify all concealments cumulatively, including committed pending concealments that this round keeps.
+  // A clue is taken away once: a second person planning the same clue this round is cut. A clue is refused for good
+  // (audit.refused, never offered again) only when the case as it actually stands cannot spare it; a failure that
+  // depends on other pending plans is cut this round and may be planned again once those resolve.
+  const admitted = [];
+  audit.refused = [];
+  for (const [pid, steps] of Object.entries(plan)) {
+    for (const [i, x] of steps.entries()) {
+      if (x.kind !== 'conceal') continue;
+      if (admitted.includes(x.clue)) {
+        audit.solvable[`${pid}:${x.clue}`] = 'already planned by someone else this round';
+        plan[pid] = steps.slice(0, i); break;
+      }
+      const v = Morning.certifyConcealments(s, kc, {
+        phase: 'planning', actor: pid, stepIndex: i, clue: x.clue, replanned,
+        additionalConcealments: [...admitted, x.clue],
+      });
+      audit.solvable[`${pid}:${x.clue}`] = v.ok ? 'still solvable' : (v.errors[0] ?? 'certification failed');
+      if (v.ok) { admitted.push(x.clue); continue; }
+      const alone = Morning.certifyConcealments(s, kc, {phase: 'planning', actor: pid, stepIndex: i, clue: x.clue,
+        replanned, includeCommitments: false, additionalConcealments: [x.clue]});
+      if (!alone.ok) audit.refused.push(x.clue);
+      plan[pid] = steps.slice(0, i); break;
+    }
+  }
   for (const pid of Object.keys(plan)) if (!plan[pid].length) delete plan[pid];
-  // everyone the director planned for who can act, whatever survived
-  const free = new Set(Morning.actors(s, kc, ctx.roles, ctx.victim));
-  const replanned = Object.keys(proposal?.agendas && typeof proposal.agendas === 'object' ? proposal.agendas : {}).filter(p => free.has(p));
   return {plan, audit, replanned};
 }
 
@@ -124,23 +125,32 @@ export async function directMorning(session, {fetchImpl = globalThis.fetch, sign
     const res = await fetchImpl(endpoint, {method: 'POST', signal, headers: {'content-type': 'application/json', 'X-Living-Mystery': 'character-v1'},
       body: JSON.stringify({role, system, prompt: JSON.stringify(prompt), max_tokens})});
     if (!res.ok) throw Error(`director unavailable (${res.status})`);
-    return parseJsonLoose((await res.json()).text);
+    const parsed = parseJsonLoose((await res.json()).text);
+    const field = role === 'line_critic' ? 'verdicts' : 'agendas';
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)
+      || !parsed[field] || typeof parsed[field] !== 'object' || Array.isArray(parsed[field]))
+      throw Error(`${role.replace('_', ' ')} returned malformed JSON`);
+    return parsed;
   };
-  const timer = new Promise((_, no) => setTimeout(() => no(Error('director timed out')), timeoutMs));
+  let timeoutId;
+  const timer = new Promise((_, no) => { timeoutId = setTimeout(() => no(Error('director timed out')), timeoutMs); });
   let proposal, result, audit = {};
   try {
     proposal = await Promise.race([call('director', DIRECTOR_PROMPT, ctxt, 1500), timer]);
     // the code critic's reasons go back once, so a fault (a meeting resting on private history, say) is mended, not just cut
     const first = Morning.check(session, session.world.caseRecords, r.behavior.morningCtx, proposal);
     if (first.errors.length) {
-      const again = await Promise.race([call('director', DIRECTOR_PROMPT, {...ctxt, previous_attempt: proposal, rejected: first.errors}, 1500), timer]).catch(() => null);
-      if (again?.agendas) { audit.revised = first.errors; proposal = again; }
+      audit.revised = first.errors;   // recorded first, so a failed revision call still says what it was mending
+      proposal = await Promise.race([call('director', DIRECTOR_PROMPT, {...ctxt, previous_attempt: proposal, rejected: first.errors}, 1500), timer]);
     }
-    result = await Promise.race([criticise(session, proposal ?? {}, {lineCritic: items => call('line_critic', LINE_CRITIC, items, 800)}), timer]);
-    audit = {trigger: reason, why: proposal?.why ?? '', ...(audit.revised ? {revised: audit.revised} : {}), ...result.audit};
+    result = await Promise.race([criticise(session, proposal, {lineCritic: items => call('line_critic', LINE_CRITIC, items, 800)}), timer]);
+    audit = {trigger: reason, why: proposal.why ?? '', ...(audit.revised ? {revised: audit.revised} : {}), ...result.audit};
   } catch (e) {
     if (signal?.aborted || exportSession(session) !== base) return {status: 'stale'};
-    result = {plan: {}}; audit = {error: String(e.message).slice(0, 200)};
+    const error = String(e instanceof Error ? e.message : e).slice(0, 200);
+    return {status: 'error', error, audit: {error, trigger: reason, ...(audit.revised ? {revised: audit.revised} : {})}};
+  } finally {
+    clearTimeout(timeoutId);
   }
   if (signal?.aborted || exportSession(session) !== base) return {status: 'stale'};
   const trial = copy(session);

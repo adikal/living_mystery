@@ -11,6 +11,9 @@ from llm import PLAYER_MODEL, call_json
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PROFILES = json.load(open(os.path.join(HERE, 'profiles.json')))
+# inference settings, recorded in each batch's provenance (run.py) and checked against its request audit
+PLAYER_MAX_TOKENS, PLAYER_TEMPERATURE = 600, 0.8
+QUESTIONNAIRE_MAX_TOKENS, QUESTIONNAIRE_TEMPERATURE = 800, 0.3
 
 SYSTEM = """You are a person playing a text detective game set in an English village in 1932. Someone has died, and you
 are the detective. You can walk between places, examine things, question people (with the question buttons or in your
@@ -88,7 +91,7 @@ def render_news(news):
 
 
 class Player:
-    def __init__(self, profile, temperament, model=PLAYER_MODEL, temperature=0.8, memory=10):
+    def __init__(self, profile, temperament, model=PLAYER_MODEL, temperature=PLAYER_TEMPERATURE, memory=10):
         self.profile, self.temperament = profile, temperament
         self.system = SYSTEM.format(profile=profile_text(profile, temperament))
         self.model, self.temperature, self.memory = model, temperature, memory
@@ -106,7 +109,8 @@ class Player:
             f"That did not work: {error}" if error else None,
             f"What you see now:\n{render(observation)}",
             f"You have taken {actions_so_far} actions; {self.since_progress} since you last learned something new."]))
-        out = call_json(self.system, prompt, self.model, max_tokens=600, temperature=self.temperature)
+        out = call_json(self.system, prompt, self.model, max_tokens=PLAYER_MAX_TOKENS, temperature=self.temperature,
+                        role='player')
         action = out.get('action') if isinstance(out.get('action'), dict) else {'type': 'wait', 'minutes': 5}
         if out.get('thinking'):
             self.thoughts.append(str(out['thinking'])[:300])
@@ -120,4 +124,5 @@ class Player:
 
     def questionnaire(self, outcome):
         user = json.dumps({'player': profile_text(self.profile, self.temperament), 'diary': self.diary, 'outcome': outcome})
-        return call_json(QUESTIONNAIRE, user, self.model, max_tokens=800, temperature=0.3)
+        return call_json(QUESTIONNAIRE, user, self.model, max_tokens=QUESTIONNAIRE_MAX_TOKENS,
+                         temperature=QUESTIONNAIRE_TEMPERATURE, role='questionnaire')

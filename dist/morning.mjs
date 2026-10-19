@@ -1,3 +1,4 @@
+import {certify} from './mk/kernel.mjs';
 import {inSentence} from './places.mjs';
 // A morning that moves (docs/living-village.md). People in a generated case follow short agendas during the
 // investigation: go somewhere, stay a while, meet someone and tell them something, or conceal a clue that is theirs to
@@ -16,6 +17,101 @@ export const HORIZON = 30;                 // an agenda covers the next half hou
 // a place name written mid-sentence ("reaches the post office"), as kernel-case writes them
 const placeIn = (ctx, p) => ctx.places[p] ? inSentence(ctx.places[p]) : p;
 const PHYSICAL = new Set(['document', 'item', 'record', 'trace']);                 // physical clues: what a hand can move
+
+// ---- availability and certification -------------------------------------------------------------------------------
+
+const uniqueSorted = values => [...new Set(values.filter(x => typeof x === 'string'))].sort();
+
+// Signs a concealment takes out of the case: the concealed roots, and everything not already held that requires or needs
+// one of them (transitively). Public and notebook evidence is a retained root: once the detective has recorded it,
+// moving the physical source cannot take it away. The engine's own view (kernel-case goneSet) uses this same function.
+export function unavailableSigns(kc, acquired, hiddenRoots) {
+  const held = new Set([...kc.signs.filter(x => x.kind === 'public').map(x => x.id), ...arr(acquired)]);
+  const removed = new Set(uniqueSorted(arr(hiddenRoots)).filter(id => !held.has(id)));
+  for (let more = removed.size > 0; more;) {
+    more = false;
+    for (const x of kc.signs) if (!held.has(x.id) && !removed.has(x.id)
+      && [...arr(x.requires), ...arr(x.needs)].some(id => removed.has(id))) {
+      removed.add(x.id); more = true;
+    }
+  }
+  return uniqueSorted([...removed]);
+}
+
+// Pure projection of the case after committed concealments (see unavailableSigns for what is removed).
+export function projectAvailability(kc, acquired, hiddenRoots) {
+  const held = new Set([...kc.signs.filter(x => x.kind === 'public').map(x => x.id), ...arr(acquired)]);
+  const removed = unavailableSigns(kc, acquired, hiddenRoots), gone = new Set(removed);
+  const retained = new Set(kc.signs.filter(x => !gone.has(x.id)).map(x => x.id));
+  const signIds = new Set(kc.signs.map(x => x.id));
+  const projected = structuredClone(kc);
+  projected.signs = projected.signs.filter(x => retained.has(x.id)).map(x => {
+    for (const field of ['defeats', 'explainedBy']) if (x[field]) x[field] = x[field].filter(id => retained.has(id));
+    // A held sign keeps its place in the case: access (requires) to it is already granted, so a requirement on a removed
+    // sign is dropped. Interpretation (needs) is kept: a held sign that needs a sign no longer in the case can no longer
+    // be read, and the kernel must see it as not understood (a need on a missing sign is unmet).
+    if (held.has(x.id) && x.requires) x.requires = x.requires.filter(id => !signIds.has(id) || retained.has(id));
+    return x;
+  });
+  return {caseRecords: projected, removed};
+}
+
+// Pure session snapshot used by both plan admission and execution. Replanned actors' old commitments are excluded
+// because installation replaces them. Callers may exclude every pending/active commitment to certify only the actual
+// post-commit state; planning includes commitments by default.
+export function concealmentAvailability(s, kc, {replanned = [], additionalConcealments = [], includeCommitments = true} = {}) {
+  const replaced = new Set(arr(replanned));
+  const acquired = uniqueSorted([
+    ...kc.signs.filter(x => x.kind === 'public').map(x => x.id),
+    ...arr(s?.world?.player?.evidence).map(x => x?.clue),
+  ]);
+  const alreadyConcealed = uniqueSorted(arr(s?.world?.flags?.morning?.concealed));
+  const remainingCommitted = [];
+  if (includeCommitments) for (const [actor, steps] of Object.entries(s?.world?.flags?.morning?.agendas ?? {}).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)) {
+    if (replaced.has(actor)) continue;
+    for (const [stepIndex, x] of arr(steps).entries()) if (x?.kind === 'conceal' && ['pending', 'active'].includes(x.state))
+      remainingCommitted.push({actor, stepIndex, clue: x.clue});
+  }
+  const hiddenRoots = uniqueSorted([
+    ...alreadyConcealed,
+    ...remainingCommitted.map(x => x.clue),
+    ...arr(additionalConcealments),
+  ]);
+  return {acquired, alreadyConcealed, remainingCommitted, hiddenRoots};
+}
+
+// Strict, fail-closed certification with a JSON-safe audit. The metadata fields are always present so a decision can
+// be reconstructed from an event without consulting transient director state.
+export function certifyConcealments(s, kc, {phase, actor = null, stepIndex = null, clue = null, replanned = [], additionalConcealments = [], includeCommitments = true} = {}) {
+  const available = concealmentAvailability(s, kc, {replanned, additionalConcealments, includeCommitments});
+  let removed = [], result;
+  try {
+    const projected = projectAvailability(kc, available.acquired, available.hiddenRoots);
+    removed = projected.removed;
+    const unknown = available.hiddenRoots.filter(id => !kc.signs.some(x => x.id === id));
+    result = unknown.length ? {ok: false, errors: [`unknown concealed signs: ${JSON.stringify(unknown)}`]}
+      : certify(projected.caseRecords, true, true);
+  } catch (error) {
+    result = {ok: false, errors: [`concealment certification failed: ${error instanceof Error ? error.message : String(error)}`]};
+  }
+  return {
+    phase: phase ?? 'planning', actor, stepIndex, clue,
+    acquired: available.acquired,
+    alreadyConcealed: available.alreadyConcealed,
+    remainingCommitted: available.remainingCommitted,
+    hiddenRoots: available.hiddenRoots,
+    removed,
+    ok: result?.ok === true,
+    errors: result?.ok === true ? [] : arr(result?.errors).map(String),
+  };
+}
+
+// Compatibility projection for callers without a live session. Planning/execution use certifyConcealments above.
+export function stillSolvable(kc, clues) {
+  const s = {world: {player: {evidence: []}, flags: {morning: {concealed: [], agendas: {}}}}};
+  const audit = certifyConcealments(s, kc, {phase: 'planning', additionalConcealments: clues});
+  return {ok: audit.ok, errors: audit.errors, removed: audit.removed};
+}
 
 // ---- knowledge ----------------------------------------------------------------------------------------------------
 
@@ -83,13 +179,19 @@ export function actors(s, kc, roles, victim) {
 
 // The clues a person may conceal: not yet found, made by them (its source event is theirs) or about them, and the
 // person has a reason in their own attitudes (one of their fears or wants is cited).
-export function concealable(s, kc, pid) {
+// `replanning`: people whose pending steps this round replaces, so their own planned concealments do not count against
+// them (re-planning the same intention is allowed).
+export function concealable(s, kc, pid, replanning = [pid]) {
   const held = new Set(s.world.player.evidence.map(e => e.clue));
-  // gone already, or refused by the kernel (the case needs it; more hidden only makes that worse)
-  const gone = [...(s.world.flags.morning?.concealed ?? []), ...(s.world.flags.morning?.refused ?? [])];
+  const replaced = new Set(arr(replanning));
+  // gone already, refused by the kernel (the case needs it; more hidden only makes that worse), or already another
+  // person's pending or active concealment: one clue is taken away once, by one person
+  const gone = new Set([...(s.world.flags.morning?.concealed ?? []), ...(s.world.flags.morning?.refused ?? []),
+    ...Object.entries(s.world.flags.morning?.agendas ?? {}).filter(([who]) => !replaced.has(who)).flatMap(([, steps]) => arr(steps)
+      .filter(x => x?.kind === 'conceal' && ['pending', 'active'].includes(x.state)).map(x => x.clue))]);
   // only things a hand can move: documents, items, records, traces (not behaviour, absences or observations)
   // (a lead not yet open to the detective is still there to be moved: locked only means not yet reachable for them)
-  return kc.signs.filter(x => PHYSICAL.has(x.kind) && !held.has(x.id) && !gone.includes(x.id)
+  return kc.signs.filter(x => PHYSICAL.has(x.kind) && !held.has(x.id) && !gone.has(x.id)
     && (kc.events.find(e => e.id === x.source)?.agent === pid || x.about === pid
       || [x.claim?.person, x.claim?.a, x.claim?.b].includes(pid))).map(x => x.id);
 }
@@ -135,13 +237,15 @@ export function check(s, kc, ctx, proposal) {
         Object.assign(step, {with: st.with, say: said, until: Math.min(arrive + 20, end)});
         t = arrive + 6;
       } else if (st.kind === 'conceal') {
-        if (!concealable(s, kc, pid).includes(st.clue)) { bad(`${st.clue} is not theirs to hide, or already found or gone`); break; }
+        if (!concealable(s, kc, pid, Object.keys(proposal.agendas)).includes(st.clue)) { bad(`${st.clue} is not theirs to hide, or already found or gone`); break; }
+        // a concealment needs time to happen: arriving at the deadline itself would only ever be missed
+        if (arrive >= end) { bad(`cannot reach ${to} before the plan ends to hide anything there`); break; }
         // the constable keeps to his post (he is never planned for), so nothing there can be hidden from him
         const post = roles?.constable && s.world.npcs[roles.constable]?.location;
         if (post && to === post) { bad(`${people[roles.constable]?.name ?? 'the constable'} is at ${places[to]?.name ?? to}: nobody hides anything in front of the constable`); break; }
         if (!cites.some(c => c.startsWith('k_att_') && ['fears', 'wants', 'hides', 'intends'].includes(kc.attitudes.find(a => `k_att_${a.id}` === c)?.mode)))
           { bad('concealing needs a reason of theirs (a fear or want) cited'); break; }
-        step.clue = st.clue; t = arrive + 3;
+        step.clue = st.clue; step.until = end; t = arrive + 3;
       } else t = arrive;
       out.push(step); where = to;
     }
@@ -159,17 +263,24 @@ export function install(K, s, plan, cause, audit = {}, replanned = Object.keys(p
   const m = s.world.flags.morning ?? {agendas: {}, concealed: [], last: null};
   const agendas = {...m.agendas};
   for (const pid of replanned) if (agendas[pid]) agendas[pid] = agendas[pid].filter(x => !['pending', 'active'].includes(x.state));
+  // Concealments kept from an earlier round that predate absolute deadlines get one now, from the round that made them
+  // (the last install), before this round moves `last` on: their deadline never drifts with later replanning.
+  const madeAt = Number.isFinite(m.last) ? m.last : s.world.minute;
+  for (const [pid, steps] of Object.entries(agendas)) if (arr(steps).some(x => x.kind === 'conceal' && !Number.isFinite(x.until)))
+    agendas[pid] = steps.map(x => x.kind === 'conceal' && !Number.isFinite(x.until) ? {...x, until: madeAt + HORIZON} : x);
   for (const [pid, steps] of Object.entries(plan)) agendas[pid] = steps.map(x => ({...x, state: 'pending'}));
-  // clues the kernel refused to let go this round: never offered to the director again
-  const refused = [...new Set([...(m.refused ?? []), ...Object.entries(audit.solvable ?? {}).filter(([, v]) => v !== 'still solvable').map(([k]) => k.split(':')[1])])];
+  // Clues the kernel refused on the case as it actually stands (not merely alongside another pending concealment that
+  // may yet be missed): never offered to the director again. criticise() lists them in audit.refused.
+  const refused = uniqueSorted([...(m.refused ?? []), ...arr(audit.refused)]);
   return K.commit(s, {kind: 'decision', title: 'The village goes about its morning', actor: 'world', parents: [cause ?? s.events.at(-1)?.id].filter(Boolean),
     data: {morning: true, plan, audit}, changes: {'flags.morning': {...m, agendas, refused, last: s.world.minute, lastIndex: s.events.length}}});
 }
 
 const setStep = (K, s, pid, i, patch, cause, title, extra = {}) => {
   const m = s.world.flags.morning, steps = m.agendas[pid].map((x, j) => j === i ? {...x, ...patch} : x);
+  const morning = {...m, agendas: {...m.agendas, [pid]: steps}, ...(extra.morning ?? {})};
   const e = K.commit(s, {kind: 'action', title, actor: pid, parents: [cause].filter(Boolean), location: s.world.npcs[pid].location,
-    data: {morning: true, step: steps[i], ...extra.data}, changes: {'flags.morning': {...m, agendas: {...m.agendas, [pid]: steps}}, ...extra.changes},
+    data: {morning: true, step: steps[i], ...extra.data}, changes: {'flags.morning': morning, ...extra.changes},
     playerText: extra.playerText ?? null});
   if (patch.state === 'done') K.remember(s, pid, e);        // what they did is theirs to remember (and tell, or not)
   return e;
@@ -192,9 +303,19 @@ function stepOnce(K, s, ctx, pid, cause) {
   if (!steps) return false;
   const a = s.world.npcs[pid], i = steps.findIndex(x => x.state === 'pending' || x.state === 'active');
   if (i < 0) return true;                                                  // done for now: stays where they are
+  const x = steps[i], name = q => ctx.people[q]?.name ?? q;
   if (a.travel || s.world.player.conversation === pid) return true;          // on the way, or talking to the detective
-  const x = steps[i], here = a.location, playerHere = s.world.player.location === here;
-  const name = q => ctx.people[q]?.name ?? q;
+  const concealUntil = x.kind === 'conceal'
+    ? (Number.isFinite(x.until) ? x.until : Number.isFinite(m.last) ? m.last + HORIZON : s.world.minute)
+    : null;
+  if (x.kind === 'conceal' && s.world.minute >= concealUntil) {
+    // why: what became of the clue itself, else whoever kept them from it while they lingered, else the plan ran out
+    const why = s.world.player.evidence.some(e => e.clue === x.clue) ? 'already found' : arr(m.concealed).includes(x.clue) ? 'already gone'
+      : x.blockedBy ? `${x.blockedBy} stayed` : 'the chance passed';
+    setStep(K, s, pid, i, {state: 'missed', why}, cause, `${name(pid)} gives up and leaves it`);
+    return true;
+  }
+  const here = a.location, playerHere = s.world.player.location === here;
   if (here !== x.place) { K.startTravel(s, pid, x.place, cause, `Morning: ${x.kind}`); return true; }
   if (x.kind === 'go') { setStep(K, s, pid, i, {state: 'done'}, cause, `${name(pid)} reaches ${placeIn(ctx, x.place)}`); return true; }
   if (x.kind === 'stay') {
@@ -204,25 +325,43 @@ function stepOnce(K, s, ctx, pid, cause) {
   if (x.kind === 'conceal') {
     const held = s.world.player.evidence.some(e => e.clue === x.clue);
     if (held) { setStep(K, s, pid, i, {state: 'missed', why: 'already found'}, cause, `${name(pid)} finds it already taken`); return true; }
+    if (arr(m.concealed).includes(x.clue)) { setStep(K, s, pid, i, {state: 'missed', why: 'already gone'}, cause, `${name(pid)} finds it already gone`); return true; }
     // nobody hides something in front of the law: the detective or the constable. They wait (seen to linger, if the
     // detective is there), until the plan runs out. The line names the clue only if the detective can already see it.
-    const constable = ctx.roles?.constable, lawHere = playerHere || (constable && constable !== pid
-      && s.world.npcs[constable]?.location === here && !s.world.npcs[constable]?.travel);
-    if (lawHere) {
-      const until = x.until ?? s.world.minute + 30;
+    const constable = ctx.roles?.constable, constableHere = constable && constable !== pid
+      && s.world.npcs[constable]?.location === here && !s.world.npcs[constable]?.travel;
+    if (playerHere || constableHere) {
       const visible = s.world.player.evidence.some(e => e.clue === x.clue) || !(s.world.flags.lockedObjects ?? []).includes(x.clue);
-      if (s.world.minute >= until) setStep(K, s, pid, i, {state: 'missed', why: playerHere ? 'the detective stayed' : 'the constable stayed'}, cause, `${name(pid)} gives up and leaves it`);
-      else if (x.state !== 'active') setStep(K, s, pid, i, {state: 'active', until}, cause, `${name(pid)} lingers`, {
-        playerText: playerHere ? `${name(pid)} lingers${visible ? ` near ${ctx.clueTitle(x.clue)}` : ''}, glancing at you, and seems in no hurry to leave.` : null});
+      const blockedBy = playerHere ? 'the detective' : 'the constable';
+      if (x.state !== 'active' || x.blockedBy !== blockedBy) setStep(K, s, pid, i, {state: 'active', until: concealUntil, blockedBy}, cause, `${name(pid)} lingers`, {
+        playerText: playerHere && x.state !== 'active' ? `${name(pid)} lingers${visible ? ` near ${ctx.clueTitle(x.clue)}` : ''}, glancing at you, and seems in no hurry to leave.` : null});
+      return true;
+    }
+    const checkOptions = {phase: 'execution', actor: pid, stepIndex: i, clue: x.clue, additionalConcealments: [x.clue]};
+    const actualPostCommit = certifyConcealments(s, s.world.caseRecords, {...checkOptions, includeCommitments: false});
+    const allCommitmentsProjection = certifyConcealments(s, s.world.caseRecords, checkOptions);
+    const executionAudit = {
+      ...allCommitmentsProjection,
+      ok: actualPostCommit.ok && allCommitmentsProjection.ok,
+      errors: [
+        ...(actualPostCommit.ok ? [] : actualPostCommit.errors.map(error => `actual post-commit state: ${error}`)),
+        ...(allCommitmentsProjection.ok ? [] : allCommitmentsProjection.errors.map(error => `all commitments projection: ${error}`)),
+      ],
+      checks: {actualPostCommit, allCommitmentsProjection},
+    };
+    if (!executionAudit.ok) {
+      // Refused for good only when the case as it actually stands cannot spare the clue; a failure that depends on
+      // another person's still-pending concealment may resolve when that one is missed, so the clue stays available.
+      const refused = actualPostCommit.ok ? uniqueSorted(m.refused ?? []) : uniqueSorted([...(m.refused ?? []), x.clue]);
+      setStep(K, s, pid, i, {state: 'missed', why: 'no longer safely concealable', executionAudit}, cause,
+        `${name(pid)} leaves it where it is`, {morning: {refused}, data: {executionAudit}});
       return true;
     }
     const concealed = [...(m.concealed ?? []), x.clue];
     const expiry = {...(s.world.flags.evidenceExpiry ?? {}), [x.clue]: s.world.minute - 1};
-    const e = setStep(K, s, pid, i, {state: 'done'}, cause, `${name(pid)} takes ${ctx.clueTitle(x.clue)} away from ${placeIn(ctx, here)}`, {
-      changes: {'flags.evidenceExpiry': expiry},
+    const e = setStep(K, s, pid, i, {state: 'done', executionAudit}, cause, `${name(pid)} takes ${ctx.clueTitle(x.clue)} away from ${placeIn(ctx, here)}`, {
+      morning: {concealed}, changes: {'flags.evidenceExpiry': expiry}, data: {executionAudit},
       playerText: null});
-    K.commit(s, {kind: 'action', title: 'A clue is gone', actor: 'world', parents: [e],
-      changes: {'flags.morning': {...s.world.flags.morning, concealed}}});
     // anyone present saw it (the detective too, if there)
     for (const [q, b] of Object.entries(s.world.npcs)) if (q !== pid && b.location === here)
       K.commit(s, {kind: 'observation', title: `I saw ${name(pid)} take ${ctx.clueTitle(x.clue)} away from ${placeIn(ctx, here)}`, actor: q, parents: [e], data: {morning: true}});

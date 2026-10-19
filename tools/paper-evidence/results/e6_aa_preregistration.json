@@ -1,0 +1,93 @@
+{
+  "schema_version": "e6-aa-preregistration-v1",
+  "registered_before_model_calls": true,
+  "purpose": "Calibrate paired playtest and judgment dispersion under a true A/A null, not estimate a treatment effect.",
+  "arm_a_batch": "e6-aa-a-calibration",
+  "arm_b_batch": "e6-aa-b-calibration",
+  "arm_b_requirement": "Arm B must be independently executed with --plan-from e6-aa-a-calibration.",
+  "expected_pairs": 18,
+  "expected_episodes": 36,
+  "profiles": ["beginner", "amateur", "pro"],
+  "seeds": [1, 2],
+  "budget": {"actions": 100, "minutes": 480},
+  "selection_rule": "Using the current strictly certified corpus and its pre-existing contiguous strata, choose depth 3 for low, depth 5 for middle, and depth 8 for high; within each target depth choose the lexicographically first case ID. This rule was fixed before inference.",
+  "cases": [
+    {
+      "stratum": "low structural depth",
+      "case_id": "mk-live-20261003-082807",
+      "path": "dist/cases/generated/live/mk-live-20261003-082807.json",
+      "instantaneous_depth": 3,
+      "stable_depth": 3,
+      "classification": "live",
+      "normalized_sha256": "3a8d103c3c608037f547e0f0cffa5b3274c497bf40c26048787efc15fdc931ee"
+    },
+    {
+      "stratum": "middle structural depth",
+      "case_id": "mk-live-20261002-224855",
+      "path": "dist/cases/generated/mk-live-20261002-224855.json",
+      "instantaneous_depth": 5,
+      "stable_depth": 5,
+      "classification": "stable",
+      "normalized_sha256": "6592d79c6e7cb273a2d1caf83063878896471f4c203199560427d0fba9463162"
+    },
+    {
+      "stratum": "high structural depth",
+      "case_id": "mk-live-20261003-085134",
+      "path": "dist/cases/generated/live/mk-live-20261003-085134.json",
+      "instantaneous_depth": 8,
+      "stable_depth": 8,
+      "classification": "live",
+      "normalized_sha256": "07abdcb67f5d7b5598a855aabe0c199a0b45aafa3882799a0271b88d62a18f9f"
+    }
+  ],
+  "metrics": [
+    "solved",
+    "correct",
+    "actions_or_censored_action_budget",
+    "hints_helped",
+    "longest_stall",
+    "fallback_or_decline_rate",
+    "witnessed_village_actions",
+    "judged_fairness",
+    "judged_fun"
+  ],
+  "metric_definitions": {
+    "solved": "Objective solved indicator from the deterministic scorecard.",
+    "correct": "Objective correct-solution indicator from the deterministic scorecard.",
+    "actions_or_censored_action_budget": "Observed scored actions; out-of-budget runs are represented at the fixed action budget and marked right-censored; quit runs are marked right-censored at observed actions.",
+    "hints_helped": "Scorecard fraction of requested hints followed by progress within five actions; missing when no hint was requested.",
+    "longest_stall": "Longest scorecard run of at least 12 actions without progress, otherwise zero.",
+    "fallback_or_decline_rate": "Character fallbacks plus neutral declines divided by character turns; missing with zero character turns.",
+    "witnessed_village_actions": "Count of witnessed morning-village actions in the private trace.",
+    "judged_fairness": "Independent judge fairness score, 1–7.",
+    "judged_fun": "Independent judge fun score, 1–7."
+  },
+  "analysis": {
+    "difference": "Arm B minus Arm A",
+    "blocking": "Compute pair differences and weight each case equally through case-block means.",
+    "empirical_null": "Exact within-pair sign flips of the equal-case blocked mean.",
+    "nominal_interval": "95% t interval over the three case means, reported only as a calibration descriptor.",
+    "missingness": "Every planned pair remains in the denominator; differences require both arm values and all missing reasons are counted.",
+    "censoring": "Out-of-budget and quit episodes remain in the denominator and are explicitly marked right-censored."
+  },
+  "episodes": [
+    ["dist/cases/generated/live/mk-live-20261003-082807.json", "beginner", "methodical", 1],
+    ["dist/cases/generated/live/mk-live-20261003-082807.json", "beginner", "impatient", 2],
+    ["dist/cases/generated/live/mk-live-20261003-082807.json", "amateur", "literal", 1],
+    ["dist/cases/generated/live/mk-live-20261003-082807.json", "amateur", "literal", 2],
+    ["dist/cases/generated/live/mk-live-20261003-082807.json", "pro", "methodical", 1],
+    ["dist/cases/generated/live/mk-live-20261003-082807.json", "pro", "methodical", 2],
+    ["dist/cases/generated/mk-live-20261002-224855.json", "beginner", "chatty", 1],
+    ["dist/cases/generated/mk-live-20261002-224855.json", "beginner", "chatty", 2],
+    ["dist/cases/generated/mk-live-20261002-224855.json", "amateur", "chatty", 1],
+    ["dist/cases/generated/mk-live-20261002-224855.json", "amateur", "chatty", 2],
+    ["dist/cases/generated/mk-live-20261002-224855.json", "pro", "suspicious", 1],
+    ["dist/cases/generated/mk-live-20261002-224855.json", "pro", "impatient", 2],
+    ["dist/cases/generated/live/mk-live-20261003-085134.json", "beginner", "methodical", 1],
+    ["dist/cases/generated/live/mk-live-20261003-085134.json", "beginner", "literal", 2],
+    ["dist/cases/generated/live/mk-live-20261003-085134.json", "amateur", "chatty", 1],
+    ["dist/cases/generated/live/mk-live-20261003-085134.json", "amateur", "impatient", 2],
+    ["dist/cases/generated/live/mk-live-20261003-085134.json", "pro", "literal", 1],
+    ["dist/cases/generated/live/mk-live-20261003-085134.json", "pro", "impatient", 2]
+  ]
+}

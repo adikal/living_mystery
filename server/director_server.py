@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Optional local symbolic service; no AWS credentials or model calls required.
 Run: .venv/bin/python server/director_server.py (port 8788)
+
+Loopback only. Every request must carry the director's own Host (127.0.0.1:8788 or localhost:8788); POSTs also need an
+LM_ALLOWED_ORIGINS Origin and X-Living-Mystery: director-v1.
 """
 import json
 import logging
@@ -8,10 +11,14 @@ import os
 import re
 import time
 from http.server import ThreadingHTTPServer
-from llm_proxy import Handler as BaseHandler, ALLOWED_ORIGINS
+from llm_proxy import Handler as BaseHandler
+from local_origins import DEFAULT_ALLOWED_ORIGINS, allowed_hosts, parse_allowed_origins
 from symbolic_solver import solve
 import case_oracle
 
+HOST, PORT = '127.0.0.1', 8788
+ALLOWED_ORIGINS = parse_allowed_origins(os.environ.get('LM_ALLOWED_ORIGINS', DEFAULT_ALLOWED_ORIGINS))
+ALLOWED_HOSTS = allowed_hosts(PORT)
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 CASES = [os.path.join(ROOT, 'dist', 'cases', 'generated'), os.path.join(ROOT, 'dist', 'cases', 'generated', 'live')]
 CASE_ID = re.compile(r'^mk-[a-z0-9-]{1,60}$')
@@ -38,10 +45,15 @@ def load_case(case_id):
 class Handler(BaseHandler):
     server_version = 'LivingMysteryDirector/1.0'
 
+    def _host_allowed(self):
+        return self.headers.get('Host') in ALLOWED_HOSTS
+
     def _allowed(self):
-        return self.headers.get('Host') in ('127.0.0.1:8788', 'localhost:8788') and self.headers.get('Origin') in ALLOWED_ORIGINS
+        return self._host_allowed() and self.headers.get('Origin') in ALLOWED_ORIGINS
 
     def do_GET(self):
+        if not self._host_allowed():
+            self._send(403, {'error': 'host_not_allowed'}); return
         if self.path == '/health':
             try:
                 import z3
@@ -72,6 +84,8 @@ class Handler(BaseHandler):
                 answers.append({'id': item['id'], 'query': item['query'], 'result': solve(item['query'])})
             LOG.info('solve %d queries: %s', len(answers), [a['result'].get('status') for a in answers])
             self._send(200, {'results': answers})
+        except TimeoutError:   # the client stalled mid-body; the server closes the connection
+            raise
         except (ValueError, TypeError, KeyError, RecursionError) as e:
             LOG.warning('solve rejected: %s', e)
             self._send(400, {'error': 'invalid_symbolic_query'})
@@ -105,6 +119,8 @@ class Handler(BaseHandler):
             LOG.info('case %s accused=%s held=%d survivors=%s alternative=%s %.2fs', body['caseId'], body['accused'],
                      len(held), out['survivors'], alt, time.time() - t0)
             self._send(200, out)
+        except TimeoutError:   # the client stalled mid-body; the server closes the connection
+            raise
         except (ValueError, TypeError, KeyError) as e:
             LOG.warning('case rejected: %s', e)
             self._send(400, {'error': 'invalid_case_query'})
@@ -114,6 +130,6 @@ class Handler(BaseHandler):
 
 
 if __name__ == '__main__':
-    print('World Director → http://127.0.0.1:8788 (Z3; independent of AI); log: logs/director.log', flush=True)
+    print(f'World Director → http://{HOST}:{PORT} (Z3; independent of AI); log: logs/director.log', flush=True)
     LOG.info('director server started')
-    ThreadingHTTPServer(('127.0.0.1', 8788), Handler).serve_forever()
+    ThreadingHTTPServer((HOST, PORT), Handler).serve_forever()

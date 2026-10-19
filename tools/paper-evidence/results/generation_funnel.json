@@ -1,0 +1,901 @@
+{
+  "schema_version": 1,
+  "corpus_definition": {
+    "claims_version": 2,
+    "runs_root": "tools/refine-c/runs",
+    "completed_cohort_rule": "A directory must contain final-case.json or 00-seed.json whose parsed object has claims_version == 2, and it must contain result.json. result.json is joined only after the case-version check.",
+    "attempted_job_scope": "Strict completed claims-version-2 rows plus the explicitly selected provider-censored attempt live-20261011-132544; no-case directories are not assigned a claims version.",
+    "artifact_directories_enumerated": [
+      "20260925-222003/lighthouse",
+      "20260925-222533/lighthouse",
+      "20260925-222533/liner",
+      "20260925-222533/scriptorium",
+      "20260925-222533/station",
+      "20260925-223833/lighthouse",
+      "20260925-223833/liner",
+      "20260925-223833/scriptorium",
+      "20260925-223833/station",
+      "20260925-223833/studio",
+      "20260925-225439/lighthouse",
+      "20260925-225439/liner",
+      "20260925-225439/scriptorium",
+      "20260925-225439/station",
+      "20260925-225439/studio",
+      "20260925-231011/lighthouse",
+      "20260925-231011/liner",
+      "20260925-231011/scriptorium",
+      "20260925-231011/station",
+      "20260925-231011/studio",
+      "20260925-234555/lighthouse",
+      "20260925-234555/liner",
+      "20260925-234555/scriptorium",
+      "20260925-234555/station",
+      "20260925-234555/studio",
+      "20260926-000637/liner",
+      "20260926-000637/station",
+      "20260926-002131/lighthouse",
+      "20260926-002131/liner",
+      "20260926-002131/scriptorium",
+      "20260926-002131/station",
+      "20260926-002131/studio",
+      "20260926-002910/bw-ledger",
+      "20260926-002910/bw-pair",
+      "20260926-002910/bw-poison",
+      "20260926-004007/bw-inn",
+      "20260926-004007/bw-letter",
+      "20260926-004007/bw-poison",
+      "20260926-004007/bw-vestry",
+      "live-20260927-085044",
+      "live-20260927-092335",
+      "live-20260927-122514",
+      "live-20260927-152509",
+      "live-20260927-153710",
+      "live-20260927-162110",
+      "live-20260927-163612",
+      "live-20260927-164543",
+      "live-20260927-165647",
+      "live-20260927-191646",
+      "live-20261002-222517",
+      "live-20261002-224855",
+      "live-20261002-225824",
+      "live-20261002-235614",
+      "live-20261003-082807",
+      "live-20261003-082809",
+      "live-20261003-082811",
+      "live-20261003-082813",
+      "live-20261003-085134",
+      "live-20261003-100424",
+      "live-20261003-100726",
+      "live-20261003-102819",
+      "live-20261003-130902",
+      "live-20261003-130906",
+      "live-20261003-133036",
+      "live-20261003-135210",
+      "live-20261011-112405",
+      "live-20261017-223841"
+    ],
+    "completed_v2_run_ids": [
+      "live-20261011-112405",
+      "live-20261017-223841"
+    ],
+    "externally_censored_attempt_ids": [
+      "live-20261011-132544"
+    ]
+  },
+  "run_rows": [
+    {
+      "run_id": "live-20261011-112405",
+      "row_type": "completed_v2",
+      "status": "completed",
+      "classification": "completed_claims_v2",
+      "claims_version": 2,
+      "case_evidence_path": "tools/refine-c/runs/live-20261011-112405/final-case.json",
+      "result_path": "tools/refine-c/runs/live-20261011-112405/result.json",
+      "name": "live",
+      "success": true,
+      "seconds": 552,
+      "final_counts": {
+        "signs": 21,
+        "events": 23,
+        "people": 12
+      },
+      "solve_depth": 5,
+      "max_depth": 5,
+      "twist": true,
+      "threads": {
+        "truth": 5,
+        "c_dora": 5,
+        "c_edmund": 5,
+        "c_silas": 5
+      },
+      "pillars": {
+        "opportunity": 5,
+        "means": 5,
+        "motive": 3
+      },
+      "requested_target": "medium",
+      "published_difficulty": {
+        "level": "medium",
+        "score": 6.75,
+        "target": "medium",
+        "index_path": "dist/cases/generated/live/index.json"
+      },
+      "funnel": {
+        "history_steps": 6,
+        "accepted_steps": 6,
+        "recorded_candidate_outcomes": 12,
+        "accepted_candidate_outcomes": 6,
+        "rejected_candidates": 6,
+        "critic_calls": 6,
+        "critic_rejections": 0
+      },
+      "history": [
+        {
+          "step": 1,
+          "mode": "refine",
+          "target": "s_padlock",
+          "thread": "c_dora",
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "rejected",
+              "categories": [
+                "patch_application"
+              ],
+              "reasons": [
+                {
+                  "raw": "patch could not be applied: 'str' object has no attribute 'get'",
+                  "categories": [
+                    "patch_application"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 2,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        },
+        {
+          "step": 2,
+          "mode": "twist",
+          "target": "pub_window",
+          "thread": "truth",
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "the surface still admits the truth (surface survivors ['c_clara', 'c_dora', 'c_edmund', 'c_silas']); the deception must exclude it",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                },
+                {
+                  "raw": "no story beat: every refinement must add the event or attitude that causes it (who did what, and why)",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 2,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        },
+        {
+          "step": 3,
+          "mode": "herring",
+          "target": "dora",
+          "thread": null,
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "no story beat: every refinement must add the event or attitude that causes it (who did what, and why)",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                },
+                {
+                  "raw": "no surface behaviour sign about 'dora' with a deeper explainedBy sign was found",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 2,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        },
+        {
+          "step": 4,
+          "mode": "refine",
+          "target": "s_note",
+          "thread": "truth",
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "no story beat: every refinement must add the event or attitude that causes it (who did what, and why)",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                },
+                {
+                  "raw": "no progress: the 'truth' thread is still settled at depth 1 (was 1); another path still settles it that early - hide or fragment those signs too, or make the target's chain longer",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 2,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "no progress: the 'truth' thread is still settled at depth 1 (was 1); another path still settles it that early - hide or fragment those signs too, or make the target's chain longer",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 3,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        },
+        {
+          "step": 5,
+          "mode": "refine",
+          "target": "b_jonah_cuff",
+          "thread": "c_dora",
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        },
+        {
+          "step": 6,
+          "mode": "refine",
+          "target": "t_jonah_cut_ask",
+          "thread": "c_dora",
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "no story beat: every refinement must add the event or attitude that causes it (who did what, and why)",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                },
+                {
+                  "raw": "no progress: the 'c_dora' thread is still settled at depth 4 (was 4); another path still settles it that early - hide or fragment those signs too, or make the target's chain longer",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 2,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        }
+      ],
+      "unavailable": {
+        "exact_llm_calls": null,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cost": null
+      }
+    },
+    {
+      "run_id": "live-20261017-223841",
+      "row_type": "completed_v2",
+      "status": "completed",
+      "classification": "completed_claims_v2",
+      "claims_version": 2,
+      "case_evidence_path": "tools/refine-c/runs/live-20261017-223841/final-case.json",
+      "result_path": "tools/refine-c/runs/live-20261017-223841/result.json",
+      "name": "live",
+      "success": true,
+      "seconds": 463,
+      "final_counts": {
+        "signs": 21,
+        "events": 29,
+        "people": 12
+      },
+      "solve_depth": 8,
+      "max_depth": 8,
+      "twist": true,
+      "threads": {
+        "c_jonah": 6,
+        "c_silas": 6,
+        "truth": 8,
+        "c_vicar": 6
+      },
+      "pillars": {
+        "opportunity": 8,
+        "means": 6,
+        "motive": 7
+      },
+      "requested_target": "hard",
+      "published_difficulty": {
+        "level": "hard",
+        "score": 11.0,
+        "target": "hard",
+        "index_path": "dist/cases/generated/live/index.json"
+      },
+      "funnel": {
+        "history_steps": 8,
+        "accepted_steps": 8,
+        "recorded_candidate_outcomes": 18,
+        "accepted_candidate_outcomes": 8,
+        "rejected_candidates": 10,
+        "critic_calls": 8,
+        "critic_rejections": 0
+      },
+      "history": [
+        {
+          "step": 1,
+          "mode": "refine",
+          "target": "s_ada_tin",
+          "thread": "c_jonah",
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "no story beat: every refinement must add the event or attitude that causes it (who did what, and why)",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                },
+                {
+                  "raw": "no progress: the 'c_jonah' thread is still settled at depth 0 (was 0); another path still settles it that early - hide or fragment those signs too, or make the target's chain longer",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 2,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        },
+        {
+          "step": 2,
+          "mode": "twist",
+          "target": "s_fine",
+          "thread": "truth",
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "the surface still admits the truth (surface survivors ['c_jonah', 'c_silas', 'c_vera', 'c_vicar']); the deception must exclude it",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                },
+                {
+                  "raw": "no story beat: every refinement must add the event or attitude that causes it (who did what, and why)",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 2,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "the surface still admits the truth (surface survivors ['c_jonah', 'c_silas', 'c_vera', 'c_vicar']); the deception must exclude it",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 3,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "the surface still admits the truth (surface survivors ['c_jonah', 'c_silas', 'c_vera', 'c_vicar']); the deception must exclude it",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                },
+                {
+                  "raw": "no story beat: every refinement must add the event or attitude that causes it (who did what, and why)",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 4,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        },
+        {
+          "step": 3,
+          "mode": "herring",
+          "target": "jonah",
+          "thread": null,
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "no story beat: every refinement must add the event or attitude that causes it (who did what, and why)",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                },
+                {
+                  "raw": "no surface behaviour sign about 'jonah' with a deeper explainedBy sign was found",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 2,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        },
+        {
+          "step": 4,
+          "mode": "herring",
+          "target": "silas",
+          "thread": null,
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "no story beat: every refinement must add the event or attitude that causes it (who did what, and why)",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 2,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        },
+        {
+          "step": 5,
+          "mode": "refine",
+          "target": "t_bell_sighting",
+          "thread": "truth",
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "no story beat: every refinement must add the event or attitude that causes it (who did what, and why)",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                },
+                {
+                  "raw": "no progress: the 'truth' thread is still settled at depth 1 (was 1); another path still settles it that early - hide or fragment those signs too, or make the target's chain longer",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 2,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        },
+        {
+          "step": 6,
+          "mode": "pillar",
+          "target": "s_exam",
+          "thread": "means",
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "no story beat: every refinement must add the event or attitude that causes it (who did what, and why)",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                },
+                {
+                  "raw": "no progress: the means is still shown at depth 1 (was 1); hide or fragment every sign that shows it",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 2,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        },
+        {
+          "step": 7,
+          "mode": "refine",
+          "target": "t_bell_key",
+          "thread": "c_jonah",
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "no story beat: every refinement must add the event or attitude that causes it (who did what, and why)",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                },
+                {
+                  "raw": "no progress: the 'c_jonah' thread is still settled at depth 3 (was 3); another path still settles it that early - hide or fragment those signs too, or make the target's chain longer",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 2,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        },
+        {
+          "step": 8,
+          "mode": "refine",
+          "target": "s_bell_slate",
+          "thread": "c_jonah",
+          "accepted": true,
+          "candidate_outcomes": [
+            {
+              "candidate": 1,
+              "outcome": "rejected",
+              "categories": [
+                "refinement_law"
+              ],
+              "reasons": [
+                {
+                  "raw": "no story beat: every refinement must add the event or attitude that causes it (who did what, and why)",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                },
+                {
+                  "raw": "no progress: the 'c_jonah' thread is still settled at depth 4 (was 4); another path still settles it that early - hide or fragment those signs too, or make the target's chain longer",
+                  "categories": [
+                    "refinement_law"
+                  ]
+                }
+              ]
+            },
+            {
+              "candidate": 2,
+              "outcome": "accepted",
+              "categories": [],
+              "reasons": []
+            }
+          ],
+          "critic_calls": 1,
+          "critic_rejections": 0
+        }
+      ],
+      "unavailable": {
+        "exact_llm_calls": null,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cost": null
+      }
+    },
+    {
+      "run_id": "live-20261011-132544",
+      "row_type": "attempted_job",
+      "status": "censored",
+      "classification": "external_provider_unavailable",
+      "failure_stage": "before_case_artifact",
+      "claims_version": null,
+      "case_evidence_path": null,
+      "result_path": null,
+      "log_path": "tools/refine-c/runs/live-20261011-132544.log",
+      "name": "live",
+      "success": null,
+      "seconds": null,
+      "final_counts": {
+        "signs": null,
+        "events": null,
+        "people": null
+      },
+      "solve_depth": null,
+      "max_depth": null,
+      "twist": null,
+      "threads": null,
+      "pillars": null,
+      "requested_target": null,
+      "published_difficulty": null,
+      "funnel": {
+        "recorded_seed_attempts": 4,
+        "rejected_seed_attempts": 4
+      },
+      "seed_attempts": [
+        {
+          "seed_round": 1,
+          "outcome": "rejected",
+          "categories": [
+            "provider_call"
+          ],
+          "reasons": [
+            {
+              "raw": "the case JSON was incomplete or malformed (ServiceUnavailableException: An error occurred (ServiceUnavailableException) when calling the Converse operation (reached max retries: 2): Bedrock is unable to process your request.); return ONE complete case with every top-level list (people, attitudes, events, signs, question) and keep texts short",
+              "categories": [
+                "provider_call"
+              ]
+            }
+          ]
+        },
+        {
+          "seed_round": 2,
+          "outcome": "rejected",
+          "categories": [
+            "provider_call"
+          ],
+          "reasons": [
+            {
+              "raw": "the case JSON was incomplete or malformed (ServiceUnavailableException: An error occurred (ServiceUnavailableException) when calling the Converse operation (reached max retries: 2): Bedrock is unable to process your request.); return ONE complete case with every top-level list (people, attitudes, events, signs, question) and keep texts short",
+              "categories": [
+                "provider_call"
+              ]
+            }
+          ]
+        },
+        {
+          "seed_round": 3,
+          "outcome": "rejected",
+          "categories": [
+            "provider_call"
+          ],
+          "reasons": [
+            {
+              "raw": "the case JSON was incomplete or malformed (ServiceUnavailableException: An error occurred (ServiceUnavailableException) when calling the Converse operation (reached max retries: 2): Bedrock is unable to process your request.); return ONE complete case with every top-level list (people, attitudes, events, signs, question) and keep texts short",
+              "categories": [
+                "provider_call"
+              ]
+            }
+          ]
+        },
+        {
+          "seed_round": 4,
+          "outcome": "rejected",
+          "categories": [
+            "provider_call"
+          ],
+          "reasons": [
+            {
+              "raw": "the case JSON was incomplete or malformed (ServiceUnavailableException: An error occurred (ServiceUnavailableException) when calling the Converse operation (reached max retries: 2): Bedrock is unable to process your request.); return ONE complete case with every top-level list (people, attitudes, events, signs, question) and keep texts short",
+              "categories": [
+                "provider_call"
+              ]
+            }
+          ]
+        }
+      ],
+      "unavailable": {
+        "exact_llm_calls": null,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cost": null,
+        "failed_job_duration_seconds": null
+      }
+    }
+  ],
+  "aggregate_funnel": {
+    "attempted_jobs": 3,
+    "completed_v2_jobs": 2,
+    "completed_v2_successes": 2,
+    "algorithmic_generation_failures": 0,
+    "externally_censored_provider_jobs": 1,
+    "completed_v2_refinement": {
+      "history_steps": 14,
+      "accepted_steps": 14,
+      "recorded_candidate_outcomes": 30,
+      "accepted_candidate_outcomes": 14,
+      "rejected_candidates": 16,
+      "critic_calls": 14,
+      "critic_rejections": 0
+    },
+    "provider_censored_seed": {
+      "recorded_seed_attempts": 4,
+      "rejected_seed_attempts": 4
+    },
+    "all_recorded_candidate_or_seed_outcomes": 34,
+    "all_recorded_rejected_candidate_or_seed_outcomes": 20
+  },
+  "category_counts": {
+    "completed_v2_refinement_reasons": {
+      "provider_call": 0,
+      "patch_application": 1,
+      "model_critic": 0,
+      "refinement_law": 27,
+      "hard_certification": 0
+    },
+    "provider_censored_seed_reasons": {
+      "provider_call": 4,
+      "patch_application": 0,
+      "model_critic": 0,
+      "refinement_law": 0,
+      "hard_certification": 0
+    },
+    "all_recorded_rejection_reasons": {
+      "provider_call": 4,
+      "patch_application": 1,
+      "model_critic": 0,
+      "refinement_law": 27,
+      "hard_certification": 0
+    }
+  },
+  "caveats": [
+    "Exact LLM call counts, input/output token counts, and cost were not persisted for these live v2 runs and are unavailable.",
+    "The externally censored job has no persisted duration; log timestamps are not promoted to an elapsed-duration measurement.",
+    "Requested difficulty target is unavailable unless the live run can be joined to a published index row with difficulty.target.",
+    "The provider-censored attempt has no case object, so its claims version is unknown rather than inferred from its directory date or current source code.",
+    "Candidate outcomes are persisted evaluation outcomes, not necessarily every parallel model request; cancelled or unfinished requests are not counted.",
+    "Rejection categories count raw reason strings. One rejected candidate can carry multiple reasons and categories.",
+    "The attempted-job view is curated (strict completed v2 runs plus one explicitly selected provider-censored job), not an exhaustive success-rate denominator.",
+    "The sample is too small for reliability claims."
+  ]
+}

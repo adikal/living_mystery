@@ -104,12 +104,18 @@ case unsolvable.
   plan. A finished agenda leaves the person where they are.
 - **The map shows where people are** in generated cases (someone walking is shown at where they are going, marked
   with an arrow); the person card says "Now at …".
-- **Questions**: `publish.mark_duplicate_questions` asks a model (Sonnet; Haiku missed most in trials) which account
-  questions reword a standard one ("Where were you last night, Mr Pike?" and "What is your account of last night?") or
-  each other, and marks them `same_as`. In play such an account has no button of its own: the night question and
-  "anything else" bring it out, or, when a clue earns it, it is asked about that clue. Rewriting the questions was tried
-  and rejected (rewrites asked about something else or gave the account away). `backfill.py questions`. The standard
-  questions live in one place, `dist/cases/questions.mjs`; publishing reads them from there.
+- **Questions**: an account whose own question rewords another is marked `same_as` the question that delivers it, so
+  the menu never shows two questions asking the same thing. A target must deliver the account: the night question or
+  "anything else" (`ALIAS_TOPICS`), or another account of the same speaker; an alias to the morning, sightings or news
+  question, or to another speaker, is invalid and the account keeps its own button. Code aliases plain whereabouts
+  questions ("Where were you last night, Mr Pike?": the core phrase with only forms of address and filler) and identical
+  wording; a model judge (`publish.mark_duplicate_questions`, Sonnet) adds semantic rewordings, and when it is
+  unavailable the earlier aliases are kept, still validated. The publish gate rejects missing, undeliverable or cyclic
+  aliases; `backfill.py` and `repair_history.py` repair them network-free (`judge=False`) first. In play an aliased
+  account comes out through the night question and "anything else", or, when a clue earns it, it is asked about that
+  clue; play applies the same rule to cases published earlier. Rewriting the questions does not work (rewrites ask about
+  something else or give the account away). The standard questions and these rules live in one place,
+  `dist/cases/questions.mjs`; publishing reads them from there.
 - **What people know of the detective is what they saw**: whom the detective questioned and where they searched is
   known to those who were there at the time (replayed from the event log, `morning.witnessed`); anyone else learns it
   only by being told. A person's stakes (their clues where the detective has been) use what they know, and the
@@ -127,16 +133,35 @@ case unsolvable.
   follows. `backfill.py evenings`. Everyone with everyday facts also has a question for them, so nobody stands there with
   nothing to be asked. A character may ask the detective to be clearer once, never twice running (checked in code).
 - **Bystanders remember what they saw the detective find** (`kernel.addEvidence`): a person present when the detective
-  examines something (their own behaviour included) has it in their memories, so they do not later deny it.
+  examines something (their own behaviour included) has it in their memories, so they do not later deny it. Spoken
+  testimony is remembered by its speaker only.
 - **The ending explains the red herrings from the history**: what each innocent did and the reason that made them.
 - **Where people start**: where the history leaves them this morning (the place of their latest event since the
   morning began; someone seen behaving oddly, where they are seen; otherwise home). The detective arrives where the
   constable is, who hands over the case.
 - **Concealment**: nobody hides anything in front of the detective or the constable (the code critic rejects it at
-  the constable's post; at run time they wait). A clue the kernel refused to let go is remembered and not offered to
-  the director again. A lingering line names the clue only if the detective can already see it.
+  the constable's post; at run time they wait, and a step that runs out is recorded as blocked by whoever stayed). A
+  lingering line names the clue only if the detective can already see it. The rules:
+  - *One projection.* Evidence the detective holds is a retained root. A held sign keeps its place (its requirements on
+    a concealed sign are dropped), but a held sign that needs a concealed sign can no longer be read; unheld signs that
+    require or need a concealed sign go with it. Certification (`projectAvailability`) and the engine's hints, menus and
+    accounts (`Morning.unavailableSigns`) use the same projection, so they agree.
+  - *Once.* Nobody may plan a clue already in another person's pending plan (re-planning one's own is allowed); of two
+    plans for one clue in a round only the first is kept; a clue already gone when the person arrives is missed
+    ("already gone").
+  - *In time.* The clue must be reachable before the plan's deadline. Deadlines are absolute and fixed when planned;
+    older saved steps get one from the round that made them.
+  - *Refused for good* only when the case as it actually stands cannot spare the clue (remembered and kept out of the
+    director's options from then on). A failure that depends on another person's still-pending concealment is cut for
+    that round only.
+- **Director failures** (transport, timeout, malformed output) change nothing and leave the round due; the browser
+  backs off before trying again (30 s, doubling to 5 minutes, in memory only). The error audit keeps the critic's
+  reasons a revision was mending.
 - **Hints follow the solution**: toward the signs the kernel finds critical to clearing each suspect still standing
-  and to keeping the truth (on the case as it now stands), and what leads to them; neutral accounts come last.
+  and to keeping the truth (on the case as it now stands), and what leads to them; neutral accounts come last. A
+  testimony hint names the question that actually leads to the account, found by trying it on a copy of the game (one
+  question, two in a row, or one asked "more than once: they tell it a piece at a time"); when none does, it says to
+  talk to the person again in their own words, and it never quotes a question the player has already finished.
 - **No fixed person or place in the shared code**: the accusation goes to the case's `constable` (the setting's role)
   wherever they are; generated cases start at the constable's post; place names mid-sentence come from one helper
   (`dist/places.mjs`), which uses a place's own `called` phrase when the setting gives one.

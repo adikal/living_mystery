@@ -12,9 +12,9 @@
 //   accusation          -> graded by the kernel over the evidence the player actually holds
 import * as Original from '../case.mjs';
 import {BW_PEOPLE, BW_LOCATIONS, BW_ROLES, BW_DEFAULT_VICTIM} from './village.mjs';
-import {STANDARD_QUESTIONS as Q} from './questions.mjs';
+import {STANDARD_QUESTIONS as Q, ALIAS_TOPICS, questionKey, isPlainNightQuestion} from './questions.mjs';
 import {VERSION, NEUTRAL_LINE} from '../kernel.mjs';
-import {analyse, survivors, actorOf, claimTrue, claimOf, pillarSigns, pillarSignsFor, threadDepths, criticalSigns} from '../mk/kernel.mjs';
+import {analyse, certify, survivors, actorOf, claimTrue, claimOf, pillarSigns, pillarSignsFor, threadDepths, criticalSigns, closureDependent} from '../mk/kernel.mjs';
 import {METHODS, MOTIVES} from '../mk/answer-types.mjs';
 import * as Morning from '../morning.mjs';
 import {inSentence} from '../places.mjs';
@@ -41,6 +41,43 @@ export function sanitizeRecords(value) {
   if (Array.isArray(value)) return value.map(sanitizeRecords);
   if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, sanitizeRecords(v)]));
   return value;
+}
+
+// Derive a compact acquisition-closed witness from the same typed claims used by accusation grading.
+// Starting from all certifier-understood signs, remove whole dependent branches whenever the remaining
+// evidence still uniquely identifies the truth and establishes means and motive. This is deliberately
+// case-agnostic: no itinerary or clue id is authored here.
+export function kernelInvestigationSupport(records) {
+  const report = certify(records, true, true);
+  if (!report.ok) return {proofRoutes: [], certificationErrors: report.errors};
+  const signs = Object.fromEntries(records.signs.map(sign => [sign.id, sign]));
+  const truth = records.question.truth;
+  const truthActor = actorOf(records.question.candidates.find(candidate => candidate.id === truth));
+  const supports = ids => {
+    const held = new Set(ids);
+    const sub = {...records, signs: records.signs
+      .filter(sign => sign.kind === 'public' || held.has(sign.id))
+      .map(sign => ({...sign, requires: [], unlock: sign.unlock || 'held', reading: sign.reading || 'held'}))};
+    const A = analyse(sub), remaining = survivors(sub, A), pillars = pillarSignsFor(sub, A, truthActor, held);
+    return remaining.length === 1 && remaining[0] === truth && pillars.means.length > 0 && pillars.motive.length > 0;
+  };
+  let selected = new Set([...report.A.understood].filter(id => signs[id]?.kind !== 'public'));
+  const essential = new Set([...report.key, ...report.pillarSigns.means, ...report.pillarSigns.motive]);
+  const order = [...selected].sort((a, b) => Number(essential.has(a)) - Number(essential.has(b))
+    || closureDependent(records, b).size - closureDependent(records, a).size || (a < b ? -1 : a > b ? 1 : 0));
+  for (const id of order) {
+    if (!selected.has(id)) continue;
+    const remove = closureDependent(records, id);
+    const candidate = new Set([...selected].filter(signId => !remove.has(signId)));
+    if (supports(candidate)) selected = candidate;
+  }
+  const all = [...selected].sort();
+  if (!supports(all)) return {proofRoutes: [], certificationErrors: ['Certifier support reduction did not preserve accusation support']};
+  return {
+    proofRoutes: [{id: 'kernel-certifier-support', all}],
+    certificationErrors: [],
+    certifierSupport: {key: [...report.key], means: [...report.pillarSigns.means], motive: [...report.pillarSigns.motive]},
+  };
 }
 
 export function makeKernelCase(records) {
@@ -92,6 +129,7 @@ export function makeKernelCase(records) {
   const signs = Object.fromEntries(kc.signs.map(s => [s.id, s]));
   const hyps = Object.fromEntries(kc.question.candidates.map(h => [h.id, h]));
   const truthActor = actorOf(hyps[kc.question.truth]);
+  const investigation = kernelInvestigationSupport(kc);
   const crime = kc.events.find(e => e.id === kc.question.crime.event);
   const suspects = [...new Set(kc.question.candidates.map(actorOf).filter(p => PEOPLE[p]))];
   const attitudesOf = p => arr(kc.attitudes).filter(a => a.agent === p);
@@ -155,7 +193,8 @@ export function makeKernelCase(records) {
     id, constable, title: kc.title || `${kc.setting.name} — ${kc.question.text}`, date: 'the morning after', victim: victimName, victimId: victim, victimFirst: victimAddr,
     victimRole: BW_PEOPLE[victim]?.role ?? 'The victim', victimPublic: BW_PEOPLE[victim]?.public ?? '',
     culprit: truthActor, synopsis: kc.synopsis || `${kc.question.text} Search the village, question its people, and see what holds up.`,
-    truth: truthSummary(), history: historyTimeline(), proofRoutes: [], kernel: true, askMethod: Boolean(kc.answer?.method),
+    truth: truthSummary(), history: historyTimeline(), proofRoutes: investigation.proofRoutes, kernel: true, askMethod: Boolean(kc.answer?.method),
+    method: kc.answer?.method, motive: kc.answer?.motive,
     methodOptions: METHODS, motiveOptions: MOTIVES, dayMorning: kc.setting?.day?.morning ?? null,
     suspects, topics: [['night', Q.night]],
     // the night question only for people the history gives an evening or an account (else there is nothing to tell)
@@ -194,7 +233,16 @@ export function makeKernelCase(records) {
   const [w0, w1] = kc.question.crime.window;
   CASE.night = [Math.floor((w0 - 45) / 15) * 15, Math.ceil((w1 + 45) / 15) * 15];   // the board's timeline span
   CASE.scene = kc.question.crime.place;
-  const model = {CASE, PEOPLE, LOCATIONS, OBJECTS, CLUES, baseWorld, evidenceClaims, testimonyClues: [], version: VERSION,
+  const testimonyClues = kc.signs.filter(sign => sign.kind === 'testimony').map(sign => ({
+    id: sign.id, clue: sign.id, speaker: sign.speaker, topic: sign.id, requires: [...arr(sign.requires)], duration: 3,
+  }));
+  const investigationGates = Object.fromEntries(kc.signs
+    .filter(sign => sign.kind !== 'testimony' && arr(sign.requires).length)
+    .map(sign => [sign.id, [...sign.requires]]));
+  // testimonyNotebook 'record': the notebook keeps the published account (what certification holds it to), not the
+  // model's wording of it; the spoken words stay in the conversation.
+  const model = {CASE, PEOPLE, LOCATIONS, OBJECTS, CLUES, baseWorld, evidenceClaims, testimonyClues, testimonyNotebook: 'record', investigationGates,
+    investigationSupport: investigation, version: VERSION,
     commitments: {[constable]: {location: STATION, from: START}}, agentPermissions: {}, boundedInvestigation: false, modules: [],
     // No wandering routines in generated cases: everyone keeps to their own place through the morning, so the
     // player can always find them (the notebook says where). Only the case's own events move people.
@@ -204,16 +252,64 @@ export function makeKernelCase(records) {
     // what everyone knows is held from the start (seedSession records it in the notebook)
     const publicSigns = kc.signs.filter(x => x.kind === 'public').map(x => x.id);
     const held = s => new Set([...publicSigns, ...s.world.player.evidence.map(e => e.clue)]);
-    // what is gone this morning (concealed), and everything that can only be reached through it
-    const goneSet = s => {
-      const gone = new Set(arr(s.world.flags.morning?.concealed));
-      for (let more = gone.size > 0; more;) { more = false; for (const x of kc.signs) if (!gone.has(x.id) && [...arr(x.requires), ...arr(x.needs)].some(r => gone.has(r))) { gone.add(x.id); more = true; } }
-      return gone;
+    // what is gone this morning (concealed), and everything not yet held that can only be reached or read through it.
+    // The same projection the concealment certifier uses (Morning.unavailableSigns): evidence already in the notebook is
+    // a retained root, so the engine and the certificate always agree on what remains in the case.
+    // Cached per notebook array and concealed list (both are replaced, never mutated, when they change).
+    const goneCache = new WeakMap();
+    const availability = s => {
+      const concealed = arr(s.world.flags.morning?.concealed);
+      if (!concealed.length) return null;
+      const evidence = s.world.player.evidence, byEvidence = goneCache.get(evidence) ?? new Map();
+      goneCache.set(evidence, byEvidence);
+      const key = concealed.join('\u0000');
+      if (!byEvidence.has(key)) {
+        const projected = Morning.projectAvailability(kc, [...held(s)], concealed);
+        byEvidence.set(key, {gone: new Set(projected.removed), caseRecords: projected.caseRecords});
+      }
+      return byEvidence.get(key);
     };
+    const goneSet = s => availability(s)?.gone ?? new Set();
     const earned = (s, sid) => !goneSet(s).has(sid) && arr(signs[sid]?.requires).every(r => held(s).has(r));
     const ruleKnown = (s, rid) => kc.rules?.find(r => r.id === rid)?.knowledge === 'common'
       || kc.signs.some(x => x.kind === 'rule' && x.rule === rid && held(s).has(x.id));
     const accounts = (s, pid) => kc.signs.filter(x => x.kind === 'testimony' && x.speaker === pid && earned(s, x.id));
+    // Question identity for menus, hints and done markers: a published alias (same_as) resolved along the same speaker's
+    // accounts to a topic that delivers it, plus the shared plain-whereabouts rule for cases published before
+    // deterministic aliasing (questions.mjs, the same rule the publisher applies). An alias whose target would not
+    // deliver the account (another speaker, or the morning/sightings/news questions) is ignored, so the account keeps
+    // its own button and stays reachable.
+    const NAMES_IN_CASE = Object.values(PEOPLE).flatMap(p => [p.name, p.address]).filter(Boolean);
+    const aliasable = x => x?.kind === 'testimony' && x.ask && !x.surface && !x.morning && !x.sighting;
+    const standardTopic = ask => ALIAS_TOPICS.find(topic => questionKey(Q[topic]) === questionKey(ask))
+      ?? (isPlainNightQuestion(ask, NAMES_IN_CASE) ? 'night' : null);
+    function canonicalTopic(pid, topic) {
+      let current = topic || 'night';
+      for (const seen = new Set(); aliasable(signs[current]) && signs[current].speaker === pid && !seen.has(current);) {
+        seen.add(current);
+        const target = signs[current].same_as;
+        if (ALIAS_TOPICS.includes(target)) return target;
+        if (target && signs[target]?.speaker === pid && signs[target]?.kind === 'testimony') { current = target; continue; }
+        return standardTopic(signs[current].ask) ?? current;
+      }
+      return current;
+    }
+    // Accounts that answer "where were you last night?": the night questions themselves, the evening summary, and
+    // accounts asked through the night question.
+    const nightAccount = (pid, topic) => ALIAS_TOPICS.includes(topic) || Boolean(signs[topic]?.surface && signs[topic].speaker === pid)
+      || ALIAS_TOPICS.includes(canonicalTopic(pid, topic));
+    // The typed claim an account makes, in words a speaker may use (its own time window and place). This is exactly what
+    // certification already holds the account to, lie or truth, so saying it adds nothing the certificate does not
+    // cover. Accounts without a timed claim give no details: their published words are all there is.
+    function claimDetails(pid, topic) {
+      const sign = signs[topic], c = sign && sign.speaker === pid ? claimOf(sign) : null;
+      if (!c || !Number.isFinite(c.from) || !Number.isFinite(c.to)) return [];
+      if (c.pred === 'wasAt' && (PEOPLE[c.person] !== undefined || c.person === victim))
+        return [{claim: 'whereabouts', person: PEOPLE[c.person]?.name ?? victimName, place: LOCATIONS[c.place]?.name ?? c.place,
+          from: hhmm(c.from), to: hhmm(c.to), when: c.when ?? 'throughout'}];
+      if (c.pred === 'crimeBetween') return [{claim: 'time of death', from: hhmm(c.from), to: hhmm(c.to)}];
+      return [];
+    }
     const DAY_MORNING = kc.setting?.day?.morning ?? START;
     // A person's account of this morning (written at publish from their own morning events, like the evening one).
     const morningAccount = (s, pid) => accounts(s, pid).find(x => x.morning) ?? null;
@@ -340,7 +436,8 @@ export function makeKernelCase(records) {
     // needs (shared by the hints and the constable's briefing).
     function ranked(s) {
       const have = held(s);
-      const gone = goneSet(s), kcNow = gone.size ? {...kc, signs: kc.signs.filter(x => !gone.has(x.id))} : kc;
+      // the case as it now stands: the same rootified projection the concealment certifier checks
+      const gone = goneSet(s), kcNow = availability(s)?.caseRecords ?? kc;
       const A = analyse(kcNow), depth = id => A.eff[id] ?? 99;
       const st = caseStatus(s);
       // once opportunity is settled, steer toward the missing means or motive evidence (and what leads to it)
@@ -413,8 +510,12 @@ export function makeKernelCase(records) {
         w.player.location = w.npcs[pid].location;
         return t;
       };
-      const menu = t => [...(CASE.topicsFor?.[pid] ?? []), ...followupOptions(t, pid)]
-        .sort(([a], [b]) => (likely.indexOf(a) + 1 || 99) - (likely.indexOf(b) + 1 || 99));
+      const menu = t => {
+        const seen = new Set();
+        return [...(CASE.topicsFor?.[pid] ?? []), ...followupOptions(t, pid)]
+          .sort(([a], [b]) => (likely.indexOf(a) + 1 || 99) - (likely.indexOf(b) + 1 || 99))
+          .filter(([topic]) => { const key = canonicalTopic(pid, topic); if (seen.has(key)) return false; seen.add(key); return true; });
+      };
       const after = (t, act) => { const c = structuredClone(t); try { act(c); } catch { return null; } return c; };
       const got = t => t?.world.player.evidence.some(e => e.clue === x.id);
       const start = beside(s), cause = s.events.at(-1)?.id;
@@ -424,9 +525,19 @@ export function makeKernelCase(records) {
         if (!one) continue;
         for (const [b, lb] of menu(one)) if (got(after(one, t => ask(t, pid, b, one.events.at(-1)?.id)))) return {ask: [la, lb]};
       }
+      // Accounts asked through "anything else" come one at a time: the target may be several askings away. The same
+      // question repeated is a route the player can follow, and the hint says so instead of naming a finished question.
+      for (const [a, la] of menu(start)) {
+        let t = start;
+        for (let n = 1; n <= REPEAT_LIMIT && t; n++) {
+          t = after(t, c => ask(c, pid, a, c.events.at(-1)?.id));
+          if (got(t)) return n === 1 ? {ask: [la]} : {ask: [la], repeat: n};
+        }
+      }
       const shown = [...held(s)].find(clue => CLUES[clue] && got(after(start, t => present(t, pid, clue, 'private', cause))));
       return shown ? {show: CLUES[shown].title} : null;
     }
+    const REPEAT_LIMIT = 8;
 
     function hintText(s, x) {
       const here = s.world.player.location;
@@ -442,9 +553,14 @@ export function makeKernelCase(records) {
         const route = routeTo(s, x), first = `${who}${at} has more to tell you than they have said so far${prereq ? `, now that you have ${String(prereq.title || 'that').toLowerCase()}` : ''}.`;
         if (route?.show) return {id: x.id, levels: [first, `Show ${who} ${lower(route.show)}.`,
           `Show ${who}${at} ${lower(route.show)} (drag it from your inventory onto them).`]};
-        const asks = (route?.ask ?? [Q.night]).map(q => `“${q}”`).join(', then ');
-        return {id: x.id, levels: [first, `Ask ${who}: ${asks}`,
-          `Ask ${who}${at}: ${asks} (${route?.ask?.length > 1 ? 'questions' : 'one of the questions'} you can choose when you are with them).`]};
+        // No route found from here (the person must be found, or something else must happen first): say whom to talk
+        // to without quoting a question, so a hint never names an action the player has already taken to no effect.
+        if (!route?.ask) return {id: x.id, levels: [first, `Talk to ${who} again; ask in your own words about what they have not yet told you.`,
+          `Find ${who}${at} and keep them talking: something you hold, or something you learn elsewhere, may draw out the rest.`]};
+        const asks = route.ask.map(q => `“${q}”`).join(', then ');
+        const again = route.repeat ? ` more than once: they tell it a piece at a time` : '';
+        return {id: x.id, levels: [first, `Ask ${who}: ${asks}${again}`,
+          `Ask ${who}${at}: ${asks}${again} (${route.ask.length > 1 ? 'questions' : 'one of the questions'} you can choose when you are with them).`]};
       }
       if (arr(s.world.flags.lockedObjects).includes(x.id))
         return {id: x.id, levels: ['What you have found points somewhere you have not looked yet.', `Go to ${place(x.at)}.`,
@@ -479,7 +595,7 @@ export function makeKernelCase(records) {
       const ev = K.speech(s, pid, text, cause, {topic: x.id, intent: deceptive ? 'Protect my secret' : 'Answer from my own experience',
         basis: `mk_${arr(x.because)[0] ?? ''}`, deception: deceptive ? 'False account' : false, deceptionFlexible: !claimOf(x),
         ...(x.morning || fromMorning(x) ? {aboutMorning: true} : {}),
-        sourceEvents: [historySource(s, x.source)].filter(Boolean), claims: []});
+        sourceEvents: [historySource(s, x.source)].filter(Boolean)});   // no claims field: the record's own claims apply
       if (!K.has(s, x.id)) K.addEvidence(s, x.id, ev, `${PEOPLE[pid].name}`);
       return ev;
     }
@@ -789,20 +905,17 @@ export function makeKernelCase(records) {
       const told = new Set(s.world.npcs[pid].beliefs.filter(b => b.key.startsWith('mk_news_')).map(b => b.key));
       if (Morning.news(s, pid, PEOPLE).some(h => !told.has(`mk_news_${h.id}`))) out.push(['news', Q.news]);
       // every open account with its own question is offered by that question (the evening and morning summaries have
-      // theirs in the menu already); "anything else" stays for what has no question of its own
-      // An account whose question only rewords another (published as same_as: 'night', or another account) has no button
-      // of its own: ungated, the night question and "anything else" bring it out; earned by a clue, it is asked about that.
-      const ownAsk = x => x.ask && !x.same_as;
+      // theirs in the menu already); "anything else" stays for what has no distinct question of its own. Published
+      // aliases and the compatibility classifier suppress semantically duplicate buttons in older saved cases too.
+      const ownAsk = x => x.ask && canonicalTopic(pid, x.id) === x.id;
       const own = x => !x.surface && !x.morning && !x.sighting && (arr(x.requires).length || ownAsk(x));
       if (heardAny(s, pid) && open.some(x => !own(x) && !x.surface && !x.morning && !x.sighting)) out.push(['more', Q.more]);
       for (const x of open.filter(own)) {
         const prereq = arr(x.requires).length ? signs[arr(x.requires).find(r => signs[r] && signs[r].kind !== 'testimony') ?? x.requires[0]] : null;
         const about = prereq ? String(prereq.title || 'what I found').replace(/^(the|a|an) /i, '').toLowerCase() : 'what I found';
-        // the account's own question (written not to give its content away) is the natural label when it has one, even
-        // for an account also reachable from a broader question (same_as): the question must describe what we are asking
-        // this person, not name the unrelated clue that happened to unlock it. Only without an own question do we fall
-        // back to the prerequisite: a testimony's own 'show' line, or a question about the physical thing we found.
-        let label = x.ask || (prereq?.kind === 'testimony'
+        // A distinct own question is the natural label. An aliased account unlocked by evidence is instead phrased
+        // around that prerequisite, so progression remains reachable without asking the same natural-language action.
+        let label = ownAsk(x) ? x.ask : (prereq?.kind === 'testimony'
           ? (prereq.show || `${PEOPLE[prereq.speaker]?.name ?? 'Someone'} told me something that concerns you. What do you say to it?`)
           : `What can you tell me about the ${about}?`);
         if (out.some(([, l]) => l === label)) label = `${label.replace(/\?$/, '')} — and anything else about it?`;
@@ -830,7 +943,8 @@ export function makeKernelCase(records) {
       return lines[used % lines.length];
     }
     const isDecline = (pid, text) => text === NEUTRAL || arr(kc.declines?.[pid]).includes(text);
-    return {morningCtx, seedSession, afterAction, decide, canAsk, ask, present, presentLine, checkCase, caseStatus, pillarsHeld, followupOptions, freeTextTopics, hints, declineFor, isDecline, innocentReason, parseCommand, reconcileKnowledge() {},
+    return {morningCtx, seedSession, afterAction, decide, canAsk, ask, present, presentLine, checkCase, caseStatus, pillarsHeld,
+      followupOptions, freeTextTopics, canonicalTopic, nightAccount, claimDetails, hints, declineFor, isDecline, innocentReason, parseCommand, reconcileKnowledge() {},
       commandLabel: a => `${a.type} ${a.person ?? a.object ?? a.to ?? ''}`, caseHealth: () => []};
   }
   return {CASE, LOCATIONS, PEOPLE, CLUES, OBJECTS, model, baseWorld, createBehavior, SUSPECTS: suspects,

@@ -29,6 +29,9 @@ let chatSince={id:null,from:0},villageView='map',invSort='time',mode='game',note
 const dialogueAudit=loadedAudit;
 const realized=new Map([...dialogueAudit].map(([id,r])=>[id,`${actorName(session.events.find(e=>e.id===id).actor)}\n"${r.text}"`]));
 let characterBusy=false,characterController=null,characterEpoch=0,characterDraft='',characterPending=null,directorPending=false,autonomyRunning=false,autonomyController=null;
+// Morning-director failure backoff: 30 s doubling to 5 minutes; in memory only.
+const directorBackoff={delay:0,until:0};
+function directorFailed(){directorBackoff.delay=Math.min(300000,directorBackoff.delay?directorBackoff.delay*2:30000);directorBackoff.until=Date.now()+directorBackoff.delay;}
 function cancelCharacter(){characterEpoch++;characterController?.abort();characterController=null;autonomyController?.abort();characterBusy=false;characterPending=null;directorPending=false;}
 // Ordinary NPC life deliberation runs detached after the player's turn commits, so
 // it never blocks the action or its reply. It commits only if the session is
@@ -38,11 +41,15 @@ async function scheduleAutonomy(){
   if(autonomyRunning||characterBusy)return;
   // generated cases: the morning director plans the next hour (docs/living-village.md); checked, detached, never blocking
   if(CASE.kernel&&llmActive()&&llmConfig().reasoning){
+    // A failed round changes nothing and stays due, so without a pause every player action would call a failing
+    // backend again. Back off (in memory only, never saved: the session itself is untouched) and reset on success.
+    if(Date.now()<directorBackoff.until)return;
     autonomyRunning=true;autonomyController=new AbortController();
     try{const res=await directMorning(session,{signal:autonomyController.signal,endpoint:llmConfig().endpoint});
       if(res.status!=='not_needed')dlog('morning_director',{status:res.status,plan:res.plan,audit:res.audit});
+      if(['error','rejected'].includes(res.status))directorFailed();else if(res.status!=='stale')directorBackoff.delay=0;
       if(!characterBusy&&['accepted','empty'].includes(res.status)){healthCache=null;persist();render();}
-    }catch(e){dlog('morning_director',{status:'error',error:String(e.message)});}finally{autonomyRunning=false;autonomyController=null;}
+    }catch(e){dlog('morning_director',{status:'error',error:String(e.message)});directorFailed();}finally{autonomyRunning=false;autonomyController=null;}
     return;
   }
   if(!(llmActive()&&llmConfig().reasoning&&session.world.flags?.lifeVersion))return;
@@ -355,12 +362,13 @@ function evidenceBody(e){const ev=session.events.find(x=>x.id===e.id),clue=ev?.d
 function historyModal(){const entries=playerView(session).transcript,pages=Math.max(1,Math.ceil(entries.length/20));historyPage=Math.max(0,Math.min(historyPage,pages-1));openModal(`<h2>Investigation history</h2><p class="meta">Oldest to newest · page ${historyPage+1} of ${pages}. Your complete observed history is preserved.</p><div class="two-actions"><button class="soft-button" data-do="history-older" ${historyPage===0?'disabled':''}>← Older</button><button class="soft-button" data-do="history-newer" ${historyPage===pages-1?'disabled':''}>Newer →</button></div>${entries.slice(historyPage*20,(historyPage+1)*20).map(journalEntry).join('')}`,'Investigation history');$('#modal').scrollTop=0;}
 // Derive completion from successful commands so existing saves and typed commands count.
 function actionDone(action){
+  const canonicalAsk=(person,topic)=>caseTables(session).behavior?.canonicalTopic?.(person,topic||'night')??(topic||'night');
   return session.events.some(e=>{
     const d=e.kind==='command'?e.data:null;
     const a=d?(d.action?.type==='converse'?d.origin:d.action):null;
     if(!a||a.type!==action.type)return false;
     const matches=action.type==='inspect'?a.object===action.object:
-      action.type==='ask'?a.person===action.person&&(a.topic||'night')===action.topic:
+      action.type==='ask'?a.person===action.person&&canonicalAsk(a.person,a.topic)===canonicalAsk(action.person,action.topic):
       action.type==='present'?a.person===action.person&&a.clue===action.clue&&(a.tone||'private')===action.tone:false;
     return matches&&!session.events.some(result=>result.kind==='rejected'&&result.parents.includes(e.id));
   });

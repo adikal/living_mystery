@@ -12,10 +12,12 @@ Routes come from the environment, as comma-separated ``role=backend:model`` pair
 
 Backends:
     bedrock   Amazon Bedrock's Converse API (credentials from the standard AWS chain)
-    ollama    a local Ollama server (OLLAMA_URL, default http://127.0.0.1:11434); loopback only
+    ollama    a local Ollama server (OLLAMA_URL, default http://127.0.0.1:11434); loopback only, and configured only
+              when some route uses it (OLLAMA_NUM_CTX, OLLAMA_TIMEOUT, OLLAMA_KEEP_ALIVE)
 """
 from __future__ import annotations
 
+import http.client
 import json
 import os
 import time
@@ -53,7 +55,8 @@ class Bedrock:
                 connect_timeout=3, read_timeout=30, retries={"max_attempts": 0}))
         return self._client
 
-    def complete(self, model, system, prompt, max_tokens, temperature):
+    def complete_with_metadata(self, model, system, prompt, max_tokens, temperature):
+        """Return text plus provider metadata; ``complete`` keeps the historical text-only interface."""
         kwargs = dict(modelId=model, messages=[{"role": "user", "content": [{"text": prompt}]}],
                       inferenceConfig={"maxTokens": max_tokens, "temperature": temperature})
         if system.strip():
@@ -65,14 +68,31 @@ class Bedrock:
             except Exception as exc:
                 code = ((getattr(exc, "response", None) or {}).get("Error") or {}).get("Code", "")
                 if code in self.TRANSIENT and attempt < 2:
-                    time.sleep(0.6 * (attempt + 1))   # a passing service error: wait briefly and try again
+                    time.sleep(0.6 * (attempt + 1))
                     continue
                 if attempt == 0:
-                    # a long-lived client can hold stale credentials: rebuild it once and retry
                     self._client = None
                     continue
                 raise
-        return "".join(block.get("text", "") for block in resp["output"]["message"]["content"]).strip()
+        metadata = resp.get("ResponseMetadata") or {}
+        return {
+            "text": "".join(block.get("text", "") for block in resp["output"]["message"]["content"]).strip(),
+            "usage": resp.get("usage"),
+            "bedrock_request_id": metadata.get("RequestId"),
+            "http_status": metadata.get("HTTPStatusCode"),
+            "sdk_retry_attempts": metadata.get("RetryAttempts"),
+            "effective_serving_model": None,
+        }
+
+    def complete(self, model, system, prompt, max_tokens, temperature):
+        return self.complete_with_metadata(model, system, prompt, max_tokens, temperature)["text"]
+
+
+class _NoRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """Keep a validated loopback request from being redirected elsewhere."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
 
 
 class Ollama:
@@ -81,9 +101,24 @@ class Ollama:
     the game parses them loosely and asks again, with the reason, when a reply is not the JSON object it asked for."""
 
     def __init__(self, url: str, num_ctx: int, timeout: float, keep_alive: str):
-        if urlparse(url).hostname not in ("127.0.0.1", "localhost", "::1"):
-            raise ValueError("The Ollama backend must be on loopback")
-        self.url, self.num_ctx, self.timeout, self.keep_alive = url.rstrip("/"), num_ctx, timeout, keep_alive
+        if not url or url != url.strip() or any(char.isspace() for char in url) or "?" in url or "#" in url:
+            raise ValueError("OLLAMA_URL must be a local HTTP or HTTPS root URL")
+        try:
+            parsed = urlparse(url)
+            port = parsed.port
+        except ValueError as exc:
+            raise ValueError("OLLAMA_URL is malformed") from exc
+        if (parsed.scheme.lower() not in ("http", "https")
+                or parsed.hostname not in ("127.0.0.1", "localhost", "::1")
+                or parsed.username is not None or parsed.password is not None
+                or parsed.path not in ("", "/") or parsed.params or parsed.query or parsed.fragment
+                or port == 0):
+            raise ValueError("OLLAMA_URL must be a local HTTP or HTTPS root URL")
+        host = f"[{parsed.hostname}]" if parsed.hostname == "::1" else parsed.hostname
+        authority = f"{host}:{port}" if port is not None else host
+        self.url = f"{parsed.scheme.lower()}://{authority}"
+        self.num_ctx, self.timeout, self.keep_alive = num_ctx, timeout, keep_alive
+        self._opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), _NoRedirectHandler())
 
     def request(self, model, system, prompt, max_tokens, temperature):
         messages = ([{"role": "system", "content": system}] if system.strip() else []) + \
@@ -96,11 +131,19 @@ class Ollama:
         body = json.dumps(self.request(model, system, prompt, max_tokens, temperature)).encode()
         req = urllib.request.Request(self.url + "/api/chat", data=body, headers={"content-type": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-                reply = json.loads(resp.read())
-        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+            with self._opener.open(req, timeout=self.timeout) as resp:
+                raw = resp.read()
+        except (OSError, http.client.HTTPException) as exc:   # URLError and timeouts are OSErrors
             raise BackendError(f"ollama: {exc}") from exc
-        text = ((reply.get("message") or {}).get("content") or "").strip()
+        try:
+            reply = json.loads(raw.decode("utf-8"))
+        except ValueError as exc:                               # invalid UTF-8 or not JSON
+            raise BackendError("ollama: reply is not UTF-8 JSON") from exc
+        if not isinstance(reply, dict):
+            raise BackendError("ollama: reply is not a JSON object")
+        message = reply.get("message")
+        content = message.get("content") if isinstance(message, dict) else None
+        text = content.strip() if isinstance(content, str) else ""
         if not text:
             raise BackendError("ollama: empty reply")
         return text
@@ -136,9 +179,14 @@ def turn_timeout_ms(routes: dict[str, Route]) -> int:
     return 240_000 if any(routes[r].backend != "bedrock" for r in ("character", "checker")) else 45_000
 
 
-def backends_from_env(region: str) -> dict:
-    return {"bedrock": Bedrock(region),
-            "ollama": Ollama(os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434"),
-                             num_ctx=int(os.environ.get("OLLAMA_NUM_CTX", "16384")),
-                             timeout=float(os.environ.get("OLLAMA_TIMEOUT", "120")),
-                             keep_alive=os.environ.get("OLLAMA_KEEP_ALIVE", "30m"))}
+def backends_from_env(region: str, routes: dict[str, Route] | None = None) -> dict:
+    """The backends ``routes`` use (default: LM_ROUTES). Ollama, and with it OLLAMA_URL, is configured and validated
+    only when some route sends a role to it."""
+    routes = parse_routes(os.environ.get("LM_ROUTES")) if routes is None else routes
+    backends = {"bedrock": Bedrock(region)}
+    if any(route.backend == "ollama" for route in routes.values()):
+        backends["ollama"] = Ollama(os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434"),
+                                    num_ctx=int(os.environ.get("OLLAMA_NUM_CTX", "16384")),
+                                    timeout=float(os.environ.get("OLLAMA_TIMEOUT", "120")),
+                                    keep_alive=os.environ.get("OLLAMA_KEEP_ALIVE", "30m"))
+    return backends

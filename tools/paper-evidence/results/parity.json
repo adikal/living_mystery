@@ -1,0 +1,8 @@
+{
+  "command": ".venv/bin/python tools/refine-c/parity.py",
+  "stdout": "443 cases compared, 0 mismatches, 150 certified",
+  "scope": "Historical case/draft corpus across claims versions; implementation conformance, not a claims-v2 generation rate.",
+  "compared": 443,
+  "mismatches": 0,
+  "certified": 150
+}

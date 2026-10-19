@@ -51,6 +51,9 @@ export function createKernel(model) {
   const baseWorld = model.baseWorld;
   const stateRoots = model.stateRoots || DEFAULT_STATE_ROOTS;
   const eventKinds = new Set(model.eventKinds || DEFAULT_EVENT_KINDS);
+  const testimonyClueIds = new Set((Array.isArray(model.testimonyClues) ? model.testimonyClues : [])
+    .map(item => typeof item === 'string' ? item : item?.clue || item?.id)
+    .filter(id => typeof id === 'string' && id.length > 0));
 
   const speechOverrides=new WeakMap();
   function withSpeech(s,override,run){speechOverrides.set(s,override);try{return run();}finally{speechOverrides.delete(s);}}
@@ -142,12 +145,19 @@ export function createKernel(model) {
   function addEvidence(s, clue, cause, source) {
     if (has(s, clue)) return false;
     const d = CLUES[clue], event = nextId(s);
-    const testimony=model.testimonyClues?.includes(clue)?s.events.find(e=>e.id===cause)?.data.assertion:null;
-    const text=testimony??d.text;
-    const found = commit(s, { kind: 'evidence', title: `Recorded: ${d.title}`, actor: 'player', parents: [cause,s.world.flags.evidenceOrigins?.[clue]], data: { clue, source: source ?? d.source, claims: model.testimonyClues?.includes(clue)?(s.events.find(e=>e.id===cause)?.data.claims??model.evidenceClaims?.[clue]??[]):(model.evidenceClaims?.[clue]??[]) }, changes: { 'player.evidence': [...s.world.player.evidence, { clue, eventId: event, minute: s.world.minute, source: source ?? d.source,...(testimony?{text}:{}) }] }, playerText: `${d.title}\n${text}` });
+    const isTestimony=testimonyClueIds.has(clue);
+    const testimonyEvent=isTestimony?s.events.find(e=>e.id===cause):null;
+    // What the notebook records of an account: the spoken words (default), or the published record when the case says
+    // so (testimonyNotebook 'record'), so a model's paraphrase never becomes the notebook's text.
+    const spoken=isTestimony&&model.testimonyNotebook!=='record'?testimonyEvent?.data.assertion:null;
+    const text=spoken??d.text;
+    // A speech that states its claims (even none, []) is taken at its word; one that omits the field uses the record's.
+    const spokenClaims=testimonyEvent&&Object.hasOwn(testimonyEvent.data,'claims')?testimonyEvent.data.claims:undefined;
+    const claims=isTestimony?(spokenClaims??model.evidenceClaims?.[clue]??[]):(model.evidenceClaims?.[clue]??[]);
+    const found = commit(s, { kind: 'evidence', title: `Recorded: ${d.title}`, actor: 'player', parents: [cause,s.world.flags.evidenceOrigins?.[clue]], data: { clue, source: source ?? d.source, claims }, changes: { 'player.evidence': [...s.world.player.evidence, { clue, eventId: event, minute: s.world.minute, source: source ?? d.source,...(typeof spoken==='string'&&spoken?{text:spoken}:{}) }] }, playerText: `${d.title}\n${text}` });
     // people there saw the detective find it (a thing in the room, or their own behaviour); what they were told is in
     // their own memory already
-    if (!testimony) for (const [id, npc] of Object.entries(s.world.npcs))
+    if (!isTestimony) for (const [id, npc] of Object.entries(s.world.npcs))
       if (npc.location === s.world.player.location && !npc.travel) remember(s, id, found);
     return true;
   }

@@ -1,6 +1,7 @@
 """The premise deck: code, not the model, decides who dies, who did it, why, how and where; the model writes the story.
 
-draw() picks a premise that differs from recent ones (a history file in runs/ remembers the last cases), brief()
+draw() picks a premise that differs from recent ones (a history file in runs/ remembers every published case; draw
+looks at the last RECENT), brief()
 turns it into the generator's brief, and seed_errors() checks the seed honours it, so the model cannot swap in
 its favourite story (the solicitor, the embezzlement, the candlestick).
 """
@@ -10,8 +11,18 @@ import random
 import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SETTING = json.load(open(os.path.join(HERE, 'settings', 'bellweather.json')))
-TYPES = json.load(open(os.path.join(HERE, 'settings', 'answer-types.json')))
+import publication_io as pubio
+
+PUBLICATION_ROOT = pubio.PUBLICATION_ROOT
+
+
+def _load_json(path):
+    with open(path) as source:
+        return json.load(source)
+
+
+SETTING = _load_json(os.path.join(HERE, 'settings', 'bellweather.json'))
+TYPES = _load_json(os.path.join(HERE, 'settings', 'answer-types.json'))
 HISTORY = os.path.join(HERE, 'runs', 'premise-history.json')
 
 PEOPLE = {p['id']: p for p in SETTING['people']}
@@ -38,11 +49,23 @@ SHAPES = {
 }
 
 
+RECENT = 40   # draw() rotates against the last cases; the file keeps every record (publication ids stay idempotent)
+
+
 def _history():
+    """Every remembered premise. A missing file is an empty history; an unreadable one is corruption, never empty."""
     try:
-        return json.load(open(HISTORY))
-    except (OSError, ValueError):
+        hist = _load_json(HISTORY)
+    except FileNotFoundError:
         return []
+    except ValueError as error:
+        raise ValueError(f'premise history {HISTORY} is corrupt ({error}). To recover, restore it from a backup or move '
+                         'it aside (it only steers premise variety; a missing file is an empty history), then run again: '
+                         'an interrupted live publication finishes on the next publish') from error
+    if not isinstance(hist, list):
+        raise ValueError(f'premise history {HISTORY} is corrupt (not a list). To recover, restore it from a backup or '
+                         'move it aside, then run again')
+    return hist
 
 
 def _fresh(options, used, rng):
@@ -54,7 +77,7 @@ def _fresh(options, used, rng):
 
 def draw(seed=None, history=None):
     rng = random.Random(seed)
-    hist = _history() if history is None else history
+    hist = (_history() if history is None else history)[-RECENT:]
     col = lambda k: [h.get(k) for h in hist]
     victim = _fresh(list(CAST), col('victim'), rng)
     culprit = _fresh([p for p in CAST if p != victim], col('culprit'), rng)
@@ -69,10 +92,22 @@ def draw(seed=None, history=None):
             'motive': motive, 'place': place, 'shape': shape}
 
 
-def remember(premise):
-    hist = _history() + [{k: premise[k] for k in ('victim', 'culprit', 'method', 'motive', 'place', 'shape')}]
-    os.makedirs(os.path.dirname(HISTORY), exist_ok=True)
-    json.dump(hist[-40:], open(HISTORY, 'w'), indent=1)
+def remember(premise, publication_id=None, lock_held=False):
+    """Atomically remember a committed premise; publication ids make crash recovery idempotent. The whole history is
+    kept and scanned: a cap would forget old publication ids, and recovering an old marker would then add a duplicate."""
+    def update():
+        hist = _history()
+        if publication_id and any(isinstance(item, dict) and item.get('publication_id') == publication_id for item in hist):
+            return False
+        record = {k: premise[k] for k in ('victim', 'culprit', 'method', 'motive', 'place', 'shape')}
+        if publication_id:
+            record['publication_id'] = publication_id
+        pubio.atomic_json(HISTORY, hist + [record])
+        return True
+    if lock_held:
+        return update()
+    with pubio.publication_lock(PUBLICATION_ROOT):
+        return update()
 
 
 def name(pid):

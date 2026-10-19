@@ -1,0 +1,3423 @@
+{
+  "aggregate_usage": {
+    "cacheReadInputTokens": 1249738,
+    "cacheWriteInputTokens": 24736,
+    "calls": 774,
+    "inputTokens": 5982463,
+    "outputTokens": 1422730,
+    "totalTokens": 8679667
+  },
+  "claims_boundary": [
+    "This is a prospective bounded generation pilot, not a publication set; no case or manifest was made playable.",
+    "Dirty-worktree evidence is preliminary/non-archival.",
+    "Unfinished slots remain in the denominator."
+  ],
+  "cohort": {
+    "cohort_id": "c3-e2-prospective-20261018-1516",
+    "design": {
+      "denominator": 12,
+      "draw_seed_prefix": "sleuthcraft-c3-e2-pilot-v1",
+      "effective_serving_model_policy": "unknown unless response metadata states it",
+      "fixed_order": [
+        "easy",
+        "medium",
+        "hard",
+        "easy",
+        "medium",
+        "hard",
+        "easy",
+        "medium",
+        "hard",
+        "easy",
+        "medium",
+        "hard"
+      ],
+      "hard_wall_seconds": 3600,
+      "levels": {
+        "easy": 4,
+        "hard": 4,
+        "medium": 4
+      },
+      "manual_inclusion_policy": "none",
+      "max_parallel": 3,
+      "playable_publication": false,
+      "region": "us-west-2",
+      "replacement_policy": "none",
+      "requested_models": {
+        "alternate_and_critic": "us.anthropic.claude-sonnet-5",
+        "fast_checks": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+        "generation": "us.anthropic.claude-opus-5-5"
+      }
+    },
+    "finished_at": "2026-10-18T20:15:24.939Z",
+    "started_at": "2026-10-18T19:15:23.770Z",
+    "status": "complete",
+    "wall_seconds": 3600.777
+  },
+  "denominator": {
+    "by_requested_level": {
+      "easy": {
+        "achieved_levels": {
+          "easy": 4
+        },
+        "attempted": 4,
+        "completed_strictly_gateable": 4,
+        "other_outcomes": {}
+      },
+      "hard": {
+        "achieved_levels": {
+          "hard": 3
+        },
+        "attempted": 4,
+        "completed_strictly_gateable": 3,
+        "other_outcomes": {
+          "unfinished": 1
+        }
+      },
+      "medium": {
+        "achieved_levels": {
+          "easy": 2,
+          "hard": 2
+        },
+        "attempted": 4,
+        "completed_strictly_gateable": 4,
+        "other_outcomes": {}
+      }
+    },
+    "outcomes": {
+      "completed-strictly-gateable": 11,
+      "unfinished": 1
+    },
+    "predeclared_slots": 12,
+    "retained_slots": 12
+  },
+  "generated_at": "2026-10-18T20:15:25.217Z",
+  "normalized_sha256": "c12c34e08d22172366c60524a877970adfae378fbf3f332f1589f0157248ec48",
+  "provenance": {
+    "cohort_manifest_sha256": "dbf6783b4ab4fa2f19d415db286f934bfed18aded696ab12765fdf6ddb04499e",
+    "environment": {
+      "aws_profile_name": null,
+      "boto3": "1.43.90",
+      "botocore": "1.43.90",
+      "machine": "arm64",
+      "platform": "macOS-26.7.1-arm64-arm-64bit",
+      "python": "3.12.10",
+      "region": "us-west-2"
+    },
+    "finish": {
+      "archival_status": "preliminary/non-archival",
+      "branch": "main",
+      "commit": "a2716a8643d8177914a5decb94edf474bf9c77f5",
+      "input_files": [
+        {
+          "path": "tools/refine-c/refine.py",
+          "sha256": "618a3b4521d680f60b3b6e1db8771943c63603026616b2b02372b9dfb91859ca"
+        },
+        {
+          "path": "tools/refine-c/provenance.py",
+          "sha256": "ddac1f6a0a4d8f1311726811d7add527a7711e613407f3c982dee07279ed9394"
+        },
+        {
+          "path": "tools/refine-c/publish.py",
+          "sha256": "25b67c8b4dbd78b934c39032be4417f7adcea92912179d9ee69a3565236b60e7"
+        },
+        {
+          "path": "tools/refine-c/enrich.py",
+          "sha256": "e8b6d2872dd8c55fc730eda8562cc7afa1505616f2525bd862570f2406208ce7"
+        },
+        {
+          "path": "tools/refine-c/premise.py",
+          "sha256": "e6de979aae2923816d562339ac2d52b5d8d36799406d3d067058ac0478ac1066"
+        },
+        {
+          "path": "tools/refine-c/difficulty.py",
+          "sha256": "0a3c0531ecc152c7b5dc06340d65c1ef38ab7f367396e5ffa825ebd094ad89c1"
+        },
+        {
+          "path": "tools/refine-c/settings/bellweather.json",
+          "sha256": "dff6115da1f91e87bcf27088f0cac339261d4ce5929cbd6a2ccc882ef03cd741"
+        },
+        {
+          "path": "tools/refine-c/settings/difficulty.json",
+          "sha256": "3b58da93eb8301f8c7d9e64af1659c6e1fc8d22d8388f033aa74827a6a82a4ef"
+        }
+      ],
+      "tracked_diff_sha256": "c771f83c6f2ace5e753401f47796cc890d3e2cd0120109acd1503ce713e185f1",
+      "tracked_dirty_paths": [
+        "dist/cases/kernel-case.mjs",
+        "dist/engine-runtime.mjs",
+        "dist/investigation.mjs",
+        "dist/mk/kernel.mjs",
+        "dist/morning-director.mjs",
+        "dist/morning.mjs",
+        "docs/showcase/MAKING-OF.md",
+        "docs/showcase/make_titles.py",
+        "server/llm_backends.py",
+        "server/llm_proxy.py",
+        "tests/mk-kernel.test.mjs",
+        "tests/morning-director.test.mjs",
+        "tests/morning.test.mjs",
+        "tools/playtest/judge.py",
+        "tools/playtest/llm.py",
+        "tools/playtest/player.py",
+        "tools/playtest/report.py",
+        "tools/playtest/run.py",
+        "tools/refine-c/backfill.py",
+        "tools/refine-c/difficulty.py",
+        "tools/refine-c/enrich.py",
+        "tools/refine-c/parity.py",
+        "tools/refine-c/premise.py",
+        "tools/refine-c/publish.py",
+        "tools/refine-c/refine.py",
+        "tools/refine-c/repair_history.py",
+        "tools/refine-c/test_refine.py"
+      ],
+      "untracked_content_sha256": "bb6c33f022dfe3d1da89289933787c0c80cf5337c4b7cfffd6de56a8c22a9d36",
+      "untracked_paths": [
+        "results/representation_fidelity_codebook.md",
+        "results/representation_fidelity_items.jsonl",
+        "results/representation_fidelity_key.json",
+        "results/representation_fidelity_report.json",
+        "results/representation_fidelity_report.md",
+        "tests/investigation-kernel.test.mjs",
+        "tests/paper-evidence.test.mjs",
+        "tests/test_aa_playtest_analysis.py",
+        "tests/test_playtest_analysis.py",
+        "tests/test_playtest_comparison_audit.py",
+        "tests/test_representation_fidelity.py",
+        "tools/paper-evidence/README.md",
+        "tools/paper-evidence/aa_playtest_analysis.py",
+        "tools/paper-evidence/certifier_experiments.mjs",
+        "tools/paper-evidence/committed_concealment_audit.mjs",
+        "tools/paper-evidence/corpus_depth_planning.py",
+        "tools/paper-evidence/e1_gate_ablation.mjs",
+        "tools/paper-evidence/export_representation_fidelity.py",
+        "tools/paper-evidence/generation_funnel.py",
+        "tools/paper-evidence/generation_policy_replay.py",
+        "tools/paper-evidence/paper_evidence_helpers.mjs",
+        "tools/paper-evidence/parity_capture.py",
+        "tools/paper-evidence/playtest_analysis.py",
+        "tools/paper-evidence/results/certifier_experiments.json",
+        "tools/paper-evidence/results/certifier_experiments.md",
+        "tools/paper-evidence/results/committed_concealment_audit.json",
+        "tools/paper-evidence/results/committed_concealment_audit.md",
+        "tools/paper-evidence/results/corpus_depth_planning.json",
+        "tools/paper-evidence/results/corpus_depth_planning.md",
+        "tools/paper-evidence/results/e1_gate_ablation.json",
+        "tools/paper-evidence/results/e1_gate_ablation.md",
+        "tools/paper-evidence/results/e6_aa_preregistration.json",
+        "tools/paper-evidence/results/generation_cohort_pilot.json",
+        "tools/paper-evidence/results/generation_cohort_pilot.md",
+        "tools/paper-evidence/results/generation_funnel.json",
+        "tools/paper-evidence/results/generation_funnel.md",
+        "tools/paper-evidence/results/generation_policy_replay.json",
+        "tools/paper-evidence/results/generation_policy_replay.md",
+        "tools/paper-evidence/results/parity.json",
+        "tools/paper-evidence/results/parity.md",
+        "tools/paper-evidence/results/playtest_analysis.json",
+        "tools/paper-evidence/results/playtest_analysis.md",
+        "tools/paper-evidence/results/publication_critic_adjudication.md",
+        "tools/paper-evidence/results/publication_critic_pilot.json",
+        "tools/paper-evidence/results/publication_critic_pilot.md",
+        "tools/paper-evidence/results/summary.md",
+        "tools/paper-evidence/results/witness_sweep.json",
+        "tools/paper-evidence/results/witness_sweep.md",
+        "tools/paper-evidence/structural_depth.mjs",
+        "tools/paper-evidence/witness_sweep.mjs",
+        "tools/playtest/comparison_audit.py",
+        "tools/refine-c/fixtures/publication_critic_calibration.json",
+        "tools/refine-c/generation_cohort.py",
+        "tools/refine-c/provenance.py",
+        "tools/refine-c/publication_critic_pilot.py",
+        "tools/refine-c/test_c3_provenance.py",
+        "tools/refine-c/test_generation_policy_replay.py",
+        "tools/refine-c/test_generation_review.py",
+        "tools/refine-c/test_publication_review.py"
+      ],
+      "worktree_dirty": true
+    },
+    "private_cohort_directory": "tools/refine-c/runs/experiments/c3-e2-prospective-20261018-1516",
+    "start": {
+      "archival_status": "preliminary/non-archival",
+      "branch": "main",
+      "commit": "a2716a8643d8177914a5decb94edf474bf9c77f5",
+      "input_files": [
+        {
+          "path": "tools/refine-c/refine.py",
+          "sha256": "618a3b4521d680f60b3b6e1db8771943c63603026616b2b02372b9dfb91859ca"
+        },
+        {
+          "path": "tools/refine-c/provenance.py",
+          "sha256": "ddac1f6a0a4d8f1311726811d7add527a7711e613407f3c982dee07279ed9394"
+        },
+        {
+          "path": "tools/refine-c/publish.py",
+          "sha256": "25b67c8b4dbd78b934c39032be4417f7adcea92912179d9ee69a3565236b60e7"
+        },
+        {
+          "path": "tools/refine-c/enrich.py",
+          "sha256": "e8b6d2872dd8c55fc730eda8562cc7afa1505616f2525bd862570f2406208ce7"
+        },
+        {
+          "path": "tools/refine-c/premise.py",
+          "sha256": "e6de979aae2923816d562339ac2d52b5d8d36799406d3d067058ac0478ac1066"
+        },
+        {
+          "path": "tools/refine-c/difficulty.py",
+          "sha256": "0a3c0531ecc152c7b5dc06340d65c1ef38ab7f367396e5ffa825ebd094ad89c1"
+        },
+        {
+          "path": "tools/refine-c/settings/bellweather.json",
+          "sha256": "dff6115da1f91e87bcf27088f0cac339261d4ce5929cbd6a2ccc882ef03cd741"
+        },
+        {
+          "path": "tools/refine-c/settings/difficulty.json",
+          "sha256": "3b58da93eb8301f8c7d9e64af1659c6e1fc8d22d8388f033aa74827a6a82a4ef"
+        }
+      ],
+      "tracked_diff_sha256": "c771f83c6f2ace5e753401f47796cc890d3e2cd0120109acd1503ce713e185f1",
+      "tracked_dirty_paths": [
+        "dist/cases/kernel-case.mjs",
+        "dist/engine-runtime.mjs",
+        "dist/investigation.mjs",
+        "dist/mk/kernel.mjs",
+        "dist/morning-director.mjs",
+        "dist/morning.mjs",
+        "docs/showcase/MAKING-OF.md",
+        "docs/showcase/make_titles.py",
+        "server/llm_backends.py",
+        "server/llm_proxy.py",
+        "tests/mk-kernel.test.mjs",
+        "tests/morning-director.test.mjs",
+        "tests/morning.test.mjs",
+        "tools/playtest/judge.py",
+        "tools/playtest/llm.py",
+        "tools/playtest/player.py",
+        "tools/playtest/report.py",
+        "tools/playtest/run.py",
+        "tools/refine-c/backfill.py",
+        "tools/refine-c/difficulty.py",
+        "tools/refine-c/enrich.py",
+        "tools/refine-c/parity.py",
+        "tools/refine-c/premise.py",
+        "tools/refine-c/publish.py",
+        "tools/refine-c/refine.py",
+        "tools/refine-c/repair_history.py",
+        "tools/refine-c/test_refine.py"
+      ],
+      "untracked_content_sha256": "bb6c33f022dfe3d1da89289933787c0c80cf5337c4b7cfffd6de56a8c22a9d36",
+      "untracked_paths": [
+        "results/representation_fidelity_codebook.md",
+        "results/representation_fidelity_items.jsonl",
+        "results/representation_fidelity_key.json",
+        "results/representation_fidelity_report.json",
+        "results/representation_fidelity_report.md",
+        "tests/investigation-kernel.test.mjs",
+        "tests/paper-evidence.test.mjs",
+        "tests/test_aa_playtest_analysis.py",
+        "tests/test_playtest_analysis.py",
+        "tests/test_playtest_comparison_audit.py",
+        "tests/test_representation_fidelity.py",
+        "tools/paper-evidence/README.md",
+        "tools/paper-evidence/aa_playtest_analysis.py",
+        "tools/paper-evidence/certifier_experiments.mjs",
+        "tools/paper-evidence/committed_concealment_audit.mjs",
+        "tools/paper-evidence/corpus_depth_planning.py",
+        "tools/paper-evidence/e1_gate_ablation.mjs",
+        "tools/paper-evidence/export_representation_fidelity.py",
+        "tools/paper-evidence/generation_funnel.py",
+        "tools/paper-evidence/generation_policy_replay.py",
+        "tools/paper-evidence/paper_evidence_helpers.mjs",
+        "tools/paper-evidence/parity_capture.py",
+        "tools/paper-evidence/playtest_analysis.py",
+        "tools/paper-evidence/results/certifier_experiments.json",
+        "tools/paper-evidence/results/certifier_experiments.md",
+        "tools/paper-evidence/results/committed_concealment_audit.json",
+        "tools/paper-evidence/results/committed_concealment_audit.md",
+        "tools/paper-evidence/results/corpus_depth_planning.json",
+        "tools/paper-evidence/results/corpus_depth_planning.md",
+        "tools/paper-evidence/results/e1_gate_ablation.json",
+        "tools/paper-evidence/results/e1_gate_ablation.md",
+        "tools/paper-evidence/results/e6_aa_preregistration.json",
+        "tools/paper-evidence/results/generation_cohort_pilot.json",
+        "tools/paper-evidence/results/generation_cohort_pilot.md",
+        "tools/paper-evidence/results/generation_funnel.json",
+        "tools/paper-evidence/results/generation_funnel.md",
+        "tools/paper-evidence/results/generation_policy_replay.json",
+        "tools/paper-evidence/results/generation_policy_replay.md",
+        "tools/paper-evidence/results/parity.json",
+        "tools/paper-evidence/results/parity.md",
+        "tools/paper-evidence/results/playtest_analysis.json",
+        "tools/paper-evidence/results/playtest_analysis.md",
+        "tools/paper-evidence/results/publication_critic_adjudication.md",
+        "tools/paper-evidence/results/publication_critic_pilot.json",
+        "tools/paper-evidence/results/publication_critic_pilot.md",
+        "tools/paper-evidence/results/summary.md",
+        "tools/paper-evidence/results/witness_sweep.json",
+        "tools/paper-evidence/results/witness_sweep.md",
+        "tools/paper-evidence/structural_depth.mjs",
+        "tools/paper-evidence/witness_sweep.mjs",
+        "tools/playtest/comparison_audit.py",
+        "tools/refine-c/fixtures/publication_critic_calibration.json",
+        "tools/refine-c/generation_cohort.py",
+        "tools/refine-c/provenance.py",
+        "tools/refine-c/publication_critic_pilot.py",
+        "tools/refine-c/test_c3_provenance.py",
+        "tools/refine-c/test_generation_policy_replay.py",
+        "tools/refine-c/test_generation_review.py",
+        "tools/refine-c/test_publication_review.py"
+      ],
+      "worktree_dirty": true
+    }
+  },
+  "request_lifecycle": {
+    "scheduled_requests": 779,
+    "terminal_statuses": {
+      "completed-after-cancel": 17,
+      "error": 4,
+      "response": 757,
+      "unfinished": 1
+    },
+    "unfinished": 1
+  },
+  "retry_taxonomy": {
+    "provider_attempt_http_statuses": {
+      "200": 774,
+      "400": 24,
+      "403": 4
+    },
+    "sdk_retry_attempts": 0,
+    "semantic_repairs": {
+      "forced-tool-choice-to-auto": 24
+    }
+  },
+  "schema_version": "e2-generation-cohort-v1",
+  "slots": [
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 3,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 0,
+          "lies_on_path": 0,
+          "lies_other": 0
+        },
+        "level": "easy",
+        "score": 3.75,
+        "target": "easy",
+        "v": 1
+      },
+      "audit_manifest_sha256": "275f194d7b726512587171cfb5544d80f1d416cde36032b175b04dc6cf83471e",
+      "audit_semantic_sha256": "5814f117f13ef5b68e35309824f5d983d722ea751e5f4d1aa06776034262a2e7",
+      "bedrock_request_ids": [
+        "88b4ef85-3ec0-4a7d-b12e-388081a595ea",
+        "79d5907a-8e62-4e07-aa8c-4fdf151cabec",
+        "e39459c0-8297-4c5c-b50d-bceee6848897",
+        "025dfd0a-d6a1-4667-9680-97abd457c2c7",
+        "4152ffb4-c258-4417-ad3d-276ff35e1c44",
+        "6e5d1697-df7d-41d2-94fc-2a0f3319eaa2",
+        "7a1bb3da-b0ed-4652-bdfa-7f37ef481b08",
+        "e834f516-9131-4f24-829d-61247ba1fec9",
+        "c655a1a7-c225-4336-a4c4-17d99f57ba49",
+        "6a3f0b22-aafc-4cd1-b9f0-99cf022d48cb",
+        "efebbb15-da59-49e3-987c-54448bbaae4e",
+        "3ff0a6b5-f40e-42cc-9f60-e51b5d1c092e",
+        "770bd40e-646a-44e1-884f-e4c43f954fe9",
+        "0c553506-babb-438c-9040-dcb0e49bcfe5",
+        "55ba4e1c-fe36-49ed-b67f-d28eaece8cb8",
+        "0576c3bf-c3dc-4233-b142-6886de1964bd",
+        "081e05de-6eab-4247-8776-671a56c3bb91",
+        "7dcabb43-5df1-477a-96d5-d8d628447197",
+        "85107f82-4655-4218-88d8-b7e2bc87309a",
+        "8d889d32-0a6d-4737-970e-faf481982a1e",
+        "f37f25bf-bcad-4f34-bfc6-9631b5b82359",
+        "d0ce28ed-4ce1-4a81-bdc2-af11786abfde",
+        "8ef0e80a-d598-4dec-9588-bd1e4d5e35ee",
+        "92ae9489-9a3c-4653-8749-a86a5f942a7f",
+        "c5c41e8c-f20b-4a25-9f36-e35d9b5ba982",
+        "6c2d351d-7ca2-4f9f-85c8-cf6e3dd55cb5",
+        "e0b6aa1f-56ea-4ba2-9f41-b19cf8dd053f",
+        "86432abe-5cad-4f6f-ada5-e911e248c822",
+        "28d3288e-44ac-4b88-a6bb-8272a4ee225f",
+        "7fa866c8-e30f-4cac-8ff9-0e31fab4e06d",
+        "55fa17cf-f300-4923-9af1-462bd61c5a7d",
+        "3126432c-673e-4cd3-a1fb-2e64093737c0",
+        "ea7e40f2-da85-48ba-9740-fe2b15fbbc23",
+        "db7c7518-781c-4598-a6fc-f72b9e34b3c2",
+        "61e92d78-5f7f-48b0-b7c4-8894245b9960",
+        "c86861c8-46ae-4310-95bc-b8a366b1ee7f",
+        "3734aa9f-845f-4685-87a9-c543b0e3a876",
+        "d9c664df-bd2d-4352-acd9-4440c2eeb985",
+        "8e66ff48-2e8c-40a1-aa56-2a0d997326e6",
+        "41ab9a89-7e7c-4f3a-a72f-0c901c6e15fa",
+        "caa69ab2-174f-47fc-8a10-898e9cfd5b52",
+        "cb118b67-e98e-4bcb-861f-c13b7fca7595",
+        "b75d3f15-98a4-46eb-8e84-2f417d56aa30",
+        "91b00626-afcc-48da-99f7-4987a7b69b41",
+        "a49211f4-62ed-44fa-8a4b-5beb916bc044",
+        "02502212-3d7e-40f1-9611-bb05e175d0f1",
+        "dc3e4a90-878a-4d3d-82b8-785d920d1543",
+        "4bad08b9-d724-4cbf-b1d2-c41aa57f6fb1",
+        "f88730fa-25d0-4a39-a6dd-6104c4948df6",
+        "5baa41e2-5440-4415-a469-d66864293801",
+        "6c38a7b7-e3f3-444a-86ba-b95bbe9a19f3",
+        "eaa616dd-eac4-43eb-86e2-5584f4eecc1d",
+        "81fcc581-e577-4091-943c-8f71e8c50a63",
+        "421c84f4-8ef7-43ca-bc09-f5d516ec983e",
+        "24af31f3-6e63-4b8c-9fff-749ca3eece58"
+      ],
+      "case_sha256": "3890d4f3e444f28993a5301e0bc4ed4749963fc2d97dacd0f8feaac93b8d400b",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:01",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "a826c56edc8443e2ce4d88032560de7e93b3224faf9d4b70110511a87d6e3933",
+        "metrics": {
+          "false_signs": [],
+          "herrings": [
+            "b_clara_grate"
+          ],
+          "max_depth": 3,
+          "means": [
+            "s_knife"
+          ],
+          "mmo_depth": 3,
+          "motive": [],
+          "pillars": {
+            "means": 2,
+            "motive": 3,
+            "opportunity": 2
+          },
+          "solve_depth": 2,
+          "surface": [
+            "ada",
+            "clara",
+            "silas",
+            "vicar"
+          ],
+          "threads": {
+            "clara": 2,
+            "silas": 2,
+            "truth": 0,
+            "vicar": 2
+          },
+          "twist": false
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 55,
+        "in": 370252,
+        "out": 96084
+      },
+      "ordinal": 1,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "00e6affd9d25ddea0ff9566e09a4573cbd518b96f874178f7cd9520ccfbe6409",
+        "javascript": {
+          "maxDepth": 3,
+          "ok": true,
+          "pillars": {
+            "means": 2,
+            "motive": 3,
+            "opportunity": 2
+          },
+          "solveDepth": 2,
+          "threads": {
+            "clara": 2,
+            "silas": 2,
+            "truth": 0,
+            "vicar": 2
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 3,
+          "means": [
+            "s_knife"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 2,
+            "motive": 3,
+            "opportunity": 2
+          },
+          "solve_depth": 2,
+          "threads": {
+            "clara": 2,
+            "silas": 2,
+            "truth": 0,
+            "vicar": 2
+          },
+          "twist": false
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "70eea35973bafbef9db16c68fa77041d527d57c4f9d01ef4e4af22b94d1e08f0",
+        "javascript": {
+          "maxDepth": 3,
+          "ok": true,
+          "pillars": {
+            "means": 2,
+            "motive": 3,
+            "opportunity": 2
+          },
+          "solveDepth": 2,
+          "threads": {
+            "clara": 2,
+            "silas": 2,
+            "truth": 0,
+            "vicar": 2
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 3,
+          "means": [
+            "s_knife"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 2,
+            "motive": 3,
+            "opportunity": 2
+          },
+          "solve_depth": 2,
+          "threads": {
+            "clara": 2,
+            "silas": 2,
+            "truth": 0,
+            "vicar": 2
+          },
+          "twist": false
+        }
+      },
+      "premise_sha256": "911ccdb6f6f902520aaf84747c351dd5d319cae74f9659250e3a4db9d4d88d82",
+      "request_count": 55,
+      "request_statuses": {
+        "completed-after-cancel": 2,
+        "response": 53
+      },
+      "requested_difficulty_profile": {
+        "depth": 3,
+        "herrings": [
+          0,
+          1
+        ],
+        "herrings_aimed": 0,
+        "innocents": 0,
+        "level": "easy",
+        "seconds": 480,
+        "steps": 8,
+        "truth": 0,
+        "twist": false
+      },
+      "requested_level": "easy",
+      "requested_target_deficits": [
+        "solve depth 2 < 3"
+      ],
+      "seconds": 607.202,
+      "slot_id": "slot-01-easy",
+      "usage": {
+        "cacheReadInputTokens": 88744,
+        "cacheWriteInputTokens": 10632,
+        "calls": 55,
+        "inputTokens": 370252,
+        "outputTokens": 96084,
+        "totalTokens": 565712
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 6,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 0,
+          "lies_on_path": 1,
+          "lies_other": 0
+        },
+        "level": "hard",
+        "score": 8.25,
+        "target": "medium",
+        "v": 1
+      },
+      "audit_manifest_sha256": "dff975dfcf258c87c9e2808f50597d19e99243092b00fc2241631e819e2fae72",
+      "audit_semantic_sha256": "8df9ef40a06edb72d7210692d434a9ed763f9e1c2c851b6168cb3dc1a2596cc3",
+      "bedrock_request_ids": [
+        "0110aef2-76d6-431b-b870-0bb07d70be8c",
+        "11a73175-3656-41ab-99d0-82e4e6ae8e75",
+        "dc313363-8baf-44f1-b09a-56591157aa58",
+        "a8d0c611-58e7-4387-8193-938d454161ff",
+        "16df9b01-9c30-483c-b71d-108c8a322afe",
+        "571c847f-a612-4c0f-aa15-3954466c8baa",
+        "18e2cbb3-14b6-4692-9cc9-421fe11dee95",
+        "c634ac93-92cd-4747-86ff-514594964668",
+        "3efcd3b1-560c-4eb7-a038-b793b25ea156",
+        "b9a7631b-62eb-4b0e-9369-592969b808df",
+        "2c571759-3b0d-4090-a21f-81a260e3bbc9",
+        "fc1e4985-eaa1-4972-a8dc-00ee2c6f53db",
+        "fda67f68-1d70-42cc-a956-5fa326b21331",
+        "9add1022-e109-4665-b1fa-635fda308864",
+        "d139ec74-8328-4916-842f-8c4902b3bd0f",
+        "9f29b213-0e6f-459a-81a0-b2abae48efe0",
+        "8f8d209a-30b3-4140-a311-e17d81b2bec9",
+        "cb1442e7-ea78-439e-a847-deb1a769951b",
+        "8e5b1208-03c8-40e7-bc06-630cfd72bf0b",
+        "a75c6597-4ddd-45ff-a8dd-fd7f930857ba",
+        "61dc622c-a81e-448c-91a1-906152ac3736",
+        "6c188411-c80b-4107-957b-0ecd46e400a2",
+        "30ad62b2-18c2-4e83-a6f3-801e71a83b91",
+        "19235f6c-c2bb-428f-9715-774a0db3c9cc",
+        "3075a502-e558-47c4-9dd3-d3e2436dc7fa",
+        "c289ab1c-3534-4878-9c73-cc5896a11867",
+        "26deb9f2-179a-43c2-9c5c-e20d442af7ac",
+        "ae87f38c-c3ee-4e80-bee1-47864a323d65",
+        "0244e694-d25e-47f2-a3af-96476d3edc9c",
+        "cdf2ab6c-78d2-4216-8226-b50a6504b695",
+        "5e5da923-7285-4054-beb6-748b51c9e672",
+        "ef358a3f-d43f-4a81-a5e1-d5ae5349c076",
+        "79fb7b6f-8e1e-48b0-a817-66ae0cb2272b",
+        "3b505c5a-6199-4bc5-8324-5ee0fee9c024",
+        "1cb1ecfd-5fed-43d2-8bf6-792293c2a155",
+        "9d0ac76c-9e1f-46f5-95b0-501fd3bb635b",
+        "dcc735df-d01e-4db9-bcd9-a949de7b9830",
+        "c3752776-bf3c-4ac3-8187-bf213b2a8ee0",
+        "178a7757-a8a5-405f-9eca-29c1277b3580",
+        "a498da78-1ffd-41a7-868c-cbdbcd37c2ce",
+        "05669401-6114-47e8-95dc-858e6cde9b74",
+        "a814b01b-fd38-4f85-bf9c-2d163cad22ee",
+        "626c3ce0-774f-48e8-89c8-0ef38fb2a1c1",
+        "e9665ac7-1f96-43a3-ac9c-290b1829f93a",
+        "259fd923-8854-4a6d-8423-e7743b7a37cc",
+        "9e43c167-f205-43dd-b1ea-aa554a6ebbfb",
+        "cc5b090b-2788-4aef-ab28-d3d0c56faf8c",
+        "46995351-1d8e-49e9-8a25-1d2fbde38081",
+        "b6d13fe5-783a-4d72-8ec0-a72a88325a8d",
+        "f654c5db-69ec-4e50-ab1f-20d4dccecf67",
+        "42d7510f-2080-4d0a-a6d2-2a5305a056ce",
+        "b69cb4aa-7d7b-4edc-bbe4-827317602adc",
+        "bedfe207-dfe5-4145-bf31-601ddd4be862",
+        "eca20e42-6f06-4bc8-9ea1-2b81b4ef1598",
+        "da3dfe86-166c-4e6d-9a0e-a6433bf27651",
+        "ced1eca7-74c1-4f54-a281-1f52ffe5bb9a",
+        "0e1e2946-3752-40c0-9188-6f68b37b2f75",
+        "01d7bb45-e42f-4ebd-9ba3-b34e765df8ab",
+        "325c9b68-8cf0-4633-9714-ea1dfcdef42a",
+        "1eed8737-93a1-4954-b0fe-cb0378a14d3d",
+        "62d41f2e-16e6-4f26-9e3d-2cc81a532883",
+        "480b08ba-73a4-4341-83b7-c119aff1ada7",
+        "3ab23f09-d00f-48d4-8234-be165e6aa05c",
+        "8200a95f-5eac-4b14-9581-121afc456224",
+        "85b2ffec-0291-4d1d-bbeb-79e5115639a3"
+      ],
+      "case_sha256": "07b68bc9c4ac1e58066a9f0b63c8e60007d0b06fb56d635ac9afc7b864abcd14",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:02",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "946b088d45947aa11e46a6c6356e2ff6c4ca5f74d8fa5f7918149ca53a3c0015",
+        "metrics": {
+          "false_signs": [
+            "s_dora_surface"
+          ],
+          "herrings": [
+            "s_ada_hands"
+          ],
+          "max_depth": 6,
+          "means": [
+            "s_cushion"
+          ],
+          "mmo_depth": 6,
+          "motive": [],
+          "pillars": {
+            "means": 5,
+            "motive": 4,
+            "opportunity": 6
+          },
+          "solve_depth": 6,
+          "surface": [
+            "ada",
+            "jonah",
+            "silas"
+          ],
+          "threads": {
+            "ada": 5,
+            "jonah": 6,
+            "silas": 6,
+            "truth": 6
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 65,
+        "in": 393109,
+        "out": 114097
+      },
+      "ordinal": 2,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "89ecf780c0ac4b6356a23f13a26fb78428b3ed062715e3baf6e6a5bbb1b7a510",
+        "javascript": {
+          "maxDepth": 6,
+          "ok": true,
+          "pillars": {
+            "means": 5,
+            "motive": 4,
+            "opportunity": 6
+          },
+          "solveDepth": 6,
+          "threads": {
+            "ada": 5,
+            "jonah": 6,
+            "silas": 6,
+            "truth": 6
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 6,
+          "means": [
+            "s_cushion"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 5,
+            "motive": 4,
+            "opportunity": 6
+          },
+          "solve_depth": 6,
+          "threads": {
+            "ada": 5,
+            "jonah": 6,
+            "silas": 6,
+            "truth": 6
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "d3612f7ffe965d53626e598dcef408cde4f8e7119cb498b8bd5172d29d708e75",
+        "javascript": {
+          "maxDepth": 6,
+          "ok": true,
+          "pillars": {
+            "means": 5,
+            "motive": 4,
+            "opportunity": 6
+          },
+          "solveDepth": 6,
+          "threads": {
+            "ada": 5,
+            "jonah": 6,
+            "silas": 6,
+            "truth": 6
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 6,
+          "means": [
+            "s_cushion"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 5,
+            "motive": 4,
+            "opportunity": 6
+          },
+          "solve_depth": 6,
+          "threads": {
+            "ada": 5,
+            "jonah": 6,
+            "silas": 6,
+            "truth": 6
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "d6eded4b8e6515dce4861886a28d5169cb059e0076c937885dee931d9cc8f62c",
+      "request_count": 65,
+      "request_statuses": {
+        "completed-after-cancel": 1,
+        "response": 64
+      },
+      "requested_difficulty_profile": {
+        "depth": 5,
+        "herrings": [
+          1,
+          2
+        ],
+        "herrings_aimed": 0,
+        "innocents": 2,
+        "level": "medium",
+        "seconds": 900,
+        "steps": 16,
+        "truth": 3,
+        "twist": true
+      },
+      "requested_level": "medium",
+      "requested_target_deficits": [],
+      "seconds": 749.189,
+      "slot_id": "slot-02-medium",
+      "usage": {
+        "cacheReadInputTokens": 63900,
+        "cacheWriteInputTokens": 7052,
+        "calls": 65,
+        "inputTokens": 393109,
+        "outputTokens": 114097,
+        "totalTokens": 578158
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 8,
+          "herrings_aimed": 2,
+          "herrings_other": 0,
+          "lenient_motives": 1,
+          "lies_on_path": 1,
+          "lies_other": 0
+        },
+        "level": "hard",
+        "score": 10.5,
+        "target": "hard",
+        "v": 1
+      },
+      "audit_manifest_sha256": "81ec89361c92e576f4213053f0de7be3fea0cb03aeb85aeae9947ab6f4705234",
+      "audit_semantic_sha256": "db3c326ef5881def594a7752e417a1d636ff50c318eaf3febf1ae902e844b62a",
+      "bedrock_request_ids": [
+        "c8487f8d-e804-4056-b9d0-3e38191a8a01",
+        "042c311a-d6f6-4b71-9758-8a28a7c7d9d8",
+        "e801e47c-c45a-4767-9cbf-e057dfb7daaf",
+        "289d3cf6-7bdc-41f3-b09f-ea051b586d54",
+        "f43c439f-ae4b-4d3b-9d38-603702c53be6",
+        "e8d23833-a5d8-4985-a62c-3c0aa64c0fcb",
+        "0690eb89-dd39-4666-aa95-59bccef717a2",
+        "a87d3145-62b2-4680-aa6a-f30b2a08b019",
+        "e2873e2c-bbd5-40c3-af08-fcb6a26f3b3f",
+        "8f49d025-ff56-400d-b80d-32dfc16dd94f",
+        "2d8a3b1a-e90e-405a-a508-2eeccf5604f9",
+        "91ee8b74-d64c-4595-84f5-8dc6ef724093",
+        "fa140025-a024-4b94-9a20-8d2866941149",
+        "37dbd818-821b-4040-9c2b-57d49c857ecd",
+        "584846c8-eb25-44eb-9791-9f7e0f9e7c57",
+        "ba27b95e-b04c-4a95-b799-1ff862fe8f85",
+        "b323706a-6fcc-47d0-9d97-68ddd65d6478",
+        "b1c0b0b3-f659-4b39-b9a8-e93b78270490",
+        "140a63d7-e1bb-4294-92a9-6224515becde",
+        "98fd4373-1c3c-4198-a312-f81d2afeb432",
+        "a73cec88-9626-4327-9783-074c3337d0eb",
+        "2ddda2a6-aae5-40c1-ad57-d2db4c13e06a",
+        "be4d4f93-7a9b-4985-968f-a838b1bf7a0b",
+        "a30247f5-fae3-4dab-85b8-899ba5371197",
+        "9f3f4cc8-cf11-44ed-8bd9-4afd653c72dd",
+        "3bbe546b-23cd-4d9c-ade3-48a1a8d5ec3e",
+        "cf68b81a-b6be-4f33-9df6-77330fc91f47",
+        "69a5af04-e9d1-4034-8e83-622b64076176",
+        "cbad20bd-d8de-42bd-8a39-242ecdbb61f8",
+        "cf7a18cc-1237-45dc-bdf1-df0d03a6b4af",
+        "355d5924-09ce-4c9e-a33e-8f6186f6177b",
+        "75675ae7-e7b4-49b6-b46b-b9bad046fae0",
+        "726346e5-092c-43d2-ab44-1515ce8ce7fc",
+        "2c659c89-bf26-41fa-8da3-d59b1f7a375e",
+        "ed144c88-5624-476a-b6c5-ab586ad183a4",
+        "abfd06d7-639d-48bd-9ed3-9f1005110e92",
+        "ae2ee170-d390-476b-b661-5125995ac168",
+        "b9a58738-302b-4042-877e-78b5e415dc0e",
+        "c41b4622-754a-424c-b31b-54a27e4a1f8b",
+        "68c8df50-3b40-4a6d-be31-14a3c47d594b",
+        "b6e90508-07b4-4e8b-9828-657603e0ea9c",
+        "2c1b07c0-dcdf-4842-b156-5d50f19d2789",
+        "62e44d8c-9c76-4391-9cd5-20995581c34f",
+        "9312edf6-21a5-4f0b-beb8-7adea8754b71",
+        "c0f40f7b-1da4-40b5-855d-1a15a33bc3a5",
+        "481998c8-7ec3-475e-8074-9b36516d5576",
+        "3b1fc019-89d3-46d0-a4fd-a2a84f8d0f86",
+        "c3c605c4-e8ef-47c2-ad16-6265b2b5d5e5",
+        "bd8f65d0-2c4a-49f5-a84c-d9e15d85b3bd",
+        "34a7975c-89ec-4583-9475-755bcd5a1b18",
+        "8c610d73-2248-4b59-8ee8-e0425545697a",
+        "54c559e5-5b98-4862-949f-cc976708781b",
+        "cd3df7a5-affa-4343-8cf8-071e7b171d77",
+        "b528f47e-3402-4dfc-8dfa-2f65dac4d9be",
+        "6c7df153-475c-484a-bab3-74072e30faee",
+        "8fed9d1a-a243-4f40-b3b5-815b73dea454",
+        "73d2a215-fc6b-44ff-852b-7f3fc248eddc",
+        "089f0752-86ec-487d-ae32-1d61a78dc42e",
+        "db281a43-8359-444a-920f-7ddc23116f7a",
+        "7aacf220-5565-4175-a6b6-c3b325201da1",
+        "f95b0ac7-ddb2-4acd-bee1-9ba8c939f947",
+        "8635d216-3558-4268-95f8-109abfcede77",
+        "aec872d5-9f68-4fc0-a469-ee51d8e20343",
+        "60953fdd-7487-44c9-8dbf-6a3fa8ba7f2e",
+        "0353fe5e-18fe-4e2e-a394-f2ceb55075a7",
+        "2b8ecc14-d6fe-4c29-8db1-a34d3fe845d3",
+        "88e128eb-5108-46a2-972d-b751a5dcad4c",
+        "b21814e5-30ec-4b04-aced-59ef7e3cd747",
+        "de0f9759-e461-4ee0-acb1-7cb085097da4",
+        "8e58e58a-679a-4012-88c8-72dae7320077",
+        "6e6f7ad6-70b3-4a5a-94a3-06c1e311ac3b",
+        "4d97775f-3302-4a07-b083-d498ea471903",
+        "cd45205a-4244-46fe-9372-ac86a3939df4",
+        "7e3c84ee-2aae-4f00-90b1-1ee2f17cd82d",
+        "d30e7ce4-d766-4366-a43f-f26d5dbe4aa6",
+        "813aa342-d180-4ecf-b892-ed4eafb20087",
+        "45c79881-f6f6-4a91-ad13-e0fe2abaa371",
+        "1befa7d4-ea62-41d2-9b44-eb755c5864ed",
+        "062d2907-6465-4400-b42c-f2ae237f2536",
+        "b3cfb7aa-93b7-4d57-916c-ee14673003b3",
+        "3f203118-d50b-4b0b-b9fd-d284769d9c10"
+      ],
+      "case_sha256": "2181b9121bb91b9de086f86e3476afd921c056d14aeb8b36ab2b63044d1b278e",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:03",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "9fb332686acaf8f4997297acb686bd1828b7dea845e897ae2c96eff59e906a7e",
+        "metrics": {
+          "false_signs": [
+            "t_clara"
+          ],
+          "herrings": [
+            "b_ada_hand",
+            "b_jonah_hand"
+          ],
+          "max_depth": 8,
+          "means": [
+            "s_bootprint"
+          ],
+          "mmo_depth": 8,
+          "motive": [],
+          "pillars": {
+            "means": 6,
+            "motive": 8,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "surface": [
+            "c_ada",
+            "c_jonah",
+            "c_silas"
+          ],
+          "threads": {
+            "c_ada": 7,
+            "c_jonah": 7,
+            "c_silas": 7,
+            "truth": 6
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 81,
+        "in": 748409,
+        "out": 138597
+      },
+      "ordinal": 3,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "594b25e80942e360bfb83366738028998d814a6f92221a1a82f0a6524d9fe4a0",
+        "javascript": {
+          "maxDepth": 8,
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 8,
+            "opportunity": 7
+          },
+          "solveDepth": 7,
+          "threads": {
+            "c_ada": 7,
+            "c_jonah": 7,
+            "c_silas": 7,
+            "truth": 6
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 8,
+          "means": [
+            "s_bootprint"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 8,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "threads": {
+            "c_ada": 7,
+            "c_jonah": 7,
+            "c_silas": 7,
+            "truth": 6
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "ade25f546e4e1249a42b7509c3186e7c8b1cd995d0ef18f3366008783ac66145",
+        "javascript": {
+          "maxDepth": 8,
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 8,
+            "opportunity": 7
+          },
+          "solveDepth": 7,
+          "threads": {
+            "c_ada": 7,
+            "c_jonah": 7,
+            "c_silas": 7,
+            "truth": 6
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 8,
+          "means": [
+            "s_bootprint"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 8,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "threads": {
+            "c_ada": 7,
+            "c_jonah": 7,
+            "c_silas": 7,
+            "truth": 6
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "72c4d168bf5639d5adb16cc0e027e1dcd87c9da24a143aa6607f23d71a112e38",
+      "request_count": 81,
+      "request_statuses": {
+        "completed-after-cancel": 4,
+        "response": 77
+      },
+      "requested_difficulty_profile": {
+        "depth": 7,
+        "herrings": [
+          2,
+          3
+        ],
+        "herrings_aimed": 1,
+        "innocents": 3,
+        "level": "hard",
+        "seconds": 1500,
+        "steps": 28,
+        "truth": 4,
+        "twist": true
+      },
+      "requested_level": "hard",
+      "requested_target_deficits": [],
+      "seconds": 901.315,
+      "slot_id": "slot-03-hard",
+      "usage": {
+        "cacheReadInputTokens": 120748,
+        "cacheWriteInputTokens": 7052,
+        "calls": 81,
+        "inputTokens": 748409,
+        "outputTokens": 138597,
+        "totalTokens": 1014806
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 2,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 1,
+          "lies_on_path": 1,
+          "lies_other": 2
+        },
+        "level": "easy",
+        "score": 4.75,
+        "target": "easy",
+        "v": 1
+      },
+      "audit_manifest_sha256": "3118d173050c85f59428bad6e1059f6d2c69120be2ff87d191a4e3450dde6854",
+      "audit_semantic_sha256": "304d59005970a9aa79d3f598f2c659bb3d2d1e86f53f6b9db70aa433474568ca",
+      "bedrock_request_ids": [
+        "a37245e5-6ec4-40af-8c3d-671c9156e310",
+        "9f036014-1f75-4b48-8f17-2cf5c195646e",
+        "3c09da4d-898e-44fd-befe-4673e31c157a",
+        "cde1a217-4dae-4438-be92-41a7362f6a56",
+        "015827f1-2e16-4bc3-b67a-4c991712627f",
+        "e78003c3-50fc-4e9f-90ff-930e85a6564f",
+        "287778de-2531-442f-88d7-c5deea3c586f",
+        "9db2b4a3-4b9a-493b-a90f-69956e2b2deb",
+        "7d55f31d-315f-450e-9739-7ca833953d89",
+        "b6f49c29-bfb4-4858-96af-23acb2dfbedb",
+        "180c3eea-387c-46dd-b6d7-829eef1af9c2",
+        "29093dfb-6a0b-4bf5-a820-8220e3cf3526",
+        "54f01ce5-2f26-44e1-9610-9f83f76346cb",
+        "865b511a-3e89-489e-a99e-c6f866a125be",
+        "50b3be54-4292-45c0-a742-60fca5db43e2",
+        "eb365868-b4cb-4936-bb02-3466dcbdd4f4",
+        "164e3ebf-510b-454f-9cef-582aa8bf3bf7",
+        "2191b0e8-1768-4d89-9f12-41368503f539",
+        "851a213e-8922-40e1-8642-1b7091785b12",
+        "0343bf7d-7e92-4624-99f6-55cc282ec3fb",
+        "35a81ae6-4432-432c-a415-62adaed91cb5",
+        "be400ea8-64cf-4e2d-b915-1fee1043b728",
+        "6a2c93e5-22b9-42fb-b4d3-7055847edd26",
+        "8bdf4743-546b-4e9d-8a8b-f7671bdc9a5f",
+        "de74161a-000f-49f7-a085-7ea6f96ef75e",
+        "7bfbdb70-f8d9-400c-acc0-9ad56be9013b",
+        "43e3ff62-4629-4c08-8cf6-01ef074d2b90",
+        "109fb680-ce11-46a0-9147-5127bcc23759",
+        "2c26fe3f-1b24-4ffd-bb81-836fe4f6652b",
+        "7b59b35e-175e-4b63-9c82-5e98ce4247e0",
+        "c99a77c3-0952-4bc8-9664-619683934c0f",
+        "b79f8ec8-cbc8-468e-8551-b2970310bffa",
+        "8e29d635-d2d6-40fa-bae2-0c3375af1ae8",
+        "43c4af74-ccf6-476d-b9f5-a8c16b5bcdf8",
+        "d418ab3e-ce3f-4b9c-a859-1e04f1aeacd0",
+        "ce6141b3-b62b-4df1-aa5d-ed86e6a9793a",
+        "36b648db-5d51-4d27-ad9a-114805e024fb",
+        "2ff8b764-f828-4ed9-9ecb-b29fe2e2069b",
+        "4d4e7526-1692-4382-9ab8-32a33702fe6a",
+        "375802d7-dd45-4ba4-af53-e22e01477b89",
+        "6dfbb1ec-9cb0-45fc-a238-fde50412a208",
+        "b8afcaa3-48e6-49b0-b613-3d4d420b482c",
+        "7378d2ef-e3dc-4e4e-b81f-bbd7988396ed",
+        "685e4ac4-1dfd-4040-8841-03b70d369919",
+        "abfcde5f-5f68-4858-ab17-e7b675ce416c",
+        "ef154260-55e9-4486-86a0-a55a67a5738b",
+        "7d87427d-9f7c-46d2-9fea-338d59daaa80",
+        "ef900a3a-cd04-4f2d-a656-bd5fdd2ebb4a",
+        "ba9d22b0-3aa7-4509-afa6-52f2260710ec",
+        "8fff37e1-081f-4d45-ad0d-a379c8bdf907",
+        "045182e7-9f36-4f52-915d-82442da590d6",
+        "cab68a2d-5d91-4e66-8837-15a1e27290fd"
+      ],
+      "case_sha256": "4217b58b12664e4cd918f66b2fc74a2450178169f46d6a99688a545a18edb9f9",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:04",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "ab08920ed4359e25b2f9a8bc8d065e1fe33d94479eef87c85fbacd6c6286e8c9",
+        "metrics": {
+          "false_signs": [
+            "t_silas",
+            "t_vera",
+            "t_vicar"
+          ],
+          "herrings": [
+            "b_dora_pocket"
+          ],
+          "max_depth": 2,
+          "means": [
+            "s_button"
+          ],
+          "mmo_depth": 2,
+          "motive": [],
+          "pillars": {
+            "means": 1,
+            "motive": 2,
+            "opportunity": 1
+          },
+          "solve_depth": 1,
+          "surface": [
+            "dora"
+          ],
+          "threads": {
+            "dora": 1,
+            "silas": 0,
+            "truth": 1,
+            "vera": 0
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 52,
+        "in": 299717,
+        "out": 109350
+      },
+      "ordinal": 4,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "ca099145813888d7d42593f550caf1285fca87ab5f16a265897d42bdf8bd53b2",
+        "javascript": {
+          "maxDepth": 2,
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 2,
+            "opportunity": 1
+          },
+          "solveDepth": 1,
+          "threads": {
+            "dora": 1,
+            "silas": 0,
+            "truth": 1,
+            "vera": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 2,
+          "means": [
+            "s_button"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 2,
+            "opportunity": 1
+          },
+          "solve_depth": 1,
+          "threads": {
+            "dora": 1,
+            "silas": 0,
+            "truth": 1,
+            "vera": 0
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "49186bf3f23e13cd12670ed83bae3bc5a648be115621150980b58dae68b6e26c",
+        "javascript": {
+          "maxDepth": 2,
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 2,
+            "opportunity": 1
+          },
+          "solveDepth": 1,
+          "threads": {
+            "dora": 1,
+            "silas": 0,
+            "truth": 1,
+            "vera": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 2,
+          "means": [
+            "s_button"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 2,
+            "opportunity": 1
+          },
+          "solve_depth": 1,
+          "threads": {
+            "dora": 1,
+            "silas": 0,
+            "truth": 1,
+            "vera": 0
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "06ab25af521515ba1e74e24934a39874fecbeb6bc3c64b99032f9151b7def957",
+      "request_count": 52,
+      "request_statuses": {
+        "completed-after-cancel": 1,
+        "response": 51
+      },
+      "requested_difficulty_profile": {
+        "depth": 3,
+        "herrings": [
+          0,
+          1
+        ],
+        "herrings_aimed": 0,
+        "innocents": 0,
+        "level": "easy",
+        "seconds": 480,
+        "steps": 8,
+        "truth": 0,
+        "twist": false
+      },
+      "requested_level": "easy",
+      "requested_target_deficits": [
+        "solve depth 1 < 3"
+      ],
+      "seconds": 687.048,
+      "slot_id": "slot-04-easy",
+      "usage": {
+        "cacheReadInputTokens": 63846,
+        "cacheWriteInputTokens": 0,
+        "calls": 52,
+        "inputTokens": 299717,
+        "outputTokens": 109350,
+        "totalTokens": 472913
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 5,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 1,
+          "lies_on_path": 0,
+          "lies_other": 1
+        },
+        "level": "easy",
+        "score": 5.75,
+        "target": "medium",
+        "v": 1
+      },
+      "audit_manifest_sha256": "c1cd8b0d2e6bef332f2efb3bc8f9db46109471c18b976621148200b1f2d615e3",
+      "audit_semantic_sha256": "4699e7e3d7b1e4b36a81c94a19194cc12907ae137a5a1e9c2e0a80a36bcafe7a",
+      "bedrock_request_ids": [
+        "f185e4e0-ba00-49c2-b227-30f289135d36",
+        "23d5c6b5-c087-4043-be68-c1a9950e8c2b",
+        "90e04f0e-4b95-4e5a-b7a3-20f1eeaa74b8",
+        "3de2ab67-5b87-4d14-9e7f-3fe63f2e2d9d",
+        "1f7eef94-d38f-493b-98ed-b249023880d3",
+        "c050e0a8-121c-4683-a1ff-cb5cc0fa6cb0",
+        "66214f9a-496c-48c5-b2ae-3ddb93512873",
+        "3837ea2f-c394-46f1-92e9-745b39ab19d7",
+        "34ad8d6c-a51b-4190-addb-7444040337ac",
+        "484cdaf5-2fa6-4663-97b7-b3ed779e22d6",
+        "35a3196d-df75-49fe-9ef9-8c42e00a2623",
+        "49fdcd3b-1bc0-4490-ad8d-8b6eed0cfa8c",
+        "0a36d8da-1715-43a0-8b25-b3be64dc219e",
+        "8ff3393e-b5a5-4ac2-97a8-96dd675db1d4",
+        "9a8a7c4e-4cd1-480b-a537-2453fc23c7b0",
+        "810827d7-e0d5-4d23-99c8-cedf0ea250e9",
+        "320e3286-41ee-4c9d-a563-e2cb70481975",
+        "4c4f3e6c-539d-4796-88b0-5b04b6eccd40",
+        "752f6671-1aec-4d58-b336-90e0a8533501",
+        "e2680f66-7e2a-4e56-93ad-691f34cff08e",
+        "0a719ebc-641c-4974-b54c-077855146336",
+        "c392caa0-df1f-44f7-b2a1-af6870148f6e",
+        "04cd94ab-7baf-453c-9c91-2514b8bee7d5",
+        "f2c0ee01-d152-44fb-a69e-e028b3b959e6",
+        "b1ed3a9c-6ea4-4ebd-aa90-d22a55f54761",
+        "5b10023e-4615-480c-9ee5-de823f7a0ba1",
+        "c432fd7f-902b-4e0a-bff8-289f657670f6",
+        "a313113f-ec76-4a94-b0f1-cb88ffc0d27e",
+        "cb3081a9-2f33-4add-8ff4-a8dc9581ccf1",
+        "0a43738b-d50d-4a7b-896f-916c450b7a1e",
+        "43aa1e9c-403c-4665-86c0-8f8bdbb52878",
+        "b8870db5-4769-4be4-8066-b17f7c86a779",
+        "9325860e-19e0-4cde-abea-4aecc2f41d3e",
+        "c5be6b77-675a-4d48-ba22-27df3ae96c36",
+        "de8b2bdb-c2d1-45bc-ab24-f23ef2648e1d",
+        "03caa426-db2c-4b39-8d7f-1eaa646defed",
+        "c0d3bd0f-8746-4ed5-a838-66034b9235d1",
+        "d6f4076e-4acc-4a7d-880e-b990b6d9e117",
+        "e08bc4dc-dc58-4168-a33a-4caa831cbc70",
+        "5637ef17-f153-421a-bd1b-911b2bcb0c6d",
+        "26e12427-c836-434b-9faa-6da88fa17f04",
+        "5d6b47ea-0d99-4509-980c-ecc3f35c3286",
+        "3196ca79-30aa-4ca5-89bc-87274fafc050",
+        "f84ffce9-f7bf-402b-ab06-f6232cecc214",
+        "4962c268-b427-41e8-8731-391f9f3aca6a",
+        "593dde55-a054-4c81-addb-24e2fb61a997",
+        "832e386e-0413-4b8d-995f-2e28d27f9dc5",
+        "9d4d80b6-bc6e-4372-b238-dadeaab6ed68",
+        "018e79b8-3006-42ba-9b53-20db38bd13b8",
+        "9bb47e6e-d963-49d7-b98f-fdc7d2319050",
+        "535a4459-610a-4fb0-9d71-e21d4da545d7",
+        "110a654d-ddfd-4a17-b214-75e37c835d71",
+        "c81b942d-ffbe-4fe9-9de9-545b3f44c889",
+        "d3550434-2b94-453a-ada9-d2ede4e9702d",
+        "0846809d-3950-46fe-aad0-e73ecf30a117",
+        "d941d49d-f124-4283-85d4-ca538064d500",
+        "46b95483-4c9d-4bd9-bf82-43e85c9954c6",
+        "d759dbbc-a94d-42ca-99a5-84f39337fec8",
+        "3c232d24-37cb-4df4-a89b-76e1e1366007",
+        "53ec242e-518b-429c-ab54-ad1f7cc81f57"
+      ],
+      "case_sha256": "6c094c2f5ea3e5e65679eeb9300c59d5420024f4c3acdb334f2bde94a407f8f0",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:05",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "9fd41b9376a561dfb43e114eaa7862a8e212b24624df227ddf10435b555a90ae",
+        "metrics": {
+          "false_signs": [
+            "s_watch"
+          ],
+          "herrings": [
+            "s_ada_pocket"
+          ],
+          "max_depth": 5,
+          "means": [
+            "s_bullet"
+          ],
+          "mmo_depth": 5,
+          "motive": [],
+          "pillars": {
+            "means": 4,
+            "motive": 5,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "surface": [
+            "c_ada",
+            "c_dora",
+            "c_edmund"
+          ],
+          "threads": {
+            "c_ada": 5,
+            "c_dora": 5,
+            "c_edmund": 5,
+            "truth": 3
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 60,
+        "in": 435919,
+        "out": 105155
+      },
+      "ordinal": 5,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "612148a0f1522664fabd57cc7266228e3c8f51630af95fee793d96d41d977d08",
+        "javascript": {
+          "maxDepth": 5,
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 5,
+            "opportunity": 5
+          },
+          "solveDepth": 5,
+          "threads": {
+            "c_ada": 5,
+            "c_dora": 5,
+            "c_edmund": 5,
+            "truth": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 5,
+          "means": [
+            "s_bullet"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 5,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "threads": {
+            "c_ada": 5,
+            "c_dora": 5,
+            "c_edmund": 5,
+            "truth": 0
+          },
+          "twist": false
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "5bf2db36a1a2b7e4fe3036c2163d1e1b8351b617a845d481f5a76547338266c0",
+        "javascript": {
+          "maxDepth": 5,
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 5,
+            "opportunity": 5
+          },
+          "solveDepth": 5,
+          "threads": {
+            "c_ada": 5,
+            "c_dora": 5,
+            "c_edmund": 5,
+            "truth": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 5,
+          "means": [
+            "s_bullet"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 5,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "threads": {
+            "c_ada": 5,
+            "c_dora": 5,
+            "c_edmund": 5,
+            "truth": 0
+          },
+          "twist": false
+        }
+      },
+      "premise_sha256": "cae89962169ef15a5ae06fc96ab9e7233abb719e7dc06c43a150ca2dc3436eb8",
+      "request_count": 60,
+      "request_statuses": {
+        "completed-after-cancel": 1,
+        "response": 59
+      },
+      "requested_difficulty_profile": {
+        "depth": 5,
+        "herrings": [
+          1,
+          2
+        ],
+        "herrings_aimed": 0,
+        "innocents": 2,
+        "level": "medium",
+        "seconds": 900,
+        "steps": 16,
+        "truth": 3,
+        "twist": true
+      },
+      "requested_level": "medium",
+      "requested_target_deficits": [
+        "the truth is clear by layer 0 (< 3)",
+        "no twist"
+      ],
+      "seconds": 671.836,
+      "slot_id": "slot-05-medium",
+      "usage": {
+        "cacheReadInputTokens": 85164,
+        "cacheWriteInputTokens": 0,
+        "calls": 60,
+        "inputTokens": 435919,
+        "outputTokens": 105155,
+        "totalTokens": 626238
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 9,
+          "herrings_aimed": 2,
+          "herrings_other": 0,
+          "lenient_motives": 0,
+          "lies_on_path": 3,
+          "lies_other": 0
+        },
+        "level": "hard",
+        "score": 15.0,
+        "target": "hard",
+        "v": 1
+      },
+      "audit_manifest_sha256": "4340943a2691e413f708d88727354f1fe739760b4b8489896ee129ccb2c9e15b",
+      "audit_semantic_sha256": "2022a46a40097a4bbbebef52517231f48df838bb895000d42d818d7da0b0ee91",
+      "bedrock_request_ids": [
+        "cf73c7ff-f961-4986-b26c-a209b03c49e7",
+        "52acec74-f6d7-422f-9de0-23e1aaf42ba4",
+        "9ca92cb3-09be-4ce5-aff9-99940778973f",
+        "666f09b7-7cc7-49cd-8de5-9c0d0d8c8804",
+        "a75f02ea-da30-4dbc-a867-993fa9f74057",
+        "ab5c8df5-61a6-4f1e-97c9-1899b3e24f06",
+        "8335bc76-a53e-45d9-838f-091398f7754e",
+        "b099527e-8969-4b58-a9a8-8898c7772781",
+        "e4b7df7b-d9b6-4cd7-8ae2-00e7ebaa8f63",
+        "0e4e58c3-c1a7-492e-815c-26de5b799cc5",
+        "a9f55d4a-0aa1-4bb1-b6ef-2b7f56266dc5",
+        "2d89fe7c-eeed-4571-89b2-783502b292ed",
+        "b87d3917-f4a8-4d71-b91c-f9b14db33112",
+        "f5635313-c6d9-40ce-b902-52d9806cebdb",
+        "40e89f3f-b09c-4f7c-b925-8e69e3a6eff5",
+        "1ab5004a-a715-47f1-9d89-2fa96cd1fcda",
+        "cf002ce1-1240-41bc-8f05-65190dc9600b",
+        "82547cb7-168a-4c38-9b91-402ac72b7df8",
+        "50597adc-bb00-41e0-8ae9-4bb16a6681c2",
+        "2e4a51eb-9c03-4591-97ec-804c3d9601c7",
+        "d9e13bfc-99ba-4de9-b48f-37e78b4aed6d",
+        "f5999248-6906-43c0-8779-e9ca946a278c",
+        "10399907-6407-46ef-9405-7bdfa58dbbfa",
+        "8f6252dc-c6dd-460c-9679-c3d0df61fcc0",
+        "e028cf7b-fbff-42d4-b11d-e69e7033c053",
+        "c65b314d-9692-402d-bfc6-b963e8e247f5",
+        "2b7f9cdd-95df-4f74-9e01-b77aee49491e",
+        "64a44520-e27f-4f7b-b199-d13886ec05fe",
+        "f7943bfa-214d-4137-8e6a-3f974bf02d75",
+        "d7c74baa-1eaf-4f7f-9338-9bddcab4c7bb",
+        "77b3d88b-66fb-4aa7-95cb-c7d2d3eb299a",
+        "77fe7d40-b3bd-4163-a627-901dd644174c",
+        "9c4a12f3-9aea-497f-a8d3-99b4d1ff46b0",
+        "bd37a1af-7e53-4497-9d0e-a7eb7f29a9be",
+        "7251a70f-6e69-4892-b769-3c7db06b09e3",
+        "f3da9787-33d7-44aa-8239-aa2f98c502c5",
+        "f2d17292-c713-4768-ad0a-775e4c577d73",
+        "2b47e29c-6013-4538-8726-70053f84d59a",
+        "0e9fc938-42fc-4386-ba21-b902aab959df",
+        "c23d0dba-a73c-4b95-bca8-59acb8fcc228",
+        "1de18bb7-498f-4def-b4f9-38304650f322",
+        "1f37ec13-fe36-4619-985b-970949d93191",
+        "5e806f29-07d2-457b-b2b5-58aba8bbeac6",
+        "d7b1d385-1234-4817-bc38-b0289c7de8fb",
+        "f8ffd769-a5be-4ba4-a174-4927bce6575d",
+        "a25155e7-9ea8-48e3-9832-101dd624c26a",
+        "d7014a7a-df65-4af4-85fb-84329ef0ebe7",
+        "4d8fd24d-c5df-49e6-8fc4-5791d74fc18b",
+        "804dce16-bad1-4ef3-9f11-7cb0aad0ad9b",
+        "ac837ad2-8d21-47c3-9c5b-5fb4ad5e3e21",
+        "8ae1479d-6a30-49f6-9ba4-77aa5814ccb5",
+        "839fd6c4-a317-4bc1-8179-d1d650071765",
+        "e113322b-a895-4812-a8bd-0efdf86f6f00",
+        "8bb1fd5f-755d-4666-b629-79806c3173fc",
+        "9c1882be-063c-4079-908a-82811e3a152a",
+        "b1363027-6405-4988-95f2-2f25e7071e64",
+        "15614589-d030-47b1-919c-b082577ad9fd",
+        "423efece-105b-4038-b4cd-ab0ab3fda231",
+        "5535c5b4-125f-41a3-a0bb-464e3a9deab3",
+        "e45cfb3a-6ae7-4798-afc2-21465e384508",
+        "4909543c-99f6-4871-b261-6260393c8fa5",
+        "07cc6a48-c4b1-4ffc-b43c-d78380981733",
+        "9a4426fd-c618-467e-a84e-10500d9fdbed",
+        "ef0b13d5-a656-4ff5-9d6a-07cabe7e445f",
+        "b55c03a5-1f9d-41d4-a909-66e2eebf8c7a",
+        "ad4d47f4-31c1-452d-99e1-1633be4303d4",
+        "7e981960-95a0-4d08-a513-7436172ae523",
+        "24c24bb5-710d-4084-8560-a6f2ee45a86a",
+        "b2a0d9b4-c567-49ce-9b7f-cf000a8a14eb",
+        "ccb3a557-a25f-4be3-9f1e-be864749d788",
+        "8432e32c-7bd7-4b1b-a57e-61c8e9e9849a",
+        "7d284171-ae31-4760-a21f-00203504e60a",
+        "846ea2e2-022b-47ca-91d3-fbd2ec8fe06b",
+        "e66709f3-afc9-4d8a-9b47-64dcd6a1c77a",
+        "6277a02a-6062-4187-bd4c-c57f9864323b",
+        "049817f6-64ff-4a0e-95bf-8d204ed496a0",
+        "19d8bc8c-649f-4dac-a625-7af06aac3691",
+        "fae8613e-c67c-4c66-9e9d-2461a805ff7e",
+        "cb98a8e0-27db-43de-b4a0-1588eb4ff91d",
+        "d4915f6c-e1a8-4ad9-b0eb-93899e746ca0",
+        "9e43c8bb-6b3e-4cd0-b2fb-94d535e75445",
+        "851de556-5912-4d67-b0da-1d147c6f7a73",
+        "b5b781d5-2fbc-4635-8013-c73f68bcd203",
+        "477f646f-4e31-41c6-9ddf-c4537c7ff7bb",
+        "95b4b424-f5d9-4419-b2c6-aba64aec101e"
+      ],
+      "case_sha256": "c87096819aea2425563cf119e762b1846c66aa213b33118e8c5cdba32935dc8a",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:06",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "3fa825205fe7e381fe1085e231d865b88a6ff3b67186a570fc302874c1bd0279",
+        "metrics": {
+          "false_signs": [
+            "s_clara",
+            "s_edmund",
+            "s_lantern_smashed"
+          ],
+          "herrings": [
+            "s_rowan_hands",
+            "s_silas_manner"
+          ],
+          "max_depth": 9,
+          "means": [
+            "s_lamps"
+          ],
+          "mmo_depth": 9,
+          "motive": [],
+          "pillars": {
+            "means": 6,
+            "motive": 9,
+            "opportunity": 8
+          },
+          "solve_depth": 8,
+          "surface": [
+            "c_rowan",
+            "c_silas",
+            "c_vera"
+          ],
+          "threads": {
+            "c_rowan": 6,
+            "c_silas": 6,
+            "c_vera": 6,
+            "truth": 8
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 85,
+        "in": 790537,
+        "out": 147173
+      },
+      "ordinal": 6,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "9049dcb8567403361f9cfac40fcf9d66964bbbfe2f8ad59131df588d67784177",
+        "javascript": {
+          "maxDepth": 9,
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 9,
+            "opportunity": 8
+          },
+          "solveDepth": 8,
+          "threads": {
+            "c_rowan": 6,
+            "c_silas": 6,
+            "c_vera": 6,
+            "truth": 8
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 9,
+          "means": [
+            "s_lamps"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 9,
+            "opportunity": 8
+          },
+          "solve_depth": 8,
+          "threads": {
+            "c_rowan": 6,
+            "c_silas": 6,
+            "c_vera": 6,
+            "truth": 8
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "37cbfdb9f4aec38aa5aa4a7352a881151f112420bc7a1af67f65e3f9c60f89a2",
+        "javascript": {
+          "maxDepth": 9,
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 9,
+            "opportunity": 8
+          },
+          "solveDepth": 8,
+          "threads": {
+            "c_rowan": 6,
+            "c_silas": 6,
+            "c_vera": 6,
+            "truth": 8
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 9,
+          "means": [
+            "s_lamps"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 9,
+            "opportunity": 8
+          },
+          "solve_depth": 8,
+          "threads": {
+            "c_rowan": 6,
+            "c_silas": 6,
+            "c_vera": 6,
+            "truth": 8
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "aec81c56457b4bb77a6929e4d09ec81a1837b1257a49ec85564daf35695d5e55",
+      "request_count": 85,
+      "request_statuses": {
+        "completed-after-cancel": 2,
+        "response": 83
+      },
+      "requested_difficulty_profile": {
+        "depth": 7,
+        "herrings": [
+          2,
+          3
+        ],
+        "herrings_aimed": 1,
+        "innocents": 3,
+        "level": "hard",
+        "seconds": 1500,
+        "steps": 28,
+        "truth": 4,
+        "twist": true
+      },
+      "requested_level": "hard",
+      "requested_target_deficits": [],
+      "seconds": 1089.95,
+      "slot_id": "slot-06-hard",
+      "usage": {
+        "cacheReadInputTokens": 149172,
+        "cacheWriteInputTokens": 0,
+        "calls": 85,
+        "inputTokens": 790537,
+        "outputTokens": 147173,
+        "totalTokens": 1086882
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 2,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 0,
+          "lies_on_path": 2,
+          "lies_other": 0
+        },
+        "level": "easy",
+        "score": 5.75,
+        "target": "easy",
+        "v": 1
+      },
+      "audit_manifest_sha256": "ef64eac110bb98dbb6cb1bb8398a6505b886a4946359f72856d64dfc65c313db",
+      "audit_semantic_sha256": "95f65351ca3d28622194f2a3dd364f66bdbf7bee0f5c80899118c97fa9b36fc8",
+      "bedrock_request_ids": [
+        "9bbe59c9-1d93-476f-8495-83921aacc880",
+        "e0bd2126-db6b-4d8c-9e7a-227ca3ac80fc",
+        "83844010-95b3-4de8-baf4-754fb6fa8280",
+        "e2520b32-08e7-4a11-b204-acf2fb46db63",
+        "26de5832-6f55-4f9d-8f96-111aaea3d356",
+        "a1adfa8c-e995-477d-b0b0-5346f3540f51",
+        "babce515-1e38-4d39-b403-8358c26a267d",
+        "8bc8aea7-0d4e-4959-9981-d282d944d926",
+        "f18bd4f9-7ed2-41c6-b135-bf0cde077ecc",
+        "21f39327-2670-4b0f-bc95-26a7a9df1676",
+        "4a407d8f-2704-4e5f-a67c-d1969110dd19",
+        "b82e539c-d870-41d9-a809-27e350c4649d",
+        "8f63df3b-0476-4f75-9260-5446719ca568",
+        "5700dd8b-4163-4c2c-adde-c803a23c5530",
+        "02c301c8-ce8d-44d8-a828-f629aeb66de1",
+        "b68a72d2-fd5c-4ee0-876d-e593fb312d97",
+        "efc3140c-50dc-43be-b349-a2cea3313e04",
+        "7df77520-2ee7-4c52-92eb-08b368cdfc50",
+        "00cce37e-9e7c-4c98-b898-d80a299c02bc",
+        "36020485-181a-44fd-8e0c-24a2471ce9a1",
+        "0e7bd92f-762b-4dc4-a798-cbf9cef89162",
+        "f6dc2aa0-d2fd-4228-81a3-a298845c8641",
+        "7b3a5bef-7b7b-40d8-9ff6-67a989616794",
+        "c4eaeacf-e91d-4ebd-ab12-356ab9726d06",
+        "80e0d05a-6e79-4eac-a32e-04a0264410cf",
+        "8068c3b1-7e17-42a8-95cb-2a3494c8db41",
+        "20333b07-43ba-4903-9f08-13c5c61dffbe",
+        "97afc585-d402-4aef-bdf9-0fcfebc839b9",
+        "63eef2bb-4920-4905-b5ed-1a323f794eec",
+        "93fe28b4-1b0c-4fa5-b0f2-ffb52c4f25f5",
+        "cd925759-b705-4ad9-9bfc-3179853a0782",
+        "ce7b928a-292f-4d2e-8aa0-f91ee4c23138",
+        "055bc35c-fe6d-4e46-97d2-2e2362253e5b",
+        "addc76a9-dfa0-40a3-98ad-f56ad8dbdd65",
+        "6dd955d7-17c5-41d7-b20f-a9377ea63de3",
+        "8739d278-f9d3-4a7f-9da2-04a5637c7cce",
+        "d2437936-1eed-4b1f-a6e3-bb161aca06ab",
+        "5d368672-7f75-4e5f-b765-1a09b173416a",
+        "4fd307d0-9d37-4720-b704-6f1b8b9f72c1",
+        "6ceaf421-44eb-465b-8f6f-071d000d0019",
+        "6e56b885-d870-49c1-a611-38ac06203a3d",
+        "020f21e7-9181-432d-b82d-0f1c3c296be2",
+        "24bf2d5a-035f-466f-8773-f8008dee204c",
+        "367147a8-8e02-44be-834d-694a7667a355",
+        "ba854ebc-757c-422c-a969-9b5b689054ae",
+        "2c595cb8-68e3-4a04-8ae6-d108dec526fc",
+        "7227c5fe-218d-477d-8ae6-c58df1c611da",
+        "b9ab5604-ed8e-44ce-b89a-57b73fb78ba3",
+        "a2193346-970e-4be4-8c2b-1a66d01fb551",
+        "9ffd93e1-b5a9-4bf0-adfb-717f9d4637b1",
+        "ac50ee90-509e-4790-b297-9d1134172745",
+        "98446bac-3406-42ee-858b-d8b6f1aa297a",
+        "0bde17a1-74f7-4774-a329-2d2798a47333",
+        "57338a2c-d182-4c76-9d8c-900b2f0bbaae",
+        "a51bee7c-ea74-427c-8dd3-712abec0c2b6",
+        "f76ac97b-57c7-4e86-bc13-595234859c3a",
+        "3bcdfd34-34a1-45e3-a3b8-4c545b5d6489",
+        "0b10323a-be0f-40ba-baef-4a71cb99f184",
+        "ac1bad3e-e2e6-4456-b005-e6b8d5f1d5cb",
+        "d142830b-ffab-4055-8a4b-9b27a65ceebb",
+        "87996ff1-7518-4000-81e2-1e7b42abb3d5",
+        "809ffa80-ad14-4b8d-8953-da09cc257996"
+      ],
+      "case_sha256": "656d60cb7a77d2bae9187da92b7dab3095da511aa48dfda7c648374cc7396118",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:07",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "6c2c1f9aa0d8d3c4c6616af8b6e7adaf6f032d78d218c00f7a353e7762ea4ad6",
+        "metrics": {
+          "false_signs": [
+            "t_hugo_lie",
+            "t_silas"
+          ],
+          "herrings": [
+            "b_dora_pocket"
+          ],
+          "max_depth": 3,
+          "means": [
+            "s_exam"
+          ],
+          "mmo_depth": 2,
+          "motive": [],
+          "pillars": {
+            "means": 1,
+            "motive": 0,
+            "opportunity": 2
+          },
+          "solve_depth": 2,
+          "surface": [
+            "c_dora",
+            "c_hugo",
+            "c_rowan"
+          ],
+          "threads": {
+            "c_dora": 2,
+            "c_hugo": 2,
+            "c_rowan": 2,
+            "truth": 2
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 62,
+        "in": 380353,
+        "out": 107672
+      },
+      "ordinal": 7,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "1fe9e64297d5b4ab521aa51023623f497a71a6b55bfeebff921dfc072e34b57a",
+        "javascript": {
+          "maxDepth": 3,
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 0,
+            "opportunity": 2
+          },
+          "solveDepth": 2,
+          "threads": {
+            "c_dora": 2,
+            "c_hugo": 2,
+            "c_rowan": 2,
+            "truth": 2
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 3,
+          "means": [
+            "s_exam"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 0,
+            "opportunity": 2
+          },
+          "solve_depth": 2,
+          "threads": {
+            "c_dora": 2,
+            "c_hugo": 2,
+            "c_rowan": 2,
+            "truth": 2
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "ffed0688d4df1762dd81c3cc4fe827c8fd8db3b6174b3b3e62418e22855d36a0",
+        "javascript": {
+          "maxDepth": 3,
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 0,
+            "opportunity": 2
+          },
+          "solveDepth": 2,
+          "threads": {
+            "c_dora": 2,
+            "c_hugo": 2,
+            "c_rowan": 2,
+            "truth": 2
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 3,
+          "means": [
+            "s_exam"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 0,
+            "opportunity": 2
+          },
+          "solve_depth": 2,
+          "threads": {
+            "c_dora": 2,
+            "c_hugo": 2,
+            "c_rowan": 2,
+            "truth": 2
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "5183af80f7f40f6276457ef2d58ccbca510a77c9ce82fcaf8e1790cab7a54044",
+      "request_count": 62,
+      "request_statuses": {
+        "completed-after-cancel": 3,
+        "response": 59
+      },
+      "requested_difficulty_profile": {
+        "depth": 3,
+        "herrings": [
+          0,
+          1
+        ],
+        "herrings_aimed": 0,
+        "innocents": 0,
+        "level": "easy",
+        "seconds": 480,
+        "steps": 8,
+        "truth": 0,
+        "twist": false
+      },
+      "requested_level": "easy",
+      "requested_target_deficits": [
+        "solve depth 2 < 3"
+      ],
+      "seconds": 656.03,
+      "slot_id": "slot-07-easy",
+      "usage": {
+        "cacheReadInputTokens": 70952,
+        "cacheWriteInputTokens": 0,
+        "calls": 62,
+        "inputTokens": 380353,
+        "outputTokens": 107672,
+        "totalTokens": 558977
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 6,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 0,
+          "lies_on_path": 1,
+          "lies_other": 0
+        },
+        "level": "hard",
+        "score": 8.25,
+        "target": "medium",
+        "v": 1
+      },
+      "audit_manifest_sha256": "84d395513a873e035dd4fe5350ee9938e74d655f0269021e8ef5ca5aeee4844d",
+      "audit_semantic_sha256": "34d4970420c8224a9fbed3eca5f6fa3d606a9b1aaef4be27e20345c8f5f2b44c",
+      "bedrock_request_ids": [
+        "c5043803-d110-4ad2-9943-5db637ac57cf",
+        "73b73306-9d8d-49f5-9ffd-f2fbbc1b0819",
+        "bdd64776-3715-4a39-95b0-2cc00e9404b6",
+        "e65ad3ab-6edb-44cb-9dab-976358701bbb",
+        "64a528d5-a882-4331-9b2c-454524bde8d9",
+        "7dd369a1-c1ca-4616-bb7c-5e889ca254b7",
+        "387114dd-b638-47b8-903c-64a0867f7850",
+        "253242d0-5469-4d77-ba1d-d9fa5c3d4998",
+        "b865d22d-f487-4514-b60e-2a71f61934dd",
+        "c11f6309-689f-4a18-bd35-eb2039c10edf",
+        "1d604e25-dcc1-46d6-a16a-0f54d40cb51c",
+        "15f76641-db39-467d-a0e7-1421b00ef3eb",
+        "b076a2a9-1d52-43ff-971b-a63932deeefd",
+        "ed539b31-4fd3-45e1-8f64-b78e970ad4f4",
+        "6c3e09c0-6659-43c1-8dfb-6166685cb4eb",
+        "4e4bd9ef-5af1-4f8d-85c3-1a4b31d191ca",
+        "5781c81d-b087-4b44-9f68-fa711c70717d",
+        "406119eb-b3cc-49d2-819b-dba884d13770",
+        "46a97906-c5c0-4d71-9a8a-634a450b62be",
+        "fbf22edc-e197-4973-b393-0f61f24a64be",
+        "e232453d-6961-41cb-9930-cffe11051d54",
+        "b8af1e1c-14f1-4216-8ff5-96b54be9125b",
+        "8931273d-d6b4-4b1f-89c5-1dc898160d2b",
+        "96011c2d-ac89-40ec-872a-883cea4d06fe",
+        "58434830-6ded-4296-9dfb-f722b4fc2750",
+        "65abcfb4-4aa2-4ce3-9ecb-3264fd1ed99f",
+        "aa2a2b5b-2330-4e33-b833-dbe661bbba4c",
+        "bd820115-cee2-49f4-a466-2817c734d975",
+        "b48772f5-38d7-4eed-9f3f-a4c70ae0115b",
+        "dcdc6c98-f6e6-4335-b3a7-ac9bf8f90385",
+        "602f3df9-d7cc-4986-a2b2-febc782e925e",
+        "45bace8e-0e83-4eae-bb0b-7e476d7e8326",
+        "3c985768-2209-441a-bb1b-2f6133be4657",
+        "f9bae387-0597-4370-a0d4-2a227156d88a",
+        "ae161ab1-0385-471c-98e3-5372edce287d",
+        "772888a9-a24e-40f9-b939-456b1d0cac19",
+        "a569a40b-ff78-4aa6-83c6-5e5dc4d0e549",
+        "02c7d159-9afb-4db9-ae40-dcd8b7e29e4c",
+        "cc81809f-aeb8-4102-b8f8-006af5ebabdc",
+        "fa782670-238d-4208-b5cf-9562ef3a4439",
+        "e050fd95-f2d0-4c48-8237-2609c5cfbf9c",
+        "440c4131-1429-48fe-8ad4-64e580023fbf",
+        "211ad040-1255-4c85-9460-16b49c07780a",
+        "4eea5ba4-157d-4e62-a133-4af1d5ff6193",
+        "b2629052-3c4b-4fee-a3e6-68697a7b91e6",
+        "7d19262c-0baf-4a43-a0b0-03fc562570df",
+        "ef28365a-0f3d-4732-b80f-aa081cdd77bd",
+        "e9ee4574-13c6-4871-bc99-2c09e5df01e9",
+        "39b2f50f-3dcc-42ed-b9d9-738c278a69c2",
+        "4663e724-89b1-4612-a0e0-6a2082f29a58",
+        "c966ad9f-dab8-42fe-9c3c-2177638aab05",
+        "9373d449-f1f5-4d75-b826-e75cd697ec98",
+        "03a8a348-7837-4cdb-991e-7825813206e6",
+        "063ea0f7-ac28-4599-b6af-9fee11597fa9",
+        "bec7ce43-80d9-49bd-8cbb-47d60c81d2f9",
+        "575bc2a6-5e77-4339-8e43-113ae9db7ed9",
+        "ceaf8cd9-5d30-4d72-8cf9-ea83a46d2ea7",
+        "a98163ef-1b7e-4e71-9641-a4ffe5ca10f4",
+        "774dc5d0-01a3-4ded-b41f-333ca1e52acd",
+        "f58568b9-04c1-4a09-878a-33670a6a2725",
+        "708351d3-32d5-449a-8054-cc4d6722ebca",
+        "8e7fa83e-de56-4e9d-b69f-996e0c59b00c",
+        "d3abe09b-6b26-41e9-a72f-70dc9e2f6f6f",
+        "8d2e97f1-161d-4cec-b747-b30180143f6c",
+        "6cbc3071-5d6c-4d0a-b12d-bd12453836f0",
+        "c11514dc-73b9-4d88-b126-005d53eaf54f",
+        "25fbaeaa-0e4a-4850-a7c9-68003dae8e22",
+        "92fb4808-0f83-48ed-bae4-cab1449311c8"
+      ],
+      "case_sha256": "8fe9786bf81ec2d386b1cd10f05a483df5378c8a8deb817885828aa96a676143",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:08",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "21392b6b68b16920e8a7071ed1b5f15984c6a755af4c613acfe057717074a048",
+        "metrics": {
+          "false_signs": [
+            "t_jonah"
+          ],
+          "herrings": [
+            "b_ada"
+          ],
+          "max_depth": 7,
+          "means": [
+            "s_stopcock"
+          ],
+          "mmo_depth": 6,
+          "motive": [
+            "s_flowers"
+          ],
+          "pillars": {
+            "means": 4,
+            "motive": 6,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "surface": [
+            "c_ada",
+            "c_silas",
+            "c_vicar"
+          ],
+          "threads": {
+            "c_ada": 4,
+            "c_silas": 5,
+            "c_vicar": 5,
+            "truth": 5
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 68,
+        "in": 475081,
+        "out": 97792
+      },
+      "ordinal": 8,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "79ceec8708ea5b2273f4f357337237822ed05af1a0154a1d749ed76038a926a5",
+        "javascript": {
+          "maxDepth": 7,
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 6,
+            "opportunity": 5
+          },
+          "solveDepth": 5,
+          "threads": {
+            "c_ada": 4,
+            "c_silas": 5,
+            "c_vicar": 5,
+            "truth": 5
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 7,
+          "means": [
+            "s_stopcock"
+          ],
+          "motive": [
+            "s_flowers"
+          ],
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 6,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "threads": {
+            "c_ada": 4,
+            "c_silas": 5,
+            "c_vicar": 5,
+            "truth": 5
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "2bbf84bcb12618fa5a309bfc55ee39bccfe052fd6acca25fa4384d14f04ce0e6",
+        "javascript": {
+          "maxDepth": 7,
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 6,
+            "opportunity": 5
+          },
+          "solveDepth": 5,
+          "threads": {
+            "c_ada": 4,
+            "c_silas": 5,
+            "c_vicar": 5,
+            "truth": 5
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 7,
+          "means": [
+            "s_stopcock"
+          ],
+          "motive": [
+            "s_flowers"
+          ],
+          "ok": true,
+          "pillars": {
+            "means": 4,
+            "motive": 6,
+            "opportunity": 5
+          },
+          "solve_depth": 5,
+          "threads": {
+            "c_ada": 4,
+            "c_silas": 5,
+            "c_vicar": 5,
+            "truth": 5
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "f2e673db30a92aaca9596e6528951260fe2318db1822b0456e6c2a46fea49124",
+      "request_count": 68,
+      "request_statuses": {
+        "response": 68
+      },
+      "requested_difficulty_profile": {
+        "depth": 5,
+        "herrings": [
+          1,
+          2
+        ],
+        "herrings_aimed": 0,
+        "innocents": 2,
+        "level": "medium",
+        "seconds": 900,
+        "steps": 16,
+        "truth": 3,
+        "twist": true
+      },
+      "requested_level": "medium",
+      "requested_target_deficits": [],
+      "seconds": 746.574,
+      "slot_id": "slot-08-medium",
+      "usage": {
+        "cacheReadInputTokens": 92324,
+        "cacheWriteInputTokens": 0,
+        "calls": 68,
+        "inputTokens": 475081,
+        "outputTokens": 97792,
+        "totalTokens": 665197
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 7,
+          "herrings_aimed": 2,
+          "herrings_other": 0,
+          "lenient_motives": 1,
+          "lies_on_path": 1,
+          "lies_other": 0
+        },
+        "level": "hard",
+        "score": 9.5,
+        "target": "hard",
+        "v": 1
+      },
+      "audit_manifest_sha256": "df876682d3eb261c4d312f7165cc143acf98f64884fd3b90d9da46d6e1bcb1be",
+      "audit_semantic_sha256": "453d787b0f5fe11c3be959e721325e8902294edce77b5fdf37728e653580a680",
+      "bedrock_request_ids": [
+        "b7f7acbd-80b4-4345-87e2-21259ac96be3",
+        "7115cfca-f894-4616-9b63-ed5c37b6c64b",
+        "b5e87a68-466f-4470-8ece-6c90b00f1afb",
+        "63931654-dc6a-4312-8d7f-8d148644dc3b",
+        "2aeb03a9-4cae-457e-9a41-d3a44166a859",
+        "9bf9450b-6019-4461-a0d7-752f4518edc8",
+        "e9b07747-e882-4b09-8f6b-bb5b66097682",
+        "b6eee9bf-62c4-4fdd-a8f5-6c56505f338f",
+        "1aade260-266d-40e8-8af4-8b042330ca4e",
+        "4198b74c-3ee5-4f4c-876a-521541817dcf",
+        "bb0c7411-23a5-4122-a294-8bb5e95226c2",
+        "7c7e1538-0b40-4cc7-a07f-bcb870adae70",
+        "fa1d5290-efee-4c2c-8f6c-36184581430d",
+        "282c638b-c865-4be0-b862-446858a2cffb",
+        "6b9312fe-d00c-434d-bf8b-85bb64f60f28",
+        "b747e736-6c4b-4c16-9108-34e1b223d604",
+        "05336126-0bfb-4d77-a6a8-d8744ef1299b",
+        "267a083a-a108-4ca5-95e4-32776fa9a3b8",
+        "8560d53d-1ab1-4032-beb6-e3a1e8bdb536",
+        "44ed08e3-4e16-48d1-a2e2-dd30b71806ba",
+        "4369ffa1-5d68-433e-8673-61ef85fc13d4",
+        "29577d54-c649-46aa-ad4c-fada4b059d45",
+        "529b5dac-3ad3-4891-a2ca-e208b62700dd",
+        "5b7ae11f-3e94-46c2-ae62-7fe63589f447",
+        "bc86467b-5016-4cf0-816a-0fb9e44f966e",
+        "29f56c94-e6c4-4ef0-b0de-c5baca8f6591",
+        "ce07e710-ee96-49b6-ac0a-22547c9de28d",
+        "43a31c30-2008-487f-8e81-0dd5e4bcc8a4",
+        "25ebe54b-239c-4ba0-9048-5c5267617229",
+        "d978462d-4f09-463f-9a97-1c63e4be58a1",
+        "b7fecaea-3488-4897-9199-6ebf83243e4f",
+        "a2feb7cd-cd62-4844-8c55-1775a53a03d4",
+        "44994af9-70aa-41e6-950c-6ea3491405a8",
+        "2c2ed0cb-c81f-4620-a8b2-b68ce5c8e74d",
+        "1ea41431-2790-44b2-841e-fdae7d85ac0c",
+        "7b07c922-1e67-466d-93d8-30244c6453e8",
+        "962808ed-9b45-42f0-ad30-647ced738f2c",
+        "e84a0523-4c62-4353-aa6d-067884baebde",
+        "8f9475e7-501a-4d31-a312-a770cc41d177",
+        "e3ac1835-bade-46c4-a710-a106c871413b",
+        "8e139e3c-6c72-4c0f-93ab-290514f38b86",
+        "98f951a0-15bf-451e-a92d-a5ec703f5d40",
+        "1d3f250b-b733-4bb5-9552-bcd1bd1200fa",
+        "dcbca4c4-f8c0-4bb8-817b-390a57a07118",
+        "f0241cd4-716c-4432-86af-2c24b6c990fd",
+        "ac2f626f-9cf1-4d5f-b779-0af74817231c",
+        "f25b511c-b566-46ea-9a78-cbe34f57c6af",
+        "7e8c3cc5-fd74-407f-8641-bc9ab4e58857",
+        "36e341f1-378e-4bad-9a9c-5fe8dc359b71",
+        "5a942d84-cee7-48ed-8e9f-f674a020cd72",
+        "bb6539ec-3005-43d1-a83a-feedca891e8f",
+        "0a679814-5928-44c7-bdb9-6bf7ab4b284a",
+        "add96071-9d46-4a27-ac39-904c8ccd541d",
+        "9890b9ee-1414-4317-80e0-8f00ef2623d5",
+        "3c3dd2f6-cc9d-468b-bfa6-44a40b4a748a",
+        "8d023824-4ae3-4089-b5b0-b4214396c4c6",
+        "656cf244-3040-4ae3-8822-af2935875a6f",
+        "f9a1b621-5af0-44a6-a968-75f6628c02e1",
+        "95cc0ec5-bfed-47d9-868e-cc32b3fc4143",
+        "6804a8eb-d831-4308-bb28-ec225b031a7d",
+        "89595f1c-32d7-4e1d-9bc1-48b52607fafd",
+        "613b05f6-5316-4b01-90ca-0c2d828ecbde",
+        "6d855484-ee58-4869-b64d-903e0c60abfc",
+        "692ea12d-a5bb-407e-b551-9a5d2fe77608",
+        "daa53183-1563-4db1-8494-27dd976c42e4",
+        "968c41ad-b8bb-4c46-aada-6f1898999c8f",
+        "a9a06880-c2e5-41de-9872-81ad35a52038",
+        "70af64bc-6450-4874-a0a4-65d19c28940a",
+        "29739455-9b0e-410a-aa6c-380dad1df247",
+        "227b06e2-9340-4a11-ac6e-71e32c925278",
+        "7aa2ddd3-5931-46b8-8e4c-ca2a44443cda",
+        "8e37a41c-8fb8-4ece-bf30-56637d02e2b5",
+        "92dd1f84-713c-42db-aef5-01f6ed90dc9c",
+        "62141018-5710-42ed-b3ef-afdc46e710bb",
+        "c75eaad1-d30a-4616-9cee-398ab5f3a1a0",
+        "c0eb64a5-63c8-4384-9ea2-2248c51273f4",
+        "b0d5e889-bf51-4553-9408-e035cfbe04cf",
+        "0d1d97f8-dcc9-43d8-a7ae-37add72c15b8"
+      ],
+      "case_sha256": "360890b40f075108c95e32358c4a88c68caf3a3fa25a544ef59f96fe4d9f1b61",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:09",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "9e74768fb70a435b9cdb688f74eaffd5044c55b9274b3a968395ce11bbd410c2",
+        "metrics": {
+          "false_signs": [
+            "t_ada"
+          ],
+          "herrings": [
+            "b_jonah_pocket",
+            "b_rowan_ash"
+          ],
+          "max_depth": 7,
+          "means": [
+            "s_page"
+          ],
+          "mmo_depth": 7,
+          "motive": [],
+          "pillars": {
+            "means": 6,
+            "motive": 6,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "surface": [
+            "c_jonah",
+            "c_rowan",
+            "c_vicar"
+          ],
+          "threads": {
+            "c_jonah": 6,
+            "c_rowan": 6,
+            "c_vicar": 6,
+            "truth": 7
+          },
+          "twist": true
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 78,
+        "in": 725228,
+        "out": 126214
+      },
+      "ordinal": 9,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "48fa4174bc8c1b9373f95a2b407e33be9ad7dfcde312988fca1aa936c5829787",
+        "javascript": {
+          "maxDepth": 7,
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 6,
+            "opportunity": 7
+          },
+          "solveDepth": 7,
+          "threads": {
+            "c_jonah": 6,
+            "c_rowan": 6,
+            "c_vicar": 6,
+            "truth": 7
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 7,
+          "means": [
+            "s_page"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 6,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "threads": {
+            "c_jonah": 6,
+            "c_rowan": 6,
+            "c_vicar": 6,
+            "truth": 7
+          },
+          "twist": true
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "52a7ca50d532407109ff7de78681f709ad5ba0cab166fb5a44489d50d52b4031",
+        "javascript": {
+          "maxDepth": 7,
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 6,
+            "opportunity": 7
+          },
+          "solveDepth": 7,
+          "threads": {
+            "c_jonah": 6,
+            "c_rowan": 6,
+            "c_vicar": 6,
+            "truth": 7
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 7,
+          "means": [
+            "s_page"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 6,
+            "motive": 6,
+            "opportunity": 7
+          },
+          "solve_depth": 7,
+          "threads": {
+            "c_jonah": 6,
+            "c_rowan": 6,
+            "c_vicar": 6,
+            "truth": 7
+          },
+          "twist": true
+        }
+      },
+      "premise_sha256": "1c62b35bd957d13220efe1cd9c364ad8d4acd0b3496eb5aaf1300a94af4526a8",
+      "request_count": 78,
+      "request_statuses": {
+        "response": 78
+      },
+      "requested_difficulty_profile": {
+        "depth": 7,
+        "herrings": [
+          2,
+          3
+        ],
+        "herrings_aimed": 1,
+        "innocents": 3,
+        "level": "hard",
+        "seconds": 1500,
+        "steps": 28,
+        "truth": 4,
+        "twist": true
+      },
+      "requested_level": "hard",
+      "requested_target_deficits": [],
+      "seconds": 947.232,
+      "slot_id": "slot-09-hard",
+      "usage": {
+        "cacheReadInputTokens": 142066,
+        "cacheWriteInputTokens": 0,
+        "calls": 78,
+        "inputTokens": 725228,
+        "outputTokens": 126214,
+        "totalTokens": 993508
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 1,
+          "herrings_aimed": 1,
+          "herrings_other": 0,
+          "lenient_motives": 0,
+          "lies_on_path": 0,
+          "lies_other": 0
+        },
+        "level": "easy",
+        "score": 1.75,
+        "target": "easy",
+        "v": 1
+      },
+      "audit_manifest_sha256": "c2b453268444942956f910c6490bcf31c34d32ac708573f78ff827e552f32fce",
+      "audit_semantic_sha256": "56579bd6e1443d9399f8dc0ebcd96128e164834e8932d0388793f990eae64aa6",
+      "bedrock_request_ids": [
+        "ef0f891f-f731-499e-a0cc-cd15a47f5801",
+        "a434bdab-a057-463f-a717-9a71db9a993f",
+        "14fc51aa-b44e-4735-8a14-1f3cb882d541",
+        "fface70f-963d-4d8f-98eb-bd9b73cca89e",
+        "c2b586a6-3ca2-448a-91a6-5f2b1fa7faf1",
+        "3f220e7f-d006-42b3-bd67-afec7ec985ed",
+        "b7f756e9-6674-4a66-836c-bae1879771a7",
+        "d38640fa-6ba3-4800-99fa-b643921454ef",
+        "43639345-75e2-4ae1-b044-7decafd45c80",
+        "135a9ae0-6f4c-4603-9dfc-a0d6de67a880",
+        "661b098e-e56f-4259-865f-b72c81178456",
+        "589fae9c-5001-4438-a106-9687821810f0",
+        "5a5f7409-c0e3-4d22-a0d3-59a1171f8a3b",
+        "14505e3d-d6eb-43f4-9325-bd8b9f1cb841",
+        "9d966196-a2c8-420c-99a7-34062885983e",
+        "f7b6db9e-b216-4cb5-bd6d-8b82f6b68761",
+        "c15f73b3-e899-49d8-a6e8-6ed4474acf90",
+        "10781bfd-88ab-4984-a6e2-961954e77f4e",
+        "c27d50fa-6a32-4f34-91fc-499e311342b3",
+        "90466644-adfe-43fb-8c6f-46dd5dd5fff7",
+        "9c5dc8a1-2da0-4ecf-a26b-d8b991dc4ffd",
+        "0d7f88ba-1c7a-4eee-9dfa-9bb81ad09db9",
+        "93d4db11-c8e3-4972-a2e8-3110f2ab14ef",
+        "fc664476-56fe-4c38-9cc1-7924565c68f9",
+        "f6cc9403-1795-4ec2-bcf8-a6909106abcf",
+        "b8feb927-167b-4f9f-85ae-5b29e3a5ee99",
+        "664922d5-40db-406d-83d7-e5377d7d5e1b",
+        "12d0d445-5400-4ff0-8d48-9062a60279fa",
+        "75c1287b-9ab5-4df5-9cf9-41e2dd45c932",
+        "ae22ed53-5ab7-47f2-a16c-06cdc3930ed9",
+        "e63b4f06-3a2f-4ff9-8bda-ae39a69c3800",
+        "5461f2dc-8747-4eb6-b0f5-96fbec9672e0",
+        "7026795b-4e9a-4f12-ab7e-7c3c4800963c",
+        "6ec0aea3-a76a-48f8-9d35-6dc0485a1085",
+        "f51f6b6a-09a3-461e-89f8-1fcf1d7c02df",
+        "3373110a-42cb-4749-a7b1-76b13522c943",
+        "7651cf03-b352-4fa7-8a69-c0c5d7ba1c7a",
+        "a63741be-1f9e-4e15-9b99-1121ca28c244",
+        "91b43dcf-f5f9-4e9c-80da-3dfcf60fd486",
+        "a2e839fc-36d1-4c79-88e5-53bed489f34b",
+        "aba99871-2112-4085-916f-23ec17f940ba",
+        "b2035de3-ccc2-489f-955d-a750d8e88129",
+        "271ca862-b45a-4500-8e0e-8db9e31c5f2c",
+        "567c337a-48e7-4994-90d9-0e83c561d892",
+        "e3102694-9479-42ae-98e0-8fdedb7ad3df",
+        "e2f675f0-67d8-41f5-ba26-d3812e9e30ef",
+        "854e92a6-eae9-482a-b6de-1531e44c8d93",
+        "e8c1aef5-8b39-40c3-bbfd-3e90759cb86e",
+        "cc087687-6f1d-4445-8d96-abad273e4586",
+        "4e6b7195-04ef-4865-ad7e-97aa64df50fe",
+        "fad6092d-6748-4e44-9370-746bc60db9d4",
+        "823e80db-6448-445a-a160-323f8c768789",
+        "2388e3c8-814e-4859-82d4-3dc10e68a4fa"
+      ],
+      "case_sha256": "fc6b3d7137c4c36d2a7305a5a83d108a8afbb78aaa0e94327f6d8cc07e8ae5a3",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:10",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "dc9f6e0a4298be00bde80e638bcd8192ed1b72abb891eccb938e391d9d0c0f23",
+        "metrics": {
+          "false_signs": [],
+          "herrings": [
+            "b_edmund_cuff"
+          ],
+          "max_depth": 1,
+          "means": [
+            "s_knife"
+          ],
+          "mmo_depth": 1,
+          "motive": [],
+          "pillars": {
+            "means": 1,
+            "motive": 0,
+            "opportunity": 1
+          },
+          "solve_depth": 1,
+          "surface": [
+            "c_clara",
+            "c_edmund",
+            "c_silas",
+            "c_vicar"
+          ],
+          "threads": {
+            "c_edmund": 1,
+            "c_silas": 1,
+            "c_vicar": 1,
+            "truth": 0
+          },
+          "twist": false
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 53,
+        "in": 346961,
+        "out": 83083
+      },
+      "ordinal": 10,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "93041d8d0b889ccb074ddea9ae0d115262aabb133caeee2626afc1dfd114903f",
+        "javascript": {
+          "maxDepth": 1,
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 0,
+            "opportunity": 1
+          },
+          "solveDepth": 1,
+          "threads": {
+            "c_edmund": 1,
+            "c_silas": 1,
+            "c_vicar": 1,
+            "truth": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 1,
+          "means": [
+            "s_knife"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 0,
+            "opportunity": 1
+          },
+          "solve_depth": 1,
+          "threads": {
+            "c_edmund": 1,
+            "c_silas": 1,
+            "c_vicar": 1,
+            "truth": 0
+          },
+          "twist": false
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "90c31f06fffe0bb77b383fcaf191f51c1cc3713c5cde570371da81acc9ac14ae",
+        "javascript": {
+          "maxDepth": 1,
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 0,
+            "opportunity": 1
+          },
+          "solveDepth": 1,
+          "threads": {
+            "c_edmund": 1,
+            "c_silas": 1,
+            "c_vicar": 1,
+            "truth": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 1,
+          "means": [
+            "s_knife"
+          ],
+          "motive": [],
+          "ok": true,
+          "pillars": {
+            "means": 1,
+            "motive": 0,
+            "opportunity": 1
+          },
+          "solve_depth": 1,
+          "threads": {
+            "c_edmund": 1,
+            "c_silas": 1,
+            "c_vicar": 1,
+            "truth": 0
+          },
+          "twist": false
+        }
+      },
+      "premise_sha256": "46efce6752d6c97b196aba7bb3754b2e0f1c6087c95e2666f69752a294a3882c",
+      "request_count": 53,
+      "request_statuses": {
+        "completed-after-cancel": 1,
+        "response": 52
+      },
+      "requested_difficulty_profile": {
+        "depth": 3,
+        "herrings": [
+          0,
+          1
+        ],
+        "herrings_aimed": 0,
+        "innocents": 0,
+        "level": "easy",
+        "seconds": 480,
+        "steps": 8,
+        "truth": 0,
+        "twist": false
+      },
+      "requested_level": "easy",
+      "requested_target_deficits": [
+        "solve depth 1 < 3"
+      ],
+      "seconds": 563.942,
+      "slot_id": "slot-10-easy",
+      "usage": {
+        "cacheReadInputTokens": 99430,
+        "cacheWriteInputTokens": 0,
+        "calls": 53,
+        "inputTokens": 346961,
+        "outputTokens": 83083,
+        "totalTokens": 529474
+      }
+    },
+    {
+      "achieved_difficulty": {
+        "features": {
+          "depth": 2,
+          "herrings_aimed": 0,
+          "herrings_other": 0,
+          "lenient_motives": 1,
+          "lies_on_path": 0,
+          "lies_other": 0
+        },
+        "level": "easy",
+        "score": 1.5,
+        "target": "medium",
+        "v": 1
+      },
+      "audit_manifest_sha256": "06c7f8500279f0b7254c55a6d93180e2debd1c1d318c4b48b752dbf3f4380d30",
+      "audit_semantic_sha256": "5b89b1b31dbade8d80e3a44d257ce966408ce7c971744516433c5d88925b25b3",
+      "bedrock_request_ids": [
+        "bd821a9d-39bc-4a17-ba99-f78aad31ef05",
+        "057fdb52-c8be-4aee-96fe-3bdf030f9860",
+        "dea7b078-fd99-4842-b23f-cc8433209323",
+        "ca666c95-4c16-429a-bd8f-53daccf83098",
+        "99cafaeb-6b43-4e6a-adf6-45890363bdb7",
+        "c73d8543-ee69-4d82-8095-a3a7201d12be",
+        "945edecb-82a5-46b0-94b0-83491617441b",
+        "ebd2e9c1-7d97-4be8-92de-340c9ae207bd",
+        "98a3bdec-aee0-4e31-9d8f-c7b4a0a60940",
+        "8b76b19b-dc1a-46b0-9f3b-a7bd1c0a07ae",
+        "7c5d55c6-f69e-49c8-91f2-4f67f6249b7a",
+        "b024cf4f-8942-46d6-88a1-fc0b59076a69",
+        "8a079bdb-b024-4094-b5eb-3423b2b962d9",
+        "4925aab0-72d6-458e-802c-b8192e26fe97",
+        "26b1f4ce-9481-4159-a43d-a2762e81480e",
+        "5d74a7e7-daa1-4ced-af94-ac761bc1a7a3",
+        "da89fd0d-b340-4b02-be69-c12f4532f139",
+        "c832e9f2-db28-4411-b072-7cb9a1508450",
+        "f2369eda-57f8-4a1d-beec-251e03013e9e",
+        "ca10a4b3-a552-4ca6-aa20-029d6ca9c90a",
+        "358ce1cd-7752-417f-b635-2d81310276ea",
+        "a0928c4e-2fc7-4b71-97f3-6680a2bfad35",
+        "91dafe9e-348a-4bf0-825b-438aa687670d",
+        "13419675-e760-4416-b822-df68cedbadb1",
+        "fed37e0c-6259-44d0-811b-4032088687a0",
+        "82d7d061-4e4e-4817-9650-82570679b271",
+        "5f54f67f-1e0f-44de-a359-7e4854d5c044",
+        "da7b2233-f4d1-4015-a57f-4767cee0d43a",
+        "cd9b02ae-7da1-4f55-bbba-08a84bf8a96f",
+        "d7d62fb6-a3fb-4a2b-943b-cd7676756a28",
+        "c9207f34-0ccb-4921-bb60-2d31b3976cdf",
+        "b99562f8-7e99-4a60-80f0-1186e75b8ea4",
+        "90ff8098-0946-4822-8efe-658f04dd8088",
+        "8982170d-0e76-443a-8d74-594d7ab8335c",
+        "0cf2b741-2e3b-453d-8a2f-7f65aee36396",
+        "e0a2c15d-2137-41b3-86c3-e7b3360da2a8",
+        "3744a6fd-bca6-4115-b6d5-5149a2b6fe8e",
+        "e6d94843-6ccf-4476-b729-039d7211f94b",
+        "da594114-ee77-4171-a61d-ef61a2b05fb0",
+        "9d96d0a9-ca14-4374-a408-f5f48d20e691",
+        "5600dd00-095c-428a-82f3-6c44d9052dc5",
+        "385ab3a0-a608-4af2-8159-607b04aad5b3",
+        "8eae7ecb-a6ee-4428-b66e-5922bb2446c2",
+        "f33451f0-9b40-4961-9fdd-0766ac6e53dd",
+        "2dde89da-973b-4e47-add4-030e37e7cef5",
+        "6ddc27e4-d057-4676-ad41-12724e5f5be7",
+        "9fc8a7df-0e04-4e14-a4cb-990a1ec75945",
+        "e49d775f-df6c-4712-84aa-598e625cf5e8",
+        "d8875c3d-3622-4d3b-a41a-a28874922dee",
+        "f8eb897d-50f0-487c-8330-6796a348adab",
+        "de0def74-04ff-45a5-bff2-87da10f2fee9",
+        "7e17e770-57e7-4959-a535-5232b4894d84",
+        "670bbc89-4bd6-417c-b447-191019e0696b",
+        "27e64cc4-db59-4d2a-9a26-e97414246f45",
+        "f47f511d-2dd2-4e92-9e58-e1cb66f6440e",
+        "14f48aec-20f6-4805-a156-f2df951ed0be",
+        "fe22eed1-700d-402a-b10f-9496606129ae",
+        "9c364f37-edaa-492b-b50a-f77193529b12",
+        "117c296e-add7-4a4d-8146-d98bc96716b6",
+        "d5ade4c6-7871-4dc0-bc6d-17b12a8c93d5",
+        "3160346a-b39f-4b6c-ad41-234d217f4744",
+        "2fc274cb-484e-42a0-a360-d670f6942cd0",
+        "d6e82cda-950f-4711-9009-2df97504bd6c",
+        "dd578efe-6dff-4517-9838-8bae3dbaa70c",
+        "0eaa2c10-99af-456a-87ed-6507ae224409",
+        "79e89e6d-dc61-4407-91fd-32eb85336de6",
+        "5fbd9e9e-7441-45eb-918d-f57c6b1115a3",
+        "fbc1f00e-9b2e-4b64-94f6-99f0d2e8fdea",
+        "c709edf8-e268-45fd-8d47-f900a08bf8d8",
+        "30272458-ddc7-47c9-a2a7-65be52e06aef",
+        "e7d18561-9ef3-408b-a863-b1371d95d67f"
+      ],
+      "case_sha256": "0af7eb0ee21a14d94ecda4cc26635485769811a137f93ea05f5f9a29702ec50c",
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:11",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": null,
+      "failure_stage": null,
+      "generation_certificate": {
+        "errors": [],
+        "full_sha256": "58da0903ab3ed9df39fb23766be70769b9f9b92fe223983c914cac7082524457",
+        "metrics": {
+          "false_signs": [],
+          "herrings": [],
+          "max_depth": 2,
+          "means": [
+            "s_button"
+          ],
+          "mmo_depth": 2,
+          "motive": [
+            "s_letter"
+          ],
+          "pillars": {
+            "means": 0,
+            "motive": 0,
+            "opportunity": 2
+          },
+          "solve_depth": 2,
+          "surface": [
+            "c_ada",
+            "c_jonah",
+            "c_silas",
+            "c_vera"
+          ],
+          "threads": {
+            "c_jonah": 2,
+            "c_silas": 2,
+            "c_vera": 2,
+            "truth": 0
+          },
+          "twist": false
+        },
+        "ok": true
+      },
+      "legacy_usage": {
+        "calls": 71,
+        "in": 488800,
+        "out": 137431
+      },
+      "ordinal": 11,
+      "outcome": "completed-strictly-gateable",
+      "post_serialization_certificate": {
+        "errors": [],
+        "full_sha256": "a5ab2425da6a5d743d9dca31168dcecbf602ea105babc8a716e8cd25bee0895d",
+        "javascript": {
+          "maxDepth": 2,
+          "ok": true,
+          "pillars": {
+            "means": 0,
+            "motive": 0,
+            "opportunity": 2
+          },
+          "solveDepth": 2,
+          "threads": {
+            "c_jonah": 2,
+            "c_silas": 2,
+            "c_vera": 2,
+            "truth": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 2,
+          "means": [
+            "s_button"
+          ],
+          "motive": [
+            "s_letter"
+          ],
+          "ok": true,
+          "pillars": {
+            "means": 0,
+            "motive": 0,
+            "opportunity": 2
+          },
+          "solve_depth": 2,
+          "threads": {
+            "c_jonah": 2,
+            "c_silas": 2,
+            "c_vera": 2,
+            "truth": 0
+          },
+          "twist": false
+        }
+      },
+      "pre_publication_certificate": {
+        "errors": [],
+        "full_sha256": "427bdbdfae67b8697a4e93b6dbfef5a8ad257824d2b38fead3667e5b5e4303bb",
+        "javascript": {
+          "maxDepth": 2,
+          "ok": true,
+          "pillars": {
+            "means": 0,
+            "motive": 0,
+            "opportunity": 2
+          },
+          "solveDepth": 2,
+          "threads": {
+            "c_jonah": 2,
+            "c_silas": 2,
+            "c_vera": 2,
+            "truth": 0
+          }
+        },
+        "ok": true,
+        "oracle": {
+          "errors": [],
+          "ok": true
+        },
+        "python": {
+          "max_depth": 2,
+          "means": [
+            "s_button"
+          ],
+          "motive": [
+            "s_letter"
+          ],
+          "ok": true,
+          "pillars": {
+            "means": 0,
+            "motive": 0,
+            "opportunity": 2
+          },
+          "solve_depth": 2,
+          "threads": {
+            "c_jonah": 2,
+            "c_silas": 2,
+            "c_vera": 2,
+            "truth": 0
+          },
+          "twist": false
+        }
+      },
+      "premise_sha256": "9f998648940ebce5cc3cb362fdf1289df65a7be943cd3db26be645961c322ff7",
+      "request_count": 71,
+      "request_statuses": {
+        "completed-after-cancel": 1,
+        "response": 70
+      },
+      "requested_difficulty_profile": {
+        "depth": 5,
+        "herrings": [
+          1,
+          2
+        ],
+        "herrings_aimed": 0,
+        "innocents": 2,
+        "level": "medium",
+        "seconds": 900,
+        "steps": 16,
+        "truth": 3,
+        "twist": true
+      },
+      "requested_level": "medium",
+      "requested_target_deficits": [
+        "solve depth 2 < 5",
+        "the truth is clear by layer 0 (< 3)",
+        "no twist",
+        "0 red herrings (< 1)"
+      ],
+      "seconds": 1020.518,
+      "slot_id": "slot-11-medium",
+      "usage": {
+        "cacheReadInputTokens": 142066,
+        "cacheWriteInputTokens": 0,
+        "calls": 71,
+        "inputTokens": 488800,
+        "outputTokens": 137431,
+        "totalTokens": 768297
+      }
+    },
+    {
+      "achieved_difficulty": null,
+      "audit_manifest_sha256": "eea1e848289ca7dfce7940c91a4c90ced354d98256a1ea7a6d74352fb96ece4d",
+      "audit_semantic_sha256": "c26b72811353221615497bf084015eced2535292853210caf6ab16c36c4980b6",
+      "bedrock_request_ids": [
+        "e4cbdb6d-799a-4112-847b-3549fd2d97a4",
+        "2c15f277-8df7-43fc-9d28-5409331bf2e4",
+        "f34b4927-92fd-4169-9039-bea0ab4f2114",
+        "1f0f0eb3-fff0-41fc-8d97-c7367f77b152",
+        "64edc1b3-9548-4d98-a88f-f5563d9ed3ec",
+        "b0bce0bb-e39e-4498-9371-10c401dc2200",
+        "ae7eb3c4-e5c5-4a0c-9512-957c3380117b",
+        "e36dc3af-f43b-4e1f-a367-33216a510847",
+        "2266c946-708a-4d3b-a8df-77a871dabc75",
+        "128eb7b6-7edd-4b9c-8fbc-f17f513282e7",
+        "a007e8d9-1b99-475d-9a79-ea8b548a9770",
+        "22b55797-4683-4b71-9b2f-dfab671583f0",
+        "d530e1d8-8462-47cd-a221-db0b3cbd5f0a",
+        "cc64a99e-8391-4b90-9859-350e71893dfa",
+        "4d999dd5-2328-4e9d-85ab-4b0f1c739642",
+        "5a3416d9-eb54-4cd1-a25a-d3086c3f0753",
+        "59903f4f-72b6-458b-b29a-153c0b2fae73",
+        "7619a7a3-1efa-417b-99ca-3670eb3055e4",
+        "96001e4d-0b6b-4cb0-9886-50a6f3bf7ed9",
+        "a4bc4148-0dff-44ea-be82-a079c9471bf7",
+        "7227d9ca-f905-4cc5-964f-678b89e17554",
+        "029d08f1-7d9a-4fb8-9623-351b06f34872",
+        "900e99c9-da3b-46b3-b393-0f7edaef6491",
+        "9de90c1d-7560-48e6-9741-ed9b9e5dfc49",
+        "0558cac0-e13b-4bd5-a96e-dc4f7b7e7d52",
+        "c7f100af-3b8b-4293-8db9-2e44d3b4e90e",
+        "d8d73e12-205c-4d69-bcff-767d3f1461f5",
+        "f8f1906d-bf70-4bb5-afdf-9b1e0a53c865",
+        "097be4a6-56f7-46bc-9416-0d6cbda9462f",
+        "252b844f-6f86-4968-bc70-16eccbea9a3e",
+        "37aa864a-3b86-448a-bbf3-7f05e892e620",
+        "2a03ddfa-4a61-41fa-afe7-2d61378b1c08",
+        "14a8af74-35d4-4801-887e-15fc3cb1b070",
+        "00098169-4357-493c-ba71-6d194904d649",
+        "87311b57-be50-48fc-b6ae-3cd7ef8af0c8",
+        "25692f48-4197-4b98-9f1d-27feb1ae848d",
+        "263ec2c9-1b22-42b4-ae90-546f85c1fabb",
+        "76766bdf-08ca-410b-a2d6-98486c1e7270",
+        "250edc2d-f244-4009-b78d-f18adf7aa32f",
+        "732b2a98-21f3-4151-be47-c85007da9f42",
+        "ed59dd69-285e-4963-a296-c6090e4d43d1",
+        "14be2879-86df-4940-98a4-c4cdce26433a",
+        "79eb6189-e76f-411e-a2b2-4e4648b38b74",
+        "4cdc7531-f63e-4157-854e-1bd03740c4a2",
+        "a797287c-e1e7-4e16-8c98-1cf5fb17be0b",
+        "5729a17b-6003-4d25-909c-d75e6c5048a6",
+        "877be269-d646-4ac5-9bff-45d2cb7600f4",
+        "2d3e884a-6f6d-4388-b0a4-ad74c2b1730a"
+      ],
+      "case_sha256": null,
+      "draw_seed": "sleuthcraft-c3-e2-pilot-v1:12",
+      "effective_serving_models": [
+        "unknown"
+      ],
+      "failure": "cohort-wall-clock-bound",
+      "failure_stage": null,
+      "generation_certificate": null,
+      "legacy_usage": {
+        "calls": 44,
+        "in": 528097,
+        "out": 160082
+      },
+      "ordinal": 12,
+      "outcome": "unfinished",
+      "post_serialization_certificate": null,
+      "pre_publication_certificate": null,
+      "premise_sha256": "60926e6cda977c447a1a851a0a859ba9e35c2285b7333052601b8df19a3197c9",
+      "request_count": 49,
+      "request_statuses": {
+        "completed-after-cancel": 1,
+        "error": 4,
+        "response": 43,
+        "unfinished": 1
+      },
+      "requested_difficulty_profile": {
+        "depth": 7,
+        "herrings": [
+          2,
+          3
+        ],
+        "herrings_aimed": 1,
+        "innocents": 3,
+        "level": "hard",
+        "seconds": 1500,
+        "steps": 28,
+        "truth": 4,
+        "twist": true
+      },
+      "requested_level": "hard",
+      "requested_target_deficits": null,
+      "seconds": 1042.681,
+      "slot_id": "slot-12-hard",
+      "usage": {
+        "cacheReadInputTokens": 131326,
+        "cacheWriteInputTokens": 0,
+        "calls": 44,
+        "inputTokens": 528097,
+        "outputTokens": 160082,
+        "totalTokens": 819505
+      }
+    }
+  ],
+  "usage_by_requested_inference_profile": {
+    "us.anthropic.claude-opus-5-5": {
+      "cacheReadInputTokens": 680518,
+      "cacheWriteInputTokens": 21156,
+      "calls": 199,
+      "inputTokens": 2303575,
+      "outputTokens": 1092811,
+      "totalTokens": 4098060
+    },
+    "us.anthropic.claude-sonnet-5": {
+      "cacheReadInputTokens": 569220,
+      "cacheWriteInputTokens": 3580,
+      "calls": 575,
+      "inputTokens": 3678888,
+      "outputTokens": 329919,
+      "totalTokens": 4581607
+    }
+  }
+}

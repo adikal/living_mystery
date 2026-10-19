@@ -9,6 +9,11 @@ __pycache__/
 .venv/
 tools/refine-c/runs/
 dist/cases/generated/live/
+# publication lock, interrupted atomic-write temporaries, and recovery markers (live and quarantined)
+dist/cases/generated/.publication.lock
+*.json.tmp
+.publication-*.tmp
+.publication-transaction*.json
 logs/
 tools/art/out/
 dist/cases/archive/live/
