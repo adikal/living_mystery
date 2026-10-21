@@ -696,7 +696,8 @@ CLAIMS (from, to: minutes, both included; when: throughout (default) | sometime 
 The kernel CODE computes what follows, from what the PLAYER KNOWS: the claims of the clues they hold and trust, and the
 public signs (kind "public": what everyone in the village knows, held from the start; no requires or needs). A culprit
 claim rules a candidate out only when other claims the player has say the candidate lacks it: "whoever did it had vestry
-paper" clears no one until a sign says who had vestry paper (e.g. a public sign {"pred":"onlyHad",...}). A whereabouts
+paper" clears no one until a sign says who had vestry paper (e.g. a public sign {"pred":"onlyHad",...}; the game shows such
+a public sign only once the player understands a clue about that item, so it must decide nothing on its own). A whereabouts
 claim is an alibi when, with the walking times, the person could not have been at the scene at any minute the claims
 allow for the crime. Truth is computed from the events: a person is where their events put them, stays put between
 events at the same place, and may be anywhere they can reach between events at different places; a claim over minutes

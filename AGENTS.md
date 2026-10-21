@@ -94,7 +94,9 @@ the proxy (`prepareCharacterTurn` → `proposeCharacterTurn` → `applyCharacter
 - **Saved games keep their case records.** A fix to a published case's content only appears after starting it again
   from Choose a case (or Restart this case, which reloads the file). Code fixes appear on a normal refresh.
 - **Model output shapes vary** (nested wrapper keys, lists instead of maps). Normalise, and retry once on empty output.
-- **Anything a player must reason with has to be visible** (time window, traits). If certification assumes a fact, the
+- **Anything a player must reason with has to be visible** (time window, traits). Who had an item a culprit clue names is
+  public knowledge recorded in the notebook only once a clue about the item is understood (`heldBackPublic`); the publish
+  gate refuses public knowledge that would tie a suspect to the culprit's item from the start. If certification assumes a fact, the
   player must be able to learn it.
 - **Free-text replies may only use accounts** (including 'everyday'). Memories are private; the guarded third attempt keeps them so. Menu questions must use their own account; a plain "where were you last night?" must use a night account (`player.requiredAccounts`, lie or truth). A reply with no account may give no time, number or place the detective has not mentioned (code screen in `dist/character-turn.mjs`).
 - **A case publishes only through `publish.gate`**: Python kernel, JS kernel and Z3 must all certify it and agree, with every account backed. Publish-time content is wording only (evening and morning summaries, the examination's words, concessions, everyday facts, lines, reactions, pictures) and must not change the solve; the gate re-checks.

@@ -2004,8 +2004,8 @@
   {
    "id": "pub_holders_doorstop",
    "kind": "public",
-   "title": "Who had Iron hound doorstop",
-   "text": "Only Clara Vale had Iron hound doorstop.",
+   "title": "Who had the iron hound doorstop",
+   "text": "Everyone knows only Clara Vale had the iron hound doorstop.",
    "claim": {
     "pred": "onlyHad",
     "item": "doorstop",

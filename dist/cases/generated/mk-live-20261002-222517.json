@@ -1599,8 +1599,8 @@
   {
    "id": "pub_holders_letter_opener",
    "kind": "public",
-   "title": "Who had Post office letter-opener",
-   "text": "Only Dorothy Pruett had Post office letter-opener.",
+   "title": "Who had the post office letter-opener",
+   "text": "Everyone knows only Dorothy Pruett had the post office letter-opener.",
    "claim": {
     "pred": "onlyHad",
     "item": "letter_opener",

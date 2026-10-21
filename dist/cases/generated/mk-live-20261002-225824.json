@@ -2402,7 +2402,7 @@
    "id": "pub_holders_letter",
    "kind": "public",
    "title": "Who had Edmund's letter",
-   "text": "Only Edmund Vale and Jonah Reed had Edmund's letter.",
+   "text": "Everyone knows only Edmund Vale and Jonah Reed had Edmund's letter.",
    "claim": {
     "pred": "onlyHad",
     "item": "letter",

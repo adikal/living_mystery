@@ -91,6 +91,30 @@ export function survivors(c, A, maxDepth = null, exclude = new Set()) {
   return survivorsOf(c, trustedClaims(A, visible), A.tt);
 }
 
+/** Public knowledge about who held an item matters only once the player understands a clue about that item: told at
+ * the start, "only X had the button" names a suspect before any button is found. Returns {public sign id: [trigger
+ * sign ids]} for each such public sign that is inert without its triggers: removing it changes no survivor set at any
+ * depth while the triggers (and everything that depends on them) are absent, and it defeats nothing. The game records
+ * these in the notebook when a trigger is first understood; certification, which holds them from the start, stays exact.
+ * Mirrors publish.py held_back_public. */
+export function heldBackPublic(c, A = analyse(c)) {
+  const out = {};
+  const maxd = Math.max(0, ...Object.values(A.eff));
+  for (const p of c.signs.filter(x => x.kind === 'public' && claimOf(x)?.item && !arr(x.defeats).length)) {
+    const item = claimOf(p).item;
+    const triggers = c.signs.filter(x => x.kind !== 'public' && claimOf(x)?.item === item).map(x => x.id).sort();
+    if (!triggers.length) continue;
+    const without = new Set(triggers.flatMap(t => [...closureDependent(c, t)]));
+    const alsoP = new Set([...without, p.id]);
+    const same = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+    let inert = true;
+    for (const d of [...Array(maxd + 1).keys(), null])
+      if (!same(survivors(c, A, d, without).sort(), survivors(c, A, d, alsoP).sort())) { inert = false; break; }
+    if (inert) out[p.id] = triggers;
+  }
+  return out;
+}
+
 /** root plus every sign that (transitively) requires or needs it. */
 export function closureDependent(c, root) {
   const out = new Set([root]);

@@ -14,7 +14,7 @@ import * as Original from '../case.mjs';
 import {BW_PEOPLE, BW_LOCATIONS, BW_ROLES, BW_DEFAULT_VICTIM} from './village.mjs';
 import {STANDARD_QUESTIONS as Q, ALIAS_TOPICS, questionKey, isPlainNightQuestion} from './questions.mjs';
 import {VERSION, NEUTRAL_LINE} from '../kernel.mjs';
-import {analyse, certify, survivors, actorOf, claimTrue, claimOf, pillarSigns, pillarSignsFor, threadDepths, criticalSigns, closureDependent} from '../mk/kernel.mjs';
+import {analyse, certify, survivors, heldBackPublic, actorOf, claimTrue, claimOf, pillarSigns, pillarSignsFor, threadDepths, criticalSigns, closureDependent} from '../mk/kernel.mjs';
 import {METHODS, MOTIVES} from '../mk/answer-types.mjs';
 import * as Morning from '../morning.mjs';
 import {inSentence} from '../places.mjs';
@@ -252,6 +252,11 @@ export function makeKernelCase(records) {
     // what everyone knows is held from the start (seedSession records it in the notebook)
     const publicSigns = kc.signs.filter(x => x.kind === 'public').map(x => x.id);
     const held = s => new Set([...publicSigns, ...s.world.player.evidence.map(e => e.clue)]);
+    // Public knowledge about who held an item ("only X had the button") goes into the notebook only once the player
+    // understands a clue about that item; at the start it would name a suspect before any such clue is found. It is held
+    // (for hints, the board and the accusation) from the start, as certification holds it: heldBackPublic proves it
+    // decides nothing on its own.
+    const heldBack = heldBackPublic(kc);
     // what is gone this morning (concealed), and everything not yet held that can only be reached or read through it.
     // The same projection the concealment certifier uses (Morning.unavailableSigns): evidence already in the notebook is
     // a retained root, so the engine and the certificate always agree on what remains in the case.
@@ -346,7 +351,7 @@ export function makeKernelCase(records) {
       if (s.world.minute < START) K.advance(s, START - s.world.minute, null);
       const begun = K.commit(s, {kind: 'arrival', actor: 'player', title: 'You begin the investigation', data: {boundary: true},
         changes: {'player.location': STATION}, playerText: CASE.synopsis});
-      for (const id of publicSigns) K.addEvidence(s, id, begun, 'What everyone knows');
+      for (const id of publicSigns.filter(id => !heldBack[id])) K.addEvidence(s, id, begun, 'What everyone knows');
     }
 
     // After any action: open earned gates (with their in-world reason) and reveal completed readings.
@@ -376,6 +381,10 @@ export function makeKernelCase(records) {
         K.commit(s, {kind: 'observation', actor: 'player', title: 'You put it together', parents: [cause],
           changes: {'flags.read': [...read, ...ready]},
           playerText: ready.map(sid => `${CLUES[sid].title}: ${signs[sid].reading || 'it makes sense now.'}`).join('\n\n')});
+      // what everyone knows about an item, now that the player understands a clue about it
+      const understood = sid => have.has(sid) && arr(signs[sid]?.needs).every(n => (signs[n] ? have.has(n) : ruleKnown(s, n)));
+      for (const [pid, triggers] of Object.entries(heldBack))
+        if (!K.has(s, pid) && triggers.some(understood)) K.addEvidence(s, pid, cause, 'What everyone knows');
       updateStress(s, cause);
     }
 

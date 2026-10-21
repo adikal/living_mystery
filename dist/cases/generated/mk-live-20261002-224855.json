@@ -1758,7 +1758,7 @@
    "id": "pub_holders_o_signet",
    "kind": "public",
    "title": "Who had Hugo's boar signet ring",
-   "text": "Only Hugo Vale had Hugo's boar signet ring.",
+   "text": "Everyone knows only Hugo Vale had Hugo's boar signet ring.",
    "claim": {
     "pred": "onlyHad",
     "item": "o_signet",

@@ -8,9 +8,10 @@ The migration is mechanical and keeps what version 1 meant wherever version 2 ca
 - possession -> holdings; an item held by more than one person becomes a supply; relation names -> vocabulary;
 - the crime event's facts come from the true candidate's (and from fact claims the true candidate says nothing about),
   and an event's own 'method' moves into its facts;
-- what version 1 read from hidden tables becomes public knowledge, which the player holds from the start: the crime
+- what version 1 read from hidden tables becomes public knowledge, which certification holds from the start: the crime
   window, each candidate's tested traits, who had each item a culpritHad claim names, and that a candidate does not
   stand in a relation a culpritRelated claim names; public knowledge overturns (defeats) any clue that contradicts it.
+  Who had an item is recorded in the player's notebook only once they understand a clue about it (heldBackPublic).
 
 Version 2 judges whereabouts more strictly (a claim over minutes no event accounts for is undetermined), so a migrated
 case may need its history completed before it certifies; that is a change to the case, not to the migration.
@@ -20,6 +21,7 @@ case may need its history completed before it certifies; that is a change to the
 import argparse
 import copy
 import json
+import re
 
 from claims import claim_of, consistent
 
@@ -28,6 +30,30 @@ VERSION = 2
 
 def _words(s):
     return str(s).replace('_', ' ')
+
+
+def item_phrase(case, name):
+    """An item's name as it reads mid-sentence: 'A coat button' -> 'the coat button', 'Iron hound doorstop' -> 'the iron
+    hound doorstop'; possessives ('Hugo's boar signet ring') and proper names ('Rook & Lantern mug') keep their capitals."""
+    words = str(name).split()
+    if not words:
+        return 'it'
+    if words[0].endswith(("'s", "’s")):
+        return ' '.join(words)
+    if words[0].lower() in ('a', 'an', 'the'):
+        words = words[1:] or ['item']
+    proper = {w for place in case.get('setting', {}).get('places', []) for w in str(place.get('name', '')).split()}
+    proper |= {w for p in case.get('people', []) for w in str(p.get('name', '')).split()}
+    first = words[0] if words[0] in proper or (len(words) > 1 and words[1] == '&') else words[0][:1].lower() + words[0][1:]
+    return ' '.join(['the', first, *words[1:]])
+
+
+def holder_wording(case, item, people):
+    """Title and text of the public sign saying who had an item (game shows it once a clue about the item is understood)."""
+    items = {o['id']: o.get('name', _words(o['id'])) for o in case.get('objects', [])}
+    thing = item_phrase(case, items.get(item, _words(item)))
+    names = re.sub(r'\bThe (?=[A-Z])', 'the ', _names(case, people)) if people else ''   # 'the Reverend Thomas Hale'
+    return f'Who had {thing}', (f'Everyone knows only {names} had {thing}.' if people else f'No one had {thing}.')
 
 
 def _names(case, ids):
@@ -150,9 +176,7 @@ def migrate(case):
 
     for i in sorted({x['item'] for x in claims if x['pred'] == 'culpritHad'}):
         ps = holders.get(i, [])
-        add(f'pub_holders_{i}', f'Who had {items.get(i, _words(i))}',
-            f"Only {_names(c, ps)} had {items.get(i, _words(i))}." if ps else f"No one had {items.get(i, _words(i))}.",
-            {'pred': 'onlyHad', 'item': i, 'people': ps})
+        add(f'pub_holders_{i}', *holder_wording(c, i, ps), {'pred': 'onlyHad', 'item': i, 'people': ps})
     for x in [x for x in claims if x['pred'] == 'culpritRelated']:
         for a in actors:
             if not any(r['a'] == a and r['rel'] == x['rel'] and (not x.get('b') or r.get('b') == x['b']) for r in c.get('relations', [])):

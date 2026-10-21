@@ -233,6 +233,41 @@ def publication_certificate_errors(case):
     return errors
 
 
+def held_back_public(case, A=None):
+    """{public sign id: [trigger ids]} for public knowledge about who held an item that decides nothing until a clue about
+    that item is understood. The game records such a sign only when a trigger is understood (kernel.mjs heldBackPublic,
+    which this mirrors): told at the start it would name a suspect before any such clue is found."""
+    from refine import analyse, survivors, closure_dependent
+    from claims import claim_of
+    A = A or analyse(case)
+    maxd = max(A['eff'].values()) if A['eff'] else 0
+    out = {}
+    for p in case['signs']:
+        c = claim_of(p) if p.get('kind') == 'public' else None
+        if not c or not c.get('item') or p.get('defeats'):
+            continue
+        triggers = sorted(x['id'] for x in case['signs'] if x.get('kind') != 'public' and (claim_of(x) or {}).get('item') == c['item'])
+        if not triggers:
+            continue
+        without = frozenset().union(*(closure_dependent(case, t) for t in triggers))
+        also = without | {p['id']}
+        if all(sorted(survivors(case, A, d, without)) == sorted(survivors(case, A, d, also)) for d in [*range(maxd + 1), None]):
+            out[p['id']] = triggers
+    return out
+
+
+def public_spoiler_errors(case):
+    """Public knowledge shown at the start must not tie a suspect to the culprit's item: a public sign about an item a
+    culprit claim names is allowed only when the game can hold it back until a clue about the item is understood."""
+    from claims import claim_of
+    culprit_items = {(claim_of(x) or {}).get('item') for x in case['signs'] if (claim_of(x) or {}).get('pred') == 'culpritHad'}
+    held = held_back_public(case)
+    return [f"public sign {p['id']} names who had {claim_of(p)['item']}, the culprit's item, from the start: "
+            f"carry it on a clue the player finds, or make it decide nothing until a clue about the item is understood"
+            for p in case['signs'] if p.get('kind') == 'public' and (claim_of(p) or {}).get('item') in culprit_items - {None}
+            and p['id'] not in held]
+
+
 def deterministic_gate(case):
     """Network-free Python/JavaScript/Z3 certification: the ordinary blocking publication gate."""
     import case_oracle
@@ -247,7 +282,7 @@ def deterministic_gate(case):
     z = case_oracle.check_case(case)
     errors = ([f'python: {error}' for error in py.get('errors', [])]
               + [f'js: {error}' for error in js.get('errors', [])]
-              + z['errors'] + question_alias_errors(case))
+              + z['errors'] + question_alias_errors(case) + public_spoiler_errors(case))
     if py['ok'] and js['ok'] and (py['solve_depth'], py['pillars']) != (js['solveDepth'], js['pillars']):
         errors.append(f"python and js disagree: {py['solve_depth']}/{py['pillars']} vs {js['solveDepth']}/{js['pillars']}")
     return {'ok': not errors, 'errors': errors, 'python': py, 'js': js, 'z3': z}

@@ -193,7 +193,12 @@ Two pieces of content bear on fairness, and both are what everyone in the villag
 player holds from the start and which appear in the notebook as common knowledge. One gives when the crime happened
 (the crime window), which the player needs in order to use alibis. The others give each suspect's physical traits that
 a clue tests (also shown in each person's description), because a trait clue can rule someone out only if the player
-knows who has the trait. Reasoning uses nothing else the player is not told. Other generated lines are claimless
+knows who has the trait. A third kind says who had an item a clue ties to the culprit ("only Dr Marsh had the
+surgery key"). Shown at the start it would name a suspect before any such clue is found, so the notebook records it
+only when the player first understands a clue about that item; certification still holds it from the start, which is
+exact because the game publishes such a sign only after proving it decides nothing without those clues
+(`heldBackPublic` in both kernels; the publish gate refuses one that would have to be shown at the start). Reasoning uses
+nothing else the player is not told. Other generated lines are claimless
 and do not enter certification; they are checked mechanically (no times or numbers that are not in the source, length
 limits, no second-person address in third-person lines).
 

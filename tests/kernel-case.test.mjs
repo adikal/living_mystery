@@ -434,3 +434,38 @@ test('a hint never quotes a question that no longer leads to the account', () =>
   assert.equal(h.id, 't_more_3');
   assert.doesNotMatch(h.levels[1], /account of last night/i, 'the completed night question is not quoted again');
 });
+
+test('who had an item is recorded when a clue about it is understood, never at the start, in every case', async () => {
+  const {heldBackPublic} = await import('../dist/mk/kernel.mjs');
+  const {readdirSync} = await import('node:fs');
+  const files = ['../dist/cases/generated/', '../dist/cases/generated/live/'].flatMap(d => { try { return readdirSync(new URL(d, import.meta.url)).filter(f => f.startsWith('mk-') && f.endsWith('.json')).map(f => new URL(d + f, import.meta.url)); } catch { return []; } });
+  let checked = 0;
+  for (const f of files) {
+    const kc = JSON.parse(readFileSync(f, 'utf8')), held = heldBackPublic(kc);
+    const culpritItems = new Set(kc.signs.filter(x => x.claim?.pred === 'culpritHad').map(x => x.claim.item));
+    for (const p of kc.signs.filter(x => x.kind === 'public' && culpritItems.has(x.claim?.item)))
+      assert.ok(held[p.id], `${kc.id}: ${p.id} would name who had the culprit's item from the start`);
+    const s = createSession(1, registerKernelCase(kc)), B = caseTables(s).behavior;
+    for (const [pid, triggers] of Object.entries(held)) {
+      checked++;
+      assert.ok(!s.world.player.evidence.some(e => e.clue === pid), `${kc.id}: ${pid} is not in the opening notebook`);
+      assert.ok(B.caseStatus(s), 'hints and status still hold it');
+      // give the player a trigger and everything it needs, then any action: the fact is recorded
+      const t = kc.signs.find(x => x.id === triggers[0]), need = new Set([t.id, ...(t.needs ?? []).filter(n => kc.signs.some(x => x.id === n))]);
+      const run = structuredClone(s);
+      for (const id of need) if (!run.world.player.evidence.some(e => e.clue === id)) run.world.player.evidence.push({clue: id});
+      B.afterAction(run, run.events.at(-1).id);
+      assert.ok(run.world.player.evidence.some(e => e.clue === pid), `${kc.id}: ${pid} is recorded once ${t.id} is understood`);
+    }
+  }
+  assert.ok(checked >= 10, `held-back facts checked in ${checked} cases`);
+});
+
+test('The Lamb Asleep Upstairs opens without naming who had the button', (t) => {
+  const file = new URL('../dist/cases/generated/live/mk-live-20261003-082813.json', import.meta.url);
+  if (!existsSync(file)) return t.skip('generated on this machine only (live cases are not shipped)');
+  const kc = JSON.parse(readFileSync(file, 'utf8'));
+  const s = createSession(1, registerKernelCase(kc));
+  const opening = s.events.filter(e => e.kind === 'evidence').map(e => e.playerText).join('\n');
+  assert.doesNotMatch(opening, /button|Hale/);
+});
