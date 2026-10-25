@@ -7,6 +7,87 @@ fair: there is always a way to the one true answer, and nothing anyone says brea
 
 The research behind it is called **SleuthCraft**: certified living mysteries with solver-checked language models.
 
+## Quick start
+
+You need Python 3.12 or later. Run everything from the repository root.
+
+**1. Install (once).**
+
+```sh
+python3 -m venv .venv
+.venv/bin/pip install -r server/requirements-solver.txt boto3
+```
+
+**2. Play without AI (no key or credentials).** Characters give their written answers from the menu of questions.
+
+```sh
+.venv/bin/python server/static_server.py      # then open http://127.0.0.1:8000
+```
+
+**3. Choose where the AI runs.** The AI characters and the living morning go through a local model proxy, which holds
+your key or credentials; the browser never sees them, and the proxy sends a key only to its own provider and never
+logs it. Keep keys out of the repository (export them in your shell, or `source` a file kept elsewhere). Use one of:
+
+- **A Claude API key** (from the [Claude Console](https://console.anthropic.com)). It runs the models the game was
+  tuned on, Claude Sonnet 4.5 and Claude Haiku 4.5:
+
+  ```sh
+  export ANTHROPIC_API_KEY=sk-ant-...
+  LM_PROVIDER=anthropic .venv/bin/python server/llm_proxy.py
+  ```
+
+  Anthropic retires Sonnet 4.5 from its API on 30 November 2026. After that, add
+  `LM_ANTHROPIC_MODEL=claude-sonnet-5-5` (not yet tested with the game).
+
+- **An OpenAI API key** (from the [OpenAI platform](https://platform.openai.com)). The default model is `gpt-6-luna` with
+  low reasoning effort; choose another with `LM_OPENAI_MODEL`:
+
+  ```sh
+  export OPENAI_API_KEY=sk-...
+  LM_PROVIDER=openai .venv/bin/python server/llm_proxy.py
+  ```
+
+  Any OpenAI-compatible service works the same way with `OPENAI_BASE_URL` (for example
+  `https://openrouter.ai/api/v1` and that service's key); a server on this machine (`http://127.0.0.1:<port>/v1`) needs
+  no key. The game's prompts were tuned on Claude, so expect more replies to fall back to written lines on other models.
+
+- **Amazon Bedrock** (AWS credentials). This is also what generating new cases needs. You need Bedrock in `us-west-2`
+  with access to Claude Sonnet 4.5 and Claude Haiku 4.5 (request both under *Model access* in the Bedrock console), and
+  `bedrock:InvokeModel` on those models and their `us.` cross-region inference profiles. Give the proxy credentials
+  through a named profile (`aws configure --profile living-mystery` with access keys, or `aws configure sso --profile
+  living-mystery` and then `aws sso login --profile living-mystery`) or the usual environment variables
+  (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN` for temporary keys):
+
+  ```sh
+  aws sts get-caller-identity --profile living-mystery      # optional: check the credentials
+  AWS_PROFILE=living-mystery AWS_REGION=us-west-2 .venv/bin/python server/llm_proxy.py
+  ```
+
+  Environment variables take precedence over `AWS_PROFILE`; if the proxy uses the wrong account, `unset` them.
+  Temporary credentials usually expire within hours. For long sessions, use SSO or a profile with a self-renewing
+  `credential_process`.
+
+**4. Start the other servers**, each in its own terminal, next to the proxy from step 3 (port 8787):
+
+```sh
+.venv/bin/python server/static_server.py                                # the game     :8000
+.venv/bin/python server/director_server.py                              # Z3 checks    :8788
+AWS_PROFILE=living-mystery .venv/bin/python server/generator_server.py  # optional, Bedrock only: new cases :8789
+```
+
+`curl http://127.0.0.1:8787/health` shows the proxy's provider and models for each role.
+
+**5. Turn on AI in the game.** Open http://127.0.0.1:8000, then **Menu → AI characters…**: keep the endpoint
+`http://127.0.0.1:8787`, tick *Enable character reasoning and free-text conversation*, and save. Optionally, **Menu →
+World Director… → Enable Z3 turn checks**. Choose a case under **Menu → Choose a case configuration…**: six are offered,
+one easy, two medium and three hard.
+
+**If the characters stop answering in their own words**, look at `logs/proxy.log`. On a Claude or OpenAI key it names
+the problem and the setting to fix: *the API key was refused* (check the key), or *model … was not found* (choose
+another model). On Bedrock, `ExpiredToken` means the credentials ran out (renew them and restart the proxy), and
+`AccessDenied` means model access or IAM permission is missing, or the region is wrong. A proxy that will not start
+says which setting is missing. Always open the game through the server at port 8000, never as a file.
+
 ## What is different
 
 Most games that use language models let the model invent freely and hope it stays consistent. In a mystery that
@@ -36,22 +117,15 @@ Living Mystery is built the other way round.
 The [living technical report](dist/report/index.html) explains each layer; [docs/architecture.md](docs/architecture.md)
 gives the engine contracts.
 
-## Play
+## Playing, and the local servers
 
-```sh
-python3 server/static_server.py          # the game, at http://127.0.0.1:8000
-```
-
-That is enough for scripted play with the original case, *The Last Bell*, and the shipped generated cases; it makes no
-model requests. For AI characters, the living morning and case generation, run the local servers as well (they need
-AWS credentials with Bedrock access, and a Python environment with the solver):
-
-```sh
-python3 -m venv .venv && .venv/bin/pip install -r server/requirements-solver.txt boto3
-.venv/bin/python server/llm_proxy.py          # characters and director     :8787
-.venv/bin/python server/director_server.py    # Z3 checks                   :8788
-.venv/bin/python server/generator_server.py   # new cases (several minutes) :8789
-```
+The game server alone is enough for scripted play with the original case, *The Last Bell*, and the six generated cases
+in the menu (retired cases are kept in `dist/cases/archive/`); it makes no model requests. The model proxy adds AI
+characters and the living morning (on Bedrock, the Claude API, the OpenAI API or a compatible one, or a local model),
+the director server adds Z3 checks, and the generator server adds new cases, which take several minutes each and always
+use Bedrock (setup is in the [quick start](#quick-start)). `LM_PROVIDER` sets where every role goes; `LM_ROUTES` sends
+single roles elsewhere, for example `LM_ROUTES="checker=anthropic:claude-sonnet-4-5-20250929"`. The proxy's module
+docstring and `server/llm_backends.py` list every setting.
 
 **These servers are for this machine only.** Each binds to 127.0.0.1 and answers only requests whose `Host` is its own
 (`127.0.0.1:<port>` or `localhost:<port>`), so a page on another name that resolves to 127.0.0.1 (DNS rebinding) is
@@ -80,10 +154,16 @@ The proxy prints its routes on start and reports them at `GET /health`, with the
 Case generation and the playtest tools always use Bedrock.
 
 In the game: choose a case from the menu, or **✨ Generate a new deep case**. Talk to people with the listed questions
-or in your own words, examine what you find, show it to people, and take your case to the constable. The menu never
-offers two questions that ask the same thing. The notebook's **Hints** tab gives one nudge at a time; a hint about
-what someone knows names the question that actually draws it out. **Menu → 🐞 Flag an issue** saves a note and the
-game state to `logs/game.log`.
+or in your own words, examine what you find, show it to people, and take your case to the constable. The constable is
+on your side: he briefs you (in medium and hard cases he sends you only to the doctor), never lies and holds nothing
+back. The menu never offers two questions that ask the same thing. Someone caught in a lie owns up and says why;
+someone behaving oddly turns your first question aside, but pressed again gives the reason. What a person keeps (the
+doctor's notes, the dead man's effects) they hand over when you have earned it, and shown a clue that needs one of
+their own findings they compare the two for you. The notebook's **Hints**
+tab gives one nudge at a time; a hint about what someone knows names the question that actually draws it out. When the
+constable accepts your case, the closing file tells you what you missed: why each innocent person lied, and what each
+odd behaviour you did not get to the bottom of really was. **Menu → 🐞 Flag an issue** saves a note and the game state
+to `logs/game.log`.
 
 ## Improving the game by playing it
 
@@ -125,7 +205,7 @@ artifact and whether it was present when the batch finished, and every batch end
 
 ## Documentation
 
-- [Technical report](dist/report/index.html) (edition 0.26; [continuous edition](dist/report/complete.html)): the
+- [Technical report](dist/report/index.html) (edition 0.27; [continuous edition](dist/report/complete.html)): the
   connected argument, with diagrams; sources in [docs/report/](docs/report/index.md).
 - [Claims](docs/claims.md): the language of clues (eleven predicates over facts that change with events), how a claim's
   truth is computed in the history, and why reasoning from what the player knows is sound and complete.
@@ -153,10 +233,13 @@ artifact and whether it was present when the batch finished, and every batch end
 
 ## Tests and limits
 
+The tests need Node 20 or later, and `pytest` in the environment (`.venv/bin/pip install pytest`).
+
 ```sh
-npm test                                         # 281 JavaScript tests
-.venv/bin/python -m pytest tests/ -q             # 25 Python tests
-(cd tools/refine-c && ../../.venv/bin/python parity.py)   # the Python and JS kernels agree on 443 cases
+npm test                                                   # 365 JavaScript tests
+.venv/bin/python -m pytest tests/ -q                       # Python tests: servers, solver, oracle, playtest tools
+(cd tools/refine-c && ../../.venv/bin/python -m pytest -q)  # generation and publishing tests
+(cd tools/refine-c && ../../.venv/bin/python parity.py)     # the Python and JS kernels agree on 443 cases
 npm run docs:check
 ```
 

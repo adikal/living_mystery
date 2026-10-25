@@ -1,0 +1,1971 @@
+{
+ "title": "A Tin from Fortnum's",
+ "victim": "dora",
+ "story": "Twenty years ago Dorothy Pruett kept back a soldier's letters to his sweetheart and told the village he had jilted her. Now that sweetheart has come back under a widow's name, carrying a tin of shortbread.",
+ "setting": {
+  "name": "Bellweather",
+  "era": "An English village, 1932",
+  "summary": "A small English village: a square, a manor with its greenhouse and boathouse on the river, an inn, the church vestry, a doctor's surgery, a post office, a railway halt and a disused mill. Someone is dead; the investigation begins the next morning.",
+  "places": [
+   {
+    "id": "square",
+    "name": "Village square",
+    "called": "the village square"
+   },
+   {
+    "id": "manor",
+    "name": "Vale Manor"
+   },
+   {
+    "id": "inn",
+    "name": "The Rook & Lantern"
+   },
+   {
+    "id": "greenhouse",
+    "name": "The greenhouse"
+   },
+   {
+    "id": "vestry",
+    "name": "St. Alden’s vestry"
+   },
+   {
+    "id": "surgery",
+    "name": "Dr Marsh’s surgery"
+   },
+   {
+    "id": "halt",
+    "name": "Bellweather Halt"
+   },
+   {
+    "id": "post",
+    "name": "The post office"
+   },
+   {
+    "id": "mill",
+    "name": "Alder Mill"
+   },
+   {
+    "id": "boathouse",
+    "name": "The boathouse"
+   }
+  ],
+  "links": [
+   {
+    "a": "square",
+    "b": "manor",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "inn",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "vestry",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "surgery",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "post",
+    "minutes": 2
+   },
+   {
+    "a": "square",
+    "b": "halt",
+    "minutes": 6
+   },
+   {
+    "a": "manor",
+    "b": "greenhouse",
+    "minutes": 3
+   },
+   {
+    "a": "manor",
+    "b": "boathouse",
+    "minutes": 6
+   },
+   {
+    "a": "inn",
+    "b": "greenhouse",
+    "minutes": 6
+   },
+   {
+    "a": "inn",
+    "b": "post",
+    "minutes": 3
+   },
+   {
+    "a": "greenhouse",
+    "b": "mill",
+    "minutes": 7
+   },
+   {
+    "a": "vestry",
+    "b": "halt",
+    "minutes": 5
+   },
+   {
+    "a": "surgery",
+    "b": "post",
+    "minutes": 3
+   },
+   {
+    "a": "halt",
+    "b": "mill",
+    "minutes": 5
+   },
+   {
+    "a": "mill",
+    "b": "boathouse",
+    "minutes": 4
+   }
+  ],
+  "roles": {
+   "examiner": "iris",
+   "constable": "bell"
+  },
+  "day": {
+   "evening": 1080,
+   "morning": 1740,
+   "start": 1920
+  }
+ },
+ "rules": [],
+ "people": [
+  {
+   "id": "dora",
+   "name": "Dorothy Pruett",
+   "role": "The postmistress",
+   "traits": {},
+   "pronoun": "she",
+   "address": "Miss Pruett",
+   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people’s business.",
+   "public": "The postmistress. Every letter, parcel and telegram in Bellweather passes over her counter, and she forgets nothing.",
+   "home": "post",
+   "role_words": [
+    "postmistress",
+    "Dora"
+   ]
+  },
+  {
+   "id": "vera",
+   "name": "Vera Lacey",
+   "role": "A newcomer, lodging at the Rook",
+   "traits": {
+    "born_name": "Vera Ashby"
+   },
+   "pronoun": "she",
+   "address": "Mrs Lacey",
+   "voice": "Low, amused and worldly: a London polish over something harder. Answers a question with a question and watches your face while you answer.",
+   "public": "A widow down from London three weeks ago, lodging in the Rook’s back bedroom. Says she is sketching old churches for a book, and asks a great many questions.",
+   "home": "inn",
+   "role_words": [
+    "newcomer",
+    "lodger",
+    "widow"
+   ]
+  },
+  {
+   "id": "jonah",
+   "name": "Jonah Reed",
+   "role": "The boathouse keeper",
+   "traits": {},
+   "pronoun": "he",
+   "address": "Mr Reed",
+   "voice": "Slow, weathered and wry; a river man who speaks in the present tense and weighs every word like a stone.",
+   "public": "Keeper of the manor’s boathouse and ferryman when the river is up. He knows the water and keeps his own counsel.",
+   "home": "boathouse",
+   "role_words": [
+    "boatman",
+    "boathouse keeper",
+    "ferryman"
+   ]
+  },
+  {
+   "id": "silas",
+   "name": "Silas Voss",
+   "role": "The solicitor",
+   "traits": {},
+   "pronoun": "he",
+   "address": "Mr Voss",
+   "voice": "Measured, formal and faintly amused; speaks in tidy clauses and likes a Latin tag. Never rambles.",
+   "public": "A precise, courteous solicitor who keeps an office in the vestry and handles the affairs of half the parish.",
+   "home": "vestry",
+   "role_words": [
+    "solicitor"
+   ]
+  },
+  {
+   "id": "vicar",
+   "name": "The Reverend Thomas Hale",
+   "role": "The vicar",
+   "traits": {},
+   "pronoun": "he",
+   "address": "Mr Hale",
+   "voice": "Gentle and rambling, with a scholar’s digressions and a surprising steel when conscience is touched.",
+   "public": "Vicar of St. Alden’s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
+   "home": "vestry",
+   "role_words": [
+    "vicar",
+    "rector",
+    "parson"
+   ]
+  },
+  {
+   "id": "iris",
+   "name": "Dr Iris Marsh",
+   "role": "The village doctor",
+   "traits": {},
+   "pronoun": "she",
+   "address": "Dr Marsh",
+   "voice": "Clinical and direct, with brisk warmth underneath; says exactly what she observed and no more.",
+   "public": "The village doctor. Methodical and direct; she is called whenever anyone in Bellweather is hurt or ill.",
+   "home": "surgery",
+   "role_words": [
+    "doctor"
+   ]
+  },
+  {
+   "id": "bell",
+   "name": "Arthur Bell",
+   "role": "The village constable",
+   "traits": {},
+   "pronoun": "he",
+   "address": "Constable Bell",
+   "voice": "A gruff country constable: terse, dry and matter-of-fact, with a soft spot he hides badly.",
+   "public": "The village constable. He has secured the scene and asked you to investigate; he will hear an accusation when you can back it with evidence.",
+   "home": "square",
+   "role_words": [
+    "constable"
+   ]
+  },
+  {
+   "id": "ada",
+   "name": "Ada Finch",
+   "role": "The innkeeper",
+   "traits": {},
+   "pronoun": "she",
+   "address": "Mrs Finch",
+   "voice": "Warm, chatty and colloquial; calls people \"love\", runs on a little, and enjoys a bit of news more than she should.",
+   "public": "Proprietor of the Rook & Lantern. She knows everyone’s habits and most of their business.",
+   "home": "inn",
+   "role_words": [
+    "innkeeper",
+    "landlady"
+   ]
+  }
+ ],
+ "objects": [
+  {
+   "id": "shortbread_tin",
+   "name": "A tartan shortbread tin",
+   "desc": "A small Fortnum & Mason tin of Scotch shortbread, tartan lid."
+  },
+  {
+   "id": "arsenic",
+   "name": "A paper of white powder",
+   "desc": "A folded paper of arsenical rat powder."
+  },
+  {
+   "id": "vera_diary",
+   "name": "A diary",
+   "desc": "A worn leather diary kept in a trunk."
+  },
+  {
+   "id": "dora_notebook",
+   "name": "A pocket notebook",
+   "desc": "Miss Pruett's small black notebook of payments."
+  },
+  {
+   "id": "dora_keys",
+   "name": "A bunch of keys",
+   "desc": "Miss Pruett's keys on a steel chain."
+  },
+  {
+   "id": "salmon_net",
+   "name": "A wet salmon net",
+   "desc": "A fine-meshed salmon net, still wet, rolled in sacking with a fresh fish inside."
+  },
+  {
+   "id": "silas_carbon",
+   "name": "A carbon copy of a letter",
+   "desc": "A carbon copy of a letter to the Hartley trustees, pinned to a jeweller's receipt for a gold half-hunter watch."
+  },
+  {
+   "id": "vera_coat",
+   "name": "A grey coat with a fox collar",
+   "desc": "A long grey London coat with a fox-fur collar."
+  }
+ ],
+ "vocabulary": {
+  "relations": [
+   {
+    "rel": "wronged",
+    "inverse": "wronged_by"
+   },
+   {
+    "rel": "blackmailing",
+    "inverse": "blackmailed_by"
+   },
+   {
+    "rel": "informed_on",
+    "inverse": "informed_on_by"
+   },
+   {
+    "rel": "threatened",
+    "inverse": "threatened_by"
+   }
+  ]
+ },
+ "relations": [
+  {
+   "a": "dora",
+   "rel": "wronged",
+   "b": "vera"
+  },
+  {
+   "a": "dora",
+   "rel": "blackmailing",
+   "b": "silas"
+  },
+  {
+   "a": "dora",
+   "rel": "informed_on",
+   "b": "jonah"
+  },
+  {
+   "a": "dora",
+   "rel": "threatened",
+   "b": "vicar"
+  }
+ ],
+ "holdings": [
+  {
+   "person": "vera",
+   "item": "shortbread_tin"
+  },
+  {
+   "person": "vera",
+   "item": "arsenic"
+  },
+  {
+   "person": "vera",
+   "item": "vera_diary"
+  },
+  {
+   "person": "dora",
+   "item": "dora_notebook"
+  },
+  {
+   "person": "dora",
+   "item": "dora_keys"
+  },
+  {
+   "person": "vera",
+   "item": "vera_coat"
+  }
+ ],
+ "question": {
+  "text": "Who killed Dorothy Pruett?",
+  "candidates": [
+   {
+    "id": "c_jonah",
+    "label": "Jonah Reed",
+    "facts": {
+     "actor": "jonah",
+     "method": "poison",
+     "motive": "revenge"
+    }
+   },
+   {
+    "id": "c_silas",
+    "label": "Silas Voss",
+    "facts": {
+     "actor": "silas",
+     "method": "poison",
+     "motive": "fear_of_exposure"
+    }
+   },
+   {
+    "id": "c_vera",
+    "label": "Vera Lacey",
+    "facts": {
+     "actor": "vera",
+     "method": "poison",
+     "motive": "revenge"
+    }
+   },
+   {
+    "id": "c_vicar",
+    "label": "The Reverend Thomas Hale",
+    "facts": {
+     "actor": "vicar",
+     "method": "poison",
+     "motive": "fear_of_exposure"
+    }
+   }
+  ],
+  "truth": "c_vera",
+  "crime": {
+   "event": "e_crime",
+   "place": "vestry",
+   "window": [
+    1190,
+    1230
+   ]
+  }
+ },
+ "attitudes": [
+  {
+   "id": "a_vera_knows",
+   "agent": "vera",
+   "mode": "knows",
+   "content": "Dora held back Tom's letters from France in 1916 and told the village he had jilted her.",
+   "because": []
+  },
+  {
+   "id": "a_vera_revenge",
+   "agent": "vera",
+   "mode": "wants",
+   "content": "Dora to pay with her life for the ruined years.",
+   "because": [
+    "a_vera_knows"
+   ],
+   "motive": "revenge"
+  },
+  {
+   "id": "a_vera_intend",
+   "agent": "vera",
+   "mode": "intends",
+   "content": "To dust the shortbread with arsenic and give it to Dora at the vestry.",
+   "because": [
+    "a_vera_revenge"
+   ]
+  },
+  {
+   "id": "a_vera_safe",
+   "agent": "vera",
+   "mode": "believes",
+   "content": "No one in Bellweather knows Mrs Lacey was once Vera Ashby.",
+   "because": []
+  },
+  {
+   "id": "a_vera_home",
+   "agent": "vera",
+   "mode": "intends",
+   "content": "To spend the evening quietly at the Rook.",
+   "because": []
+  },
+  {
+   "id": "a_dora_duty",
+   "agent": "dora",
+   "mode": "intends",
+   "content": "To close the post office and do the churchwarden's accounts in the vestry.",
+   "because": []
+  },
+  {
+   "id": "a_silas_fear",
+   "agent": "silas",
+   "mode": "fears",
+   "content": "Dora will reveal the client money he borrowed.",
+   "because": []
+  },
+  {
+   "id": "a_silas_chess",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "To work late, then play his Tuesday chess with Dr Marsh.",
+   "because": []
+  },
+  {
+   "id": "a_iris_routine",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "To keep evening surgery and play chess with Mr Voss.",
+   "because": []
+  },
+  {
+   "id": "a_jonah_grudge",
+   "agent": "jonah",
+   "mode": "feels",
+   "content": "Bitter that Dora informed on his salmon netting.",
+   "because": []
+  },
+  {
+   "id": "a_jonah_work",
+   "agent": "jonah",
+   "mode": "intends",
+   "content": "To mend oars and ready the punt for the flooded lane.",
+   "because": []
+  },
+  {
+   "id": "a_vicar_fear",
+   "agent": "vicar",
+   "mode": "fears",
+   "content": "Dora will write to the bishop about the mislaid restoration fund.",
+   "because": []
+  },
+  {
+   "id": "a_vicar_funeral",
+   "agent": "vicar",
+   "mode": "intends",
+   "content": "To arrange with Reed a river passage for Mrs Barlow's coffin.",
+   "because": []
+  },
+  {
+   "id": "a_vicar_matins",
+   "agent": "vicar",
+   "mode": "intends",
+   "content": "To prepare the vestry for early service.",
+   "because": []
+  },
+  {
+   "id": "a_vicar_report",
+   "agent": "vicar",
+   "mode": "wants",
+   "content": "To fetch the constable at once.",
+   "because": []
+  },
+  {
+   "id": "a_bell_duty",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "To walk his rounds and see to the death properly.",
+   "because": []
+  },
+  {
+   "id": "a_ada_routine",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "To keep the bar at the Rook.",
+   "because": []
+  },
+  {
+   "id": "a_ada_knows_tin",
+   "agent": "ada",
+   "mode": "knows",
+   "content": "The tartan tin came in Mrs Lacey's trunk and sat on her washstand; nobody else had one.",
+   "because": []
+  },
+  {
+   "id": "a_iris_duty",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "To examine the body.",
+   "because": []
+  },
+  {
+   "id": "a_bell_secure",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "To lock the vestry so that no one disturbs the scene, and hand the key only to the investigator.",
+   "because": [
+    "a_bell_duty"
+   ]
+  },
+  {
+   "id": "a_ada_discreet",
+   "agent": "ada",
+   "mode": "wants",
+   "content": "To keep the Rook's name out of police business and not to gossip about a paying guest without good cause.",
+   "because": []
+  },
+  {
+   "id": "a_vera_cover",
+   "agent": "vera",
+   "mode": "intends",
+   "content": "To swear she never left the Rook that evening, and steer eyes toward the boatman Dora informed on.",
+   "because": [
+    "a_vera_intend",
+    "a_vera_safe"
+   ]
+  },
+  {
+   "id": "a_jonah_poach",
+   "agent": "jonah",
+   "mode": "intends",
+   "content": "To net salmon again before dawn while the flood brings them up, fine or no fine.",
+   "because": [
+    "a_jonah_grudge"
+   ]
+  },
+  {
+   "id": "a_jonah_hide",
+   "agent": "jonah",
+   "mode": "fears",
+   "content": "Constable Bell will find he is netting again and have him fined twice over, or lose him his place.",
+   "because": [
+    "a_jonah_poach"
+   ]
+  },
+  {
+   "id": "a_silas_shame",
+   "agent": "silas",
+   "mode": "feels",
+   "content": "Ashamed of the Hartley trust money he borrowed, and afraid anyone will learn he sold his father's watch to repay it.",
+   "because": [
+    "a_silas_fear"
+   ]
+  },
+  {
+   "id": "a_silas_repay",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "To repay the Hartley trust in full and confess the loan to its trustees before Dora can ask for more.",
+   "because": [
+    "a_silas_fear",
+    "a_silas_shame"
+   ]
+  },
+  {
+   "id": "a_vera_muffle",
+   "agent": "vera",
+   "mode": "intends",
+   "content": "To go out with her collar up and her hat pulled low, so that no one in the square could put a face to her.",
+   "because": [
+    "a_vera_intend",
+    "a_vera_safe"
+   ]
+  },
+  {
+   "id": "a_iris_test",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "To test the biscuits for arsenic at her surgery before committing anything to paper.",
+   "because": [
+    "a_iris_duty"
+   ]
+  },
+  {
+   "id": "a_bell_coroner",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "To wire the county coroner from the Halt's telegraph and wait there for his reply, keeping the vestry key on him.",
+   "because": [
+    "a_bell_duty",
+    "a_bell_secure"
+   ]
+  },
+  {
+   "id": "a_bell_quiet",
+   "agent": "bell",
+   "mode": "wants",
+   "content": "To keep the village from knowing the police-house stands empty and the vestry key is away with him, so he leaves word privately, telling only the vicar.",
+   "because": [
+    "a_bell_secure",
+    "a_bell_coroner"
+   ]
+  }
+ ],
+ "events": [
+  {
+   "id": "e_ada_bar",
+   "type": "work",
+   "agent": "ada",
+   "others": [],
+   "place": "inn",
+   "start": 1080,
+   "end": 1440,
+   "causedBy": "a_ada_routine",
+   "summary": "Ada keeps the bar at the Rook all evening.",
+   "effects": []
+  },
+  {
+   "id": "e_vera_supper",
+   "type": "meal",
+   "agent": "vera",
+   "others": [],
+   "place": "inn",
+   "start": 1080,
+   "end": 1140,
+   "causedBy": "a_vera_home",
+   "summary": "Vera takes supper in the Rook's parlour.",
+   "effects": []
+  },
+  {
+   "id": "e_vera_prepare",
+   "type": "prepare",
+   "agent": "vera",
+   "others": [],
+   "place": "inn",
+   "start": 1145,
+   "end": 1175,
+   "causedBy": "a_vera_intend",
+   "summary": "In her back bedroom Vera dusts the shortbread with arsenic under the sugar.",
+   "effects": []
+  },
+  {
+   "id": "e_dora_close",
+   "type": "work",
+   "agent": "dora",
+   "others": [],
+   "place": "post",
+   "start": 1080,
+   "end": 1150,
+   "causedBy": "a_dora_duty",
+   "summary": "Dora closes up and sorts the evening post.",
+   "effects": []
+  },
+  {
+   "id": "e_silas_office",
+   "type": "work",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1080,
+   "end": 1100,
+   "causedBy": "a_silas_chess",
+   "summary": "Silas works late on routine papers at his vestry office.",
+   "effects": []
+  },
+  {
+   "id": "e_vicar_vestry",
+   "type": "work",
+   "agent": "vicar",
+   "others": [],
+   "place": "vestry",
+   "start": 1080,
+   "end": 1140,
+   "causedBy": "a_vicar_funeral",
+   "summary": "The vicar sorts hymn books in the vestry before going out.",
+   "effects": []
+  },
+  {
+   "id": "e_dora_accounts",
+   "type": "work",
+   "agent": "dora",
+   "others": [],
+   "place": "vestry",
+   "start": 1165,
+   "end": 1199,
+   "causedBy": "a_dora_duty",
+   "summary": "Dora sits alone over the churchwarden's ledgers.",
+   "effects": []
+  },
+  {
+   "id": "e_crime",
+   "type": "poisoning",
+   "agent": "vera",
+   "others": [
+    "dora"
+   ],
+   "place": "vestry",
+   "start": 1200,
+   "end": 1215,
+   "causedBy": "a_vera_intend",
+   "summary": "Vera calls, chats about the church, and leaves Dora the poisoned shortbread.",
+   "effects": [
+    {
+     "give": "shortbread_tin",
+     "to": "dora"
+    }
+   ],
+   "facts": {
+    "method": "poison",
+    "motive": "revenge"
+   }
+  },
+  {
+   "id": "e_vera_return",
+   "type": "rest",
+   "agent": "vera",
+   "others": [],
+   "place": "inn",
+   "start": 1240,
+   "end": 1440,
+   "causedBy": "a_vera_home",
+   "summary": "Vera returns to her room at the Rook.",
+   "effects": []
+  },
+  {
+   "id": "e_death",
+   "type": "death",
+   "agent": "dora",
+   "others": [],
+   "place": "vestry",
+   "start": 1250,
+   "end": 1260,
+   "causedBy": "nature",
+   "summary": "Dora collapses and dies alone among the parish ledgers.",
+   "effects": []
+  },
+  {
+   "id": "e_chess",
+   "type": "visit",
+   "agent": "silas",
+   "others": [
+    "iris"
+   ],
+   "place": "surgery",
+   "start": 1170,
+   "end": 1290,
+   "causedBy": "a_silas_chess",
+   "summary": "Silas plays chess with Dr Marsh at the surgery.",
+   "effects": []
+  },
+  {
+   "id": "e_iris_surgery",
+   "type": "work",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1080,
+   "end": 1320,
+   "causedBy": "a_iris_routine",
+   "summary": "Dr Marsh keeps evening surgery and stays in.",
+   "effects": []
+  },
+  {
+   "id": "e_jonah_oars",
+   "type": "work",
+   "agent": "jonah",
+   "others": [],
+   "place": "boathouse",
+   "start": 1080,
+   "end": 1440,
+   "causedBy": "a_jonah_work",
+   "summary": "Jonah mends oars and readies the punt.",
+   "effects": []
+  },
+  {
+   "id": "e_vicar_boathouse",
+   "type": "visit",
+   "agent": "vicar",
+   "others": [
+    "jonah"
+   ],
+   "place": "boathouse",
+   "start": 1170,
+   "end": 1290,
+   "causedBy": "a_vicar_funeral",
+   "summary": "The vicar sits with Jonah arranging the coffin's river passage.",
+   "effects": []
+  },
+  {
+   "id": "e_bell_rounds",
+   "type": "patrol",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1080,
+   "end": 1380,
+   "causedBy": "a_bell_duty",
+   "summary": "Constable Bell walks his evening rounds about the square.",
+   "effects": []
+  },
+  {
+   "id": "e_discovery",
+   "type": "discovery",
+   "agent": "vicar",
+   "others": [],
+   "place": "vestry",
+   "start": 1830,
+   "end": 1835,
+   "causedBy": "a_vicar_matins",
+   "summary": "Coming to prepare for early service, the vicar finds Dora dead.",
+   "effects": []
+  },
+  {
+   "id": "e_report",
+   "type": "report",
+   "agent": "vicar",
+   "others": [
+    "bell"
+   ],
+   "place": "square",
+   "start": 1840,
+   "end": 1845,
+   "causedBy": "a_vicar_report",
+   "summary": "The vicar tells Constable Bell in the square.",
+   "effects": []
+  },
+  {
+   "id": "e_fetch_doctor",
+   "type": "report",
+   "agent": "bell",
+   "others": [
+    "iris"
+   ],
+   "place": "surgery",
+   "start": 1850,
+   "end": 1855,
+   "causedBy": "a_bell_duty",
+   "summary": "Bell fetches Dr Marsh from the surgery.",
+   "effects": []
+  },
+  {
+   "id": "e_examination",
+   "type": "examination",
+   "agent": "iris",
+   "others": [
+    "bell",
+    "vicar"
+   ],
+   "place": "vestry",
+   "start": 1865,
+   "end": 1900,
+   "causedBy": "a_iris_duty",
+   "summary": "Dr Marsh examines the body and the vestry table.",
+   "effects": []
+  },
+  {
+   "id": "e_news",
+   "type": "report",
+   "agent": "bell",
+   "others": [
+    "ada",
+    "vera",
+    "jonah",
+    "silas"
+   ],
+   "place": "inn",
+   "start": 1910,
+   "end": 1918,
+   "causedBy": "a_bell_duty",
+   "summary": "Bell brings the news to the Rook's breakfast room.",
+   "effects": []
+  },
+  {
+   "id": "e_bell_lock",
+   "type": "secure",
+   "agent": "bell",
+   "others": [],
+   "place": "vestry",
+   "start": 1900,
+   "end": 1903,
+   "causedBy": "a_bell_secure",
+   "summary": "After the examination Bell locks the vestry door and pockets the heavy iron key.",
+   "effects": []
+  },
+  {
+   "id": "e_vera_cross",
+   "type": "walk",
+   "agent": "vera",
+   "others": [],
+   "place": "square",
+   "start": 1195,
+   "end": 1196,
+   "causedBy": "a_vera_muffle",
+   "summary": "Vera crosses the lamplit square toward Church Lane, collar up and hat low, the tartan tin wrapped under her arm.",
+   "effects": []
+  },
+  {
+   "id": "e_jonah_net",
+   "type": "poach",
+   "agent": "jonah",
+   "others": [],
+   "place": "boathouse",
+   "start": 1680,
+   "end": 1720,
+   "causedBy": "a_jonah_poach",
+   "summary": "Before dawn Jonah nets salmon off the boathouse steps, then hides the wet net in sacking under the punt.",
+   "effects": []
+  },
+  {
+   "id": "e_silas_letter",
+   "type": "write",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1100,
+   "end": 1145,
+   "causedBy": "a_silas_repay",
+   "summary": "At his vestry desk Silas writes to the Hartley trustees enclosing a draft in repayment, and files a carbon copy.",
+   "effects": []
+  },
+  {
+   "id": "e_vera_coat_back",
+   "type": "rest",
+   "agent": "vera",
+   "others": [],
+   "place": "inn",
+   "start": 1235,
+   "end": 1240,
+   "causedBy": "a_vera_muffle",
+   "summary": "Back at the Rook, Vera hangs her muddy grey coat on her bedroom wardrobe hook and doesn't brush it.",
+   "effects": []
+  },
+  {
+   "id": "e_iris_test",
+   "type": "examination",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1908,
+   "end": 1918,
+   "causedBy": "a_iris_test",
+   "summary": "At her surgery Dr Marsh runs a Marsh test on two biscuits from the tartan tin and records the result.",
+   "effects": []
+  },
+  {
+   "id": "e_bell_slate",
+   "type": "write",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1921,
+   "end": 1922,
+   "causedBy": "a_bell_coroner",
+   "summary": "Bell chalks a note saying he has gone to the Halt, and hangs the slate inside the police-house porch, out of sight.",
+   "effects": []
+  },
+  {
+   "id": "e_bell_halt",
+   "type": "wait",
+   "agent": "bell",
+   "others": [],
+   "place": "halt",
+   "start": 1929,
+   "end": 2100,
+   "causedBy": "a_bell_coroner",
+   "summary": "At Bellweather Halt Bell wires the county coroner and waits by the telegraph for a reply.",
+   "effects": []
+  },
+  {
+   "id": "e_bell_word",
+   "type": "talk",
+   "agent": "bell",
+   "others": [
+    "vicar"
+   ],
+   "place": "square",
+   "start": 1922,
+   "end": 1923,
+   "causedBy": "a_bell_quiet",
+   "summary": "Bell stops the vicar in the square and quietly tells him the slate is hung inside the police-house porch.",
+   "effects": []
+  }
+ ],
+ "signs": [
+  {
+   "id": "s_surface_vera",
+   "kind": "testimony",
+   "speaker": "vera",
+   "surface": true,
+   "deceptive": true,
+   "title": "Vera Lacey on the evening",
+   "text": "Last night? Supper in the parlour, then up to my room with my sketches for company, and never a step outside till morning. If you want someone who hated that woman, I shouldn't look at a stranger like me so much as at that boatman she had her claws into.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_why": "Claims she had supper then went to her room and never stepped outside till morning, but she actually dusted shortbread with arsenic, visited Dora to deliver poisoned shortbread, crossed the square to Church Lane with a tartan tin, and got mud on her coat - directly contradicting her claim of staying",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Vera Lacey says she had supper in the parlour and then stayed in her room all night with her sketches. Do you know if that's true?",
+   "confront": "You told me you took supper in the parlour, then went up to your room with your sketches and never stepped outside till morning. Is that the whole of it?",
+   "lines_for": "e147d11b1887"
+  },
+  {
+   "id": "s_medical",
+   "kind": "record",
+   "medical": true,
+   "medical_v": 2,
+   "source": "e_examination",
+   "at": "surgery",
+   "title": "The doctor’s examination notes",
+   "text": "Examination of the deceased shows a poison taken by mouth. Death was from a poison taken by mouth, and it occurred between ten to eight and half past eight.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1190,
+    "to": 1230
+   },
+   "reactions": {
+    "bell": "Between ten to eight and half past, you say. Poison taken by mouth—well, that fits with what I saw at the vestry table right enough. I'll see the coroner has it exact when his wire comes.",
+    "vicar": "Oh dear, oh dear—poison, taken by mouth, and in that window of time... I was sorting hymn books not an hour before, quite unknowing. It chills me to think how near I came to finding her sooner.",
+    "vera": "Poor Dora. Taken by mouth, you say—well, she did love her little treats. I was tucked up with my sketches by then, so I couldn't tell you a thing about it, really.",
+    "iris": "Yes, that's my finding exactly as written. Oral poisoning, death within that half-hour window either side of eight—the stomach contents and the timing of symptom onset bear it out precisely."
+   },
+   "to": null,
+   "show": "The examination shows the death was caused by a poison taken by mouth, occurring between ten to eight and half past eight. Does that match what you know?",
+   "art": "wound",
+   "lines_for": "7194609f4db8"
+  },
+  {
+   "id": "s_medical_iris",
+   "kind": "testimony",
+   "medical": true,
+   "medical_v": 2,
+   "speaker": "iris",
+   "source": "e_examination",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1190,
+    "to": 1230
+   },
+   "title": "Dr Marsh on the body",
+   "text": "Death was from a poison taken by mouth, and it occurred between ten to eight and half past eight.",
+   "ask": "Doctor, what did you find when you examined Miss Pruett?",
+   "to": null,
+   "show": "Dr Marsh says death came from a poison taken by mouth, between ten to eight and half past eight. Does that fit with what you saw?",
+   "confront": "You told me death came from a poison taken by mouth, between ten to eight and half past eight. Is that your firm conclusion?",
+   "lines_for": "84ed5139534f"
+  },
+  {
+   "id": "s_surface_ada",
+   "kind": "testimony",
+   "speaker": "ada",
+   "surface": true,
+   "deceptive": false,
+   "title": "Ada Finch on the evening",
+   "text": "I was behind the bar at the Rook the whole evening, love, same as always, keeping an eye on my guests and pouring for whoever came in. Can't say I left it for more than a minute all night.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Ada Finch says she was behind the bar at the Rook all evening and never left it for more than a minute. Can you confirm that?",
+   "confront": "You told me you were behind the bar at the Rook all evening and never left it for more than a minute. Is that so?",
+   "lines_for": "b0bbd4e006b4"
+  },
+  {
+   "id": "s_surface_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "surface": true,
+   "deceptive": true,
+   "title": "Arthur Bell on the evening",
+   "text": "I walked my rounds about the square same as any evening, keeping half an eye on things as I go. Nothing more to tell than that.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_why": "Says he just walked his rounds with nothing more to tell, omitting that the vicar told him about the body, that he fetched Dr Marsh, witnessed the examination, brought news to the Rook, locked the vestry and took the key, left a hidden chalk note, wired the coroner from the Halt, and secretly told t",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Constable Bell says he walked his rounds about the square same as any evening. Does that match what you saw of him?",
+   "confront": "You told me you walked your rounds about the square same as any evening, nothing more to tell. Is that really all?",
+   "lines_for": "8fa10c1423f0"
+  },
+  {
+   "id": "s_surface_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "surface": true,
+   "deceptive": true,
+   "title": "Dr Iris Marsh on the evening",
+   "text": "I kept my evening surgery as usual, and later had my chess with Mr Voss. I was about the village and the surgery, nothing out of the ordinary.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_why": "Says she just kept evening surgery and played chess, 'nothing out of the ordinary,' omitting that she was fetched by Bell to examine the body and vestry table, and that she ran a Marsh arsenic test on biscuits from the tartan tin - a significant and misleading omission given the claim nothing out of",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Dr Marsh says she kept her evening surgery and later had chess with Mr Voss. Can you confirm that was her evening?",
+   "confront": "You told me you kept your evening surgery as usual, then had chess with Mr Voss. Is that the whole of your evening?",
+   "lines_for": "073da46fb485"
+  },
+  {
+   "id": "s_surface_vicar",
+   "kind": "testimony",
+   "speaker": "vicar",
+   "surface": true,
+   "deceptive": false,
+   "title": "The Reverend Thomas Hale on the evening",
+   "text": "Oh - last night, yes. I was in the vestry a time, sorting the hymn books, and then out to see Mr Reed about poor Mrs Barlow's coffin and its passage by water. After that I went home to my own fireside, as any old man would.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "to": null,
+   "show": "The Reverend Hale says he was in the vestry, then went to see Mr Reed about Mrs Barlow's coffin, then home. Does that match what you know of him?",
+   "confront": "You told me you were in the vestry, then saw Mr Reed about Mrs Barlow's coffin, then went home. Is that the whole of your evening?",
+   "lines_for": "d0bb59d8eaba"
+  },
+  {
+   "id": "s_surface_silas",
+   "kind": "testimony",
+   "speaker": "silas",
+   "surface": true,
+   "deceptive": true,
+   "title": "Silas Voss on the evening",
+   "text": "I worked on at my desk in the vestry a good while, papers and the like, and later took my chess with Dr Marsh as I do most Tuesdays. A quiet evening, nothing more remarkable than that.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_why": "Describes a 'quiet evening, nothing more remarkable than that,' omitting that he wrote to the Hartley trustees enclosing a repayment draft and filed a carbon copy - a significant omission given the explicit claim nothing more remarkable happened.",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Silas Voss says he worked at his desk in the vestry, then took chess with Dr Marsh as usual. Does that fit with what you saw?",
+   "confront": "You told me you worked at your desk in the vestry, then took chess with Dr Marsh as usual. Is that the whole of your evening?",
+   "lines_for": "b73a4aa68785"
+  },
+  {
+   "id": "s_surface_jonah",
+   "kind": "testimony",
+   "speaker": "jonah",
+   "surface": true,
+   "deceptive": true,
+   "title": "Jonah Reed on the evening",
+   "text": "Evening, I's mending oars down the boathouse, and seeing the vicar about the coffin's passage along the river. After that it's my own time, and I keep it to myself.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_why": "Says after seeing the vicar it's 'my own time, I keep it to myself,' omitting that before dawn he netted salmon off the boathouse steps and hid the wet net under the punt - concealing a specific illicit activity under a vague claim of privacy.",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Jonah Reed says he was mending oars at the boathouse and seeing the vicar about the coffin's passage. Can you confirm that?",
+   "confront": "You told me you were mending oars at the boathouse and seeing the vicar about the coffin's passage. Is that the whole of your evening?",
+   "lines_for": "929ccb71fd7a"
+  },
+  {
+   "id": "s_morning_ada",
+   "kind": "testimony",
+   "speaker": "ada",
+   "morning": true,
+   "deceptive": false,
+   "title": "Ada Finch on the morning",
+   "text": "Oh, love, it was ten to eight when Constable Bell came and told us all at the Rook's breakfast room - that's when I heard it, and that's my whole morning for you.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Ada Finch says it was ten to eight when Constable Bell told them all at the Rook's breakfast room. Does that match what you know of the morning?",
+   "confront": "You told me it was ten to eight when Constable Bell told you all at the Rook's breakfast room. Is that the whole of your morning?",
+   "lines_for": "7aef665806a3"
+  },
+  {
+   "id": "s_morning_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "morning": true,
+   "deceptive": false,
+   "title": "Dr Iris Marsh on the morning",
+   "text": "Bell fetched me from the surgery at ten to seven. I examined the body and the vestry table at five past seven, and at about ten to eight, back at my surgery, I ran a Marsh test on two biscuits from the tartan tin and recorded the result.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Dr Marsh says Bell fetched her at ten to seven, she examined the body and the vestry table at five past seven, and tested two biscuits at the surgery around ten to eight. Does that match what you know?",
+   "confront": "You've told me Bell fetched you at ten to seven, you examined the body and table at five past seven, and tested two biscuits by ten to eight. Is that the whole of it?",
+   "lines_for": "e2d75ddc7f14"
+  },
+  {
+   "id": "s_morning_vera",
+   "kind": "testimony",
+   "speaker": "vera",
+   "morning": true,
+   "deceptive": true,
+   "title": "Vera Lacey on the morning",
+   "text": "At ten to eight Bell came to the Rook's breakfast room with the news - that was the whole of my morning, if you want it so plainly. I'd spent the evening before quietly at the Rook, and I hadn't stirred from it, so you may stop looking at me as if I had.",
+   "ask": "What did you do this morning?",
+   "surface_why": "Claims she spent the evening quietly at the Rook and never stirred, which is false - she went to Dora's with poisoned shortbread, crossed the square to Church Lane with the tartan tin, and hid her muddy coat afterward.",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Vera Lacey says Bell came to the Rook's breakfast room at ten to eight with the news, and that was the whole of her morning. Can you confirm that?",
+   "confront": "You told me Bell came to the Rook's breakfast room at ten to eight with the news, and that was the whole of your morning. Is that so?",
+   "lines_for": "050c0f075dd2"
+  },
+  {
+   "id": "s_exam",
+   "kind": "observation",
+   "title": "Dr Marsh's findings",
+   "text": "Signs of an irritant poison in mouth and gullet; shortbread in what she brought up. On the table is a tartan tin of biscuits with a few gone, and a clean teacup. A bunch of keys hangs on a chain at her waist. Pencilled note: 'Two biscuits taken to surgery for testing. Timing of ingestion: see my case notes. I.M.'",
+   "at": "vestry",
+   "source": "e_examination",
+   "claim": {
+    "pred": "culpritHad",
+    "item": "shortbread_tin",
+    "from": 1080,
+    "to": 1190
+   },
+   "requires": [
+    "t_bell_key"
+   ],
+   "unlock": "Constable Bell gives you the key to the vestry he locked, and Dr Marsh's findings are laid out on the table there.",
+   "needs": [
+    "s_marsh_test"
+   ],
+   "reading": "Dr Marsh's test finds arsenic only in the dust on the biscuits from the tartan tin, so the poison came in that tin, and whoever gave it to her had the tin first.",
+   "art": "wound",
+   "to": null,
+   "reactions": {
+    "bell": "Aye, that's as I saw it when I came with the doctor—tin half-empty, cup clean, her note pinned there plain as day. I locked the door on it myself and the key's not left my person since.",
+    "vicar": "The tin of biscuits—yes, I noticed it on the table, though my mind was all on poor Dora and fetching the constable. Dr Marsh's hand is very neat, isn't it, even in such a moment.",
+    "vera": "Shortbread, was it? How dreadful—I do hope it wasn't from that tin she was so proud of. I wouldn't know a thing about tins or teacups, Inspector; I was never near the vestry that evening.",
+    "iris": "Yes, that's my note, written at the scene before anything was disturbed. The tin went to my surgery for testing and the timing is in my case notes, as I said—I don't commit figures to paper until I'm certain of them."
+   },
+   "show": "I've found signs of an irritant poison, and a tin of biscuits with a few missing beside a clean teacup. There's also a note saying two biscuits went to the surgery for testing — do you know anything about this?",
+   "lines_for": "8ea7200ba5bf"
+  },
+  {
+   "id": "s_ada_tin",
+   "kind": "testimony",
+   "title": "Ada Finch on the tartan tin",
+   "text": "I don't talk about my guests, love, it's bad for trade... Dust in it? Oh Lord. That tartan tin's Mrs Lacey's. Came down in her trunk from London, sat on her washstand three weeks, and she never offered a biscuit to a soul. There's not another like it in Bellweather, I'd swear to that.",
+   "at": "inn",
+   "speaker": "ada",
+   "because": [
+    "a_ada_knows_tin",
+    "a_ada_discreet"
+   ],
+   "ask": "Have you ever seen a tartan shortbread tin like this one?",
+   "claim": {
+    "pred": "onlyHad",
+    "item": "shortbread_tin",
+    "people": [
+     "vera"
+    ],
+    "from": 1080,
+    "to": 1190
+   },
+   "requires": [
+    "s_marsh_test"
+   ],
+   "unlock": "Mrs Finch won't talk about her lodgers, but she gives in once you tell her Dr Marsh's test found arsenic on the biscuits in a tartan tin.",
+   "to": null,
+   "show": "Ada Finch tells me that tartan biscuit tin belongs to Mrs Lacey, brought down from London and kept on her washstand for three weeks, with none offered to anyone. Is that right?",
+   "confront": "You've kept this tartan tin on your washstand for three weeks without offering a biscuit to anyone, I hear. Is that so?",
+   "lines_for": "edba949948cf"
+  },
+  {
+   "id": "s_diary",
+   "kind": "document",
+   "title": "A diary in the trunk",
+   "text": "An entry from last week: 'She held back every letter Tom wrote me from France in 1916 and told Bellweather he had thrown me over. I heard it from her own lips on Sunday, said as if it were a kindness. Twenty years. — V.A.'",
+   "at": "inn",
+   "requires": [
+    "s_ada_tin"
+   ],
+   "unlock": "In the trunk you find the diary.",
+   "source": "e_vera_supper",
+   "claim": {
+    "pred": "related",
+    "a": "dora",
+    "rel": "wronged",
+    "b": "vera"
+   },
+   "art": "diary",
+   "to": "dora",
+   "direct": "I've read a diary claiming you held back Tom's letters from France in 1916 and told the village he'd thrown you over. Is that true?",
+   "show": "I've read a diary entry claiming Miss Pruett held back Tom's letters from France in 1916 and told the village he'd thrown her over. Did you know anything of that?",
+   "reactions": {
+    "vera": "Oh, that old thing. A woman writes all sorts in the dark of a bad week, Inspector—it hardly means I crept out and did murder over it, does it? Twenty years is a long time to carry a grudge, I'll grant you, but longer still to act on one so neatly."
+   },
+   "unlock_full": "Ada said the tin came out of Mrs Lacey's trunk; she lets you into the back bedroom to look in it.",
+   "unlock_lead": "Ada said the tin came out of Mrs Lacey's trunk, and she lets you into the back bedroom to look.",
+   "lines_for": "db122ef1c286"
+  },
+  {
+   "id": "s_notebook",
+   "kind": "document",
+   "title": "Miss Pruett's notebook",
+   "text": "In the locked desk drawer, a small black notebook: 'S.V. — two guineas, 1st of the month' repeated down three pages, with a pencilled note: 'Hartley trust. Ask more.'",
+   "at": "post",
+   "requires": [
+    "s_exam"
+   ],
+   "unlock": "The keys on Miss Pruett's chain include a small one that fits her desk at the post office.",
+   "claim": {
+    "pred": "related",
+    "a": "dora",
+    "rel": "blackmailing",
+    "b": "silas"
+   },
+   "art": "notebook",
+   "to": "silas",
+   "direct": "I found your initials in Miss Pruett's notebook, two guineas a month, alongside a note about the Hartley trust. What can you tell me about that?",
+   "show": "In Miss Pruett's locked drawer there's a notebook recording two guineas a month from S.V., with a note about the Hartley trust. Does that mean anything to you?",
+   "reactions": {
+    "silas": "I had rather hoped that drawer would stay locked. Yes—two guineas a month, borrowed against the Hartley trust, and I am ashamed of it, but I was repaying it in full, letter and draft both sent before this ever happened. Dora knew, and meant to use it; that is hardly a secret I'd kill to keep when I was already putting it right.",
+    "vera": "Mr Voss's little arithmetic? Not my affair, Inspector. If Dora was squeezing every soul in this village for pocket money, you'd do better asking who else she'd ask more of."
+   },
+   "lines_for": "bf9f36f963a7"
+  },
+  {
+   "id": "s_fine",
+   "kind": "public",
+   "title": "The bench notice",
+   "text": "Pinned by the pump since spring: 'J. Reed, boatman, fined two pounds for netting salmon, on information laid by Miss D. Pruett.'",
+   "at": "square",
+   "claim": {
+    "pred": "related",
+    "a": "dora",
+    "rel": "informed_on",
+    "b": "jonah"
+   },
+   "art": "card",
+   "to": "jonah",
+   "direct": "There's a notice by the pump saying you were fined for netting salmon on information laid by Miss Pruett. Does that bear on anything last night?",
+   "show": "There's a notice by the pump saying you were fined for netting salmon on information laid by Miss Pruett. Does that bear on anything last night?",
+   "reactions": {
+    "jonah": "Aye, that notice's been up since spring, and every soul in the village has read it and smirked at me over it. Two pound for a fish, on her word—I don't forget a thing like that, but a grudge over coin isn't a knife in a man's hand.",
+    "vera": "Two pounds, for a bit of salmon—there, you see, Inspector, a man with real cause to hate her, and living by the water besides. I'd look harder at him than at a widow with her sketchbook."
+   },
+   "lines_for": "46c1f43e0c40"
+  },
+  {
+   "id": "t_jonah",
+   "kind": "testimony",
+   "title": "Jonah Reed's evening",
+   "text": "Where am I? Here. With the oars, and the punt, for the lane is under water. The parson comes down about the Barlow coffin and sits a good while. River talks louder than he does, most nights.",
+   "at": "boathouse",
+   "speaker": "jonah",
+   "source": "e_jonah_oars",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Jonah Reed says he was at the boathouse all evening with the punt, and that the vicar sat with him a good while about the Barlow coffin. Does that match what you know?",
+   "confront": "You told me you were at the boathouse all evening with the punt, and that the vicar sat with you about the Barlow coffin. Is that the whole of it?",
+   "lines_for": "c08224c2b771",
+   "same_as": "night"
+  },
+  {
+   "id": "t_silas",
+   "kind": "testimony",
+   "title": "Silas Voss's evening",
+   "text": "I worked late at my desk, then went to Dr Marsh for our Tuesday chess. I lost, which is rare enough to be memorable. Mea culpa. Of Miss Pruett I can tell you she was diligent, and not universally loved.",
+   "at": "vestry",
+   "speaker": "silas",
+   "source": "e_chess",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Mr Voss says he worked late at his desk, then lost at chess with Dr Marsh, and that Miss Pruett was diligent but not well liked. Does that fit with what you saw?",
+   "confront": "You told me you worked late at your desk, then lost at chess with Dr Marsh, and that Miss Pruett was diligent but not well liked. Is that the whole of it?",
+   "lines_for": "cb6505d12859",
+   "same_as": "night"
+  },
+  {
+   "id": "t_vicar",
+   "kind": "testimony",
+   "title": "The vicar's evening",
+   "text": "Dear me, last night... I was down at the boathouse with Reed, about poor Mrs Barlow's coffin. The lane's flooded, you see, quite the Deluge, though Noah had better carpentry. Miss Pruett had been pressing me about the fund lately. I'm afraid I was glad of an evening away from her.",
+   "at": "vestry",
+   "speaker": "vicar",
+   "source": "e_vicar_boathouse",
+   "ask": "Where were you last night?",
+   "to": null,
+   "confront": "You told me you spent last evening at the boathouse with Reed, glad to be away from Miss Pruett, who'd been pressing you about the fund. Is that the whole of it?",
+   "show": "The Reverend Hale says he was at the boathouse with Reed about Mrs Barlow's coffin, and admits he was glad of an evening away from Miss Pruett, who'd been pressing him about the fund. Can you confirm this?",
+   "lines_for": "d0b834e7d0ea",
+   "same_as": "night"
+  },
+  {
+   "id": "t_vera",
+   "kind": "testimony",
+   "title": "Vera Lacey's evening",
+   "text": "Last night? Supper in the parlour, then up to my room with my sketches. I never stirred out until breakfast; Mrs Finch's stairs creak, ask anyone. If you want someone with a grudge against that woman, read the notice by the pump.",
+   "at": "inn",
+   "speaker": "vera",
+   "source": "e_vera_supper",
+   "because": [
+    "a_vera_safe",
+    "a_vera_cover"
+   ],
+   "ask": "Where were you last night?",
+   "claim": {
+    "pred": "wasAt",
+    "person": "vera",
+    "place": "inn",
+    "from": 1150,
+    "to": 1260
+   },
+   "to": null,
+   "show": "Mrs Lacey says she took supper in the parlour, then went up to her room with her sketches and never stirred until breakfast. Does that match what you know of her evening?",
+   "confront": "You told me you took supper in the parlour, then went up to your room with your sketches and never stirred until breakfast. Is that the whole of it?",
+   "lines_for": "fba989bc422a",
+   "same_as": "night"
+  },
+  {
+   "id": "pub_window",
+   "kind": "record",
+   "title": "Dr Marsh's case notes",
+   "text": "Case notes, P., Dorothy. From the onset of symptoms and the contents of the stomach, the arsenic was taken between 19:50 and 20:30. Death followed within the hour. I.M.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1190,
+    "to": 1230
+   },
+   "at": "surgery",
+   "requires": [
+    "s_exam"
+   ],
+   "unlock": "There, she shows you her case notes for the timing.",
+   "art": "notes",
+   "to": null,
+   "show": "Dr Marsh's case notes put the arsenic as taken between 19:50 and 20:30, with death following within the hour. Does that time fit with what you know?",
+   "reactions": {
+    "vera": "Half past seven to half past eight, within the hour—well, I was upstairs with my sketches by then, so it's no good asking me what the stomach contents say. Dr Marsh is thorough, I'll give her that."
+   },
+   "unlock_full": "Her note at the vestry sends you to her case notes for the timing; she shows them to you at the surgery.",
+   "unlock_lead": "Her pencilled note at the vestry sends you to her surgery, where she shows you what you came for.",
+   "lines_for": "12d5bae11bf0"
+  },
+  {
+   "id": "t_bell_key",
+   "kind": "testimony",
+   "title": "Constable Bell and the vestry key",
+   "text": "Locked it myself the minute the doctor finished. Nobody's been in since, not even the parson for his service. Here's the key. Look all you like, but you touch nothing without telling me.",
+   "at": "halt",
+   "speaker": "bell",
+   "because": [
+    "a_bell_secure"
+   ],
+   "source": "e_bell_lock",
+   "ask": "May I see the vestry where Miss Pruett was found?",
+   "requires": [
+    "s_bell_slate"
+   ],
+   "unlock": "The slate on his door says he has gone to the Halt to wire the coroner and that the vestry is locked, so you walk to the Halt and find him by the telegraph with the key in his pocket.",
+   "to": null,
+   "show": "Constable Bell says he locked the vestry himself the moment the doctor finished, and nobody's been in since, not even the vicar for his service. Does that match what you know?",
+   "confront": "You told me you locked the vestry yourself the moment the doctor finished, and that nobody's been in since, not even the vicar. Is that the whole of it?",
+   "lines_for": "c24979ebad25"
+  },
+  {
+   "id": "pub_news",
+   "kind": "public",
+   "title": "The news at the Rook",
+   "text": "What Constable Bell told the Rook's breakfast room, and the whole village repeated by nine: Miss Pruett shut the post office at ten past seven as she always does, and the doctor reckons she was dead by nine o'clock last night.",
+   "at": "inn",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1150,
+    "to": 1260
+   },
+   "art": "telephone",
+   "to": null,
+   "show": "It's being said all over the village that Miss Pruett shut the post office at ten past seven as always, and the doctor reckons she was dead by nine. Does that match what you heard?",
+   "reactions": {
+    "vera": "Dead by nine, they're saying now, after shutting up the post office at her usual hour—poor woman kept to her little routines right to the end, didn't she. I only heard it over breakfast same as everyone, same shock as the rest of the Rook."
+   },
+   "lines_for": "23955af8ec65"
+  },
+  {
+   "id": "t_bell_sighting",
+   "kind": "testimony",
+   "title": "Constable Bell on the London widow",
+   "text": "In all evening, was she? Hm. I was by the pump a few minutes short of eight when a woman went past me under the lamp, quick, toward Church Lane. Long grey coat, fur collar turned up, hat pulled well down, a little parcel under her arm. Said good evening, very low. Never saw her face. Thought nothing of it till now.",
+   "at": "halt",
+   "speaker": "bell",
+   "source": "e_vera_cross",
+   "ask": "Did you see anyone about the square last night while you were on your rounds?",
+   "requires": [
+    "t_vera"
+   ],
+   "unlock": "Mrs Lacey swears she never left the Rook; Bell walked his rounds in the square right outside it all evening, so you go and ask him whether that is so.",
+   "claim": {
+    "pred": "wasAt",
+    "person": "vera",
+    "place": "square",
+    "from": 1195,
+    "to": 1196,
+    "when": "sometime"
+   },
+   "defeats": [
+    "t_vera"
+   ],
+   "needs": [
+    "s_vera_coat"
+   ],
+   "reading": "Bell only saw a grey coat with a fur collar going toward Church Lane. Mrs Lacey's grey fox-collared coat, with Church Lane clay on its hem, shows the woman he saw was her.",
+   "concede": {
+    "s_vera_coat": "Aye, that's the coat right enough - grey, fox collar, and I'd wager that red clay's off Church Lane itself. So it were her I saw after all, near enough eight. Didn't say so plain before 'cause I weren't rightly sure, and I'll not go naming names on a guess."
+   },
+   "to": "vera",
+   "confront": "You told me a woman in a long grey coat with a fur collar hurried past you toward Church Lane just before eight, hat down, carrying a small parcel. Who was she?",
+   "reactions": {
+    "vera": "A woman in a grey coat under a lamp, saying good evening low—Constable, half the women in this county own a grey coat with a fur collar. I told you, I never left my room; perhaps it's Mrs Finch's niece, or your own eyes playing tricks in that light."
+   },
+   "show": "Constable Bell says that near eight o'clock a woman in a long grey coat with a fur collar and hat pulled down hurried past him toward Church Lane with a small parcel. Do you know who that might have been?",
+   "lines_for": "3fd5c9e1ebb6"
+  },
+  {
+   "id": "b_jonah_hands",
+   "kind": "behavior",
+   "title": "Jonah Reed's hands",
+   "text": "His knuckles are freshly torn and raw, and silver scales are stuck to his cuffs. Whenever Constable Bell comes near he pushes his hands deep into his pockets and looks away, and he goes quiet when Miss Pruett's name comes up.",
+   "about": "jonah",
+   "watch": true,
+   "because": [
+    "a_jonah_hide"
+   ],
+   "source": "e_jonah_net",
+   "explainedBy": [
+    "s_jonah_net"
+   ],
+   "to": "jonah",
+   "direct": "Your knuckles are freshly torn and there are silver scales on your cuffs, and you go quiet whenever Miss Pruett's name comes up. Can you explain that?",
+   "show": "Jonah Reed's knuckles are freshly torn, there are silver scales stuck to his cuffs, and he hides his hands and falls quiet whenever Miss Pruett's name or the constable come up. Can you explain his manner?",
+   "confront": "Your knuckles are freshly torn and there are silver scales on your cuffs, and you go quiet whenever Miss Pruett's name comes up. Can you explain that?",
+   "reactions": {
+    "jonah": "Torn knuckles and scales—I mend oars and ready the punt, and the river doesn't ask a man's pardon before it bites him. I go quiet on her name because there's nothing kind left in me to say about her, that's all it is."
+   },
+   "lines_for": "ce13096f86e3"
+  },
+  {
+   "id": "s_jonah_net",
+   "kind": "item",
+   "title": "Sacking under the punt",
+   "text": "Under the upturned punt, a bundle in sacking: a fine-meshed salmon net, still wet through and torn in two places, and wrapped in it a fresh salmon, its scales bright and its gills red. Pond weed is caught in the mesh. The river gauge on the steps shows the water high.",
+   "at": "boathouse",
+   "source": "e_jonah_net",
+   "requires": [
+    "b_jonah_hands"
+   ],
+   "unlock": "The fish scales on his cuffs and his torn knuckles send you down to his boathouse to look for whatever he handled, and the sacking is pushed under the punt.",
+   "art": "sacking",
+   "to": "jonah",
+   "direct": "I found a torn, wet salmon net wrapped round a fresh salmon under your upturned punt, with pond weed in the mesh. Can you account for that?",
+   "show": "Under the upturned punt there's a wet, torn salmon net wrapped around a fresh salmon, with pond weed caught in the mesh. Can you account for that?",
+   "reactions": {
+    "jonah": "That's my net, aye, and a fine fish in it too—water's high and the salmon run with it, fine or no fine. I'll take whatever Bell wants to charge me for it, but it's got nothing to do with what happened to that woman."
+   },
+   "lines_for": "85a1ec429645"
+  },
+  {
+   "id": "b_silas_watch",
+   "kind": "behavior",
+   "title": "Mr Voss's empty watch-chain",
+   "text": "A gold chain hangs across his waistcoat with nothing on the end of it. He keeps reaching for the watch out of habit, finds nothing, and looks for a clock instead. There is fresh ink on his right cuff. When money or Miss Pruett's name comes up he colours, and his tidy sentences trail off.",
+   "about": "silas",
+   "watch": true,
+   "because": [
+    "a_silas_shame",
+    "a_silas_repay"
+   ],
+   "source": "e_silas_letter",
+   "explainedBy": [
+    "s_silas_carbon"
+   ],
+   "to": "silas",
+   "direct": "Your watch-chain hangs empty, you keep reaching for a watch that isn't there, and you colour whenever money or Miss Pruett's name comes up. Can you explain that?",
+   "show": "Mr Voss wears an empty watch-chain, keeps reaching for a watch that isn't there, has fresh ink on his cuff, and colours whenever money or Miss Pruett's name comes up. Can you explain his manner?",
+   "confront": "Your watch-chain hangs empty, you keep reaching for a watch that isn't there, and you colour whenever money or Miss Pruett's name comes up. Can you explain that?",
+   "reactions": {
+    "silas": "Habet suum tempus — everything has its season, including an old man's watch. I sent it to the jeweller's; the chain seemed a pity to discard. As for ink, I write a great many letters at that desk, and none of them, I assure you, require explaining in this corridor."
+   },
+   "lines_for": "a8d6cec003be"
+  },
+  {
+   "id": "s_silas_carbon",
+   "kind": "document",
+   "title": "The Hartley trust file",
+   "text": "In the solicitor's office, a file marked 'Hartley Trust'. On top is a carbon copy dated yesterday: 'Gentlemen, I enclose a draft for sixty pounds, being the whole of a sum I improperly borrowed from the trust. I place myself in your hands. S. Voss.' Pinned to it is a jeweller's receipt for one gold half-hunter watch, sold last week.",
+   "at": "vestry",
+   "source": "e_silas_letter",
+   "requires": [
+    "s_notebook"
+   ],
+   "unlock": "Miss Pruett's notebook says 'Hartley trust' beside his initials, so you ask Mr Voss for that file in his vestry office. Cornered, he hands it over.",
+   "art": "letter",
+   "to": "silas",
+   "direct": "I've found your letter confessing to improperly borrowing sixty pounds from the Hartley trust, and a receipt for your watch sold last week. Can you account for that?",
+   "show": "In the Hartley trust file there's a letter confessing to improperly borrowing sixty pounds from the trust, signed by you, and a jeweller's receipt for a watch sold last week. Can you account for that?",
+   "reactions": {
+    "silas": "Quite so. There is no use in my dressing it up: I borrowed from the Hartley trust, and I have been ashamed of it every day since. The watch paid for my shame, Inspector — I sold it before you could ask me why I needed sixty pounds."
+   },
+   "lines_for": "5fb13e26af93"
+  },
+  {
+   "id": "s_vera_coat",
+   "kind": "trace",
+   "title": "A grey coat on the wardrobe hook",
+   "text": "On the hook of the wardrobe in the Rook's back bedroom hangs a long grey coat with a fox-fur collar. The hem is spattered with the red clay of Church Lane, now dried. In the right pocket there are a few grains of coarse sugar and a scrap of tartan-printed paper.",
+   "at": "inn",
+   "source": "e_vera_coat_back",
+   "requires": [
+    "s_ada_tin"
+   ],
+   "unlock": "Hanging in plain view in the room, you spot the coat.",
+   "art": "cloak",
+   "to": "vera",
+   "direct": "I found your grey fox-fur coat with Church Lane's red clay on the hem, and sugar grains and a scrap of tartan paper in the pocket. Can you account for that?",
+   "show": "There's a grey coat with a fox-fur collar on the wardrobe hook, hem spattered with Church Lane's red clay, and sugar grains and a scrap of tartan paper in the pocket. Can you account for that?",
+   "reactions": {
+    "vera": "A coat gets muddy on a lane that's all mud, Inspector — what else would you expect of Church Lane in this weather? Sugar in a pocket, tartan paper — I've a weakness for shortbread, as half the village could tell you, and no shame in it."
+   },
+   "unlock_full": "Ada said the tin lived in Mrs Lacey's room, so she lets you into the back bedroom to look, and the coat is hanging in plain view there.",
+   "unlock_lead": "Ada said the tin came out of Mrs Lacey's trunk, and she lets you into the back bedroom to look.",
+   "lines_for": "55133ae0e7f2"
+  },
+  {
+   "id": "s_marsh_test",
+   "kind": "record",
+   "title": "Dr Marsh's test bench",
+   "text": "On the surgery bench: a glass tube with a silvery-black mirror inside it, beside an envelope marked 'Two biscuits, tartan tin, vestry table.' The doctor's slip reads: 'Marsh test on the white dust under the sugar: arsenic, strongly. Fresh biscuit from beneath, untouched: none. I.M.'",
+   "at": "surgery",
+   "source": "e_iris_test",
+   "requires": [
+    "s_exam"
+   ],
+   "unlock": "There, she shows you her bench, where the biscuits were sent for testing.",
+   "claim": {
+    "pred": "crimeFact",
+    "key": "method",
+    "value": "poison"
+   },
+   "art": "bottle",
+   "to": null,
+   "show": "Dr Marsh's test found arsenic in the white dust under the sugar in the tartan tin, but none in a fresh untouched biscuit from beneath. Does that match what you understand?",
+   "reactions": {
+    "vera": "Arsenic under the sugar — how very thorough of the good doctor. I wouldn't know a Marsh test from a parlour game, Inspector, but I do know I never touched that tin after I left it on her table with my compliments.",
+    "iris": "I ran the test myself, twice, to be certain before I'd put it in writing. The dust beneath the sugar was heavy with arsenic; the biscuit I took fresh from underneath carried none. That tells you the poison was added after the tin was filled, not baked in."
+   },
+   "unlock_full": "Her pencilled note in the vestry says the biscuits went to her surgery for testing, so you go there and she shows you her bench.",
+   "unlock_lead": "Her pencilled note at the vestry sends you to her surgery, where she shows you what you came for.",
+   "lines_for": "6ce90a2fa3a5"
+  },
+  {
+   "id": "s_bell_slate",
+   "kind": "absence",
+   "title": "The slate on the police-house door",
+   "text": "The police-house door on the square is shut and nobody answers it, and there is nothing on the knocker. Inside the porch, past a latch that lifts if you push, a child's chalk slate hangs on a peg. On it in a heavy hand: 'Gone to the Halt to wire the coroner. Back by eleven. Vestry LOCKED. A.B.'",
+   "at": "square",
+   "source": "e_bell_slate",
+   "requires": [
+    "t_vicar_word"
+   ],
+   "unlock": "The vicar says Bell left word on a slate inside the police-house porch and told him how the latch lifts, so you let yourself into the porch.",
+   "art": "slate",
+   "to": null,
+   "show": "The police-house is shut, but a slate inside the porch says Constable Bell has gone to the Halt to wire the coroner and left the vestry locked. Did you know he'd gone there?",
+   "reactions": {
+    "bell": "Aye, that's my hand and my doing. Wired the coroner from the Halt, locked the vestry first, told only the vicar where the slate was — didn't want the whole square gossiping that the police-house stood empty of a night."
+   },
+   "lines_for": "88b9752c0aa9"
+  },
+  {
+   "id": "t_vicar_word",
+   "kind": "testimony",
+   "title": "The vicar on the constable's word",
+   "text": "Bell? Oh, he was a rock, poor fellow. He caught my sleeve in the square afterwards and said he'd left word for whoever came asking. Not on the door, mind, but on the slate inside the police-house porch. He'd not have the whole square knowing the place stood empty. The latch lifts if you lift it and push.",
+   "at": "vestry",
+   "speaker": "vicar",
+   "source": "e_bell_word",
+   "ask": "What did Constable Bell do after you told him?",
+   "requires": [
+    "t_vicar"
+   ],
+   "unlock": "Mr Hale says he found her and went straight to Constable Bell, so you ask him what the constable did next.",
+   "to": null,
+   "show": "The Reverend Hale says Constable Bell told him he'd left word on the slate inside the police-house porch, not on the door, since the latch simply lifts and pushes open. Does that match what you know?",
+   "confront": "You told me you left word on the slate inside the porch rather than the door, and that the latch lifts if pushed. Is that the whole of it?",
+   "lines_for": "2165fdb37b71"
+  },
+  {
+   "id": "s_saw_ada_vera_inn",
+   "kind": "testimony",
+   "speaker": "ada",
+   "sighting": true,
+   "source": "e_ada_bar",
+   "claim": {
+    "pred": "wasAt",
+    "person": "vera",
+    "place": "inn",
+    "from": 1080,
+    "to": 1140
+   },
+   "title": "Ada Finch saw Vera Lacey",
+   "text": "Oh, love, I saw Mrs Lacey at The Rook & Lantern at quarter past six.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "vera",
+   "direct": "Ada Finch says she saw you at the Rook & Lantern at quarter past six. Is that correct?",
+   "show": "Ada Finch says she saw Mrs Lacey at the Rook & Lantern at quarter past six. Does that match what you know?",
+   "confront": "You told me you saw Mrs Lacey at the Rook & Lantern at quarter past six. Is that correct?",
+   "lines_for": "73c143533775"
+  },
+  {
+   "id": "s_saw_vicar_silas_vestry",
+   "kind": "testimony",
+   "speaker": "vicar",
+   "sighting": true,
+   "source": "e_vicar_vestry",
+   "claim": {
+    "pred": "wasAt",
+    "person": "silas",
+    "place": "vestry",
+    "from": 1080,
+    "to": 1100
+   },
+   "title": "The Reverend Thomas Hale saw Silas Voss",
+   "text": "I saw Mr Voss in St. Alden's vestry at about ten past six.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "silas",
+   "direct": "The Reverend Hale says he saw you in St. Alden's vestry at about ten past six. Is that correct?",
+   "show": "The Reverend Hale says he saw Mr Voss in St. Alden's vestry at about ten past six. Can you confirm that?",
+   "confront": "You told me you saw Mr Voss in St. Alden's vestry at about ten past six. Is that correct?",
+   "lines_for": "b5cd7da8755f"
+  }
+ ],
+ "claims_version": 2,
+ "premise": {
+  "victim": "dora",
+  "culprit": "vera",
+  "suspects": [
+   "jonah",
+   "silas",
+   "vera",
+   "vicar"
+  ],
+  "bystanders": [
+   "ada",
+   "clara",
+   "rowan",
+   "hugo",
+   "edmund"
+  ],
+  "method": "poison",
+  "motive": "revenge",
+  "place": "vestry",
+  "shape": "obvious_wrong"
+ },
+ "id": "mk-live-20261017-223841",
+ "answer": {
+  "method": "poison",
+  "motive": "revenge",
+  "methods": [
+   "poison"
+  ],
+  "motives": [
+   "revenge"
+  ],
+  "accepted_scores": {
+   "methods": {
+    "poison": 3,
+    "blow": 0,
+    "fall": 0,
+    "smother": 0,
+    "drown": 0,
+    "blade": 0,
+    "gun": 0,
+    "gas": 0,
+    "staged": 0
+   },
+   "motives": {
+    "money": 0,
+    "inheritance": 0,
+    "love": 2,
+    "revenge": 3,
+    "secret": 1,
+    "protect": 0,
+    "blackmail": 0,
+    "quarrel": 0
+   }
+  },
+  "accepted_v": 3
+ },
+ "synopsis": "Dorothy Pruett was found dead at St. Alden’s vestry.",
+ "moods": {
+  "jonah": "Edgy and sore-tempered, muttering about the fine still hanging over him as he busies himself with the oars.",
+  "silas": "Pale and distracted, eager to be shut of some old business before anyone comes asking after it.",
+  "vicar": "Anxious and overly formal, keen to see the constable fetched and the proper forms observed.",
+  "iris": "Brisk and clinical this morning, impatient to get to her surgery and settle a matter quietly before saying anything official.",
+  "bell": "Stiff and tight-lipped, guarding a small secret about his whereabouts while trying to look every inch the dutiful constable.",
+  "ada": "Tight-lipped behind the bar, polite but plainly reluctant to let talk turn to one of her guests."
+ },
+ "knowledge": {},
+ "morning_dropped": [
+  "s_morning_bell",
+  "s_morning_vicar",
+  "s_morning_silas",
+  "s_morning_jonah"
+ ],
+ "reviewed": [
+  "b_jonah_hands|direct",
+  "b_jonah_hands|reactions|jonah",
+  "b_silas_watch|direct",
+  "b_silas_watch|reactions|silas",
+  "pub_news|reactions|vera",
+  "pub_window|reactions|vera",
+  "s_bell_slate|reactions|bell",
+  "s_diary|direct",
+  "s_diary|reactions|vera",
+  "s_exam|reactions|bell",
+  "s_exam|reactions|iris",
+  "s_exam|reactions|vera",
+  "s_exam|reactions|vicar",
+  "s_fine|direct",
+  "s_fine|reactions|jonah",
+  "s_fine|reactions|vera",
+  "s_jonah_net|direct",
+  "s_jonah_net|reactions|jonah",
+  "s_marsh_test|reactions|iris",
+  "s_marsh_test|reactions|vera",
+  "s_medical_iris|text",
+  "s_medical|reactions|bell",
+  "s_medical|reactions|iris",
+  "s_medical|reactions|vera",
+  "s_medical|reactions|vicar",
+  "s_medical|text",
+  "s_morning_ada|text",
+  "s_morning_iris|text",
+  "s_morning_vera|text",
+  "s_notebook|direct",
+  "s_notebook|reactions|silas",
+  "s_notebook|reactions|vera",
+  "s_saw_ada_vera_inn|direct",
+  "s_saw_ada_vera_inn|text",
+  "s_saw_vicar_silas_vestry|direct",
+  "s_saw_vicar_silas_vestry|text",
+  "s_silas_carbon|direct",
+  "s_silas_carbon|reactions|silas",
+  "s_surface_ada|text",
+  "s_surface_bell|text",
+  "s_surface_iris|text",
+  "s_surface_jonah|text",
+  "s_surface_silas|text",
+  "s_surface_vera|text",
+  "s_surface_vicar|text",
+  "s_vera_coat|direct",
+  "s_vera_coat|reactions|vera",
+  "t_bell_sighting|concede|s_vera_coat",
+  "t_bell_sighting|reactions|vera"
+ ],
+ "review_version": 2,
+ "declines": {
+  "vera": [
+   "Now why would I keep a thing like that in my head?",
+   "Darling, you're asking the wrong woman entirely on that score.",
+   "That's a question with no answer waiting behind it, I'm afraid.",
+   "I've turned that over and found nothing worth handing you."
+  ],
+  "jonah": [
+   "Nothing there. Weighed it. Nothing.",
+   "That one's empty, same as an unbaited line.",
+   "Can't give you more on that. Not a thing.",
+   "River's quiet on that one. So am I."
+  ],
+  "silas": [
+   "On that point, I have nothing whatsoever to offer, I fear.",
+   "Res nulla, as it were — there is simply nothing there.",
+   "I must disappoint you there; the matter yields nothing further.",
+   "That inquiry, I regret, closes itself for want of content."
+  ],
+  "vicar": [
+   "Oh dear, no — I find I have nothing at all to offer there.",
+   "That particular thread, I'm afraid, simply runs out in my hands.",
+   "I've searched my memory and come back quite empty on that one.",
+   "There's nothing more I can add there, I'm sorry to say."
+  ],
+  "iris": [
+   "Nothing to report on that. That's all.",
+   "I have no observation to give you there.",
+   "On that point, I have nothing further.",
+   "That's a blank. Nothing else to say."
+  ],
+  "bell": [
+   "Nothing on that. Next question.",
+   "Can't help you there. Nothing to add.",
+   "That's a dead end, far as I'm concerned.",
+   "No, nothing more on that one."
+  ],
+  "ada": [
+   "Ooh, now that one's got nothing in it, love, sorry to say.",
+   "I've got nothing more for you there, not a scrap.",
+   "Can't add a thing to that, love, truly I can't.",
+   "That one's just empty as my teapot of a Monday, I'm afraid."
+  ]
+ },
+ "declines_version": 3,
+ "difficulty": {
+  "v": 1,
+  "score": 11.0,
+  "level": "hard",
+  "features": {
+   "depth": 8,
+   "lies_on_path": 1,
+   "lies_other": 0,
+   "herrings_aimed": 2,
+   "herrings_other": 0,
+   "lenient_motives": 0
+  },
+  "target": "hard"
+ }
+}

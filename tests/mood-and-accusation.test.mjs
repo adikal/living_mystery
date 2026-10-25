@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {registerKernelCase, createSession, dispatch, caseTables} from '../dist/engine.mjs';
 
-const load = f => JSON.parse(readFileSync(new URL(`../dist/cases/generated/${f}`, import.meta.url), 'utf8'));
+// a case kept for tests after it left the menu is read from the archive
+const load = f => JSON.parse(readFileSync(new URL(f === 'mk-live-20261002-222517.json' ? `../dist/cases/archive/2026-10/${f}` : `../dist/cases/generated/${f}`, import.meta.url), 'utf8'));
 const truthOf = kc => kc.question.candidates.find(h => h.id === kc.question.truth).facts.actor;
 
 // Collect every reachable clue by examining and asking, in dependency order, with the plain (scripted) actions.

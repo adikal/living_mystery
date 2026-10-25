@@ -16,7 +16,7 @@ The model chooses a permitted account and its delivery, or a non-disclosure resp
 
 Player speech becomes an explicitly unverified memory. A character may remember an assertion without endorsing it, tentatively accept it (confidence 0.6), or doubt it (0.2). These create attributed `player_report_*` beliefs with unknown truth, linked to the player's speech. They never overwrite canonical case beliefs. The latest 12 report beliefs remain active; history is preserved. Questions should use `remember_only`, checked by the critic.
 
-A turn records its intent, selected account, exact accepted words, sources, bounded trust change (±0.08 a turn when the model judges the exchange warmer or cooler: courtesy, belief and kept confidences warm; accusations, threats, disbelief and being caught out cool), dialogue-state progression and optional explicit ending. Conversation state retains prior disclosures and the latest topic, question and event links. The full perspective/proposal/validation audit lives on the decision event. Speech records the authored reference separately; acquired testimony uses the accepted words.
+A turn records its intent, selected account, exact accepted words, sources, bounded trust change (±0.15 a turn when the model judges the exchange warmer or cooler: courtesy, belief and kept confidences warm; accusations, threats, disbelief and being caught out cool), dialogue-state progression and optional explicit ending. Conversation state retains prior disclosures and the latest topic, question and event links. The full perspective/proposal/validation audit lives on the decision event. Speech records the authored reference separately; acquired testimony uses the accepted words.
 
 Saved event history replays without a model call. Fresh AI runs can differ. Audits are debugging records, not authenticated evidence against local save editing. The omniscient inspector and exported saves contain private information by design.
 
@@ -91,11 +91,41 @@ Configured/generated cases now support persistent ordinary goals, timed activiti
 
 ## Trust and stress (October 2026)
 
-- **Trust** moves ±0.08 a turn in the direction the character's model chooses; the prompt says what warms and cools.
-- **Stress follows the history** (`kernel-case.mjs` `stressFor`): how much of what bears on a person the detective
-  holds (clues about them, naming them, from what they did; clues that defeat their own stories count double), and,
-  for a suspect still standing, how far the evidence has narrowed the field. Someone with a `fears` or `hides` attitude
-  feels it most. It changes after each action as an `emotion` event, so it replays, and the character's prompt sees it.
+- **Trust** moves ±0.15 a turn in the direction the character's model chooses; the prompt says what warms and cools.
+- **Stress follows the history and the pressure** (`kernel-case.mjs` `stressFor`): how much of what bears on a person
+  the detective holds (clues about them, naming them, from what they did; clues that defeat their own stories count
+  double), for a suspect still standing how far the evidence has narrowed the field, and how often they have been
+  pressed in person (shown evidence that bears on them, asked why about their own behaviour, or an exchange that cooled
+  them; each adds 0.15 of exposure, six at most, as a `pressure` step). Someone with something to fear feels it most:
+  a `fears` or `hides` attitude, an untrue account of theirs, behaviour with a private reason behind it, or being the
+  culprit. The constable is never pressed. It changes as an `emotion` event, so it replays, and the prompt sees it.
+- **Caught in an untrue account**, an innocent concedes in the engine's words with the case's reasons for the lie (what
+  they believed, feared or wanted, and what that rests on), whatever reaction was written for the clue; the culprit may
+  still brazen it out with the written line. Shown the same clue again, they refer back to what they admitted.
+- **A red herring put to its subject.** The first time, they turn it aside (the written reaction). Pressed again, or
+  asked while the player holds what explains it, an innocent person gives the private reason behind it (the attitude
+  that caused it, and what that rests on): words only, so the explaining clue is still the player's to find. Nobody may
+  hide a clue that explains a red herring in the living morning, and the hints lead to it once the player has seen the
+  behaviour (after the solution's own path).
+- **The closing file** (a supported accusation) adds the motive and means evidence the player missed, why each person
+  other than the culprit gave an untrue account, and what each red herring the player did not get to the bottom of
+  really was, and why.
+- **The fact-checker** is given what everyone knows (`publicFacts`: the public facts in the notebook) and what the
+  person has already told the detective (`toldAccounts`, lie or truth). Saying either, or a person's role and home from
+  the roster (who lodges where), is not an added fact; a decline with no account is never a fault for not answering.
+  The account's claims and sources are filled in by code, so a reply is not lost for leaving them out.
+- **What a person keeps goes with them.** A clue that comes from someone's own doing and waits behind an account of
+  theirs (the doctor's notes, the dead man's effects she took) opens wherever that person is and is handed over then
+  and there; one handover can open the next. A lead that points to such a clue names the person ("with Dr Marsh"), and
+  so does its hint.
+- **Experts read evidence.** Shown a clue that needs one of their own findings to be read (a possible weapon, and the
+  doctor's notes on the wound), a person confirms that it fits when the player holds the finding, hands the finding over
+  when it is theirs to give, and otherwise says it must wait. The clue just shown stays on the table for two exchanges,
+  so a follow-up in the player's own words ("could that be the weapon?") can be answered with that comparison.
+- **Replies are not lost** for repeating a figure written on the evidence shown, the question or the conversation, and
+  a person with no reaction to a clue is offered only accounts that share a person, place or subject with it.
+- **The constable's briefing** points to one person only in an easy case; in a medium or hard case (or one with no
+  level) only to the doctor, so the briefing never hands over the investigation.
 - With no account for a question, a character says plainly they have nothing to tell; they ask for clarification only
   when a question is genuinely ambiguous, never twice running, and never set conditions (authority, a reason): what
   makes people say more is being shown evidence.

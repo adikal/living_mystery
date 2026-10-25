@@ -91,18 +91,27 @@ export function survivors(c, A, maxDepth = null, exclude = new Set()) {
   return survivorsOf(c, trustedClaims(A, visible), A.tt);
 }
 
-/** Public knowledge about who held an item matters only once the player understands a clue about that item: told at
- * the start, "only X had the button" names a suspect before any button is found. Returns {public sign id: [trigger
- * sign ids]} for each such public sign that is inert without its triggers: removing it changes no survivor set at any
- * depth while the triggers (and everything that depends on them) are absent, and it defeats nothing. The game records
- * these in the notebook when a trigger is first understood; certification, which holds them from the start, stays exact.
- * Mirrors publish.py held_back_public. */
+/** What a claim is about, for public knowledge that matters only alongside a clue: an item (who had it) or a trait (who
+ * has it). Null for any other claim. */
+export function claimSubject(x) {
+  if (!x) return null;
+  if (x.item) return `item:${x.item}`;
+  if (x.trait && ['hasTrait', 'culpritTrait'].includes(x.pred)) return `trait:${x.trait}`;
+  return null;
+}
+
+/** Public knowledge about an item or a trait matters only once the player understands a clue about it: told at the
+ * start, "only X had the button" or every suspect's shoe size names a suspect before any button or print is found.
+ * Returns {public sign id: [trigger sign ids]} for each such public sign that is inert without its triggers: removing
+ * it changes no survivor set at any depth while the triggers (and everything that depends on them) are absent, and it
+ * defeats nothing. The game records these in the notebook when a trigger is first understood; certification, which
+ * holds them from the start, stays exact. Mirrors publish.py held_back_public. */
 export function heldBackPublic(c, A = analyse(c)) {
   const out = {};
   const maxd = Math.max(0, ...Object.values(A.eff));
-  for (const p of c.signs.filter(x => x.kind === 'public' && claimOf(x)?.item && !arr(x.defeats).length)) {
-    const item = claimOf(p).item;
-    const triggers = c.signs.filter(x => x.kind !== 'public' && claimOf(x)?.item === item).map(x => x.id).sort();
+  for (const p of c.signs.filter(x => x.kind === 'public' && claimSubject(claimOf(x)) && !arr(x.defeats).length)) {
+    const subject = claimSubject(claimOf(p));
+    const triggers = c.signs.filter(x => x.kind !== 'public' && claimSubject(claimOf(x)) === subject).map(x => x.id).sort();
     if (!triggers.length) continue;
     const without = new Set(triggers.flatMap(t => [...closureDependent(c, t)]));
     const alsoP = new Set([...without, p.id]);

@@ -9,7 +9,7 @@ import {BW_PEOPLE, BW_ROLE_WORDS} from '../dist/cases/village.mjs';
 
 const dir = new URL('../dist/cases/generated/', import.meta.url);
 const load = rel => JSON.parse(readFileSync(new URL(rel, dir), 'utf8'));
-const CASE = 'mk-live-20261002-222517.json';
+const CASE = '../archive/2026-10/mk-live-20261002-222517.json';   // Sealing Wax and Steel, now archived
 const session = () => { const s = createSession(1, registerKernelCase(load(CASE))); return {s, T: caseTables(s)}; };
 const goTo = (s, pid) => { if (s.world.player.location !== s.world.npcs[pid].location) dispatch(s, {type: 'move', to: s.world.npcs[pid].location}); };
 const reply = (account, utterance, intent = 'refuse') => ({plan: null, intent, account: account?.id ?? null, utterance,

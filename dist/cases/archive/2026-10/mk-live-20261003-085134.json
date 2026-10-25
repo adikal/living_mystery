@@ -1,0 +1,2433 @@
+{
+ "title": "Death Among the Orchids",
+ "victim": "ada",
+ "story": "Silas Voss had been taking Ada Finch's savings for a building society account that never existed. When she found out, he lured her to the greenhouse at night, killed her and made it look as if she had fallen, and the vicar unknowingly gave him an alibi.",
+ "setting": {
+  "name": "Bellweather",
+  "era": "An English village, 1932",
+  "summary": "A small English village: a square, a manor with its greenhouse and boathouse on the river, an inn, the church vestry, a doctor’s surgery, a post office, a railway halt and a disused mill. Someone is dead; the investigation begins the next morning.",
+  "places": [
+   {
+    "id": "square",
+    "name": "Village square"
+   },
+   {
+    "id": "manor",
+    "name": "Vale Manor"
+   },
+   {
+    "id": "inn",
+    "name": "The Rook & Lantern"
+   },
+   {
+    "id": "greenhouse",
+    "name": "The greenhouse"
+   },
+   {
+    "id": "vestry",
+    "name": "St. Alden’s vestry"
+   },
+   {
+    "id": "surgery",
+    "name": "Dr Marsh’s surgery"
+   },
+   {
+    "id": "halt",
+    "name": "Bellweather Halt"
+   },
+   {
+    "id": "post",
+    "name": "The post office"
+   },
+   {
+    "id": "mill",
+    "name": "Alder Mill"
+   },
+   {
+    "id": "boathouse",
+    "name": "The boathouse"
+   }
+  ],
+  "links": [
+   {
+    "a": "square",
+    "b": "manor",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "inn",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "vestry",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "surgery",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "post",
+    "minutes": 2
+   },
+   {
+    "a": "square",
+    "b": "halt",
+    "minutes": 6
+   },
+   {
+    "a": "manor",
+    "b": "greenhouse",
+    "minutes": 3
+   },
+   {
+    "a": "manor",
+    "b": "boathouse",
+    "minutes": 6
+   },
+   {
+    "a": "inn",
+    "b": "greenhouse",
+    "minutes": 6
+   },
+   {
+    "a": "inn",
+    "b": "post",
+    "minutes": 3
+   },
+   {
+    "a": "greenhouse",
+    "b": "mill",
+    "minutes": 7
+   },
+   {
+    "a": "vestry",
+    "b": "halt",
+    "minutes": 5
+   },
+   {
+    "a": "surgery",
+    "b": "post",
+    "minutes": 3
+   },
+   {
+    "a": "halt",
+    "b": "mill",
+    "minutes": 5
+   },
+   {
+    "a": "mill",
+    "b": "boathouse",
+    "minutes": 4
+   }
+  ],
+  "roles": {
+   "examiner": "iris",
+   "constable": "bell"
+  },
+  "day": {
+   "evening": 1080,
+   "morning": 1740,
+   "start": 1920
+  }
+ },
+ "rules": [
+  {
+   "id": "r_vestry_paper",
+   "text": "St. Alden’s vestry letter paper is kept only in the vestry office, which the vicar and the solicitor share.",
+   "knowledge": "common"
+  }
+ ],
+ "people": [
+  {
+   "id": "ada",
+   "name": "Ada Finch",
+   "role": "The innkeeper",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "she",
+   "address": "Mrs Finch",
+   "voice": "Warm, chatty and colloquial; calls people \"love\", runs on a little, and enjoys a bit of news more than she should.",
+   "public": "Proprietor of the Rook & Lantern. She knows everyone’s habits and most of their business.",
+   "home": "inn",
+   "role_words": [
+    "innkeeper",
+    "landlady"
+   ]
+  },
+  {
+   "id": "silas",
+   "name": "Silas Voss",
+   "role": "The solicitor",
+   "traits": {
+    "handed": "left",
+    "office": "vestry"
+   },
+   "pronoun": "he",
+   "address": "Mr Voss",
+   "voice": "Measured, formal and faintly amused; speaks in tidy clauses and likes a Latin tag. Never rambles.",
+   "public": "A precise, courteous solicitor who keeps an office in the vestry and handles the affairs of half the parish.",
+   "home": "vestry",
+   "role_words": [
+    "solicitor"
+   ]
+  },
+  {
+   "id": "dora",
+   "name": "Dorothy Pruett",
+   "role": "The postmistress",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "she",
+   "address": "Miss Pruett",
+   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people’s business.",
+   "public": "The postmistress. Every letter, parcel and telegram in Bellweather passes over her counter, and she forgets nothing.",
+   "home": "post",
+   "role_words": [
+    "postmistress"
+   ]
+  },
+  {
+   "id": "rowan",
+   "name": "Rowan Pike",
+   "role": "The groundskeeper",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "he",
+   "address": "Mr Pike",
+   "voice": "A plain-spoken countryman: short, blunt, practical, with a gardener’s patience and the odd dour joke.",
+   "public": "The manor’s groundskeeper. He lives among his glasshouses and says little to anyone.",
+   "home": "greenhouse",
+   "role_words": [
+    "groundskeeper",
+    "gardener"
+   ]
+  },
+  {
+   "id": "vera",
+   "name": "Vera Lacey",
+   "role": "A newcomer, lodging at the Rook",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "she",
+   "address": "Mrs Lacey",
+   "voice": "Low, amused and worldly: a London polish over something harder. Answers a question with a question and watches your face while you answer.",
+   "public": "A widow down from London three weeks ago, lodging in the Rook’s back bedroom. Says she is sketching old churches for a book, and asks a great many questions.",
+   "home": "inn",
+   "role_words": [
+    "newcomer",
+    "lodger",
+    "widow"
+   ]
+  },
+  {
+   "id": "iris",
+   "name": "Dr Iris Marsh",
+   "role": "The village doctor",
+   "traits": {},
+   "pronoun": "she",
+   "address": "Dr Marsh",
+   "voice": "Clinical and direct, with brisk warmth underneath; says exactly what she observed and no more.",
+   "public": "The village doctor. Methodical and direct; she is called whenever anyone in Bellweather is hurt or ill.",
+   "home": "surgery",
+   "role_words": [
+    "doctor"
+   ]
+  },
+  {
+   "id": "bell",
+   "name": "Arthur Bell",
+   "role": "The village constable",
+   "traits": {},
+   "pronoun": "he",
+   "address": "Constable Bell",
+   "voice": "A gruff country constable: terse, dry and matter-of-fact, with a soft spot he hides badly.",
+   "public": "The village constable. He has secured the scene and asked you to investigate; he will hear an accusation when you can back it with evidence.",
+   "home": "square",
+   "role_words": [
+    "constable"
+   ]
+  },
+  {
+   "id": "vicar",
+   "name": "The Reverend Thomas Hale",
+   "role": "The vicar",
+   "traits": {},
+   "pronoun": "he",
+   "address": "Mr Hale",
+   "voice": "Gentle and rambling, with a scholar’s digressions and a surprising steel when conscience is touched.",
+   "public": "Vicar of St. Alden’s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
+   "home": "vestry",
+   "role_words": [
+    "vicar",
+    "rector",
+    "parson"
+   ]
+  },
+  {
+   "id": "edmund",
+   "name": "Edmund Vale",
+   "role": "Master of Vale Manor",
+   "pronoun": "he",
+   "address": "Mr Vale",
+   "voice": "Loud, confident and used to being obeyed; bluff good humour that turns cold when crossed.",
+   "public": "Master of Vale Manor: a man of fixed habits, generous in public and hard in private.",
+   "home": "manor",
+   "role_words": [
+    "squire"
+   ],
+   "traits": {}
+  }
+ ],
+ "objects": [
+  {
+   "id": "lure_note",
+   "name": "A scrap of notepaper",
+   "desc": "A torn half-sheet of St. Alden’s vestry letter paper, folded small, found in Ada’s apron pocket."
+  },
+  {
+   "id": "vestry_paper",
+   "name": "Vestry letter paper",
+   "desc": "Cream letter paper printed 'St. Alden’s Vestry, Bellweather', kept in the vestry office.",
+   "supply": true
+  },
+  {
+   "id": "society_letter",
+   "name": "A handwritten letter",
+   "desc": "A reply from the Northern Counties Building Society, kept in Ada’s bureau at the inn."
+  },
+  {
+   "id": "case_notes",
+   "name": "A doctor’s case notes",
+   "desc": "Dr Marsh’s daybook of patients seen."
+  },
+  {
+   "id": "passbook",
+   "name": "A leather-bound book",
+   "desc": "The passbook Silas gave Ada for her supposed savings account. It is missing."
+  },
+  {
+   "id": "potting_steps",
+   "name": "A staircase or steps",
+   "desc": "Wooden potting steps in the orchid house, found overturned."
+  },
+  {
+   "id": "chalk_slate",
+   "name": "A chalk slate",
+   "desc": "The taproom's scoring slate, hung behind the bar of the Rook."
+  },
+  {
+   "id": "effects_envelope",
+   "name": "A sealed envelope",
+   "desc": "A buff constabulary envelope holding the deceased's pocket effects."
+  },
+  {
+   "id": "conveyance_draft",
+   "name": "A draft conveyance",
+   "desc": "Silas Voss's working draft of the Hollins farm conveyance, with pencilled times in the margin."
+  },
+  {
+   "id": "burnt_complaint",
+   "name": "A half-burnt paper",
+   "desc": "A scorched draft letter in Dorothy Pruett's hand, addressed to the GPO district surveyor."
+  },
+  {
+   "id": "orchid_bundle",
+   "name": "A bundle in sacking",
+   "desc": "A sacking-wrapped crate of orchids packed in damp moss, with a railway consignment label."
+  },
+  {
+   "id": "old_blotter",
+   "name": "A second blotting sheet",
+   "desc": "An older sheet of blotting paper from the robing-cupboard drawer, laid over the fresh one."
+  }
+ ],
+ "relations": [
+  {
+   "a": "silas",
+   "rel": "embezzled_from",
+   "b": "ada"
+  },
+  {
+   "a": "ada",
+   "rel": "threatened_to_expose",
+   "b": "rowan"
+  },
+  {
+   "a": "vera",
+   "rel": "owes",
+   "b": "ada"
+  },
+  {
+   "a": "ada",
+   "rel": "slandered",
+   "b": "dora"
+  },
+  {
+   "a": "vicar",
+   "rel": "friend_of",
+   "b": "silas"
+  }
+ ],
+ "question": {
+  "text": "Who killed Ada Finch?",
+  "candidates": [
+   {
+    "id": "c_dora",
+    "label": "Dorothy Pruett",
+    "facts": {
+     "actor": "dora"
+    }
+   },
+   {
+    "id": "c_rowan",
+    "label": "Rowan Pike",
+    "facts": {
+     "actor": "rowan"
+    }
+   },
+   {
+    "id": "c_silas",
+    "label": "Silas Voss",
+    "facts": {
+     "actor": "silas"
+    }
+   },
+   {
+    "id": "c_vera",
+    "label": "Vera Lacey",
+    "facts": {
+     "actor": "vera"
+    }
+   }
+  ],
+  "truth": "c_silas",
+  "crime": {
+   "event": "e_crime",
+   "place": "greenhouse",
+   "window": [
+    1345,
+    1385
+   ]
+  }
+ },
+ "attitudes": [
+  {
+   "id": "a_ada_knows",
+   "agent": "ada",
+   "mode": "knows",
+   "content": "The building society holds no account in her name; the £400 she gave Silas Voss to deposit never arrived.",
+   "because": []
+  },
+  {
+   "id": "a_ada_intends",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "Meet Silas at the greenhouse and demand her money back before she goes to the constable.",
+   "because": [
+    "a_ada_knows"
+   ]
+  },
+  {
+   "id": "a_ada_routine",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "Keep the bar at the Rook as usual.",
+   "because": []
+  },
+  {
+   "id": "a_silas_fears",
+   "agent": "silas",
+   "mode": "fears",
+   "content": "If Ada takes the society's letter to Constable Bell, his embezzlement from her and other clients will come out and ruin him.",
+   "because": [],
+   "motive": "money"
+  },
+  {
+   "id": "a_silas_intends",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "Get Ada alone in the greenhouse at night, kill her, make it look like a fall, and take back the passbook.",
+   "because": [
+    "a_silas_fears"
+   ]
+  },
+  {
+   "id": "a_silas_cover",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "Get the vicar to say he never left his desk.",
+   "because": [
+    "a_silas_intends"
+   ]
+  },
+  {
+   "id": "a_silas_routine",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "Work late in the vestry office.",
+   "because": []
+  },
+  {
+   "id": "a_vicar_believes",
+   "agent": "vicar",
+   "mode": "believes",
+   "content": "Silas went out on a delicate private matter, a lady's affairs, and his reputation should be spared.",
+   "because": []
+  },
+  {
+   "id": "a_vicar_loyal",
+   "agent": "vicar",
+   "mode": "wants",
+   "content": "Protect his old friend Silas from gossip by saying he was at his desk all evening.",
+   "because": [
+    "a_vicar_believes"
+   ]
+  },
+  {
+   "id": "a_vicar_routine",
+   "agent": "vicar",
+   "mode": "intends",
+   "content": "Write Sunday's sermon in the vestry.",
+   "because": []
+  },
+  {
+   "id": "a_rowan_fears",
+   "agent": "rowan",
+   "mode": "fears",
+   "content": "Ada will tell Mr Vale that he has been selling the manor's orchids to a London dealer.",
+   "because": []
+  },
+  {
+   "id": "a_rowan_routine",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "Drink at the Rook, then do his morning rounds of the glasshouses.",
+   "because": []
+  },
+  {
+   "id": "a_dora_feels",
+   "agent": "dora",
+   "mode": "feels",
+   "content": "Resentment toward Ada, who tells the village she steams open letters and has threatened to write to the GPO.",
+   "because": []
+  },
+  {
+   "id": "a_dora_care",
+   "agent": "dora",
+   "mode": "intends",
+   "content": "Have her scalded hand dressed by the doctor, then go home.",
+   "because": []
+  },
+  {
+   "id": "a_vera_feels",
+   "agent": "vera",
+   "mode": "fears",
+   "content": "Ada, who is owed three weeks' rent and has been through her trunk, will turn her out.",
+   "because": []
+  },
+  {
+   "id": "a_vera_stay",
+   "agent": "vera",
+   "mode": "intends",
+   "content": "Keep to her room and avoid the landlady.",
+   "because": [
+    "a_vera_feels"
+   ]
+  },
+  {
+   "id": "a_iris_duty",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "Attend to patients and come when she is called.",
+   "because": []
+  },
+  {
+   "id": "a_bell_routine",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "Play his weekly game of dominoes at the Rook, and see to any trouble reported to him.",
+   "because": []
+  },
+  {
+   "id": "a_bell_shame",
+   "agent": "bell",
+   "mode": "fears",
+   "content": "It will get about that the constable played dominoes for stakes in the Rook after closing time.",
+   "because": []
+  },
+  {
+   "id": "a_bell_duty",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "Seal the dead woman's pocket effects for the coroner and keep them locked in his desk.",
+   "because": []
+  },
+  {
+   "id": "a_iris_confidence",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "Keep her patients' visits confidential unless the patient has already spoken of them.",
+   "because": []
+  },
+  {
+   "id": "a_silas_paper",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "Leave a draft marked with times through the late evening, so his own papers seem to show he never left his desk.",
+   "because": [
+    "a_silas_intends"
+   ]
+  },
+  {
+   "id": "a_dora_shame",
+   "agent": "dora",
+   "mode": "feels",
+   "content": "Shame that she drafted a spiteful formal complaint against Ada to the GPO; with Ada dead, she wants no one to read it.",
+   "because": [
+    "a_dora_feels"
+   ]
+  },
+  {
+   "id": "a_rowan_hide",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "Hide the crate of orchids packed for the London dealer before the police search the glasshouses and find it.",
+   "because": [
+    "a_rowan_fears"
+   ]
+  },
+  {
+   "id": "a_iris_numbers",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "Enter patients in her daybook by case number only, keeping their names in a locked index, and give each patient a numbered card.",
+   "because": [
+    "a_iris_confidence"
+   ]
+  },
+  {
+   "id": "a_bell_hide",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "Get the scoring slate out of sight before anyone sees the constable's initials and a shilling stake chalked on it after closing time.",
+   "because": [
+    "a_bell_shame"
+   ]
+  },
+  {
+   "id": "a_rowan_tidy",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "Sweep up the spilled moss and soil from dragging the crate, so no trail leads from the orchid house to his bothy.",
+   "because": [
+    "a_rowan_hide"
+   ]
+  },
+  {
+   "id": "a_dora_relief",
+   "agent": "dora",
+   "mode": "intends",
+   "content": "Once she is shown to be cleared of the killing, own up to the burnt complaint herself rather than be caught hiding it.",
+   "because": [
+    "a_dora_shame"
+   ]
+  },
+  {
+   "id": "a_bell_cover",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "Hang something over the empty slate hook so nobody wonders what used to hang behind the bar.",
+   "because": [
+    "a_bell_shame"
+   ]
+  },
+  {
+   "id": "a_silas_avoid",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "Keep out of reach of questions this morning by attending Edmund Vale at the manor on the Hollins business, and hear what is said about the body.",
+   "because": [
+    "a_silas_fears"
+   ]
+  },
+  {
+   "id": "a_silas_tear",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "Tear the printed vestry heading off the note he sends Ada and burn it, so the paper cannot be traced to his office.",
+   "because": [
+    "a_silas_intends"
+   ]
+  },
+  {
+   "id": "a_bell_lost",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "Keep any lost property he picks up in his desk until someone claims it.",
+   "because": []
+  },
+  {
+   "id": "a_vera_heard",
+   "agent": "vera",
+   "mode": "wants",
+   "content": "Show she really was in her room all night by describing what she heard through the floor from the taproom after closing.",
+   "because": [
+    "a_vera_feels"
+   ]
+  },
+  {
+   "id": "a_silas_noword",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "Leave no written word in the vestry of where he has gone this morning, so callers asking about Ada cannot follow him.",
+   "because": [
+    "a_silas_fears"
+   ]
+  },
+  {
+   "id": "a_vicar_cupboard",
+   "agent": "vicar",
+   "mode": "intends",
+   "content": "Keep the mirror in the robing cupboard covered with a photograph, and the fresh blotter hidden under an older sheet, so no one reads Silas's business there by accident.",
+   "because": [
+    "a_vicar_loyal"
+   ]
+  },
+  {
+   "id": "a_edmund_evening",
+   "agent": "edmund",
+   "mode": "intends",
+   "content": "He wanted to make sure the estate's finances were in order.",
+   "strength": 0.6
+  }
+ ],
+ "events": [
+  {
+   "id": "e_ada_bar",
+   "type": "work",
+   "agent": "ada",
+   "others": [],
+   "place": "inn",
+   "start": 1080,
+   "end": 1325,
+   "causedBy": "a_ada_routine",
+   "summary": "Ada keeps the bar at the Rook, then slips out at about five and twenty past ten."
+  },
+  {
+   "id": "e_silas_desk",
+   "type": "work",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1080,
+   "end": 1300,
+   "causedBy": "a_silas_routine",
+   "summary": "Silas works in the vestry office, leaves his lamp burning and later goes out."
+  },
+  {
+   "id": "e_meet",
+   "type": "meeting",
+   "agent": "silas",
+   "others": [
+    "ada"
+   ],
+   "place": "greenhouse",
+   "start": 1345,
+   "end": 1355,
+   "causedBy": "a_silas_intends",
+   "summary": "In the orchid house Ada demands her £400 and shows that she knows of the society's letter."
+  },
+  {
+   "id": "e_crime",
+   "type": "murder",
+   "agent": "silas",
+   "others": [
+    "ada"
+   ],
+   "place": "greenhouse",
+   "start": 1355,
+   "end": 1365,
+   "causedBy": "a_silas_intends",
+   "summary": "Silas strikes Ada's head against the iron staging so it will pass for a fall.",
+   "facts": {
+    "method": "staged"
+   }
+  },
+  {
+   "id": "e_death",
+   "type": "death",
+   "agent": "ada",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1365,
+   "end": 1365,
+   "causedBy": "nature",
+   "summary": "Ada Finch dies on the orchid-house floor."
+  },
+  {
+   "id": "e_stage",
+   "type": "staging",
+   "agent": "silas",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1365,
+   "end": 1380,
+   "causedBy": "a_silas_intends",
+   "summary": "Silas tips over the potting steps, wets the tiles and takes the passbook, but misses the note in her apron."
+  },
+  {
+   "id": "e_silas_square",
+   "type": "walk",
+   "agent": "silas",
+   "others": [
+    "dora"
+   ],
+   "place": "square",
+   "start": 1387,
+   "end": 1390,
+   "causedBy": "a_silas_intends",
+   "summary": "Silas hurries across the square from the Manor lane, back toward the vestry, hatless."
+  },
+  {
+   "id": "e_silas_ask",
+   "type": "conversation",
+   "agent": "silas",
+   "others": [
+    "vicar"
+   ],
+   "place": "vestry",
+   "start": 1395,
+   "end": 1405,
+   "causedBy": "a_silas_cover",
+   "summary": "Silas asks the vicar to say he never left his desk, hinting at a lady's private affairs."
+  },
+  {
+   "id": "e_silas_night",
+   "type": "rest",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1405,
+   "end": 1500,
+   "causedBy": "a_silas_routine",
+   "summary": "Silas stays in his office until late."
+  },
+  {
+   "id": "e_vicar_sermon",
+   "type": "work",
+   "agent": "vicar",
+   "others": [],
+   "place": "vestry",
+   "start": 1200,
+   "end": 1390,
+   "causedBy": "a_vicar_routine",
+   "summary": "The vicar writes his sermon in the vestry study and notices that Silas's office is empty."
+  },
+  {
+   "id": "e_rowan_inn",
+   "type": "leisure",
+   "agent": "rowan",
+   "others": [],
+   "place": "inn",
+   "start": 1260,
+   "end": 1425,
+   "causedBy": "a_rowan_routine",
+   "summary": "Rowan drinks in the Rook's taproom."
+  },
+  {
+   "id": "e_bell_inn",
+   "type": "leisure",
+   "agent": "bell",
+   "others": [
+    "rowan"
+   ],
+   "place": "inn",
+   "start": 1300,
+   "end": 1422,
+   "causedBy": "a_bell_routine",
+   "summary": "Constable Bell plays dominoes with Rowan Pike in the taproom."
+  },
+  {
+   "id": "e_bell_home",
+   "type": "rest",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1430,
+   "end": 1500,
+   "causedBy": "a_bell_routine",
+   "summary": "Bell goes home to his police house on the square."
+  },
+  {
+   "id": "e_rowan_home",
+   "type": "rest",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1435,
+   "end": 1500,
+   "causedBy": "a_rowan_routine",
+   "summary": "Rowan goes to bed in his bothy by the glasshouses and does not go into the orchid house."
+  },
+  {
+   "id": "e_dora_scald",
+   "type": "accident",
+   "agent": "dora",
+   "others": [],
+   "place": "post",
+   "start": 1300,
+   "end": 1315,
+   "causedBy": "nature",
+   "summary": "A kettle boils over and scalds Dora's left hand."
+  },
+  {
+   "id": "e_iris_evening",
+   "type": "work",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1200,
+   "end": 1330,
+   "causedBy": "a_iris_duty",
+   "summary": "Dr Marsh writes up her notes in the surgery."
+  },
+  {
+   "id": "e_iris_treat",
+   "type": "treatment",
+   "agent": "iris",
+   "others": [
+    "dora"
+   ],
+   "place": "surgery",
+   "start": 1330,
+   "end": 1384,
+   "causedBy": "a_iris_duty",
+   "summary": "Dr Marsh dresses Dora's scald and keeps her under observation for an hour."
+  },
+  {
+   "id": "e_iris_night",
+   "type": "rest",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1384,
+   "end": 1500,
+   "causedBy": "a_iris_duty",
+   "summary": "Dr Marsh goes to bed above the surgery."
+  },
+  {
+   "id": "e_dora_square",
+   "type": "walk",
+   "agent": "dora",
+   "others": [],
+   "place": "square",
+   "start": 1387,
+   "end": 1390,
+   "causedBy": "a_dora_care",
+   "summary": "Dora walks home across the square, sees Silas Voss come up from the Manor lane, and in her fluster drops her surgery card."
+  },
+  {
+   "id": "e_dora_home",
+   "type": "rest",
+   "agent": "dora",
+   "others": [],
+   "place": "post",
+   "start": 1392,
+   "end": 1500,
+   "causedBy": "a_dora_care",
+   "summary": "Dora goes home to the rooms over the post office."
+  },
+  {
+   "id": "e_vera_room",
+   "type": "rest",
+   "agent": "vera",
+   "others": [],
+   "place": "inn",
+   "start": 1260,
+   "end": 1500,
+   "causedBy": "a_vera_stay",
+   "summary": "Vera keeps to her back bedroom at the Rook."
+  },
+  {
+   "id": "e_discovery",
+   "type": "discovery",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1830,
+   "end": 1840,
+   "causedBy": "a_rowan_routine",
+   "summary": "On his morning rounds Rowan finds Ada dead beside the overturned potting steps."
+  },
+  {
+   "id": "e_report",
+   "type": "report",
+   "agent": "rowan",
+   "others": [
+    "bell"
+   ],
+   "place": "square",
+   "start": 1847,
+   "end": 1852,
+   "causedBy": "a_rowan_routine",
+   "summary": "Rowan wakes Constable Bell and tells him a body is in the orchid house."
+  },
+  {
+   "id": "e_fetch_doctor",
+   "type": "report",
+   "agent": "rowan",
+   "others": [
+    "iris"
+   ],
+   "place": "surgery",
+   "start": 1855,
+   "end": 1858,
+   "causedBy": "a_rowan_routine",
+   "summary": "On Bell's orders, Rowan fetches Dr Marsh."
+  },
+  {
+   "id": "e_bell_secure",
+   "type": "guard",
+   "agent": "bell",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1860,
+   "end": 1869,
+   "causedBy": "a_bell_routine",
+   "summary": "Bell secures the orchid house."
+  },
+  {
+   "id": "e_examination",
+   "type": "examination",
+   "agent": "iris",
+   "others": [
+    "bell",
+    "rowan"
+   ],
+   "place": "greenhouse",
+   "start": 1870,
+   "end": 1905,
+   "causedBy": "a_iris_duty",
+   "summary": "Dr Marsh examines the body: dead about eight hours, from a head injury."
+  },
+  {
+   "id": "e_bell_effects",
+   "type": "evidence",
+   "agent": "bell",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1905,
+   "end": 1910,
+   "causedBy": "a_bell_duty",
+   "summary": "Bell empties Ada's apron pocket into a constabulary envelope, tearing off its gummed strip and leaving it on the bench."
+  },
+  {
+   "id": "e_bell_lock",
+   "type": "evidence",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1918,
+   "end": 1920,
+   "causedBy": "a_bell_duty",
+   "summary": "Bell locks the sealed envelope of effects in his desk at the police house."
+  },
+  {
+   "id": "e_silas_draft",
+   "type": "forgery",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1310,
+   "end": 1325,
+   "causedBy": "a_silas_paper",
+   "summary": "Silas finishes the Hollins draft early and pencils later times in its margin, as if he had worked until 23:15."
+  },
+  {
+   "id": "e_dora_burn",
+   "type": "concealment",
+   "agent": "dora",
+   "others": [],
+   "place": "post",
+   "start": 1890,
+   "end": 1897,
+   "causedBy": "a_dora_shame",
+   "summary": "Hearing of Ada's death, Dora pushes her unsent complaint about Ada into the post-office stove; part of it does not burn."
+  },
+  {
+   "id": "e_rowan_hide",
+   "type": "concealment",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1906,
+   "end": 1916,
+   "causedBy": "a_rowan_hide",
+   "summary": "Once the doctor is done, Rowan drags the sacking-wrapped crate of packed orchids under the bench in his bothy."
+  },
+  {
+   "id": "e_iris_card",
+   "type": "treatment",
+   "agent": "iris",
+   "others": [
+    "dora"
+   ],
+   "place": "surgery",
+   "start": 1378,
+   "end": 1384,
+   "causedBy": "a_iris_numbers",
+   "summary": "Before discharging her, Dr Marsh gives Dora a numbered surgery card with instructions for changing the dressing."
+  },
+  {
+   "id": "e_bell_hide",
+   "type": "concealment",
+   "agent": "bell",
+   "others": [],
+   "place": "inn",
+   "start": 1422,
+   "end": 1425,
+   "causedBy": "a_bell_hide",
+   "summary": "Bell half-wipes the slate, lifts it off its hook and pushes it into the taproom settle locker beside the dominoes box."
+  },
+  {
+   "id": "e_rowan_sweep",
+   "type": "concealment",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1916,
+   "end": 1919,
+   "causedBy": "a_rowan_tidy",
+   "summary": "Rowan sweeps spilled moss and everything lying by the potting bench into his barrow beside the bothy door."
+  },
+  {
+   "id": "e_bell_photo",
+   "type": "concealment",
+   "agent": "bell",
+   "others": [],
+   "place": "inn",
+   "start": 1425,
+   "end": 1427,
+   "causedBy": "a_bell_cover",
+   "summary": "Bell takes the darts-team photograph off its nail by the taproom door and hangs it on the empty slate hook."
+  },
+  {
+   "id": "e_silas_manor",
+   "type": "meeting",
+   "agent": "silas",
+   "others": [
+    "edmund"
+   ],
+   "place": "manor",
+   "start": 1915,
+   "end": 2010,
+   "causedBy": "a_silas_avoid",
+   "summary": "Silas leaves his office early, locked, and sits with Edmund Vale in the manor library going over the Hollins conveyance."
+  },
+  {
+   "id": "e_silas_note",
+   "type": "concealment",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1300,
+   "end": 1310,
+   "causedBy": "a_silas_tear",
+   "summary": "Silas writes the lure note on vestry paper, tears off the printed heading and burns it in the office grate."
+  },
+  {
+   "id": "e_bell_card",
+   "type": "evidence",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1917,
+   "end": 1918,
+   "causedBy": "a_bell_lost",
+   "summary": "Back on the square, Bell picks up a trodden surgery card and puts it in his desk as lost property."
+  },
+  {
+   "id": "e_vera_overhear",
+   "type": "eavesdrop",
+   "agent": "vera",
+   "others": [],
+   "place": "inn",
+   "start": 1422,
+   "end": 1427,
+   "causedBy": "a_vera_stay",
+   "summary": "Awake in her back bedroom, Vera hears scraping, a frame knocking on plaster and a tap or two from the empty taproom."
+  },
+  {
+   "id": "e_silas_blot",
+   "type": "concealment",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1900,
+   "end": 1907,
+   "causedBy": "a_silas_noword",
+   "summary": "Silas writes the manor appointment in his book, blots it, then pockets the book and locks his office, leaving the blotter behind."
+  },
+  {
+   "id": "e_vicar_cover",
+   "type": "concealment",
+   "agent": "vicar",
+   "others": [],
+   "place": "vestry",
+   "start": 1750,
+   "end": 1760,
+   "causedBy": "a_vicar_cupboard",
+   "summary": "The vicar covers the robing-cupboard glass with a choir photograph and lays an older blotter sheet over the fresh one."
+  },
+  {
+   "id": "e_edmund_evening",
+   "type": "routine",
+   "agent": "edmund",
+   "others": [],
+   "place": "manor",
+   "start": 1080,
+   "end": 1380,
+   "causedBy": "a_edmund_evening",
+   "summary": "He sat by the fire in the manor's study, going over the household account books.",
+   "ordinary": true
+  }
+ ],
+ "signs": [
+  {
+   "id": "s_surface_vera",
+   "kind": "testimony",
+   "speaker": "vera",
+   "surface": true,
+   "deceptive": false,
+   "title": "Vera Lacey on the evening",
+   "text": "In my room, where I generally keep of an evening — I'm a dull creature after dark. I heard the usual little sounds through the floor from the taproom after closing, a scrape and a knock or two, nothing I thought twice about.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Vera Lacey says she stayed in her room that evening and only heard the usual sounds from the taproom after closing. Do you know if that's true?",
+   "lines_for": "f931e755764a",
+   "confront": "You told me you kept to your room that evening and only heard the usual sounds from the taproom after closing. Is that the whole of it?"
+  },
+  {
+   "id": "s_surface_edmund",
+   "kind": "testimony",
+   "speaker": "edmund",
+   "surface": true,
+   "deceptive": true,
+   "title": "Edmund Vale on the evening",
+   "text": "I was in the study by the fire most of the evening, if you must know, seeing to matters that are my own business. Went over some papers, had a drink, and turned in when I'd had enough of it.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "to": null,
+   "show": "Edmund Vale says he spent most of the evening by the study fire, going over papers and having a drink before turning in. Do you know if that's true?",
+   "confront": "You told me you spent most of the evening by the study fire, going over papers and having a drink before turning in. Is that the whole of it?",
+   "surface_why": "He claims he was alone in the study by the fire going over papers, but actually he was in the library with Silas going over the Hollins conveyance, not alone with household account books.",
+   "surface_checked": "cover",
+   "lines_for": "8c205dca8767"
+  },
+  {
+   "id": "s_morning_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "morning": true,
+   "deceptive": false,
+   "title": "Arthur Bell on the morning",
+   "text": "At about quarter to seven, Rowan came and woke me to say there was a body in the orchid house. By seven I'd secured the place, and at ten past Dr Marsh came to examine it. Later, about eight o'clock, I locked the sealed envelope of effects away in my desk at the police house.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Constable Bell says Rowan woke him about quarter to seven to report a body in the orchid house, and that Dr Marsh came to examine it at ten past seven. Do you know if that's right?",
+   "confront": "You told me Rowan woke you about quarter to seven about a body in the orchid house, and that Dr Marsh examined it at ten past seven. Is that the whole of it?",
+   "lines_for": "b0d54fe0b3cb"
+  },
+  {
+   "id": "s_morning_edmund",
+   "kind": "testimony",
+   "speaker": "edmund",
+   "morning": true,
+   "deceptive": false,
+   "title": "Edmund Vale on the morning",
+   "text": "At five to eight I was in the manor library, and Silas joined me there, having locked up his office early so we could go over the Hollins conveyance together. We sat at it in the library the whole while.",
+   "ask": "What did you do this morning?",
+   "to": null,
+   "surface_checked": "honest",
+   "confront": "You told me you were in the manor library at five to eight and that Silas joined you there to go over the Hollins conveyance, sitting with you the whole while. Is that the whole of it?",
+   "lines_for": "82fce950b7ca",
+   "show": "Edmund Vale says Silas Voss locked up his office early and joined him in the manor library at five to eight, and they went over the Hollins conveyance together there the whole while. Do you know if that's true?"
+  },
+  {
+   "id": "s_morning_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "morning": true,
+   "deceptive": false,
+   "title": "Dr Iris Marsh on the morning",
+   "text": "At five to seven Rowan fetched me on Constable Bell's orders, and by ten past seven I was examining the body. She had been dead about eight hours, from a head injury.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "confront": "You told me Rowan fetched you at five to seven and you were examining the body by ten past seven, putting death at about eight hours earlier from a head injury. Is that the whole of it?",
+   "show": "Dr Marsh says Rowan fetched her just before seven on Constable Bell's orders, and she was examining the body by ten past seven, dead some eight hours from a head injury. Does that match what you know?",
+   "lines_for": "d96902884cf5"
+  },
+  {
+   "id": "s_morning_rowan",
+   "kind": "testimony",
+   "speaker": "rowan",
+   "morning": true,
+   "deceptive": false,
+   "title": "Rowan Pike on the morning",
+   "text": "At half past six, on my morning rounds, I found Ada lying dead beside the overturned potting steps. By about quarter to seven I'd woken Constable Bell and told him there was a body in the orchid house, and at five to seven, on his orders, I went and fetched Dr Marsh.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Rowan Pike says he found Ada dead beside the overturned potting steps at half past six, woke Constable Bell by quarter to seven, and fetched Dr Marsh at five to seven on his orders. Does that match what you know?",
+   "confront": "You told me you found Ada dead beside the overturned potting steps at half past six, then woke Constable Bell and later fetched Dr Marsh on his orders. Is that the whole of it?",
+   "lines_for": "9b4179eada29"
+  },
+  {
+   "id": "s_morning_silas",
+   "kind": "testimony",
+   "speaker": "silas",
+   "morning": true,
+   "deceptive": true,
+   "title": "Silas Voss on the morning",
+   "text": "At five to eight I locked my office and went directly to the manor, where I sat with Mr Vale in the library going over the Hollins conveyance. I remained there with him through the morning on that business and heard what was said of the sad affair, but I can tell you no more of it than that.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Silas Voss says he locked his office at five to eight and went straight to the manor, where he sat with Mr Vale in the library over the Hollins conveyance all morning. Does that agree with what you remember?",
+   "confront": "You told me you locked your office at five to eight and spent the whole morning with Mr Vale in the library over the Hollins conveyance. Is that the whole of it?",
+   "lines_for": "c0ccd34de599"
+  },
+  {
+   "id": "s_surface_vicar",
+   "kind": "testimony",
+   "speaker": "vicar",
+   "surface": true,
+   "deceptive": true,
+   "title": "The Reverend Thomas Hale on the evening",
+   "text": "I spent the evening in the vestry study, working at Sunday's sermon — a passage from Corinthians gave me more trouble than it ought. Silas was about the place too, on his own business, and I thought little of it before I went to my own bed.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "surface_checked": "cover",
+   "agrees_checked": 3,
+   "show": "The Reverend Hale says he spent the evening in the vestry study working on his sermon, and that Silas was about the place too on his own business. Do you know anything about that?",
+   "lines_for": "29840c7a42fc",
+   "confront": "You told me you spent the evening in the vestry study working on your sermon, and that Silas was about the place too on his own business. Is that the whole of it?"
+  },
+  {
+   "id": "s_surface_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "surface": true,
+   "deceptive": true,
+   "title": "Arthur Bell on the evening",
+   "text": "I had my usual game of dominoes down the Rook, nothing out of the ordinary about it. After that I went straight home to the police house and settled in for the night.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "surface_checked": "cover",
+   "agrees_checked": 3,
+   "show": "Constable Bell says he had his usual game of dominoes down the Rook and then went straight home to the police house for the night. Do you know if that's true?",
+   "lines_for": "ffcfbffa209e",
+   "confront": "You told me you had your usual game of dominoes at the Rook and then went straight home to the police house for the night. Is that the whole of it?"
+  },
+  {
+   "id": "s_surface_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "surface": true,
+   "deceptive": false,
+   "title": "Dr Iris Marsh on the evening",
+   "text": "I was in the surgery most of the evening, writing up my notes and attending to a patient who'd scalded her hand. After she was seen to and sent home, I went up to bed myself.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Dr Marsh says she was in her surgery writing up notes, then saw to a patient with a scald before going up to bed. Do you know if that's true?",
+   "confront": "You told me you were writing up notes, then saw to a patient with a scald before going up to bed. Is that the whole of it?",
+   "surface_checked": "honest",
+   "agrees_checked": 3,
+   "lines_for": "3be3deac192d"
+  },
+  {
+   "id": "s_surface_rowan",
+   "kind": "testimony",
+   "speaker": "rowan",
+   "surface": true,
+   "deceptive": true,
+   "title": "Rowan Pike on the evening",
+   "text": "I had my pint or two at the Rook, same as any evening, and gave the constable a game of dominoes. Then I went off to my bothy and turned in — didn't stir near the glasshouses again till morning.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Rowan Pike says he was at the Rook as usual, then went straight to his bothy and to bed until his rounds this morning. Do you know if that's true?",
+   "confront": "You told me you went to the Rook, then straight to your bothy and bed, not stirring till your rounds this morning. Is that the whole of it?",
+   "surface_checked": "cover",
+   "agrees_checked": 3,
+   "lines_for": "3d62c76bf2a8"
+  },
+  {
+   "id": "s_surface_dora",
+   "kind": "testimony",
+   "speaker": "dora",
+   "surface": true,
+   "deceptive": true,
+   "title": "Dorothy Pruett on the evening",
+   "text": "I was seeing to my hand after the kettle scalded me, and then Dr Marsh kept me sitting in her surgery a good while before I was let go home. I went straight back to my rooms over the post office after that, and spoke to no one worth mentioning.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "surface_checked": "cover",
+   "agrees_checked": 3,
+   "confront": "You told me you were seeing to your scalded hand, that Dr Marsh kept you in her surgery a good while, and that you went straight home afterwards speaking to no one. Is that the whole of it?",
+   "lines_for": "b61f6fd04825",
+   "show": "Dorothy Pruett says Dr Marsh kept her sitting in her surgery a good while after a kettle scalded her hand, before she went straight home to her rooms over the post office. Do you know if that's true?"
+  },
+  {
+   "id": "s_surface_silas",
+   "kind": "testimony",
+   "speaker": "silas",
+   "surface": true,
+   "deceptive": true,
+   "title": "Silas Voss on the evening",
+   "text": "I was at my desk in the vestry office the better part of the evening, drafting the Hollins papers by lamplight — tedious work, but it does not do itself. I stepped out briefly for a breath of air, nothing more, and was back at my papers before long.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "surface_checked": "cover",
+   "agrees_checked": 3,
+   "show": "Silas Voss says he was at his desk in the vestry office most of the evening drafting the Hollins papers, stepping out briefly for air before returning to his work. Do you know if that's true?",
+   "lines_for": "e6d2d580bbfb",
+   "confront": "You told me you were at your desk in the vestry office drafting the Hollins papers, only stepping out briefly for air before returning. Is that the whole of it?"
+  },
+  {
+   "id": "s_medical",
+   "kind": "record",
+   "medical": true,
+   "medical_v": 2,
+   "source": "e_examination",
+   "at": "surgery",
+   "title": "The doctor’s examination notes",
+   "text": "Examination of Ada Finch reveals a single heavy blow to the back of the head, with a laceration whose shape does not match a simple fall. Bruising pattern and the angle of impact suggest the injury was inflicted deliberately rather than caused by accidental collapse. Death occurred between twenty-five past ten and five past eleven, and I find no evidence of other contributory wounds.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1345,
+    "to": 1385
+   },
+   "reactions": {
+    "iris": "That is my finding, and I stand by it. The laceration shape and the angle of impact are not consistent with a simple fall onto the staging, nor is the bruising. I set the time of death between twenty-five past ten and five past eleven, and I found no other wounds.",
+    "bell": "Deliberate, is it. Well, that puts a different complexion on things than a woman slipping off her own steps. I'll have the orchid house kept secure till you've done with it, Doctor's word's good enough for me.",
+    "rowan": "Deliberate blow, you say. I only found her lying there of a morning, I never looked close enough to judge the shape of a wound. If someone meant it, that's police business, not mine.",
+    "silas": "A tragic business, if the doctor is right. One assumes the poor woman caught her head awkwardly as she fell against the staging - these old glasshouses are treacherous underfoot. I would be cautious before pronouncing malice where accident will serve."
+   },
+   "to": null,
+   "art": "notes",
+   "show": "The doctor's notes say Ada Finch died of a single deliberate blow to the back of the head, sometime between twenty-five past ten and five past eleven. Does that time or manner mean anything to you?",
+   "lines_for": "10169a404e67"
+  },
+  {
+   "id": "s_medical_iris",
+   "kind": "testimony",
+   "medical": true,
+   "medical_v": 2,
+   "speaker": "iris",
+   "source": "e_examination",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1345,
+    "to": 1385
+   },
+   "title": "Dr Marsh on the body",
+   "text": "Death occurred between twenty-five past ten and five past eleven, from a heavy blow to the back of the head — and I'll say plainly, the wound's shape tells me this was no simple fall.",
+   "ask": "Doctor, what did you find when you examined Mrs Finch?",
+   "to": null,
+   "show": "Dr Marsh says Ada died between twenty-five past ten and five past eleven from a heavy blow to the back of the head, and that the wound was no simple fall. Do you know anything about that?",
+   "confront": "You told me the wound's shape showed this was no simple fall. Is that the whole of it?",
+   "lines_for": "0f9eb3da48c4"
+  },
+  {
+   "id": "s_note",
+   "kind": "item",
+   "title": "Folded notepaper in her apron",
+   "text": "From the constable's sealed envelope of effects, taken from Mrs Finch's apron pocket: a half-sheet of cream laid paper, folded small. There is no printed heading, and the top edge has been freshly torn. Held to the light it shows a crowned A watermark. In a neat hand: 'Glasshouse, half past ten. Come alone and bring the book.' It is unsigned.",
+   "at": "square",
+   "source": "e_bell_effects",
+   "claim": {
+    "pred": "culpritHad",
+    "item": "vestry_paper"
+   },
+   "requires": [
+    "s_iris_doubt"
+   ],
+   "unlock": "Bell meant to keep the envelope sealed for the coroner. When you bring him Dr Marsh's doubts about a fall, he agrees there is cause, unlocks his desk and opens the envelope for you.",
+   "needs": [
+    "s_paper_match",
+    "r_vestry_paper"
+   ],
+   "reading": "The note has the same cream laid paper and crowned A watermark as the vestry stock, and burnt printed letters from the heading lie in the office grate. Vestry paper is kept only in that office.",
+   "art": "note",
+   "to": null,
+   "show": "This note was found folded in Mrs Finch's apron pocket, asking someone to meet at the Glasshouse at half past ten and bring the book. Do you know who wrote it?",
+   "reactions": {
+    "bell": "Half past ten, come alone, bring the book - that's an assignation, not idle gossip. Whoever wrote that meant her to be there and meant no one else to know of it. I'll want to know whose hand that is, and sharpish.",
+    "silas": "A watermarked half-sheet with no heading - cui bono, Inspector? Half the parish writes on cream laid paper. I confess I cannot account for every billet a woman like Mrs Finch might receive."
+   },
+   "lines_for": "1a30813e60ad"
+  },
+  {
+   "id": "s_bell",
+   "kind": "testimony",
+   "title": "The constable's dominoes",
+   "text": "\"Pike? Sat across the dominoes from me at the Rook from twenty to ten till near enough quarter to midnight. Only left the table to fetch a pint from the bar. Took a shilling off me, too, the beggar.\"",
+   "at": "square",
+   "speaker": "bell",
+   "source": "e_bell_inn",
+   "ask": "Where was Rowan Pike last night?",
+   "claim": {
+    "pred": "wasAt",
+    "person": "rowan",
+    "place": "inn",
+    "from": 1300,
+    "to": 1425
+   },
+   "requires": [
+    "s_slate"
+   ],
+   "unlock": "Shown the slate with his own initials on it, the constable gives up pretending he went home early and owns up to the evening's dominoes.",
+   "because": [
+    "a_bell_shame"
+   ],
+   "to": "rowan",
+   "direct": "You say you were across the dominoes from Constable Bell at the Rook from twenty to ten until near midnight, leaving only to fetch a pint. Is that right?",
+   "show": "Constable Bell says Mr Pike sat across from him playing dominoes at the Rook from twenty to ten until nearly midnight, only leaving to fetch a pint. Do you know if that's true?",
+   "confront": "You say Mr Pike was across the dominoes from you at the Rook from twenty to ten until near midnight, leaving only to fetch a pint. Is that right?",
+   "reactions": {
+    "rowan": "Aye, that's right enough, Bell'll vouch for it - I was at the dominoes table the whole while, barring fetching my pint. Took his shilling fair and square, too, though he'll grumble about it."
+   },
+   "lines_for": "be9fb7912b69",
+   "same_as": "night"
+  },
+  {
+   "id": "s_casenotes",
+   "kind": "record",
+   "title": "Dr Marsh's daybook",
+   "text": "Daybook entry in a brisk hand. No names appear on the page, only numbers: 'No. 112. Scald, dorsum of left hand, kettle. Arrived 22.10. Dressed; kept under observation for shock. Discharged 23.04.'",
+   "at": "surgery",
+   "source": "e_iris_treat",
+   "claim": {
+    "pred": "wasAt",
+    "person": "dora",
+    "place": "surgery",
+    "from": 1330,
+    "to": 1384
+   },
+   "requires": [
+    "s_dora_card"
+   ],
+   "unlock": "You bring Dr Marsh the card Miss Pruett lost, with case No. 112 on it. Since the patient has already spoken of the visit, she opens her daybook at that number.",
+   "needs": [
+    "s_dora_card"
+   ],
+   "reading": "The daybook gives only case numbers. The card Miss Pruett lost on the square carries No. 112, so this entry is hers.",
+   "art": "notes",
+   "to": null,
+   "show": "Dr Marsh's daybook records a patient numbered 112 arriving at ten past ten with a scalded left hand, dressed and kept under observation until four minutes past eleven. Do you know who that patient was?",
+   "reactions": {
+    "iris": "Case No. 112, yes - a scald to the hand, kettle injury, dressed and kept under observation for the hour as is proper. I don't put names to numbers for anyone, Inspector, not even you, unless the patient has spoken of it herself.",
+    "dora": "Well, I don't deny it was my hand, if that's what the number means - a wretched kettle, that's all it was. I'd thank you not to go putting names to the doctor's figures without my say-so.",
+    "silas": "A scalded hand at the surgery is hardly a matter for my attention, Inspector. I cannot see what bearing one of Dr Marsh's cases has upon mine, unless you mean to suggest something by it."
+   },
+   "lines_for": "16bb4993904f"
+  },
+  {
+   "id": "s_letter",
+   "kind": "document",
+   "title": "Letter in the bureau",
+   "text": "From the Northern Counties Building Society, dated last week: 'Dear Madam, In reply to your enquiry, we hold no account in your name, nor have we received any sums lodged on your behalf by Mr S. Voss, solicitor. We have no record of the £400 you mention.'",
+   "at": "inn",
+   "requires": [
+    "s_note"
+   ],
+   "unlock": "The note's demand for 'the book' sends you to Mrs Finch's bureau at the Rook, where she kept her money matters. The letter is there.",
+   "claim": {
+    "pred": "related",
+    "a": "silas",
+    "rel": "embezzled_from",
+    "b": "ada"
+   },
+   "art": "letter",
+   "to": null,
+   "show": "This letter from the Northern Counties Building Society says they hold no account for her, nor any sums of four hundred pounds lodged by Mr Voss on her behalf. Do you know anything about this?",
+   "reactions": {
+    "silas": "Clerical error, surely - building societies are notoriously slipshod with their records. I handled the lodging of those funds myself and in good faith; if the society has mislaid the account, that is a matter for their head office, not for me."
+   },
+   "lines_for": "f6ed6834ceba"
+  },
+  {
+   "id": "s_silas_t",
+   "kind": "testimony",
+   "title": "The solicitor's evening",
+   "text": "\"At my desk in the vestry, as on most evenings. A conveyance for the Hollins farm, tedious work; my draft notes the hours, if you care to see it. Labor omnia vincit, one hopes. Mr Hale was in his study across the passage; he will tell you so.\"",
+   "at": "manor",
+   "speaker": "silas",
+   "because": [
+    "a_silas_cover"
+   ],
+   "ask": "Where were you last night, Mr Voss?",
+   "requires": [
+    "s_blot_read"
+   ],
+   "unlock": "Read in the glass, the blotter puts him at Vale Manor with Mr Vale this morning. You walk up to the manor and find him with Mr Vale in the library, the Hollins papers spread out between them.",
+   "to": null,
+   "show": "Mr Voss says he was at his desk in the vestry all evening on a conveyance for the Hollins farm, and that Mr Hale can vouch he was in his study across the passage. Do you know if that's so?",
+   "confront": "You say you were at your desk in the vestry all evening working on the Hollins conveyance, and that Mr Hale will vouch for you. Is that the whole of it?",
+   "lines_for": "dfa95e5f2201",
+   "same_as": "night"
+  },
+  {
+   "id": "s_vicar_t",
+   "kind": "testimony",
+   "title": "The vicar vouches",
+   "text": "\"Silas? Oh, he was at his desk, certainly, the whole evening. From ten until long past eleven his lamp was burning. I was wrestling with Ecclesiastes myself, 'a time to keep silence', you know. No, he never stirred.\"",
+   "at": "vestry",
+   "speaker": "vicar",
+   "because": [
+    "a_vicar_loyal",
+    "a_vicar_believes"
+   ],
+   "requires": [
+    "s_silas_t"
+   ],
+   "unlock": "Mr Voss names the vicar as his witness, so you go back down to the vestry and across the passage to Mr Hale's study.",
+   "ask": "Was Mr Voss in his office all last evening?",
+   "claim": {
+    "pred": "wasAt",
+    "person": "silas",
+    "place": "vestry",
+    "from": 1320,
+    "to": 1420
+   },
+   "to": "silas",
+   "direct": "You say Mr Voss's lamp burned in his study from ten until past eleven and that he never stirred. Is that the whole of it?",
+   "show": "The Reverend Hale says Mr Voss's lamp was burning in his study from ten until past eleven and that he never stirred all evening. Do you know if that's true?",
+   "confront": "You say Mr Voss's lamp burned in his study from ten until past eleven and that he never stirred. Is that the whole of it?",
+   "reactions": {
+    "silas": "Just as I told you - I was at my desk the whole evening, lamp burning, the vicar will confirm it himself. A man of the cloth is hardly given to inventing alibis, Inspector."
+   },
+   "lines_for": "f89a902dcd05",
+   "same_as": "night"
+  },
+  {
+   "id": "s_dora_sight",
+   "kind": "testimony",
+   "title": "Crossing the square",
+   "text": "\"The vicar said that? Then the vicar wants spectacles. I left Dr Marsh's at four minutes past eleven by her clock, and before ten past I saw Mr Voss come up the Manor lane into the square. No hat, walking fast. I remember because he never goes out without his hat.\"",
+   "at": "post",
+   "speaker": "dora",
+   "source": "e_dora_square",
+   "requires": [
+    "s_vicar_t"
+   ],
+   "unlock": "Miss Pruett crossed the square that night. When you repeat the vicar's account across her counter, she has to correct it.",
+   "ask": "Did you see anyone on your way home from the surgery?",
+   "claim": {
+    "pred": "wasAt",
+    "person": "silas",
+    "place": "square",
+    "from": 1387,
+    "to": 1390
+   },
+   "defeats": [
+    "s_vicar_t",
+    "s_draft"
+   ],
+   "to": "silas",
+   "direct": "Miss Pruett says that just after four minutes past eleven she saw you hurrying up the Manor lane into the square without your hat. Is that so?",
+   "show": "Miss Pruett says she left Dr Marsh's just after four minutes past eleven and shortly after saw Mr Voss hurrying up the Manor lane into the square without his hat. Do you know if that's true?",
+   "confront": "You say that just after four minutes past eleven you saw Mr Voss hurrying up the Manor lane into the square without his hat. Is that the whole of it?",
+   "reactions": {
+    "vicar": "Dear me - well, Miss Pruett has always had sharp eyes for the square, sharper than mine, I fear. Perhaps I dozed over my Ecclesiastes longer than I knew; I would not wish to contradict her, nor to think ill of Silas on so slight a thing.",
+    "silas": "Miss Pruett is mistaken, or else the light deceived her - I was at my desk the whole evening, as the vicar himself attested. Hats are easily left behind on a hook; it proves nothing beyond a moment's forgetfulness."
+   },
+   "lines_for": "97c9f33e831a"
+  },
+  {
+   "id": "s_rowan_t",
+   "kind": "testimony",
+   "title": "The groundskeeper's evening",
+   "text": "\"Rook. Dominoes with the constable. Lost a bit and won a bit more. Back to my bothy toward midnight and straight to bed. Didn't go in the orchid house till first light, and wish I hadn't then.\"",
+   "at": "greenhouse",
+   "speaker": "rowan",
+   "source": "e_rowan_inn",
+   "ask": "Where were you last night, Mr Pike?",
+   "to": null,
+   "show": "Mr Pike says he played dominoes with the constable at the Rook, then went back to his bothy toward midnight and straight to bed, not visiting the orchid house till first light. Do you know if that's true?",
+   "confront": "You say you played dominoes with the constable, went back to your bothy toward midnight, and didn't go to the orchid house till first light. Is that the whole of it?",
+   "lines_for": "17be788e3f79",
+   "same_as": "night"
+  },
+  {
+   "id": "s_dora_t",
+   "kind": "testimony",
+   "title": "The postmistress's evening",
+   "text": "\"I scalded my hand on the kettle, if you must know, and went to Dr Marsh to have it properly dressed. Then home. I dropped the little card she gave me somewhere on the square, too, with my hand throbbing so. I keep regular hours, unlike some in this village.\"",
+   "at": "post",
+   "speaker": "dora",
+   "source": "e_iris_treat",
+   "ask": "Where were you last night, Miss Pruett?",
+   "to": null,
+   "show": "Miss Pruett says she scalded her hand on her kettle, had it dressed by Dr Marsh, then went straight home, dropping the doctor's card somewhere on the square. Do you know if that's true?",
+   "confront": "You say you scalded your hand, had it dressed by Dr Marsh, then went straight home, dropping her card somewhere on the square. Is that the whole of it?",
+   "lines_for": "c39ac9e5f5b5",
+   "same_as": "night"
+  },
+  {
+   "id": "s_vera_t",
+   "kind": "testimony",
+   "title": "The lodger's evening",
+   "text": "\"In my room, with a book and a cold hot-water bottle. Where do you suppose a widow spends her evenings in Bellweather? Did you imagine I was dancing?\"",
+   "at": "inn",
+   "speaker": "vera",
+   "source": "e_vera_room",
+   "ask": "Where were you last night, Mrs Lacey?",
+   "to": null,
+   "show": "Mrs Lacey says she spent the evening in her room with a book and a cold hot-water bottle. Do you know if that's true?",
+   "confront": "You say you spent the evening in your room with a book and a cold hot-water bottle. Is that the whole of it?",
+   "lines_for": "9f500f8c09c9",
+   "same_as": "night"
+  },
+  {
+   "id": "s_slate",
+   "kind": "trace",
+   "title": "The slate behind the bar",
+   "text": "Inside the settle locker, under a box of dominoes, lies a chalk slate with its face down. It has been half wiped. Two columns are headed 'A.B.' and 'R.P.', and tallies in fives run down them to a line chalked '11.45'. Under R.P., underlined twice: '1/-'.",
+   "at": "inn",
+   "source": "e_bell_hide",
+   "requires": [
+    "s_hook"
+   ],
+   "unlock": "The chalk smear runs from the empty hook to the settle by the fire. When you lift the settle's lid, the slate is inside.",
+   "art": "slate",
+   "to": null,
+   "reactions": {
+    "bell": "Ah. Well. That's... that's an old score, settled long since, nothing to do with the night in question. I'd be obliged if that stayed between these walls, Inspector, it's no bearing on the murder."
+   },
+   "show": "I found a chalk slate hidden in the settle locker, half wiped, with tallies under 'A.B.' and 'R.P.' running to a line marked '11.45', and a shilling owed under R.P. Do you know anything about this?",
+   "lines_for": "101aacccb63a"
+  },
+  {
+   "id": "s_apron",
+   "kind": "absence",
+   "title": "An empty apron pocket",
+   "text": "Mrs Finch's apron pocket has been turned inside out and is empty. On the potting bench nearby the dust is wiped clean in a broad stroke, as if someone had swept the bench top.",
+   "at": "greenhouse",
+   "source": "e_bell_effects",
+   "needs": [
+    "s_strip"
+   ],
+   "reading": "The gummed strip from the barrow is the kind torn off a constabulary envelope for a dead person's belongings. So the pocket was emptied officially, into a sealed envelope, and not by a thief.",
+   "art": "apron",
+   "to": null,
+   "show": "Mrs Finch's apron pocket has been turned out and left empty, and the dust on the nearby potting bench has been wiped clean in a broad stroke. Do you know who did this?",
+   "reactions": {
+    "bell": "Turned out and swept clean, is it - whoever did that meant to leave nothing behind for the likes of us to find. I sealed what little I found myself, and that pocket was already as you see it when I came to it."
+   },
+   "lines_for": "0d97d21c0fa2"
+  },
+  {
+   "id": "s_draft",
+   "kind": "document",
+   "title": "The Hollins conveyance",
+   "text": "Mr Voss slides his working draft across the desk. Clauses in his neat hand, and in the margin pencilled notes: 'cl. 4 settled 10.40', 'cl. 7 revised 10.58', 'schedule complete 11.15 p.m. S.V.' The ink of the clauses is uniformly dry and even.",
+   "at": "vestry",
+   "source": "e_silas_draft",
+   "claim": {
+    "pred": "wasAt",
+    "person": "silas",
+    "place": "vestry",
+    "from": 1320,
+    "to": 1395
+   },
+   "art": "book",
+   "to": null,
+   "show": "Mr Voss's working draft for the Hollins conveyance shows pencilled times at 10.40, 10.58 and 11.15, with ink that looks evenly dry throughout. Do you know when this was actually written?",
+   "reactions": {
+    "silas": "The ink dries evenly on any night, Inspector, that proves nothing but a tidy hand. I pencilled those times as I worked, exactly as the margin shows, and I'll not have my own methodical habits read as some manner of deceit."
+   },
+   "lines_for": "56e584025a69"
+  },
+  {
+   "id": "s_dora_stove",
+   "kind": "behavior",
+   "title": "Smoke at the post office",
+   "text": "The morning is mild, but the post-office stove is lit and smells of burnt paper. As you come in, Miss Pruett slams the stove door shut with her good hand, colours, and asks sharply whether anyone has been through Mrs Finch's papers yet.",
+   "at": "post",
+   "about": "dora",
+   "source": "e_dora_burn",
+   "explainedBy": [
+    "s_dora_burnt"
+   ],
+   "to": "dora",
+   "direct": "I saw you slam the stove shut and heard you ask sharply whether anyone had been through Mrs Finch's papers. Why did you do that?",
+   "show": "I noticed Miss Pruett slam the stove shut as I came in, her hand colouring, and heard her ask sharply whether anyone had been through Mrs Finch's papers yet. Do you know why she did that?",
+   "confront": "I saw you slam the stove shut and heard you ask sharply whether anyone had been through Mrs Finch's papers. Why did you do that?",
+   "reactions": {
+    "dora": "A body does feel the chill even on a mild morning, Inspector, and I'll thank you not to go rooting through a dead woman's post before it's proper. What I burn in my own stove is my own affair, and no concern of the investigation."
+   },
+   "lines_for": "7d834a401cf8"
+  },
+  {
+   "id": "s_dora_burnt",
+   "kind": "document",
+   "title": "Scorched paper in the grate",
+   "text": "A charred half-sheet in a prim hand, dated four days ago: '...to the District Surveyor, G.P.O. Sir, I wish to lodge a formal complaint against Mrs A. Finch of the Rook & Lantern, who maliciously asserts that I tamper with His Majesty's mails...' The rest is ash. It is unsigned, and there is no stamp.",
+   "at": "post",
+   "source": "e_dora_burn",
+   "requires": [
+    "s_dora_stove",
+    "s_casenotes"
+   ],
+   "unlock": "When you tell Miss Pruett that Dr Marsh's daybook shows she was at the surgery all evening, she lets out a breath. She opens the stove herself and hands you the part that did not burn: better you have it from her than find it.",
+   "claim": {
+    "pred": "related",
+    "a": "ada",
+    "rel": "slandered",
+    "b": "dora"
+   },
+   "art": "ashes",
+   "to": null,
+   "show": "This charred letter, dated four days ago, complains to the District Surveyor that Mrs Finch accused someone of tampering with the mails. Do you know who wrote it?",
+   "reactions": {
+    "dora": "Oh— yes, that's mine, I don't deny it now. I drafted a complaint against that wicked woman for her talk about me and the mails, but I never sent it, and when I heard she was dead I burned it rather than have it misread. There's no shame in defending one's good name, Inspector, whatever the ash makes it look like.",
+    "silas": "A disgruntled postmistress's grievance, by the look of it — hardly my affair, nor evidence of anything beyond village pettiness. You will forgive me if I decline to speculate on Miss Pruett's correspondence; I have the Hollins conveyance to occupy my mind this morning."
+   },
+   "lines_for": "7f7ef2546d79"
+  },
+  {
+   "id": "s_rowan_bundle",
+   "kind": "behavior",
+   "title": "The groundskeeper's bundle",
+   "text": "In the bothy by the glasshouses, a lumpy bundle in sacking has been pushed under the bench, still damp, with drag marks in the earth floor. Mr Pike moves to stand in front of it. \"Compost. Nothing for you there.\" He doesn't look at the bundle again, and he keeps wiping his hands on his trousers.",
+   "at": "greenhouse",
+   "about": "rowan",
+   "source": "e_rowan_hide",
+   "explainedBy": [
+    "s_rowan_label"
+   ],
+   "to": "rowan",
+   "direct": "You stepped in front of that damp bundle and called it compost, but you wouldn't look at it again and kept wiping your hands. What's really in it?",
+   "confront": "You pushed a damp bundle under your bench, stood in front of it calling it compost, and kept wiping your hands without looking at it. What's really in there?",
+   "reactions": {
+    "rowan": "Compost, I said, and compost it is — turning it's dirty work, that's all. A man can sweat over his own barrow without the law reading murder into it."
+   },
+   "show": "Mr Pike stepped in front of a damp bundle under the bench and claimed it was only compost, though he kept wiping his hands. Does that strike you as odd?",
+   "lines_for": "549b2849e90e"
+  },
+  {
+   "id": "s_rowan_label",
+   "kind": "document",
+   "title": "Inside the sacking",
+   "text": "Under the sacking is a slatted crate. Inside, a dozen flowering orchids are bedded in wet moss, each plant still carrying a Vale Manor glasshouse tag. A railway consignment label is tied to the crate: 'Messrs Thorne & Gilchrist, Nurserymen, Covent Garden. To be called for, Bellweather Halt. Carriage forward.' It is dated for today's up train.",
+   "at": "greenhouse",
+   "source": "e_rowan_hide",
+   "requires": [
+    "s_rowan_bundle",
+    "s_bell"
+   ],
+   "unlock": "You saw him guarding the bundle. Now that he has owned up to the dominoes, Constable Bell agrees to call Mr Pike out to the orchid house for questioning, and while Pike is out you go back to the bench and lift the sacking.",
+   "claim": {
+    "pred": "had",
+    "person": "rowan",
+    "item": "orchid_bundle"
+   },
+   "art": "ticket",
+   "to": "edmund",
+   "direct": "I found a crate of orchids tagged from your glasshouse, consigned today to nurserymen in Covent Garden. Do you know who arranged this?",
+   "show": "Inside that sacking I found a crate of orchids tagged from the Vale Manor glasshouse, consigned today to nurserymen in Covent Garden, carriage forward. Do you know who arranged this shipment?",
+   "reactions": {
+    "rowan": "Aye, well. A man's got to make ends meet, and Mr Vale's never missed a plant he didn't plant himself. There's no crime in a bit of trade on the side, whatever you want to call it.",
+    "silas": "Orchids and railway labels are rather outside my province, Constable — a gardener's sideline, I should think, and none of mine to judge. I came to the manor on the Hollins business, not to count Mr Vale's flowerpots.",
+    "edmund": "Yes, those are my orchids, from my own glasshouse, and there's nothing sinister in a man sending his own flowers to Covent Garden. The nursery pays well for them, and it's no business of yours how I supplement the estate's income. Hollins conveyance or no, a man's entitled to a little trade on the side."
+   },
+   "lines_for": "85a88664743b"
+  },
+  {
+   "id": "s_dora_card",
+   "kind": "observation",
+   "title": "The surgery card",
+   "text": "From the lost property in the constable's desk: a small printed card, one corner scuffed by a boot. 'Dr I. Marsh, The Surgery, Bellweather. Patient No. 112. Dressing to be changed Thursday.' On the back, in a brisk hand: 'L. hand. Keep dry.'",
+   "at": "square",
+   "source": "e_bell_card",
+   "requires": [
+    "s_dora_t",
+    "s_iris_doubt"
+   ],
+   "unlock": "Miss Pruett says she lost the doctor's card on the square. When Bell unlocks his desk to open the effects envelope, he finds a card he picked up on the square this morning and hands it to you.",
+   "art": "card",
+   "to": null,
+   "show": "This surgery card for patient number 112, scuffed by a boot heel, was found in the constable's lost property, with a note on the back about keeping a left hand dry. Do you know whose it is?",
+   "reactions": {
+    "bell": "Ah — that'll be Miss Pruett's, trodden flat in the square I shouldn't wonder. I'll want it back to her, once we've done with it; no sense in lost property gathering dust in my desk longer than it must."
+   },
+   "lines_for": "113b0dfdd2cc"
+  },
+  {
+   "id": "s_iris_doubt",
+   "kind": "testimony",
+   "title": "The doctor's misgivings",
+   "text": "\"I watched Constable Bell turn out her apron pocket: a folded paper and a few coppers, which he sealed for the coroner. I'll tell you what I told him. The wound is high on the crown, with a rust mark from the iron staging. A woman who topples off those steps lands on her back or her side.\"",
+   "at": "surgery",
+   "speaker": "iris",
+   "source": "e_examination",
+   "requires": [
+    "s_apron",
+    "s_strip"
+   ],
+   "unlock": "The constabulary strip shows the pocket was emptied into an official envelope during the examination. Dr Marsh was there, so you go to the surgery and ask her what was taken.",
+   "ask": "What did the constable take from her pocket, and what did you make of the body?",
+   "to": null,
+   "confront": "You say the constable turned out a paper and a few coppers from her apron, and that her wound sits oddly for a fall from the staging. Is there more you can tell me?",
+   "show": "Dr Iris Marsh says the wound was high on the crown with a rust mark from the iron staging, which doesn't match how a woman falling from those steps would land. Do you have anything to say about her findings?",
+   "lines_for": "1f98ae45249a",
+   "same_as": "night"
+  },
+  {
+   "id": "s_hook",
+   "kind": "absence",
+   "title": "Behind the darts-team photograph",
+   "text": "You lift the photograph down. It was hanging on an iron hook. Behind it, a clean oblong on the plaster, wider than the frame, shows where something flat used to hang. The back of the frame is dusted with chalk, and a smear of chalk runs down the underside of the bar flap toward the old oak settle by the fire.",
+   "at": "inn",
+   "source": "e_bell_photo",
+   "requires": [
+    "s_photo"
+   ],
+   "unlock": "The photograph has been moved from its nail by the door and hung awkwardly behind the bar, so you lift it down to see what it is hanging on.",
+   "art": "hook",
+   "to": null,
+   "show": "Behind the darts-team photograph I found a clean oblong on the plaster where something flatter once hung, with chalk dust on the frame and a smear leading toward the old settle. Do you know what used to hang there?",
+   "reactions": {
+    "bell": "Chalk's chalk, and a slate's a slate — a man's allowed his game of dominoes of an evening without the whole square making a inquest of it. I'll not pretend that hook's always held a photograph, but it's hardly a hanging matter, is it."
+   },
+   "lines_for": "f44d527c3c6c"
+  },
+  {
+   "id": "s_strip",
+   "kind": "trace",
+   "title": "Sweepings in the barrow",
+   "text": "Behind the bundle, the drag marks lead back toward the orchid house and stop at a freshly swept patch of tiles by the potting bench. Beside the bothy door, a wheelbarrow holds damp moss, soil and broken crocks. Caught in the moss is a torn strip of buff gummed paper printed 'COUNTY CONSTABULARY: PROPERTY OF DECEASED'.",
+   "at": "greenhouse",
+   "source": "e_rowan_sweep",
+   "requires": [
+    "s_rowan_bundle"
+   ],
+   "unlock": "You follow the drag marks from the bundle under the bench back to the swept tiles, and the sweepings are in the barrow by the door.",
+   "art": "barrow",
+   "to": null,
+   "show": "The drag marks from the bundle lead to a freshly swept patch by the potting bench, and the barrow holds moss and crocks with a torn constabulary property label caught in it. Do you know how that label got there?",
+   "reactions": {
+    "rowan": "That's none of mine, that scrap — must've blown in with the sweepings off the tiles, same as the moss and the broken pots. I weren't minding what paper got caught up in the barrow, only getting the mess cleared before folk came tramping through."
+   },
+   "lines_for": "fa31128c9d01"
+  },
+  {
+   "id": "s_photo",
+   "kind": "absence",
+   "title": "A bare nail by the door",
+   "text": "On the taproom wall by the door, a bare nail sticks out above a pale rectangle on the smoke-browned plaster. The framed photograph of the Rook's darts team hangs behind the bar instead, tilted, its cord looped twice to take up slack, on a hook too low for it.",
+   "at": "inn",
+   "source": "e_bell_photo",
+   "requires": [
+    "s_vera_noise"
+   ],
+   "unlock": "Mrs Lacey heard a frame knocking on the taproom plaster near midnight, so you go down and look over the taproom walls.",
+   "art": "hook",
+   "to": null,
+   "show": "There's a bare nail by the taproom door above a pale mark on the wall, while the darts-team photograph now hangs behind the bar, tilted and too low. Do you know why it was moved?",
+   "reactions": {
+    "bell": "I'll own the photograph's not sat right there before — man likes to tidy a wall now and then, that's all it is. There's no law against a constable rearranging his own taproom of an evening."
+   },
+   "lines_for": "ee3ac62dbdb5"
+  },
+  {
+   "id": "s_silas_away",
+   "kind": "absence",
+   "title": "A locked office door",
+   "text": "Mr Voss's office across the vestry passage is locked. His hat is gone from its peg and the grate is cold. On the passage table, where his appointments book usually lies, there is a bare space. A sheet of blotting paper is still there, with fresh ink on it that reads back to front.",
+   "at": "vestry",
+   "source": "e_silas_blot",
+   "art": "inkwell",
+   "to": "silas",
+   "direct": "Your office is locked, your hat gone, and your appointments book missing from the table. Where have you gone to?",
+   "show": "Mr Voss's office is locked, his hat gone, the grate cold, and his appointments book missing from the passage table, though fresh ink shows backward on the blotter. Do you know where he's gone?",
+   "reactions": {
+    "silas": "My office is locked because I keep it so, and I took my book with me as any careful man of business would. As for my hat, Reverend, I daresay even a vestry clerk may step out into the morning air without the County Constabulary remarking on it."
+   },
+   "lines_for": "cacd2112d746"
+  },
+  {
+   "id": "s_paper_match",
+   "kind": "trace",
+   "title": "The vestry stationery press",
+   "text": "Mr Hale takes a sheet from the press in the shared office: cream laid paper, 'St. Alden's Vestry, Bellweather' printed at the head, and a crowned A watermark when held to the window. In the office grate is a curl of ash with printed letters still on it: '...ellweath...'.",
+   "at": "vestry",
+   "source": "e_silas_note",
+   "requires": [
+    "s_dora_sight"
+   ],
+   "unlock": "When you tell him Miss Pruett saw Mr Voss hatless in the square, the vicar's conscience is stirred. He takes you into the office he shares with Mr Voss and opens the stationery press.",
+   "art": "ashes",
+   "to": null,
+   "show": "This vestry stationery matches the paper of the note found on Mrs Finch, and the office grate holds a curl of burnt paper with 'ellweath' still printed on it. Do you know who used this paper and burned the rest?",
+   "reactions": {
+    "silas": "Vestry paper is common enough about the place, Inspector, and ash tells you little beyond that someone has burned something — hardly a confession in itself. I write a great many notes in the course of my work; I could not account for every scrap that finds its way to the grate."
+   },
+   "lines_for": "fb146525f264"
+  },
+  {
+   "id": "s_vera_noise",
+   "kind": "testimony",
+   "title": "Noises after closing",
+   "text": "\"Heard anything? Darling, the walls of the Rook are paper. After the taproom went quiet, getting on for a quarter to midnight, someone was down there scraping, like a cloth on a slate, then a picture frame knocking on the plaster and a tap or two. I thought it was our landlady tidying up. Odd hour to hang pictures, wasn't it?\"",
+   "at": "inn",
+   "speaker": "vera",
+   "source": "e_vera_overhear",
+   "because": [
+    "a_vera_heard"
+   ],
+   "ask": "Did you hear anything in the house last night, Mrs Lacey?",
+   "requires": [
+    "s_vera_t"
+   ],
+   "unlock": "She says she was in her room all evening, so you ask what she might have heard from there. She is glad to tell you, because it bears out her own story.",
+   "to": null,
+   "show": "Mrs Lacey says that after the taproom quieted, near a quarter to midnight, she heard scraping like cloth on slate, then a picture frame knocking against the plaster. Do you know what that noise was?",
+   "confront": "You say that near a quarter to midnight you heard scraping like cloth on slate, then a picture frame knocking against the plaster. Can you say more about that?",
+   "lines_for": "23d3001cd387"
+  },
+  {
+   "id": "s_blot_read",
+   "kind": "trace",
+   "title": "The blotter in the glass",
+   "text": "Freed of the sheet laid over it, you hold this blotting paper up to the looking-glass. The newest impression comes out the right way round, in a neat hand: '8 a.m. E. Vale, at the Manor. Hollins conveyance, schedule.' Beneath it, fainter, are older entries from earlier days.",
+   "at": "vestry",
+   "source": "e_silas_blot",
+   "requires": [
+    "s_old_blot"
+   ],
+   "unlock": "Beneath the older sheet lies the fresh blotter, its ink still sharp; you lift that one free to read in the glass.",
+   "needs": [
+    "s_old_blot"
+   ],
+   "reading": "Once the older, weathered sheet is set aside, the fresh impression beneath it is the one that reads back to front and matches tonight's hand.",
+   "art": "inkwell",
+   "to": "edmund",
+   "direct": "This blotter shows a fresh note arranging to meet you at the Manor at eight about the Hollins conveyance schedule. Do you know who arranged it?",
+   "show": "Held to the glass, this blotter shows a fresh note arranging to meet Mr Vale at the Manor at eight about the Hollins conveyance schedule. Do you know who wrote that appointment?",
+   "reactions": {
+    "silas": "That merely confirms what I have already told you — I was at the manor with Mr Vale on the Hollins conveyance, as any respectable blotter would show. I see nothing in my own handwriting, Inspector, that should trouble either of us.",
+    "edmund": "That's my hand, certainly - I was going over the Hollins schedule with Silas, exactly as I told you. There's nothing odd in a blotter showing a man's own work, Inspector. I don't see what you're driving at."
+   },
+   "lines_for": "5bfb7d2f5935"
+  },
+  {
+   "id": "s_choir_photo",
+   "kind": "absence",
+   "title": "A photograph over the glass",
+   "text": "In the robing cupboard, a small framed choir photograph has been hung squarely over what should be a looking-glass. Dust on the frame's edge is disturbed, as though it were lifted and set back only this morning.",
+   "at": "vestry",
+   "source": "e_vicar_cover",
+   "requires": [
+    "s_silas_away"
+   ],
+   "unlock": "The empty peg and bare space in the office send you across to the robing cupboard, where the mirror used to catch the light; instead you find it covered.",
+   "art": "photo",
+   "to": null,
+   "show": "In the robing cupboard, a small choir photograph has been hung squarely over what should be a looking-glass, its dust disturbed as if lifted only this morning. Do you know why it was moved?",
+   "reactions": {
+    "vicar": "Oh — ah, yes, I moved that this morning, I confess it. I find a looking-glass rather vain for a robing cupboard, and the photograph a more fitting thing to meet one's eye before the service; there is no mystery in an old man's small vanities of order."
+   },
+   "lines_for": "8590ef137519"
+  },
+  {
+   "id": "s_old_blot",
+   "kind": "trace",
+   "title": "An older blotter sheet",
+   "text": "Lifted away, the top blotting sheet shows only faint, old impressions: a note about flowers for Sunday, dated days past. Beneath it, a second sheet lies pressed flat, its ink darker and unweathered.",
+   "at": "vestry",
+   "source": "e_vicar_cover",
+   "requires": [
+    "s_choir_photo"
+   ],
+   "unlock": "Behind the photograph the glass is bare, but a blotter sheet is pinned under the frame's lower edge; you take it down to see what it covers.",
+   "defeats": [
+    "s_blot_read"
+   ],
+   "art": "inkwell",
+   "to": null,
+   "show": "Beneath the top sheet, the blotter shows an older note about flowers for Sunday, and beneath that a second sheet with darker, fresher ink pressed flat. Do you know what was written there?",
+   "reactions": {
+    "vicar": "Ah, the flowers for Sunday — yes, that was my note, nothing more. I could not say what lies beneath it; a vestry study collects a great many sheets, and I confess I am not always as tidy as I ought to be."
+   },
+   "lines_for": "3ebf83c131c4"
+  },
+  {
+   "id": "s_saw_vera_ada_inn",
+   "kind": "testimony",
+   "speaker": "vera",
+   "sighting": true,
+   "source": "e_vera_room",
+   "claim": {
+    "pred": "wasAt",
+    "person": "ada",
+    "place": "inn",
+    "from": 1260,
+    "to": 1325
+   },
+   "title": "Vera Lacey saw Ada Finch",
+   "text": "I saw Mrs Finch at the Rook & Lantern, quarter past nine, if you must know.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "show": "Vera Lacey says she saw Mrs Finch at the Rook & Lantern at quarter past nine. Does that match what you know?",
+   "lines_for": "0bf8bf2a1a19",
+   "confront": "You told me you saw Mrs Finch at the Rook & Lantern at quarter past nine. Is that correct?",
+   "to": "ada",
+   "direct": "Vera Lacey says she saw you at the Rook & Lantern at quarter past nine. Is that where you were?"
+  },
+  {
+   "id": "s_saw_vera_bell_inn",
+   "kind": "testimony",
+   "speaker": "vera",
+   "sighting": true,
+   "source": "e_vera_room",
+   "claim": {
+    "pred": "wasAt",
+    "person": "bell",
+    "place": "inn",
+    "from": 1300,
+    "to": 1422
+   },
+   "title": "Vera Lacey saw Arthur Bell",
+   "text": "I saw Constable Bell at the Rook & Lantern, five to ten, since you're asking.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "bell",
+   "direct": "Mrs Lacey says she saw you at the Rook & Lantern at five to ten. Is that so?",
+   "show": "Vera Lacey says she saw Constable Bell at the Rook & Lantern at five to ten. Can you confirm that?",
+   "lines_for": "87c4d8580516",
+   "confront": "You told me you saw Constable Bell at the Rook & Lantern at five to ten. Is that the whole of it?",
+   "reactions": {
+    "bell": "Aye, well, I were having a quiet game at the Rook, nothing more to it than that. A man's entitled to his dominoes of an evening, and it's no crime I know of."
+   }
+  },
+  {
+   "id": "pub_window",
+   "kind": "public",
+   "title": "When it happened",
+   "text": "Ada Finch died between 22:25 and 23:05.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1345,
+    "to": 1385
+   }
+  },
+  {
+   "id": "pub_holders_vestry_paper",
+   "kind": "public",
+   "title": "Who had the vestry letter paper",
+   "text": "Everyone knows only Silas Voss and the Reverend Thomas Hale had the vestry letter paper.",
+   "claim": {
+    "pred": "onlyHad",
+    "item": "vestry_paper",
+    "people": [
+     "silas",
+     "vicar"
+    ]
+   }
+  }
+ ],
+ "premise": {
+  "victim": "ada",
+  "culprit": "silas",
+  "suspects": [
+   "dora",
+   "rowan",
+   "silas",
+   "vera"
+  ],
+  "bystanders": [
+   "jonah",
+   "clara",
+   "hugo",
+   "vicar",
+   "edmund"
+  ],
+  "method": "staged",
+  "motive": "money",
+  "place": "greenhouse",
+  "shape": "protector"
+ },
+ "id": "mk-live-20261003-085134",
+ "answer": {
+  "method": "staged",
+  "motive": "money",
+  "methods": [
+   "blow",
+   "staged"
+  ],
+  "motives": [
+   "money"
+  ],
+  "accepted_v": 3,
+  "accepted_scores": {
+   "methods": {
+    "poison": 0,
+    "blow": 3,
+    "fall": 0,
+    "smother": 0,
+    "drown": 0,
+    "blade": 0,
+    "gun": 0,
+    "gas": 0,
+    "staged": 1
+   },
+   "motives": {
+    "money": 3,
+    "inheritance": 1,
+    "love": 0,
+    "revenge": 0,
+    "secret": 1,
+    "protect": 0,
+    "blackmail": 2,
+    "quarrel": 0
+   }
+  }
+ },
+ "synopsis": "Ada Finch was found dead at the greenhouse.",
+ "moods": {
+  "silas": "Quiet and composed, going through the day's business without comment.",
+  "dora": "Flustered and tender-handed, keeping to herself and flinching whenever Ada's name comes up.",
+  "vera": "Pale and withdrawn, rehearsing what she'll say about staying in her room all night.",
+  "iris": "Calm and businesslike, already thinking ahead to the patients who'll need seeing today.",
+  "vicar": "Mild and watchful, quick to steer talk away from his old friend's reputation.",
+  "edmund": "Grave and preoccupied, going about the manor's business under a cloud."
+ },
+ "knowledge": {
+  "silas": [
+   "I've known Ada for years as the landlady of the Rook, same as everyone in the village has dealt with her at one time or another.",
+   "I understand the whole village already knows Rowan found poor Ada this morning and that Constable Bell was sent for, and the doctor after him."
+  ],
+  "dora": [
+   "I've known Ada for years, as everyone has, her being landlady at the Rook where half the village takes a drink."
+  ],
+  "rowan": [
+   "I know Ada because she's landlady of the Rook, and I take a drink there most evenings after my rounds."
+  ],
+  "vera": [
+   "I'm new to the village, lodging at the Rook these three weeks, in the back bedroom upstairs.",
+   "I know Ada as my landlady, since she keeps the inn where I'm staying.",
+   "I spend my days sketching the old church and asking folk about the village for a book I'm writing.",
+   "I don't hold any keys beyond the one to my own room, which the landlady gave me when I arrived.",
+   "I've heard this morning, same as everyone, that Rowan found Ada dead and the constable and doctor were called."
+  ],
+  "iris": [
+   "I am the village doctor and I'm called out whenever anyone is hurt or taken ill, any hour of the day or night.",
+   "I know Ada as a patient and as everyone does, through her keeping the Rook.",
+   "I hold the only key to my surgery and to the cabinet where I keep my records.",
+   "This morning Rowan fetched me on Constable Bell's orders, and I examined Ada's body in the orchid house."
+  ],
+  "bell": [
+   "I am the village constable, and I see to any trouble reported to me and keep the peace about the square.",
+   "I know Ada as the landlady of the Rook, where I'm a regular enough face of an evening.",
+   "I hold the key to my own desk and to the police house, and now to the sealed envelope of Ada's effects for the coroner."
+  ],
+  "vicar": [
+   "I am vicar of St Alden's and have been for twenty years, seeing to the church and the parish.",
+   "I hold the key to the church and vestry, as is usual for the vicar."
+  ],
+  "edmund": [
+   "I am master of Vale Manor, and the house, grounds, greenhouse and boathouse are all mine to look after.",
+   "Like the rest of the village, I've heard that Rowan found Ada dead this morning and that Bell and the doctor were sent for."
+  ]
+ },
+ "reviewed": [
+  "s_apron|reactions|bell",
+  "s_bell|direct",
+  "s_bell|reactions|rowan",
+  "s_blot_read|direct",
+  "s_blot_read|reactions|edmund",
+  "s_blot_read|reactions|silas",
+  "s_casenotes|reactions|dora",
+  "s_casenotes|reactions|iris",
+  "s_casenotes|reactions|silas",
+  "s_choir_photo|reactions|vicar",
+  "s_dora_burnt|reactions|dora",
+  "s_dora_burnt|reactions|silas",
+  "s_dora_card|reactions|bell",
+  "s_dora_sight|direct",
+  "s_dora_sight|reactions|silas",
+  "s_dora_sight|reactions|vicar",
+  "s_dora_stove|direct",
+  "s_dora_stove|reactions|dora",
+  "s_draft|reactions|silas",
+  "s_hook|reactions|bell",
+  "s_letter|reactions|silas",
+  "s_medical_iris|text",
+  "s_medical|reactions|bell",
+  "s_medical|reactions|iris",
+  "s_medical|reactions|rowan",
+  "s_medical|reactions|silas",
+  "s_medical|text",
+  "s_morning_bell|text",
+  "s_morning_edmund|text",
+  "s_morning_iris|text",
+  "s_morning_rowan|text",
+  "s_morning_silas|text",
+  "s_note|reactions|bell",
+  "s_note|reactions|silas",
+  "s_old_blot|reactions|vicar",
+  "s_paper_match|reactions|silas",
+  "s_photo|reactions|bell",
+  "s_rowan_bundle|direct",
+  "s_rowan_bundle|reactions|rowan",
+  "s_rowan_label|direct",
+  "s_rowan_label|reactions|edmund",
+  "s_rowan_label|reactions|rowan",
+  "s_rowan_label|reactions|silas",
+  "s_saw_vera_ada_inn|direct",
+  "s_saw_vera_ada_inn|text",
+  "s_saw_vera_bell_inn|direct",
+  "s_saw_vera_bell_inn|reactions|bell",
+  "s_saw_vera_bell_inn|text",
+  "s_silas_away|direct",
+  "s_silas_away|reactions|silas",
+  "s_slate|reactions|bell",
+  "s_strip|reactions|rowan",
+  "s_surface_bell|text",
+  "s_surface_dora|text",
+  "s_surface_edmund|text",
+  "s_surface_iris|text",
+  "s_surface_rowan|text",
+  "s_surface_silas|text",
+  "s_surface_vera|text",
+  "s_surface_vicar|text",
+  "s_vicar_t|direct",
+  "s_vicar_t|reactions|silas"
+ ],
+ "difficulty": {
+  "v": 1,
+  "score": 12.5,
+  "level": "hard",
+  "features": {
+   "depth": 8,
+   "lies_on_path": 2,
+   "lies_other": 0,
+   "herrings_aimed": 2,
+   "herrings_other": 0,
+   "lenient_motives": 0
+  }
+ },
+ "declines": {
+  "silas": [
+   "I have, in truth, nothing to offer you on that particular point.",
+   "That matter yields no further material from me, I'm afraid.",
+   "On that question, Inspector, my store of knowledge is exhausted.",
+   "I can furnish you no further particulars; the subject is closed."
+  ],
+  "dora": [
+   "Well, I've nothing to report on that, and that's that.",
+   "That's the whole of it from me; there's no more to tell.",
+   "I can't give you anything further on that matter, I'm sure.",
+   "Nothing further comes to mind, and I shan't invent what isn't there."
+  ],
+  "rowan": [
+   "Nowt to tell you there, and that's an end to it.",
+   "Can't help you on that one, plain and simple.",
+   "That's beyond me, I'm afraid, nothing more to say.",
+   "I've got nothing on that, so there it rests."
+  ],
+  "vera": [
+   "Now why would I have anything to say about that?",
+   "Nothing there for you, darling, truly nothing at all.",
+   "Isn't it funny how some questions just come up empty? This is one.",
+   "That's a blank page from me, I'm afraid."
+  ],
+  "iris": [
+   "I have nothing to report on that matter.",
+   "That falls outside what I can tell you; nothing further.",
+   "No observation of mine bears on that question.",
+   "I can offer you nothing more on that point."
+  ],
+  "bell": [
+   "Nothing to tell on that score. That's it.",
+   "Can't give you anything there. Nothing more to say.",
+   "That's all I've got on that, which is nothing.",
+   "Nothing further on that matter from me."
+  ],
+  "vicar": [
+   "Ah, well now, I find I have nothing at all to offer on that particular question.",
+   "That's a matter on which I'm afraid I can shed no further light whatsoever.",
+   "I'm quite without anything more to say there, I confess, nothing at all.",
+   "On that score my well runs quite dry, I'm sorry to say."
+  ],
+  "edmund": [
+   "Nothing to tell. That's the end of it.",
+   "I've nothing more to say on that matter, and there's an end to it.",
+   "That's all there is from me on it, which is nothing at all.",
+   "Nothing further to add there. Next question."
+  ]
+ },
+ "declines_version": 3,
+ "review_version": 2,
+ "holdings": [
+  {
+   "person": "silas",
+   "item": "vestry_paper"
+  },
+  {
+   "person": "vicar",
+   "item": "vestry_paper"
+  },
+  {
+   "person": "rowan",
+   "item": "potting_steps"
+  },
+  {
+   "person": "silas",
+   "item": "passbook"
+  },
+  {
+   "person": "silas",
+   "item": "conveyance_draft"
+  },
+  {
+   "person": "rowan",
+   "item": "orchid_bundle"
+  }
+ ],
+ "vocabulary": {
+  "relations": [
+   {
+    "rel": "embezzled_from"
+   },
+   {
+    "rel": "friend_of"
+   },
+   {
+    "rel": "owes"
+   },
+   {
+    "rel": "slandered"
+   },
+   {
+    "rel": "threatened_to_expose"
+   }
+  ]
+ },
+ "claims_version": 2
+}

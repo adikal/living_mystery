@@ -3,7 +3,7 @@
 // E0: direct post-commit certification of every cumulative concealment set observed in the defensible e3c cohort.
 
 import {existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync} from 'node:fs';
-import {dirname, relative, resolve} from 'node:path';
+import {basename, dirname, relative, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 import {certifyConcealments, concealmentAvailability} from '../../dist/morning.mjs';
@@ -63,10 +63,17 @@ function planningRows(trace, episodeId, traceIndex) {
   });
 }
 
+// A recorded case path, or the same file where it now lives (cases move between the menu, live/ and the archive).
+function locateCase(recorded) {
+  const name = basename(recorded);
+  return [resolve(ROOT, recorded), ...['dist/cases/generated', 'dist/cases/generated/live', 'dist/cases/archive/2026-10']
+    .map(dir => resolve(ROOT, dir, name))].find(p => existsSync(p)) ?? null;
+}
+
 function auditEpisode(item, score) {
   const episode = item.value;
-  const casePath = resolve(ROOT, score.case);
-  if (!existsSync(casePath)) throw new Error(`missing case for ${episode.id}: ${score.case}`);
+  const casePath = locateCase(score.case);
+  if (!casePath) throw new Error(`missing case for ${episode.id}: ${score.case}`);
   const records = readJson(casePath);
   if (records.id !== episode.report.case || records.id !== score.case.split('/').at(-1).replace(/\.json$/, '')) {
     throw new Error(`case identity mismatch for ${episode.id}`);
@@ -197,10 +204,10 @@ function main() {
   mkdirSync(RESULTS_DIR, {recursive: true});
   const result = buildAudit();
   const cohort = selectE3cEpisodes();
-  const casePaths = sortedUnique([...cohort.scores.values()].map(row => resolve(ROOT, row.case)));
+  const casePaths = sortedUnique([...cohort.scores.values()].map(row => locateCase(row.case) ?? resolve(ROOT, row.case)));
   result.provenance = collectProvenance(ROOT, {
     commands: ['node tools/paper-evidence/committed_concealment_audit.mjs'],
-    manifests: [resolve(RUN_DIR, 'batch.json'), cohort.scorePath, resolve(ROOT, 'dist/cases/generated/live/index.json')],
+    manifests: [resolve(RUN_DIR, 'batch.json'), cohort.scorePath, resolve(ROOT, 'dist/cases/generated/live/index.json'), resolve(ROOT, 'dist/cases/archive/2026-10/index.json')],
     inputs: [
       fileURLToPath(import.meta.url),
       resolve(ROOT, 'tools/paper-evidence/paper_evidence_helpers.mjs'),

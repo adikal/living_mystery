@@ -1,5 +1,29 @@
 [
  {
+  "id": "mk-live-20261003-082807",
+  "file": "mk-live-20261003-082807.json",
+  "title": "Cocoa in the Vestry",
+  "solveDepth": 3,
+  "blurb": "Vera Lacey was found dead at St. Alden’s vestry. Depth 3, 25 clues, 4 suspects.",
+  "generated": "20261003-082807",
+  "difficulty": {
+   "level": "easy",
+   "score": 5.25
+  }
+ },
+ {
+  "id": "mk-live-20261002-224855",
+  "file": "mk-live-20261002-224855.json",
+  "title": "Death at Vale Manor",
+  "solveDepth": 5,
+  "blurb": "Clara Vale was found dead at Vale Manor. Depth 5, 28 clues, 4 suspects.",
+  "generated": "20261002-224855",
+  "difficulty": {
+   "level": "medium",
+   "score": 7.75
+  }
+ },
+ {
   "id": "mk-live-20261002-235614",
   "file": "mk-live-20261002-235614.json",
   "title": "Paste Pearls at the Pump",
@@ -24,27 +48,27 @@
   }
  },
  {
-  "id": "mk-live-20261002-224855",
-  "file": "mk-live-20261002-224855.json",
-  "title": "Death at Vale Manor",
-  "solveDepth": 5,
-  "blurb": "Clara Vale was found dead at Vale Manor. Depth 5, 28 clues, 4 suspects.",
-  "generated": "20261002-224855",
+  "id": "mk-live-20261003-100726",
+  "file": "mk-live-20261003-100726.json",
+  "title": "The Last Train to Town",
+  "solveDepth": 7,
+  "blurb": "Silas Voss was found dead at Bellweather Halt. Depth 7, 39 clues, 4 suspects.",
+  "generated": "20261003-100726",
   "difficulty": {
-   "level": "medium",
-   "score": 7.75
+   "level": "hard",
+   "score": 12.75
   }
  },
  {
-  "id": "mk-live-20261002-222517",
-  "file": "mk-live-20261002-222517.json",
-  "title": "Sealing Wax and Steel",
-  "solveDepth": 6,
-  "blurb": "The Reverend Thomas Hale was found dead at Bellweather Halt. Depth 6, 29 clues, 4 suspects.",
-  "generated": "20261002-222517",
+  "id": "mk-live-20261003-133036",
+  "file": "mk-live-20261003-133036.json",
+  "title": "A Fall Before Midnight",
+  "solveDepth": 5,
+  "blurb": "The Reverend Thomas Hale was found dead at Vale Manor. Depth 5, 33 clues, 4 suspects.",
+  "generated": "20261003-133036",
   "difficulty": {
-   "level": "medium",
-   "score": 7.25
+   "level": "hard",
+   "score": 8.75
   }
  }
 ]

@@ -5,8 +5,10 @@ import {registerKernelCase, createSession, dispatch, caseTables, diagnostics, wo
 import * as Morning from '../dist/morning.mjs';
 
 const load = () => JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
-function setup() {
-  const kc = load(), s = createSession(1, registerKernelCase(kc)), T = caseTables(s), K = T.kernel, ctx = T.behavior.morningCtx;
+// Red herrings' explanations unmarked: the register book becomes an ordinary concealable clue for Ada (see below).
+const loadWithoutHerrings = () => { const kc = load(); for (const x of kc.signs) delete x.explainedBy; return kc; };
+function setup(kc = load()) {
+  const s = createSession(1, registerKernelCase(kc)), T = caseTables(s), K = T.kernel, ctx = T.behavior.morningCtx;
   return {kc, s, T, K, ctx};
 }
 const heard = (s, pid) => s.events.filter(e => e.kind === 'speech' && e.data?.listener === pid && e.actor !== 'player');
@@ -227,7 +229,7 @@ test('availability keeps an acquired false sign, exposing defeater cancellation'
 });
 
 test('execution refuses a concealment when another retained commitment makes the live case unsafe', () => {
-  const {kc, s, K, ctx} = setup();
+  const {kc, s, K, ctx} = setup(loadWithoutHerrings());
   const plans = {
     clara: [{kind: 'conceal', clue: 's_letter', because: ['k_att_a_clara_fear']}],
     ada: [{kind: 'conceal', clue: 's_regbook', because: ['k_att_a_ada_work']}],
@@ -256,6 +258,21 @@ test('execution refuses a concealment when another retained commitment makes the
 });
 
 test('an already found clue is missed and the next concealment is re-certified independently', () => {
+  // (recorded under the rules before the doctor was barred from hiding anything: see the next test)
+  const rules = {...Morning.CONCEALMENT_RULES};
+  Morning.CONCEALMENT_RULES.examinerMayConceal = true;
+  try { alreadyFoundIsMissed(); } finally { Object.assign(Morning.CONCEALMENT_RULES, rules); }
+});
+
+test('the doctor hides nothing in the morning unless she is a suspect', () => {
+  const {kc, s} = setup();
+  assert.deepEqual(Morning.concealable(s, kc, 'iris'), []);
+  const suspect = structuredClone(kc);
+  suspect.question.candidates[0].facts.actor = 'iris';
+  assert.ok(Morning.concealable(s, suspect, 'iris').length > 0);
+});
+
+function alreadyFoundIsMissed() {
   const {kc, s, K, ctx} = setup();
   const proposal = {agendas: {iris: [
     {kind: 'conceal', clue: 's_medical', because: ['k_att_a_iris_duty']},
@@ -276,7 +293,7 @@ test('an already found clue is missed and the next concealment is re-certified i
   assert.ok(!(s.world.flags.morning.concealed ?? []).includes('s_medical'));
   assert.ok(s.world.flags.morning.concealed.includes('s_daybook'));
   assert.equal(s.world.flags.evidenceExpiry?.s_medical, undefined);
-});
+}
 
 test('execution refuses a lone defeater concealment even when the all-commitment projection passes', () => {
   const {kc, s, K, ctx} = setup();
@@ -450,4 +467,12 @@ test('a kept concealment without a deadline (an older save) gets one from the ro
   assert.equal(s.world.flags.morning.agendas[a][0].until, made + Morning.HORIZON);
   Morning.install(K, s, {}, s.events.at(-1)?.id, {}, [b]);
   assert.equal(s.world.flags.morning.agendas[a][0].until, made + Morning.HORIZON, 'later rounds do not move it');
+});
+
+test('what explains a red herring is never anyone\'s to hide', () => {
+  const {kc, s} = setup();
+  const explains = new Set(kc.signs.filter(x => x.kind === 'behavior').flatMap(x => x.explainedBy ?? []));
+  assert.ok(explains.has('s_regbook'));
+  for (const p of kc.people.map(x => x.id)) for (const id of Morning.concealable(s, kc, p)) assert.ok(!explains.has(id), `${p} may hide ${id}`);
+  assert.ok(Morning.concealable(s, loadWithoutHerrings(), 'ada').includes('s_regbook'), 'the same clue is concealable when it explains nothing');
 });

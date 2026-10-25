@@ -49,17 +49,20 @@ function runCertify(input, requirePillars = true, requireBacking = true) {
 }
 
 function loadCases() {
+  // The retained research corpus: the cases offered in the menu, those generated here, and those retired to the archive.
   const indexes = [
     { classification: 'stable', file: 'index.json' },
     { classification: 'live', file: 'live/index.json' },
+    { classification: 'archive', file: '../archive/2026-10/index.json' },
   ];
   const byId = new Map();
   const excluded = [];
   for (const index of indexes) {
     const indexPath = path.join(GENERATED_DIR, index.file);
+    if (!fs.existsSync(indexPath)) continue;
     const entries = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
     for (const entry of entries) {
-      const sourcePath = path.join(GENERATED_DIR, entry.file);
+      const sourcePath = path.join(index.file.startsWith('../') ? path.dirname(indexPath) : GENERATED_DIR, entry.file);
       const sourceText = fs.readFileSync(sourcePath, 'utf8');
       const payload = JSON.parse(sourceText);
       if (payload.claims_version !== 2) {

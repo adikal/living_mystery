@@ -48,6 +48,17 @@ def item_phrase(case, name):
     return ' '.join(['the', first, *words[1:]])
 
 
+def trait_wording(name, trait, value):
+    """Title and text of the public sign giving one person's trait (shown once a clue about the trait is understood)."""
+    t, v = _words(trait).lower(), _words(value)
+    if t in ('foot', 'feet', 'shoe', 'shoe size'):
+        text = f'{name} has {v} feet.' if t in ('foot', 'feet') else f'{name} wears {v} shoes.'
+        return f"{name}'s {'shoes' if t.startswith('shoe') else 'feet'}", text
+    if t in ('handed', 'hand', 'handedness'):
+        return f"{name}'s hand", f'{name} is {v}-handed.'
+    return f"{name}'s {t}", f"{name}'s {t} is {v}."
+
+
 def holder_wording(case, item, people):
     """Title and text of the public sign saying who had an item (game shows it once a clue about the item is understood)."""
     items = {o['id']: o.get('name', _words(o['id'])) for o in case.get('objects', [])}
@@ -114,8 +125,8 @@ def public_knowledge(case):
         for a in actors:
             v = (people[a].get('traits') or {}).get(k)
             if v is not None:
-                added.append(public_sign(case, f'pub_trait_{a}_{k}', f"{people[a]['name']}: {_words(k)}",
-                                         f"{people[a]['name']}: {_words(k)} {_words(v)}.", {'pred': 'hasTrait', 'person': a, 'trait': k, 'value': v}))
+                added.append(public_sign(case, f'pub_trait_{a}_{k}', *trait_wording(people[a]['name'], k, v),
+                                         {'pred': 'hasTrait', 'person': a, 'trait': k, 'value': v}))
     return [x for x in added if x]
 
 

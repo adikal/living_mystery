@@ -10,6 +10,25 @@ epoch 2 kept declines that close the subject, the chosen account before a declin
 question (hints that helped: 57% → 87%). Next: calibrate players and judge against human play; record the state at each
 character turn so the offline replay is exact; automate an epoch (milestone 6); generator epochs (milestone 7).
 
+**Human plays of Cocoa in the Vestry, Sealing Wax and Steel and Death Among the Orchids (25 October).** Fixes made
+general, for every case and for new ones: the constable's briefing names only the doctor in medium and hard cases; the
+constable is the detective's ally (never a suspect, never lies, holds nothing back), checked on every generation step and
+at publication, and the three menu cases that broke this were replaced from the archive; an innocent caught in a lie
+concedes and says why, whatever reaction was written; a red herring pressed twice draws out its innocent reason, hints
+lead to its explanation, nobody may hide that explanation, and the closing file explains innocents' lies and the
+herrings left unexplained; the fact-checker allows common knowledge, what the person has already said, and a plain
+decline; code fills in an account's claims and sources; confrontation raises stress, liars count as having something
+to fear, and trust moves 0.15 a turn.
+
+**A human play of Paste Pearls at the Pump (25 October).** The doctor would not hand over the dead man's notebook or
+confirm the weapon: both waited behind her confidence to a living patient, inherited when a later step locked that
+account. Fixed generally: the doctor's rule (checked at generation and publication), a step critic that re-judges every
+clue whose gate changed, a blocking whole-case review on the generator's path, morning accounts that never name a clue
+still to be found, wider reactions and cover-story judging; in play, clues go with the person who keeps them and are
+handed over, experts compare evidence shown to them, figures from the evidence may be repeated, and a person with no
+reaction is offered only related accounts. Paste Pearls and The Last Train to Town were regenerated with the same
+premises.
+
 **A bug track and epoch 3 (5 October).** Invariant detectors and a correctness judge over every recorded game found
 six general bugs, all fixed with tests (hint routes, unrecorded contradictions, place forms and setting roles in the name
 check, spoken times, kinship in evening accounts, verbatim repeats). Epoch 3 on fresh cases rejected one change and kept

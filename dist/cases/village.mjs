@@ -102,7 +102,7 @@ export const BW_PEOPLE = {
       samples: ['The regulations are quite clear, detective. I may tell you a letter was posted. I may not tell you what it said.', 'I notice things. It is not prying; it is the job.', 'Tuppence-ha\u2019penny short, and he expected me not to notice.']}},
   jonah: {name: 'Jonah Reed', initials: 'JR', pronoun: 'he', address: 'Mr Reed', role: 'The boathouse keeper', color: '#277da1', home: 'boathouse',
     public: 'Keeper of the manor\u2019s boathouse and ferryman when the river is up. He knows the water and keeps his own counsel.',
-    voice: 'Slow, weathered and wry; a river man who speaks in the present tense and weighs every word like a stone.',
+    voice: 'Slow, weathered and wry; a river man of few words, who weighs every one like a stone.',
     sheet: {temperament: 'patient, watchful, loyal to a fault', habits: 'long pauses; talks about the river as if it were a person', pet_subject: 'the river\u2019s moods and currents',
       humour: 'dry, slow to arrive', with_outsiders: 'polite and unhurried; tells you nothing you have not earned', warms_to: 'people who respect the water',
       bristles_at: 'townsfolk who call the river pretty', when_lying: 'looks at the water and says nothing at all',

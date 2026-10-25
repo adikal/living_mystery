@@ -3,16 +3,16 @@
   "train": [
     "dist/cases/generated/mk-live-20261002-224855.json",
     "dist/cases/generated/mk-live-20261002-235614.json",
-    "dist/cases/generated/live/mk-live-20261003-130902.json"
+    "dist/cases/archive/2026-10/mk-live-20261003-130902.json"
   ],
   "heldout": [
     "dist/cases/generated/mk-live-20261002-225824.json",
-    "dist/cases/generated/mk-live-20261002-222517.json",
-    "dist/cases/generated/live/mk-live-20261003-082807.json"
+    "dist/cases/archive/2026-10/mk-live-20261002-222517.json",
+    "dist/cases/generated/mk-live-20261003-082807.json"
   ],
   "heldout3": [
-    "dist/cases/generated/live/mk-live-20261003-082809.json",
-    "dist/cases/generated/live/mk-live-20261003-135210.json",
-    "dist/cases/generated/live/mk-live-20261003-130906.json"
+    "dist/cases/archive/2026-10/mk-live-20261003-082809.json",
+    "dist/cases/archive/2026-10/mk-live-20261003-135210.json",
+    "dist/cases/archive/2026-10/mk-live-20261003-130906.json"
   ]
 }

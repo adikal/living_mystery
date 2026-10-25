@@ -5,7 +5,7 @@ import {readFileSync} from 'node:fs';
 import {PlaytestGame} from '../tools/playtest/game.mjs';
 
 const CASES = ['mk-live-20261002-235614.json', 'mk-live-20261002-224855.json', 'mk-live-20261002-225824.json'];
-const file = f => new URL(`../dist/cases/generated/${f}`, import.meta.url).pathname;
+const file = f => new URL(f === 'mk-live-20261002-222517.json' ? `../dist/cases/archive/2026-10/${f}` : `../dist/cases/generated/${f}`, import.meta.url).pathname;
 
 // A player that follows the most explicit hint, choosing by what it can see (labels, question texts, names).
 async function hintFollower(g, maxSteps = 200) {

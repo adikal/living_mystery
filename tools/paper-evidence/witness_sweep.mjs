@@ -52,6 +52,7 @@ function loadCases() {
   const manifestSpecs = [
     {corpus: 'stable', url: new URL('index.json', CASE_ROOT)},
     {corpus: 'live', url: new URL('live/index.json', CASE_ROOT)},
+    {corpus: 'archive', url: new URL('../archive/2026-10/index.json', CASE_ROOT), optional: true},
   ];
   const byId = new Map();
   const manifests = {};
@@ -60,6 +61,7 @@ function loadCases() {
   const inputFailures = [];
 
   for (const spec of manifestSpecs) {
+    if (!existsSync(spec.url) && spec.optional) continue;
     if (!existsSync(spec.url)) {
       manifests[spec.corpus] = {path: fileURLToPath(spec.url), entries: 0, present: false};
       inputFailures.push({scope: 'manifest', corpus: spec.corpus, message: `Missing authoritative manifest: ${fileURLToPath(spec.url)}`});
@@ -77,7 +79,7 @@ function loadCases() {
     manifests[spec.corpus] = {path: fileURLToPath(spec.url), entries: entries.length, present: true};
 
     for (const entry of entries) {
-      const sourceUrl = new URL(entry.file, CASE_ROOT);
+      const sourceUrl = new URL(entry.file, spec.optional ? spec.url : CASE_ROOT);
       let records;
       try {
         records = readJson(sourceUrl);

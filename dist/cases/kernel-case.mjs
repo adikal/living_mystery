@@ -26,11 +26,59 @@ const MODE = {believes: 'I believe', knows: 'I know', wants: 'I want', fears: 'I
 const START = 1920; // 08:00 the next morning, when the investigation begins
 const LEAD = {wants: 'I wanted to', intends: 'I meant to', fears: 'I was afraid that', believes: 'I believed that', knows: 'I knew that', feels: 'I feel'};
 const NAMES = new Set(Object.values(BW_PEOPLE).flatMap(p => p.name.split(' ')).concat(['Dr', 'Mr', 'Mrs', 'Miss', 'Constable', 'The', 'Reverend']));
-function reason(a) {
+// An attitude's content as the end of a sentence: lower-cased unless it starts with a name, without a leading "to" (after
+// "I wanted to") or "that" (after "I was afraid that").
+// The proper nouns of a case: words written with a capital in the middle of its sentences (Dora, Rowan's, Edmund, Rook),
+// so a reason that starts with one keeps its capital and any other first word ("Loyal to Clara") is lower-cased.
+const NOT_PROPER = new Set(['The', 'A', 'An', 'That', 'This', 'It', 'He', 'She', 'They', 'His', 'Her', 'Their', 'To', 'I']);
+function properNouns(kc) {
+  const out = new Set(NAMES);
+  const texts = [...arr(kc.attitudes).map(a => a.content), ...arr(kc.signs).map(x => x.text), ...arr(kc.events).map(e => e.summary)];
+  for (const text of texts) for (const m of String(text || '').matchAll(/(?<=[a-z,;:]\s+)([A-Z][a-z]+)/g)) out.add(m[1]);
+  for (const w of NOT_PROPER) out.delete(w);
+  return out;
+}
+function reasonBody(a, proper = NAMES) {
   const text = String(a.content || '').trim().replace(/[.]+$/, '');
-  const first = text.split(/\s+/)[0] || '';
-  const body = NAMES.has(first) || /^[A-Z]{2,}/.test(first) ? text : text.charAt(0).toLowerCase() + text.slice(1);
-  return `${LEAD[a.mode] || 'I had my reasons:'} ${body.replace(/^to /, '')}.`;
+  const first = (text.split(/\s+/)[0] || '').replace(/(?:'s|’s)$/, '');
+  const body = proper.has(first) || /^[A-Z]{2,}/.test(first) ? text : text.charAt(0).toLowerCase() + text.slice(1);
+  return body.replace(/^to /, '').replace(/^that /, '');
+}
+// A text's opening sentences, without breaking at an abbreviation or an initial ("Mr.", "Rev.", "Mrs A.", "Wm.").
+const ABBREVIATION = /(?:^|[\s(“'"])(?:Mr|Mrs|Miss|Ms|Dr|Rev|Revd|St|Wm|Messrs|No|Co|Jr|Sr|[A-Z])\.$/;
+function opening(text, count = 1) {
+  const parts = String(text || '').split(/(?<=[.!?][”’"']?)\s+/), out = [];
+  for (const part of parts) {
+    if (out.length && ABBREVIATION.test(out.at(-1))) out[out.length - 1] += ` ${part}`;
+    else if (out.length < count) out.push(part);
+    else break;
+  }
+  return out.slice(0, count).join(' ');
+}
+function reason(a, proper) {
+  const body = reasonBody(a, proper);
+  // "I was afraid of being drawn in", not "I was afraid that being drawn in"
+  const lead = a.mode === 'fears' && /^\w+ing\b/.test(body) ? 'I was afraid of' : LEAD[a.mode] || 'I had my reasons:';
+  return `${lead} ${body}.`;
+}
+// The same reason told about the person, for the file's closing notes ("she believed that ...").
+const THIRD = {wants: 'wanted to', intends: 'meant to', fears: 'feared that', believes: 'believed that', knows: 'knew that', feels: 'felt'};
+function reasonAbout(a, pronoun, proper) {
+  const body = reasonBody(a, proper);
+  // "feared being found out", not "feared that being found out"
+  const lead = a.mode === 'fears' && /^\w+ing\b/.test(body) ? 'feared' : THIRD[a.mode] || 'had a reason:';
+  return `${pronoun} ${lead} ${body}`;
+}
+// Why someone did or said something: the attitudes cited and those they rest on (the person's own), the ones that
+// explain (what they knew, believed, felt or feared) before the ones that only state an aim.
+const WHY_ORDER = {knows: 0, believes: 1, feels: 2, fears: 3, wants: 4, intends: 5};
+function reasonsOf(attitudes, pid, ids, limit = 2) {
+  const byId = Object.fromEntries(arr(attitudes).map(a => [a.id, a])), out = [], todo = [...arr(ids)];
+  while (todo.length) {
+    const a = byId[todo.shift()];
+    if (a && a.agent === pid && !out.includes(a)) { out.push(a); todo.push(...arr(a.because)); }
+  }
+  return out.sort((a, b) => (WHY_ORDER[a.mode] ?? 9) - (WHY_ORDER[b.mode] ?? 9)).slice(0, limit);
 }
 
 // Case records come from a model or from an imported save, and much of the UI renders case strings as HTML.
@@ -127,6 +175,16 @@ export function makeKernelCase(records) {
   const STATION = PEOPLE[constable]?.home ?? kc.setting.places[0]?.id;
   const victimName = BW_PEOPLE[victim]?.name ?? 'the deceased', victimAddr = BW_PEOPLE[victim]?.address ?? 'Mr Vale';
   const signs = Object.fromEntries(kc.signs.map(s => [s.id, s]));
+  const PROPER = properNouns(kc);
+  // A clue someone keeps: it comes from what they did (the doctor emptying the dead man's pockets, her notes) and waits
+  // behind an account of their own. It is with them, wherever they are, and they hand it over when it opens; it never
+  // waits where it was made for the player to walk to.
+  const keeperOf = Object.fromEntries(kc.signs.filter(x => x.kind !== 'testimony' && x.kind !== 'public').map(x => {
+    const agent = kc.events.find(e => e.id === x.source)?.agent;
+    const keeps = agent && agent !== victim && BW_PEOPLE[agent] && kc.people.some(p => p.id === agent)
+      && arr(x.requires).some(r => signs[r]?.kind === 'testimony' && signs[r].speaker === agent);
+    return [x.id, keeps ? agent : null];
+  }).filter(([, keeper]) => keeper));
   const hyps = Object.fromEntries(kc.question.candidates.map(h => [h.id, h]));
   const truthActor = actorOf(hyps[kc.question.truth]);
   const investigation = kernelInvestigationSupport(kc);
@@ -149,18 +207,14 @@ export function makeKernelCase(records) {
     // A behaviour marked 'watch' is a person's live manner (a look, a gesture, something on them), seen by watching
     // them: it is examined wherever they are now, so a lead never sits in a room they have left. Behaviours that are a
     // reaction about someone, or an object they left, are not 'watch' and stay where they were observed.
-    const follows = s.kind === 'behavior' && s.watch && s.about && s.about !== victim && PEOPLE[s.about] ? s.about : null;
+    const follows = s.kind === 'behavior' && s.watch && s.about && s.about !== victim && PEOPLE[s.about] ? s.about
+      : PEOPLE[keeperOf[s.id]] ? keeperOf[s.id] : null;
     OBJECTS[s.id] = {label: s.title || s.id, clue: s.id, description: s.kind === 'behavior' ? 'Watch more closely' : 'Examine this', ...(follows ? {follows} : {})};
     LOCATIONS[at].objects.push(s.id);
   }
-  // Physical traits that clues test (shoe size, handedness...) are observable: add them to each public description.
-  const TRAIT_WORDS = {shoe_size: v => `wears size ${v} shoes`, handed: v => `${v}-handed`};
-  const tested = [...new Set(kc.signs.map(x => claimOf(x)).filter(c => c?.pred === 'culpritTrait').map(c => c.trait))];
-  for (const kp of kc.people) {
-    const P = PEOPLE[kp.id], t = kp.traits || {};
-    const seen = tested.filter(k => t[k] != null).map(k => (TRAIT_WORDS[k] ?? (v => `${k.replace(/_/g, ' ')}: ${v}`))(t[k]));
-    if (P && seen.length) P.public = `${P.public} You notice: ${seen.join(', ')}.`;
-  }
+  // Physical traits that clues test (shoe size, handedness...) are public knowledge recorded in the notebook once the
+  // player understands a clue about that trait (heldBackPublic). They are not added to the descriptions: shown from the
+  // start, every suspect's shoe size beside a print still to be found would name the culprit.
   // Characters: public identity stays; private life comes from the generated case.
   for (const [pid, p] of Object.entries(PEOPLE)) {
     const mine = attitudesOf(pid);
@@ -355,25 +409,45 @@ export function makeKernelCase(records) {
     }
 
     // After any action: open earned gates (with their in-world reason) and reveal completed readings.
-    function afterAction(s, cause) {
-      const have = held(s), locked = arr(s.world.flags.lockedObjects), here = s.world.player.location;
+    // Where a lead opens: with the person who keeps it (wherever they are now), else where it is.
+    const keeperHere = (s, o) => { const k = keeperOf[o], n = k && s.world.npcs[k]; return Boolean(n && !n.travel && n.location === s.world.player.location); };
+    const leadHere = (s, o) => keeperOf[o] && PEOPLE[keeperOf[o]] ? keeperHere(s, o) : signs[o].at === s.world.player.location || !LOCATIONS[signs[o].at];
+    // Open every earned lead that is here (pointing to the others); returns whether anything was handed over.
+    function openLeads(s, cause) {
+      const locked = arr(s.world.flags.lockedObjects);
       const earnedLeads = locked.filter(o => earned(s, o));
       // A lead opens only where it is: its unlock text describes what happens there (a door, a person).
-      const opened = earnedLeads.filter(o => signs[o].at === here || !LOCATIONS[signs[o].at]);
+      const opened = earnedLeads.filter(o => leadHere(s, o));
       const hinted = arr(s.world.flags.hinted), point = earnedLeads.filter(o => !opened.includes(o) && !hinted.includes(o));
       if (point.length)
         K.commit(s, {kind: 'observation', actor: 'player', title: 'A lead points elsewhere', parents: [cause],
           changes: {'flags.hinted': [...hinted, ...point]},
-          // one sentence for every place a new lead points to: 'at the post office, the greenhouse and Village square'
-          playerText: (names => `What you now know should open something ${names.length > 1 ? 'in several places' : 'at ' + names[0]}`
-            + (names.length > 1 ? `: ${names.slice(0, -1).join(', ')} and ${names.at(-1)}.` : '.'))(
-            [...new Set(point.map(o => inSentence(LOCATIONS[signs[o].at])))])});
-      if (opened.length)
-        K.commit(s, {kind: 'observation', actor: 'player', title: 'A further lead opens up', parents: [cause],
+          // one sentence for every place a new lead points to: 'at the post office, the greenhouse and Village square';
+          // a lead someone keeps points to that person ('with Dr Marsh')
+          playerText: (parts => {
+            const list = xs => xs.length > 1 ? `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}` : xs[0];
+            const people = parts.filter(p => p.startsWith('with ')), places = parts.filter(p => p.startsWith('at '));
+            return `What you now know should open something ${people.length ? list(parts)
+              : places.length > 1 ? `in several places: ${list(places.map(p => p.slice(3)))}` : places[0]}.`;
+          })([...new Set(point.map(o => PEOPLE[keeperOf[o]] ? `with ${PEOPLE[keeperOf[o]].address ?? PEOPLE[keeperOf[o]].name}`
+            : `at ${inSentence(LOCATIONS[signs[o].at])}`))])});
+      if (opened.length) {
+        const ev = K.commit(s, {kind: 'observation', actor: 'player', title: 'A further lead opens up', parents: [cause],
           changes: {'flags.lockedObjects': locked.filter(o => !opened.includes(o))},
           // leads that open together say what opened once (their shared lead line), then each its own line
           playerText: [...new Set(opened.map(o => signs[o].unlock_lead).filter(Boolean))].concat(
             opened.map(o => signs[o].unlock || `You can now examine ${CLUES[o].title.toLowerCase()}.`)).join('\n\n')});
+        // what a person keeps, they hand over then and there
+        const handed = opened.filter(o => PEOPLE[keeperOf[o]] && !K.has(s, o));
+        for (const o of handed) K.addEvidence(s, o, ev, `${PEOPLE[keeperOf[o]].name} hands it over`);
+        return handed.length > 0;
+      }
+      return false;
+    }
+    function afterAction(s, cause) {
+      // what one person hands over can open the next lead at once: open leads until nothing more is handed over
+      for (let round = 0; round < 6 && openLeads(s, cause); round++);
+      const have = held(s);
       const read = arr(s.world.flags.read);
       const ready = [...have].filter(sid => arr(signs[sid]?.needs).length && !read.includes(sid)
         && arr(signs[sid].needs).every(n => (signs[n] ? have.has(n) : ruleKnown(s, n))));
@@ -392,9 +466,18 @@ export function makeKernelCase(records) {
     // someone are those about them, naming them, or coming from what they did, and those that defeat their own stories
     // (counted double: a lie that has fallen). Their own accounts do not count. Someone with something to fear or hide
     // (a 'fears' or 'hides' attitude) feels it most; others only a little. It rises a step per clue, so one clue never
-    // makes anyone frantic. Committed as an event, so it replays.
+    // makes anyone frantic. Being pressed in person adds to it too: shown evidence that bears on them, asked why about
+    // their own behaviour, or treated coldly in conversation (each a 'pressure' step, committed so it replays).
+    // Committed as an event, so it replays.
     const STRESS_BASE = .15, STRESS_FEARFUL = .65, STRESS_CALM = .25, STRESS_SPAN = 4;   // full fear needs at least four clue-weights
-    const fearful = pid => arr(kc.attitudes).some(a => a.agent === pid && ['fears', 'hides'].includes(a.mode));
+    const PRESSURE_STEP = .15, PRESSURE_MAX = 6;   // each confrontation adds this much exposure; at most six count
+    // Someone has something to fear when the case gives them a fear or a secret, a story that is not true (a liar
+    // knows it can fall), or behaviour with a private reason behind it (a red herring); and the culprit always does.
+    const falseAccount = x => x.kind === 'testimony' && (claimOf(x) ? !claimTrue(kc, claimOf(x)) : Boolean(x.deceptive) && x.speaker !== constable);
+    const fearful = pid => pid === truthActor
+      || arr(kc.attitudes).some(a => a.agent === pid && ['fears', 'hides'].includes(a.mode))
+      || kc.signs.some(x => x.speaker === pid && falseAccount(x))
+      || kc.signs.some(x => x.kind === 'behavior' && x.about === pid && arr(x.explainedBy).length);
     const bearsOn = pid => {
       const told = new Set(kc.signs.filter(x => x.speaker === pid).map(x => x.id));
       const out = new Map();
@@ -415,8 +498,19 @@ export function makeKernelCase(records) {
       const exposure = total ? got / Math.max(total, STRESS_SPAN) : 0;
       const h = kc.question.candidates.find(c => actorOf(c) === pid), n = kc.question.candidates.length;
       const suspicion = h && n > 1 && sv.includes(h.id) ? (n - sv.length) / (n - 1) : 0;
-      return Math.round((STRESS_BASE + (fearful(pid) ? STRESS_FEARFUL : STRESS_CALM) * Math.min(1, Math.max(exposure, suspicion))) * 100) / 100;
+      const pressure = Math.min(PRESSURE_MAX, s.world.npcs[pid]?.pressure ?? 0) * PRESSURE_STEP;
+      return Math.round((STRESS_BASE + (fearful(pid) ? STRESS_FEARFUL : STRESS_CALM) * Math.min(1, Math.max(exposure, suspicion) + pressure)) * 100) / 100;
     }
+    // One confrontation: the person is pressed a step further (never the constable, who is on the detective's side).
+    function press(s, pid, cause) {
+      if (!s.world.npcs[pid] || pid === constable || pid === victim) return;
+      const now = s.world.npcs[pid].pressure ?? 0;
+      if (now >= PRESSURE_MAX) return;
+      K.commit(s, {kind: 'emotion', title: `${PEOPLE[pid]?.name ?? pid} feels the detective pressing`, actor: pid, parents: [cause],
+        changes: {[`npcs.${pid}.pressure`]: now + 1}});
+    }
+    // Pressed in conversation (the exchange cooled): the engine's character turn reports it here.
+    function pressed(s, pid, cause) { press(s, pid, cause); updateStress(s, cause); }
     function updateStress(s, cause) {
       const changes = {}, sv = standing(held(s)).sv;
       for (const pid of Object.keys(s.world.npcs)) {
@@ -463,15 +557,36 @@ export function makeKernelCase(records) {
       // and to keeping the truth (computed by the kernel on the case as it now stands), and what leads to them. Accounts
       // that change nothing (sightings, summaries) come only when nothing on that path is open.
       if (!missing.length) solutionPath(kcNow, A, gone, st.remaining).forEach(walk);
+      // Next after the solution: what explains suspicious behaviour the player has seen but not yet understood (a red
+      // herring's innocent reason), and what leads to it, so a lead the player is following is never left unexplained.
+      const curious = unexplainedHerrings(s).flatMap(b => arr(b.explainedBy)), wondering = new Set();
+      const wonder = id => { if (wondering.has(id) || !signs[id] || have.has(id)) return; wondering.add(id); for (const r of [...arr(signs[id].requires), ...arr(signs[id].needs)]) wonder(r); };
+      curious.forEach(wonder);
       const next = kc.signs.filter(x => !have.has(x.id) && earned(s, x.id))
-        .sort((a, b) => (toward.has(b.id) ? 1 : 0) - (toward.has(a.id) ? 1 : 0) || depth(a.id) - depth(b.id) || (claimOf(b) ? 1 : 0) - (claimOf(a) ? 1 : 0));
-      return {next, toward, missing, misled, st};
+        .sort((a, b) => (toward.has(b.id) ? 1 : 0) - (toward.has(a.id) ? 1 : 0) || (wondering.has(b.id) ? 1 : 0) - (wondering.has(a.id) ? 1 : 0)
+          || depth(a.id) - depth(b.id) || (claimOf(b) ? 1 : 0) - (claimOf(a) ? 1 : 0));
+      return {next, toward, wondering, missing, misled, st};
+    }
+    // Behaviour the player holds whose innocent reason they have neither found nor been told.
+    function unexplainedHerrings(s) {
+      const have = held(s);
+      return kc.signs.filter(b => b.kind === 'behavior' && have.has(b.id) && b.about !== truthActor && arr(b.explainedBy).some(e => signs[e])
+        && !arr(b.explainedBy).some(e => have.has(e))
+        && !s.world.npcs[b.about]?.beliefs.some(x => x.key === `mk_explained_${b.id}`));
     }
     function hints(s) {
       if (s.world.status === 'solved') return {id: 'solved', levels: ['The case is closed. Open the inspector to see everything that happened that night.']};
-      const {next, toward, missing, misled, st} = ranked(s);
+      const {next, toward, wondering, missing, misled, st} = ranked(s);
       const x = missing.length && !next.some(n => toward.has(n.id)) ? null : next[0];
       const lead = PEOPLE[st.lead]?.name;
+      if (x && !toward.has(x.id) && wondering.has(x.id)) {
+        // the way to understand what someone was hiding: name the behaviour, then the ordinary hint for the lead
+        const b = unexplainedHerrings(s).find(h => arr(h.explainedBy).some(e => e === x.id || closureDependent(kc, x.id).has(e)))
+          ?? unexplainedHerrings(s)[0];
+        const base = hintText(s, x);
+        return {id: x.id, levels: [`You have not yet found out the reason behind ${lower(b.title)}.`,
+          ...base.levels.slice(1)]};
+      }
       if (misled && x && toward.has(x.id)) {
         const base = hintText(s, x);
         return {id: x.id, levels: [`What you hold points at ${lead}, but one of the things you are relying on may not be true.`, ...base.levels.slice(1)]};
@@ -571,6 +686,12 @@ export function makeKernelCase(records) {
         return {id: x.id, levels: [first, `Ask ${who}: ${asks}${again}`,
           `Ask ${who}${at}: ${asks}${again} (${route.ask.length > 1 ? 'questions' : 'one of the questions'} you can choose when you are with them).`]};
       }
+      if (arr(s.world.flags.lockedObjects).includes(x.id) && PEOPLE[keeperOf[x.id]]) {
+        const k = keeperOf[x.id], who = PEOPLE[k].address ?? PEOPLE[k].name, where = s.world.npcs[k]?.travel?.to ?? s.world.npcs[k]?.location;
+        const at = LOCATIONS[where] ? ` at ${place(where)}` : '';
+        return {id: x.id, levels: ['What you have found means someone has something to give you.', `Go and see ${who}${at}.`,
+          `${who}${at}: ${x.unlock || `ask about ${String(x.title).toLowerCase()}`}`]};
+      }
       if (arr(s.world.flags.lockedObjects).includes(x.id))
         return {id: x.id, levels: ['What you have found points somewhere you have not looked yet.', `Go to ${place(x.at)}.`,
           `At ${place(x.at)}: ${x.unlock || `examine ${String(x.title).toLowerCase()}`}`]};
@@ -598,11 +719,12 @@ export function makeKernelCase(records) {
     // Speak a testimony sign and record it (its truth is computed, never declared). A claimless account's
     // deception is its published flag; the AI may voice a claimless account either way (flexible).
     function giveAccount(s, pid, x, cause) {
-      const deceptive = claimOf(x) ? !claimTrue(kc, claimOf(x)) : Boolean(x.deceptive);
+      // the constable is on the detective's side: an evening summary of his is never voiced as a cover story
+      const deceptive = claimOf(x) ? !claimTrue(kc, claimOf(x)) : Boolean(x.deceptive) && pid !== constable;
       const named = x.concede && s.world.npcs[pid].beliefs.some(b => b.key === `mk_named_${x.id}`);
       const text = named ? Object.values(x.concede)[0] : x.text;
       const ev = K.speech(s, pid, text, cause, {topic: x.id, intent: deceptive ? 'Protect my secret' : 'Answer from my own experience',
-        basis: `mk_${arr(x.because)[0] ?? ''}`, deception: deceptive ? 'False account' : false, deceptionFlexible: !claimOf(x),
+        basis: `mk_${arr(x.because)[0] ?? ''}`, deception: deceptive ? 'False account' : false, deceptionFlexible: !claimOf(x) && pid !== constable,
         ...(x.morning || fromMorning(x) ? {aboutMorning: true} : {}),
         sourceEvents: [historySource(s, x.source)].filter(Boolean)});   // no claims field: the record's own claims apply
       if (!K.has(s, x.id)) K.addEvidence(s, x.id, ev, `${PEOPLE[pid].name}`);
@@ -673,10 +795,14 @@ export function makeKernelCase(records) {
 
     // The constable's briefing: the premise, how many people are in question, one person to talk to and one place to
     // look (the first of each on the way forward), and what to bring back. Bite-sized for a newcomer; it never states
-    // evidence. Asked again later, the pointers move on with the investigation.
+    // evidence. Asked again later, the pointers move on with the investigation. In an easy case the person may be
+    // anyone with something to tell; in a medium or hard case (or one with no level) only the doctor, whose findings
+    // are where any detective starts: naming a witness there would hand the player the investigation.
+    const briefingTalksOnlyToDoctor = kc.difficulty?.level !== 'easy';
     function briefing(s) {
       const {next} = ranked(s), where = pid => s.world.npcs[pid]?.travel?.to ?? s.world.npcs[pid]?.location;
-      const talk = next.find(x => x.kind === 'testimony' && PEOPLE[x.speaker] && x.speaker !== constable && LOCATIONS[where(x.speaker)]);
+      const talk = next.find(x => x.kind === 'testimony' && PEOPLE[x.speaker] && x.speaker !== constable && LOCATIONS[where(x.speaker)]
+        && (!briefingTalksOnlyToDoctor || x.speaker === examiner));
       const look = next.find(x => x.kind !== 'testimony' && LOCATIONS[x.at] && x.at !== (talk && where(talk.speaker)))
         ?? next.find(x => x.kind !== 'testimony' && LOCATIONS[x.at]);
       // where to find them, unless it is their own home (the map shows who is where)
@@ -757,6 +883,13 @@ export function makeKernelCase(records) {
         if (mine(e.causedBy)) return mine(e.causedBy);
       return arr(x?.because).map(mine).find(Boolean) ?? null;
     }
+    // A person owning up to the innocent reason behind their behaviour, in the case's own reasons.
+    function admitInnocent(pid, behaviour, opening) {
+      const first = innocentReason(pid, behaviour.id);
+      const why = reasonsOf(kc.attitudes, pid, first ? [first.id] : []).map(a => reason(a, PROPER)).join(' ');
+      return `${opening} ${why || 'I had a private reason.'} It is nothing to do with ${victimAddr}'s death, and I would thank you to keep it quiet.`.trim();
+    }
+    const explainedTo = (s, pid, behaviour) => s.world.npcs[pid]?.beliefs.some(b => b.key === `mk_explained_${behaviour}`);
 
     function present(s, pid, clue, tone, cause) {
       if (!K.local(s, pid) || !K.has(s, clue)) { K.reject(s, 'Presentation unavailable', 'Discover the clue and find the person first.', cause); return; }
@@ -764,10 +897,21 @@ export function makeKernelCase(records) {
       const heard = K.commit(s, {kind: 'speech', actor: 'player', title: `You show ${PEOPLE[pid].name} ${CLUES[clue].title}`, parents: [cause],
         data: {listener: pid, clue, assertion: line}, playerText: K.presentLineHidden(s) ? null : `You\n“${line}”`});
       K.believe(s, pid, `player_has_${clue}`, `The detective showed me ${CLUES[clue].title}.`, .99, 'observation', heard, true);
-      const caught = kc.signs.find(x => x.kind === 'testimony' && x.speaker === pid && arr(signs[clue].defeats).includes(x.id));
-      // the player shows the innocent explanation of this person's suspicious behaviour (a red herring's payoff)
-      const cleared = kc.signs.find(x => x.kind === 'behavior' && x.about === pid && arr(x.explainedBy).includes(clue));
+      // evidence that bears on this person, or their own behaviour put to them, presses them
+      if (STAKES[pid]?.has(clue) || (signs[clue]?.kind === 'behavior' && signs[clue].about === pid)) press(s, pid, heard);
+      // an account of theirs this clue shows to be untrue; once conceded, showing it again draws a reference back
+      const defeated = kc.signs.find(x => x.kind === 'testimony' && x.speaker === pid && arr(signs[clue].defeats).includes(x.id));
+      const admitted = defeated && s.world.npcs[pid].beliefs.find(b => b.key === `mk_admitted_${defeated.id}`);
+      const caught = admitted ? null : defeated;
       const have = held(s);
+      // the player shows the innocent explanation of this person's suspicious behaviour (a red herring's payoff), or puts
+      // the behaviour to them while holding its explanation
+      const herring = signs[clue]?.kind === 'behavior' && signs[clue].about === pid && pid !== truthActor && arr(signs[clue].explainedBy).some(e => signs[e])
+        ? signs[clue] : null;
+      const cleared = kc.signs.find(x => x.kind === 'behavior' && x.about === pid && arr(x.explainedBy).includes(clue))
+        ?? (herring && arr(herring.explainedBy).some(e => have.has(e)) ? herring : null);
+      // the behaviour put to them again after they turned it aside once: pressed, they give the innocent reason
+      const askedBefore = herring && s.events.filter(e => e.kind === 'speech' && e.actor === 'player' && e.data?.listener === pid && e.data?.clue === clue).length > 1;
       // an account this clue completes: it was the last thing the account required, or it makes sense of it
       const unlocks = kc.signs.find(x => x.kind === 'testimony' && x.speaker === pid && !K.has(s, x.id)
         && (arr(x.requires).includes(clue) || arr(x.needs).includes(clue)) && arr(x.requires).every(r => have.has(r)));
@@ -781,20 +925,30 @@ export function makeKernelCase(records) {
       // the culprit shown something that breaks the account that placed them elsewhere
       const alibiBroken = pid === truthActor && arr(signs[clue].defeats).some(d => claimOf(signs[d])?.person === pid);
       const written = signs[clue].reactions?.[pid];   // written for this person when the case was generated
+      // a finding of this person's own that this clue needs before it can be read (their notes, their record)
+      const ownDoing = n => n && (n.kind === 'testimony' ? n.speaker === pid : kc.events.find(e => e.id === n.source)?.agent === pid);
+      const finding = arr(signs[clue]?.needs).map(n => signs[n]).find(ownDoing) ?? null;
       let text, intent = 'Respond to evidence';
       if (caught) {
-        const why = arr(kc.attitudes).find(a => arr(caught.because).includes(a.id));
-        text = written || (mistaken(caught)
-          ? `Oh — then I had it wrong. ${why ? reason(why) : ''} I only went by what I was told at the time.`.replace(/\s+/g, ' ')
-          : `…That is not what I told you, I know. ${why ? reason(why) : 'I was mistaken.'} I will not pretend otherwise now.`);
+        // Someone caught in an untrue account says why: the reasons the case gives for it (what they believed, feared or
+        // wanted, and what that rests on). An innocent concedes in these words whatever reaction was written for the
+        // clue, so the reason is never lost to a deflection; the culprit may still brazen it out with the written line.
+        const why = reasonsOf(kc.attitudes, pid, caught.because).map(a => reason(a, PROPER)).join(' ');
+        const concession = mistaken(caught)
+          ? `Oh — then I had it wrong. ${why} I only went by what I was told at the time.`.replace(/\s+/g, ' ')
+          : `…That is not what I told you, I know. ${why || 'I was mistaken.'} I will not pretend otherwise now.`.replace(/\s+/g, ' ');
+        text = pid === truthActor ? written || concession : concession;
         intent = 'Concede';
         K.believe(s, pid, `mk_conceded_${caught.id}`, `My account (${caught.title || caught.id}) has been shown to be untrue: ${text}`, .99, 'observation', heard, true);
         K.believe(s, pid, `mk_admitted_${caught.id}`, text, .99, 'observation', heard, true);   // the words, for references back
       } else if (cleared) {
-        const why = innocentReason(pid, cleared.id);
-        text = written || `So you know. Yes. ${why ? reason(why) : 'I had a private reason.'} It is nothing to do with ${victimAddr}'s death, and I would thank you to keep it quiet.`;
+        // shown the explanation itself: the reaction written for it (an admission), else the reason in the case's words;
+        // the behaviour put to them while the player holds its explanation: the reason (never the written deflection)
+        const shownExplanation = clue !== cleared.id, told = explainedTo(s, pid, cleared.id);
+        text = told && !shownExplanation ? `As I told you: ${admitInnocent(pid, cleared, '')}`
+          : shownExplanation && written ? written : admitInnocent(pid, cleared, shownExplanation ? 'So you know. Yes.' : 'You have found it out, then. Yes.');
+        if (!told) K.believe(s, pid, `mk_explained_${cleared.id}`, `The detective knows the innocent reason for my behaviour: ${text}`, .99, 'observation', heard, true);
         intent = 'Admit an innocent secret';
-        K.believe(s, pid, `mk_explained_${cleared.id}`, `The detective knows the innocent reason for my behaviour: ${text}`, .99, 'observation', heard, true);
       } else if (own && !(pid === truthActor && arr(signs[clue].defeats).length)) {
         giveAccount(s, pid, own, heard);
         K.advance(s, 4, cause);
@@ -808,8 +962,34 @@ export function makeKernelCase(records) {
         giveAccount(s, pid, unlocks, heard);
         K.advance(s, 4, cause);
         return;
+      } else if (herring && (askedBefore || explainedTo(s, pid, herring.id))) {
+        // Pressed a second time about their own suspicious behaviour, an innocent person gives the private reason behind
+        // it (the case's attitudes) instead of turning it aside again. Words only: the explaining clue itself is still the
+        // player's to find, so nothing enters the notebook and certification is untouched.
+        const told = explainedTo(s, pid, herring.id);
+        text = told ? `As I told you: ${admitInnocent(pid, herring, '')}` : admitInnocent(pid, herring, 'All right, since you will keep at it.');
+        if (!told) K.believe(s, pid, `mk_explained_${herring.id}`, `The detective knows the innocent reason for my behaviour: ${text}`, .99, 'observation', heard, true);
+        intent = 'Admit an innocent secret';
+      } else if (admitted) {
+        text = `As I have admitted: ${admitted.text}`; intent = 'Stand by the concession';
       } else if (alibiBroken && written) {
         text = written; intent = 'Deflect';
+      } else if (finding && pid !== truthActor && (have.has(finding.id) || (earned(s, finding.id) && !goneSet(s).has(finding.id)) || !written)) {
+        // The person whose own finding this clue needs to be read (the doctor, shown a possible weapon, and her notes on
+        // the wound): set beside it, they confirm it when the player holds the finding, hand the finding over when it is
+        // theirs to give now, and otherwise say it must wait. Their words claim nothing the certified reading does not.
+        intent = 'Compare with my own findings';
+        if (have.has(finding.id)) text = `Set beside ${lower(finding.title)}, yes: it fits what I found.`;
+        else if (earned(s, finding.id) && !goneSet(s).has(finding.id)) {
+          if (finding.kind === 'testimony') { giveAccount(s, pid, finding, heard); K.advance(s, 4, cause); return; }
+          const said = K.speech(s, pid, `That wants setting beside what I found. Here: ${lower(finding.title)}.`, heard,
+            {topic: 'present', intent, claims: [], deceptionFlexible: false});
+          K.commit(s, {kind: 'observation', actor: 'player', title: `${PEOPLE[pid].name} hands it over`, parents: [said],
+            changes: {'flags.lockedObjects': arr(s.world.flags.lockedObjects).filter(o => o !== finding.id)}});
+          K.addEvidence(s, finding.id, said, `${PEOPLE[pid].name} hands it over`);
+          K.advance(s, 4, cause);
+          return;
+        } else text = 'That would want setting beside what I found, and I cannot do that for you yet.';
       } else {
         text = written || relationReply(pid, clue);
       }
@@ -838,18 +1018,37 @@ export function makeKernelCase(records) {
     const clock = m => { const h = Math.floor(m / 60) % 24, mi = Math.round(m % 60), hh = ((h + 11) % 12) + 1;
       return mi === 0 ? `${hh} o’clock` : mi === 30 ? `half past ${hh}` : mi === 15 ? `quarter past ${hh}` : mi === 45 ? `quarter to ${((h + 12) % 12) + 1}`
         : mi < 30 ? `${mi} past ${hh}` : `${60 - mi} to ${((h + 12) % 12) + 1}`; };
-    function epilogue(have) {
+    function epilogue(s, have) {
       const P = pillarSigns(kc, analyse(kc));
       const missed = [...new Set([...P.motive, ...P.means])].filter(id => !have.has(id)).map(id => signs[id]);
-      const herrings = kc.signs.filter(x => x.kind === 'behavior' && suspects.includes(x.about) && x.about !== truthActor && arr(x.explainedBy).length);
       const lines = [];
-      for (const x of missed.slice(0, 3)) lines.push(`${x.title}: ${String(x.text).split(/(?<=[.!?])\s/)[0]}`);
-      for (const b of herrings.slice(0, 3)) {
-        const why = arr(b.explainedBy).map(e => signs[e]).find(Boolean);
-        if (!why || have.has(why.id)) continue;
-        // the innocent explanation, from the history: what they did, and the reason that made them do it
-        const ev = kc.events.find(e => e.id === why.source), reason = arr(kc.attitudes).find(a => a.id === ev?.causedBy);
-        lines.push(`${PEOPLE[b.about]?.name}: ${ev?.summary ?? String(why.text).split(/(?<=[.!?])\s/)[0]}${reason ? ` (${String(reason.content).replace(/[.]+$/, '')}.)` : ''}`);
+      for (const x of missed.slice(0, 3)) lines.push(`${x.title}: ${opening(x.text)}`);
+      // Why each untrue account was given (everyone but the culprit, whose reasons the truth already tells): the
+      // reasons the case gives for it, so no lie is left unexplained however the player got past it.
+      const told = new Map();
+      for (const x of kc.signs.filter(x => x.kind === 'testimony' && x.speaker !== truthActor && PEOPLE[x.speaker]
+        && claimOf(x) && !claimTrue(kc, claimOf(x)))) {
+        const why = reasonsOf(kc.attitudes, x.speaker, x.because);
+        if (!why.length || told.get(x.speaker)?.has(why.map(a => a.id).join())) continue;
+        told.set(x.speaker, new Set([...(told.get(x.speaker) ?? []), why.map(a => a.id).join()]));
+        const [he] = pron(x.speaker), name = PEOPLE[x.speaker].name;
+        lines.push(`${name} ${mistaken(x) ? 'was mistaken' : 'lied'} (${x.title}): ${why.map(a => reasonAbout(a, he, PROPER)).join('; ')}.`);
+      }
+      // Every red herring the player did not get to the bottom of: what the behaviour really was, and why. Behaviour that
+      // one discovery explains (two odd things about the same person and the same secret) is told once.
+      const herrings = new Map();
+      for (const b of kc.signs.filter(x => x.kind === 'behavior' && x.about !== truthActor && PEOPLE[x.about] && arr(x.explainedBy).length)) {
+        const why = arr(b.explainedBy).map(e => signs[e]).filter(Boolean);
+        if (!why.length || why.some(e => have.has(e.id)) || explainedTo(s, b.about, b.id)) continue;
+        const key = `${b.about}|${why[0].id}`;
+        if (herrings.has(key)) { herrings.get(key).titles.push(b.title); continue; }
+        herrings.set(key, {b, why: why[0], titles: [b.title]});
+      }
+      for (const {b, why, titles} of [...herrings.values()].slice(0, 4)) {
+        const [he] = pron(b.about), first = innocentReason(b.about, b.id);
+        const reasons = reasonsOf(kc.attitudes, b.about, first ? [first.id] : []);
+        lines.push(`${PEOPLE[b.about].name} (${titles.join('; ')}): ${opening(why.text, 2)}`
+          + (reasons.length ? ` ${reasons.map(a => reasonAbout(a, he, PROPER)).join('; ').replace(/^./, c => c.toUpperCase())}.` : ''));
       }
       return lines.length ? `\n\nWhat the file adds, for the record:\n${lines.map(l => `• ${l}`).join('\n')}` : '';
     }
@@ -884,7 +1083,7 @@ export function makeKernelCase(records) {
       else if (!whyOk) { feedback = `“The evidence you hold points to a different reason. Read ${st.motive.map(id => `‘${signs[id]?.title}’`).join(' and ')} again.”`; status = 'wrong_motive'; }
       else if (pid !== truthActor) { feedback = '“It hangs together on paper, but something you rely on has not been tested. Check every account against the evidence before I charge anyone.”'; status = 'untested'; }
       const supported = status === 'supported';
-      if (supported) feedback = CASE.resolutionText + `\n\nWhat happened: ${CASE.truth}` + epilogue(have);
+      if (supported) feedback = CASE.resolutionText + `\n\nWhat happened: ${CASE.truth}` + epilogue(s, have);
       return {supported, selected: [...use], routes: [], feedback, status, alternatives: sv, pillars,
               pillarEvidence: {means: st.means, motive: st.motive}, alternative: alt};
     }
@@ -921,12 +1120,12 @@ export function makeKernelCase(records) {
       if (heardAny(s, pid) && open.some(x => !own(x) && !x.surface && !x.morning && !x.sighting)) out.push(['more', Q.more]);
       for (const x of open.filter(own)) {
         const prereq = arr(x.requires).length ? signs[arr(x.requires).find(r => signs[r] && signs[r].kind !== 'testimony') ?? x.requires[0]] : null;
-        const about = prereq ? String(prereq.title || 'what I found').replace(/^(the|a|an) /i, '').toLowerCase() : 'what I found';
         // A distinct own question is the natural label. An aliased account unlocked by evidence is instead phrased
         // around that prerequisite, so progression remains reachable without asking the same natural-language action.
         let label = ownAsk(x) ? x.ask : (prereq?.kind === 'testimony'
           ? (prereq.show || `${PEOPLE[prereq.speaker]?.name ?? 'Someone'} told me something that concerns you. What do you say to it?`)
-          : `What can you tell me about the ${about}?`);
+          // the clue's own title, quoted: a title is not always a noun ("Under the glove")
+          : prereq ? `Now that I have seen ‘${String(prereq.title || 'what I found').replace(/[.]+$/, '')}’, what can you tell me?` : 'What can you tell me about what I found?');
         if (out.some(([, l]) => l === label)) label = `${label.replace(/\?$/, '')} — and anything else about it?`;
         if (!out.some(([, l]) => l === label)) out.push([x.id, label]);
       }
@@ -953,7 +1152,7 @@ export function makeKernelCase(records) {
     }
     const isDecline = (pid, text) => text === NEUTRAL || arr(kc.declines?.[pid]).includes(text);
     return {morningCtx, seedSession, afterAction, decide, canAsk, ask, present, presentLine, checkCase, caseStatus, pillarsHeld,
-      followupOptions, freeTextTopics, canonicalTopic, nightAccount, claimDetails, hints, declineFor, isDecline, innocentReason, parseCommand, reconcileKnowledge() {},
+      followupOptions, freeTextTopics, canonicalTopic, nightAccount, claimDetails, hints, declineFor, isDecline, innocentReason, pressed, parseCommand, reconcileKnowledge() {},
       commandLabel: a => `${a.type} ${a.person ?? a.object ?? a.to ?? ''}`, caseHealth: () => []};
   }
   return {CASE, LOCATIONS, PEOPLE, CLUES, OBJECTS, model, baseWorld, createBehavior, SUSPECTS: suspects,

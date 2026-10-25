@@ -1,0 +1,1965 @@
+{
+ "title": "The Boathouse at Michaelmas",
+ "victim": "jonah",
+ "story": "Edmund Vale went down to turn old Jonah Reed out of the boathouse. The quarrel ended in a gunshot, and afterwards his sister Clara hid the revolver to keep the Vale name out of the papers.",
+ "setting": {
+  "name": "Bellweather",
+  "era": "An English village, 1932",
+  "summary": "A small English village: a square, a manor with its greenhouse and boathouse on the river, an inn, the church vestry, a doctor's surgery, a post office, a railway halt and a disused mill. Someone is dead; the investigation begins the next morning.",
+  "places": [
+   {
+    "id": "square",
+    "name": "Village square"
+   },
+   {
+    "id": "manor",
+    "name": "Vale Manor"
+   },
+   {
+    "id": "inn",
+    "name": "The Rook & Lantern"
+   },
+   {
+    "id": "greenhouse",
+    "name": "The greenhouse"
+   },
+   {
+    "id": "vestry",
+    "name": "St. Alden’s vestry"
+   },
+   {
+    "id": "surgery",
+    "name": "Dr Marsh’s surgery"
+   },
+   {
+    "id": "halt",
+    "name": "Bellweather Halt"
+   },
+   {
+    "id": "post",
+    "name": "The post office"
+   },
+   {
+    "id": "mill",
+    "name": "Alder Mill"
+   },
+   {
+    "id": "boathouse",
+    "name": "The boathouse"
+   }
+  ],
+  "links": [
+   {
+    "a": "square",
+    "b": "manor",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "inn",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "vestry",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "surgery",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "post",
+    "minutes": 2
+   },
+   {
+    "a": "square",
+    "b": "halt",
+    "minutes": 6
+   },
+   {
+    "a": "manor",
+    "b": "greenhouse",
+    "minutes": 3
+   },
+   {
+    "a": "manor",
+    "b": "boathouse",
+    "minutes": 6
+   },
+   {
+    "a": "inn",
+    "b": "greenhouse",
+    "minutes": 6
+   },
+   {
+    "a": "inn",
+    "b": "post",
+    "minutes": 3
+   },
+   {
+    "a": "greenhouse",
+    "b": "mill",
+    "minutes": 7
+   },
+   {
+    "a": "vestry",
+    "b": "halt",
+    "minutes": 5
+   },
+   {
+    "a": "surgery",
+    "b": "post",
+    "minutes": 3
+   },
+   {
+    "a": "halt",
+    "b": "mill",
+    "minutes": 5
+   },
+   {
+    "a": "mill",
+    "b": "boathouse",
+    "minutes": 4
+   }
+  ],
+  "roles": {
+   "examiner": "iris",
+   "constable": "bell"
+  },
+  "day": {
+   "evening": 1080,
+   "morning": 1740,
+   "start": 1920
+  }
+ },
+ "rules": [
+  {
+   "id": "r_operator",
+   "text": "The post office night operator writes down the time of every call she puts through and initials it.",
+   "knowledge": "common"
+  }
+ ],
+ "people": [
+  {
+   "id": "jonah",
+   "name": "Jonah Reed",
+   "role": "The boathouse keeper",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "he",
+   "address": "Mr Reed",
+   "voice": "Slow, weathered and wry; a river man who speaks in the present tense and weighs every word like a stone.",
+   "public": "Keeper of the manor’s boathouse and ferryman when the river is up. He knows the water and keeps his own counsel.",
+   "home": "boathouse",
+   "role_words": [
+    "boatman",
+    "boathouse keeper",
+    "ferryman"
+   ]
+  },
+  {
+   "id": "edmund",
+   "name": "Edmund Vale",
+   "role": "Master of Vale Manor",
+   "traits": {
+    "handed": "right",
+    "temper": "violent"
+   },
+   "pronoun": "he",
+   "address": "Mr Vale",
+   "voice": "Loud, confident and used to being obeyed; bluff good humour that turns cold when crossed.",
+   "public": "Master of Vale Manor: a man of fixed habits, generous in public and hard in private.",
+   "home": "manor",
+   "role_words": [
+    "squire"
+   ]
+  },
+  {
+   "id": "clara",
+   "name": "Clara Vale",
+   "role": "Mistress of the household",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "she",
+   "address": "Miss Vale",
+   "voice": "Composed, dry and exact; she chooses words like a woman choosing gloves. Polite to the point of chill with strangers, warmer once she respects you.",
+   "public": "Edmund’s younger sister. She has run Vale Manor’s household for years and guards its privacy.",
+   "home": "manor",
+   "role_words": []
+  },
+  {
+   "id": "dora",
+   "name": "Dorothy Pruett",
+   "role": "The postmistress",
+   "traits": {
+    "handed": "left"
+   },
+   "pronoun": "she",
+   "address": "Miss Pruett",
+   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people’s business.",
+   "public": "The postmistress. Every letter, parcel and telegram in Bellweather passes over her counter, and she forgets nothing.",
+   "home": "post",
+   "role_words": [
+    "postmistress"
+   ]
+  },
+  {
+   "id": "vicar",
+   "name": "The Reverend Thomas Hale",
+   "role": "The vicar",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "he",
+   "address": "Mr Hale",
+   "voice": "Gentle and rambling, with a scholar’s digressions and a surprising steel when conscience is touched.",
+   "public": "Vicar of St. Alden’s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
+   "home": "vestry",
+   "role_words": [
+    "vicar",
+    "rector",
+    "parson"
+   ]
+  },
+  {
+   "id": "iris",
+   "name": "Dr Iris Marsh",
+   "role": "The village doctor",
+   "traits": {},
+   "pronoun": "she",
+   "address": "Dr Marsh",
+   "voice": "Clinical and direct, with brisk warmth underneath; says exactly what she observed and no more.",
+   "public": "The village doctor. Methodical and direct; she is called whenever anyone in Bellweather is hurt or ill.",
+   "home": "surgery",
+   "role_words": [
+    "doctor"
+   ]
+  },
+  {
+   "id": "bell",
+   "name": "Arthur Bell",
+   "role": "The village constable",
+   "traits": {},
+   "pronoun": "he",
+   "address": "Constable Bell",
+   "voice": "A gruff country constable: terse, dry and matter-of-fact, with a soft spot he hides badly.",
+   "public": "The village constable. He has secured the scene and asked you to investigate; he will hear an accusation when you can back it with evidence.",
+   "home": "square",
+   "role_words": [
+    "constable"
+   ]
+  },
+  {
+   "id": "silas",
+   "name": "Silas Voss",
+   "role": "The solicitor",
+   "pronoun": "he",
+   "address": "Mr Voss",
+   "voice": "Measured, formal and faintly amused; speaks in tidy clauses and likes a Latin tag. Never rambles.",
+   "public": "A precise, courteous solicitor who keeps an office in the vestry and handles the affairs of half the parish.",
+   "home": "vestry",
+   "role_words": [
+    "solicitor"
+   ],
+   "traits": {}
+  },
+  {
+   "id": "hugo",
+   "name": "Hugo Vale",
+   "role": "The nephew from London",
+   "pronoun": "he",
+   "address": "Mr Hugo",
+   "voice": "Quick, flippant and charming, full of London slang; hides nerves behind jokes and talks a little too fast.",
+   "public": "Edmund’s nephew, down from London by train. Charming, restless and plainly bored by the country.",
+   "home": "manor",
+   "role_words": [
+    "nephew"
+   ],
+   "traits": {}
+  }
+ ],
+ "objects": [
+  {
+   "id": "revolver",
+   "name": "A revolver",
+   "desc": "Edmund Vale's service revolver, normally kept on a peg in the manor gun room.",
+   "supply": true
+  },
+  {
+   "id": "letter",
+   "name": "A handwritten letter",
+   "desc": "A note in Edmund Vale's hand ordering Jonah Reed out of the boathouse."
+  },
+  {
+   "id": "tin_key",
+   "name": "A small key",
+   "desc": "A small brass key on a string around Jonah Reed's neck."
+  },
+  {
+   "id": "tin_box",
+   "name": "A small tin",
+   "desc": "Jonah Reed's tin box of papers, kept on the boathouse shelf."
+  },
+  {
+   "id": "log",
+   "name": "The switchboard log",
+   "desc": "The night operator's book of connected calls at the post office."
+  },
+  {
+   "id": "peg",
+   "name": "An empty peg",
+   "desc": "The revolver's peg in the manor gun room."
+  },
+  {
+   "id": "hanky",
+   "name": "A handkerchief",
+   "desc": "A lady's linen handkerchief embroidered C.V."
+  },
+  {
+   "id": "exchange_card",
+   "name": "A printed card",
+   "desc": "The Bellweather Exchange subscribers' card, pinned in the telephone cabinet at the Halt."
+  },
+  {
+   "id": "pearl_letter",
+   "name": "A handwritten letter",
+   "desc": "A letter from Silas Voss to Clara Vale about selling her mother's pearls, with her half-written reply."
+  },
+  {
+   "id": "scoresheet",
+   "name": "A chess scoresheet",
+   "desc": "A pencilled sheet of foolscap recording two games of chess played in the vestry."
+  },
+  {
+   "id": "waste_book",
+   "name": "A kitchen waste-book",
+   "desc": "A ledger where the manor's maid lists what is cleared, burned or laundered each morning."
+  }
+ ],
+ "relations": [
+  {
+   "a": "edmund",
+   "rel": "sibling_of",
+   "b": "clara"
+  },
+  {
+   "a": "jonah",
+   "rel": "employed_by",
+   "b": "edmund"
+  },
+  {
+   "a": "edmund",
+   "rel": "quarrelled_with",
+   "b": "jonah"
+  },
+  {
+   "a": "vicar",
+   "rel": "owes",
+   "b": "jonah"
+  },
+  {
+   "a": "jonah",
+   "rel": "knows_secret_of",
+   "b": "dora"
+  }
+ ],
+ "question": {
+  "text": "Who killed Jonah Reed?",
+  "candidates": [
+   {
+    "id": "c_clara",
+    "label": "Clara Vale",
+    "facts": {
+     "actor": "clara"
+    }
+   },
+   {
+    "id": "c_dora",
+    "label": "Dorothy Pruett",
+    "facts": {
+     "actor": "dora"
+    }
+   },
+   {
+    "id": "c_edmund",
+    "label": "Edmund Vale",
+    "facts": {
+     "actor": "edmund"
+    }
+   },
+   {
+    "id": "c_vicar",
+    "label": "The Reverend Thomas Hale",
+    "facts": {
+     "actor": "vicar"
+    }
+   }
+  ],
+  "truth": "c_edmund",
+  "crime": {
+   "event": "e_shoot",
+   "place": "boathouse",
+   "window": [
+    1315,
+    1340
+   ]
+  }
+ },
+ "attitudes": [
+  {
+   "id": "a_evict",
+   "agent": "edmund",
+   "mode": "intends",
+   "content": "To turn Jonah Reed out of the boathouse by Michaelmas and pull it down, whatever his late father once promised.",
+   "because": []
+  },
+  {
+   "id": "a_jonah_defy",
+   "agent": "jonah",
+   "mode": "intends",
+   "content": "To hold Edmund to his father's written promise that the Reeds keep the boathouse for life, and to show it to the county if need be.",
+   "because": []
+  },
+  {
+   "id": "a_rage",
+   "agent": "edmund",
+   "mode": "feels",
+   "content": "Blind fury at being defied and threatened by his own boatman.",
+   "because": [
+    "a_evict"
+   ],
+   "motive": "quarrel"
+  },
+  {
+   "id": "a_fear",
+   "agent": "edmund",
+   "mode": "fears",
+   "content": "That the revolver will hang him if it is found in the gun room.",
+   "because": [
+    "a_rage"
+   ]
+  },
+  {
+   "id": "a_clara_knows",
+   "agent": "clara",
+   "mode": "knows",
+   "content": "That Edmund shot Jonah Reed at the boathouse.",
+   "because": []
+  },
+  {
+   "id": "a_protect",
+   "agent": "clara",
+   "mode": "wants",
+   "content": "To keep the Vale name out of the newspapers and the dock, though she did not kill Reed.",
+   "because": [
+    "a_clara_knows"
+   ]
+  },
+  {
+   "id": "a_clara_ill",
+   "agent": "clara",
+   "mode": "feels",
+   "content": "One of her sick headaches, bad enough to send for the doctor.",
+   "because": []
+  },
+  {
+   "id": "a_iris_duty",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "To attend any patient who telephones, whatever the hour.",
+   "because": []
+  },
+  {
+   "id": "a_bell_habit",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "To keep his weekly game of chess with the vicar.",
+   "because": []
+  },
+  {
+   "id": "a_vicar_habit",
+   "agent": "vicar",
+   "mode": "intends",
+   "content": "To keep his chess evening, then take his first-light walk along the river.",
+   "because": []
+  },
+  {
+   "id": "a_dora_duty",
+   "agent": "dora",
+   "mode": "intends",
+   "content": "To mind the night switchboard, as she does every night.",
+   "because": []
+  },
+  {
+   "id": "a_dora_fear",
+   "agent": "dora",
+   "mode": "fears",
+   "content": "That Jonah Reed will tell the Postmaster he saw her steaming open the manor's letters.",
+   "because": []
+  },
+  {
+   "id": "a_vicar_shame",
+   "agent": "vicar",
+   "mode": "feels",
+   "content": "Shame at owing Jonah Reed forty pounds he borrowed to cover a gap in the roof fund.",
+   "because": []
+  },
+  {
+   "id": "a_vicar_report",
+   "agent": "vicar",
+   "mode": "intends",
+   "content": "To fetch the constable at once after finding the body.",
+   "because": []
+  },
+  {
+   "id": "a_bell_doctor",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "To fetch the doctor to the body.",
+   "because": []
+  },
+  {
+   "id": "a_jonah_home",
+   "agent": "jonah",
+   "mode": "intends",
+   "content": "To spend the evening mending oars at the boathouse.",
+   "because": []
+  },
+  {
+   "id": "a_household",
+   "agent": "edmund",
+   "mode": "intends",
+   "content": "To dine at home as usual.",
+   "because": []
+  },
+  {
+   "id": "a_iris_confidence",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "To say nothing of a patient's visit or condition unless the visit is already known, and the patient's consent may fairly be assumed.",
+   "because": [
+    "a_iris_duty"
+   ]
+  },
+  {
+   "id": "a_dora_code",
+   "agent": "dora",
+   "mode": "intends",
+   "content": "To enter calls in her book by exchange number only, so that prying eyes at her counter learn nothing of whose calls went where.",
+   "because": [
+    "a_dora_duty"
+   ]
+  },
+  {
+   "id": "a_hugo_debts",
+   "agent": "hugo",
+   "mode": "fears",
+   "content": "That his London bookmakers will make his debts public and his uncle will cut him off.",
+   "because": []
+  },
+  {
+   "id": "a_clara_pearls",
+   "agent": "clara",
+   "mode": "wants",
+   "content": "To sell her mother's pearls in secret to pay Hugo's debts, so that Edmund never learns of the debts or the sale.",
+   "because": [
+    "a_hugo_debts"
+   ]
+  },
+  {
+   "id": "a_silas_discreet",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "To arrange the sale of Miss Vale's pearls discreetly, as her private solicitor.",
+   "because": [
+    "a_clara_pearls"
+   ]
+  },
+  {
+   "id": "a_bell_shame",
+   "agent": "bell",
+   "mode": "fears",
+   "content": "That the Superintendent will learn he left his beat on a duty night to play chess, and keeps quiet about his evening.",
+   "because": [
+    "a_bell_habit"
+   ]
+  },
+  {
+   "id": "a_vicar_score",
+   "agent": "vicar",
+   "mode": "intends",
+   "content": "To write down every game he plays, as he always does, hoping to learn from his defeats.",
+   "because": [
+    "a_vicar_habit"
+   ]
+  },
+  {
+   "id": "a_maid_tidy",
+   "agent": "clara",
+   "mode": "intends",
+   "content": "To have the sickroom tidied each morning before visitors call, so no sign of illness lingers in the house.",
+   "because": [
+    "a_protect"
+   ]
+  },
+  {
+   "id": "a_jonah_wary",
+   "agent": "jonah",
+   "mode": "fears",
+   "content": "That Edmund Vale will come to the boathouse and carry off the tin holding his father's promise and Edmund's own threatening note.",
+   "because": [
+    "a_jonah_defy"
+   ]
+  },
+  {
+   "id": "a_dora_guard",
+   "agent": "dora",
+   "mode": "intends",
+   "content": "To show her call book to no outsider, in case questions about calls lead to questions about the manor's letters.",
+   "because": [
+    "a_dora_fear",
+    "a_dora_code"
+   ]
+  },
+  {
+   "id": "a_hugo_evening",
+   "agent": "hugo",
+   "mode": "intends",
+   "content": "He wanted some company and a bit of local colour after being shut up at the manor all day.",
+   "strength": 0.6
+  },
+  {
+   "id": "a_silas_evening",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "He wanted to get his paperwork in order before the next day's appointments.",
+   "strength": 0.6
+  }
+ ],
+ "events": [
+  {
+   "id": "e_jonah_home",
+   "type": "whereabouts",
+   "agent": "jonah",
+   "others": [],
+   "place": "boathouse",
+   "start": 1080,
+   "end": 1290,
+   "causedBy": "a_jonah_home",
+   "summary": "Jonah mends oars in the boathouse all evening."
+  },
+  {
+   "id": "e_dinner",
+   "type": "whereabouts",
+   "agent": "edmund",
+   "others": [
+    "clara"
+   ],
+   "place": "manor",
+   "start": 1140,
+   "end": 1230,
+   "causedBy": "a_household",
+   "summary": "Edmund and Clara dine together at Vale Manor."
+  },
+  {
+   "id": "e_edmund_study",
+   "type": "whereabouts",
+   "agent": "edmund",
+   "others": [],
+   "place": "manor",
+   "start": 1230,
+   "end": 1295,
+   "causedBy": "a_evict",
+   "summary": "Edmund drinks in his study, then takes his revolver and goes out by the garden door."
+  },
+  {
+   "id": "e_clara_rest",
+   "type": "whereabouts",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1230,
+   "end": 1283,
+   "causedBy": "a_clara_ill",
+   "summary": "Clara lies down in her sitting room with a headache."
+  },
+  {
+   "id": "e_call",
+   "type": "telephone",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1283,
+   "end": 1287,
+   "causedBy": "a_clara_ill",
+   "summary": "Clara telephones the surgery through the exchange, at 21:25, asking Dr Marsh to come."
+  },
+  {
+   "id": "e_iris_eve",
+   "type": "whereabouts",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1080,
+   "end": 1287,
+   "causedBy": "a_iris_duty",
+   "summary": "Dr Marsh at her surgery; takes Clara's call at 21:25."
+  },
+  {
+   "id": "e_iris_visit",
+   "type": "visit",
+   "agent": "iris",
+   "others": [
+    "clara"
+   ],
+   "place": "manor",
+   "start": 1295,
+   "end": 1350,
+   "causedBy": "a_iris_duty",
+   "summary": "Dr Marsh attends Clara in her sitting room from 21:35 to 22:30."
+  },
+  {
+   "id": "e_iris_home",
+   "type": "whereabouts",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1360,
+   "end": 1794,
+   "causedBy": "a_iris_duty",
+   "summary": "Dr Marsh returns to the surgery and sleeps."
+  },
+  {
+   "id": "e_quarrel",
+   "type": "quarrel",
+   "agent": "edmund",
+   "others": [
+    "jonah"
+   ],
+   "place": "boathouse",
+   "start": 1305,
+   "end": 1325,
+   "causedBy": "a_evict",
+   "summary": "Edmund orders Jonah out; Jonah waves the old promise and threatens the county. Voices rise."
+  },
+  {
+   "id": "e_shoot",
+   "type": "murder",
+   "agent": "edmund",
+   "others": [
+    "jonah"
+   ],
+   "place": "boathouse",
+   "start": 1325,
+   "end": 1328,
+   "causedBy": "a_rage",
+   "summary": "In a rage Edmund shoots Jonah once with his revolver.",
+   "facts": {
+    "method": "gun"
+   }
+  },
+  {
+   "id": "e_death",
+   "type": "death",
+   "agent": "jonah",
+   "others": [],
+   "place": "boathouse",
+   "start": 1328,
+   "end": 1329,
+   "causedBy": "nature",
+   "summary": "Jonah Reed dies on the boathouse floor."
+  },
+  {
+   "id": "e_edmund_back",
+   "type": "whereabouts",
+   "agent": "edmund",
+   "others": [],
+   "place": "manor",
+   "start": 1340,
+   "end": 1360,
+   "causedBy": "a_fear",
+   "summary": "Edmund slips back in by the garden door, unseen, while the doctor is upstairs."
+  },
+  {
+   "id": "e_confide",
+   "type": "confession",
+   "agent": "edmund",
+   "others": [
+    "clara"
+   ],
+   "place": "manor",
+   "start": 1360,
+   "end": 1370,
+   "causedBy": "a_fear",
+   "summary": "Edmund tells Clara what he has done and presses the revolver on her."
+  },
+  {
+   "id": "e_hide",
+   "type": "cover-up",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1370,
+   "end": 1385,
+   "causedBy": "a_protect",
+   "summary": "Clara wraps the revolver in her handkerchief and hides it in the linen press."
+  },
+  {
+   "id": "e_clara_night",
+   "type": "whereabouts",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1385,
+   "end": 1860,
+   "causedBy": "a_protect",
+   "summary": "Clara stays at the manor, sleepless."
+  },
+  {
+   "id": "e_edmund_night",
+   "type": "whereabouts",
+   "agent": "edmund",
+   "others": [],
+   "place": "manor",
+   "start": 1370,
+   "end": 1860,
+   "causedBy": "a_fear",
+   "summary": "Edmund stays at the manor through the night."
+  },
+  {
+   "id": "e_dora_board",
+   "type": "whereabouts",
+   "agent": "dora",
+   "others": [],
+   "place": "post",
+   "start": 1080,
+   "end": 1500,
+   "causedBy": "a_dora_duty",
+   "summary": "Dorothy minds the night switchboard at the post office, logging calls."
+  },
+  {
+   "id": "e_dora_night",
+   "type": "whereabouts",
+   "agent": "dora",
+   "others": [],
+   "place": "post",
+   "start": 1500,
+   "end": 1860,
+   "causedBy": "a_dora_duty",
+   "summary": "Dorothy sleeps above the post office."
+  },
+  {
+   "id": "e_vicar_eve",
+   "type": "whereabouts",
+   "agent": "vicar",
+   "others": [],
+   "place": "vestry",
+   "start": 1080,
+   "end": 1288,
+   "causedBy": "a_vicar_habit",
+   "summary": "The vicar works at his sermon in the vestry."
+  },
+  {
+   "id": "e_bell_eve",
+   "type": "whereabouts",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1080,
+   "end": 1280,
+   "causedBy": "a_bell_habit",
+   "summary": "Constable Bell walks his round of the square."
+  },
+  {
+   "id": "e_chess",
+   "type": "visit",
+   "agent": "bell",
+   "others": [
+    "vicar"
+   ],
+   "place": "vestry",
+   "start": 1290,
+   "end": 1360,
+   "causedBy": "a_bell_habit",
+   "summary": "Bell and the vicar play chess in the vestry, 21:30 to 22:40."
+  },
+  {
+   "id": "e_vicar_night",
+   "type": "whereabouts",
+   "agent": "vicar",
+   "others": [],
+   "place": "vestry",
+   "start": 1360,
+   "end": 1740,
+   "causedBy": "a_vicar_habit",
+   "summary": "The vicar sleeps at the vestry lodging."
+  },
+  {
+   "id": "e_bell_night",
+   "type": "whereabouts",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1370,
+   "end": 1784,
+   "causedBy": "a_bell_habit",
+   "summary": "Bell goes home to the police house on the square and sleeps."
+  },
+  {
+   "id": "e_discovery",
+   "type": "discovery",
+   "agent": "vicar",
+   "others": [],
+   "place": "boathouse",
+   "start": 1770,
+   "end": 1775,
+   "causedBy": "a_vicar_habit",
+   "summary": "On his first-light walk the vicar finds Jonah Reed dead in the boathouse."
+  },
+  {
+   "id": "e_tell_bell",
+   "type": "report",
+   "agent": "vicar",
+   "others": [
+    "bell"
+   ],
+   "place": "square",
+   "start": 1786,
+   "end": 1790,
+   "causedBy": "a_vicar_report",
+   "summary": "The vicar hurries to the square and wakes Constable Bell."
+  },
+  {
+   "id": "e_vicar_after",
+   "type": "whereabouts",
+   "agent": "vicar",
+   "others": [],
+   "place": "vestry",
+   "start": 1800,
+   "end": 1860,
+   "causedBy": "a_vicar_report",
+   "summary": "The vicar goes back to the vestry to pray."
+  },
+  {
+   "id": "e_fetch_iris",
+   "type": "report",
+   "agent": "bell",
+   "others": [
+    "iris"
+   ],
+   "place": "surgery",
+   "start": 1795,
+   "end": 1800,
+   "causedBy": "a_bell_doctor",
+   "summary": "Bell wakes Dr Marsh and tells her of the death."
+  },
+  {
+   "id": "e_exam",
+   "type": "examination",
+   "agent": "iris",
+   "others": [
+    "bell"
+   ],
+   "place": "boathouse",
+   "start": 1815,
+   "end": 1845,
+   "causedBy": "a_iris_duty",
+   "summary": "Dr Marsh examines the body; Bell secures the boathouse."
+  },
+  {
+   "id": "e_clara_reply",
+   "type": "whereabouts",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1900,
+   "end": 1935,
+   "causedBy": "a_clara_pearls",
+   "summary": "In her sitting room Clara starts a reply to Silas Voss about the pearls, and hides it when the detective arrives."
+  },
+  {
+   "id": "e_score",
+   "type": "whereabouts",
+   "agent": "vicar",
+   "others": [
+    "bell"
+   ],
+   "place": "vestry",
+   "start": 1290,
+   "end": 1360,
+   "causedBy": "a_vicar_score",
+   "summary": "During the chess the vicar pencils both games onto a sheet and leaves it beside the board."
+  },
+  {
+   "id": "e_tidy",
+   "type": "behavior",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1760,
+   "end": 1770,
+   "causedBy": "a_maid_tidy",
+   "summary": "The maid clears Clara's sitting room, noting an emptied glass and wrapper in the waste-book before it is binned."
+  },
+  {
+   "id": "e_jonah_stow",
+   "type": "behavior",
+   "agent": "jonah",
+   "others": [],
+   "place": "boathouse",
+   "start": 1290,
+   "end": 1305,
+   "causedBy": "a_jonah_wary",
+   "summary": "Jonah takes his tin of papers off the shelf and padlocks it inside the oar locker under the workbench."
+  },
+  {
+   "id": "e_hugo_evening",
+   "type": "routine",
+   "agent": "hugo",
+   "others": [],
+   "place": "inn",
+   "start": 1080,
+   "end": 1380,
+   "causedBy": "a_hugo_evening",
+   "summary": "He sat by the fire at the Rook & Lantern with a pint, chatting idly with a couple of local farmers about the price of cattle.",
+   "ordinary": true
+  },
+  {
+   "id": "e_silas_evening",
+   "type": "routine",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1080,
+   "end": 1380,
+   "causedBy": "a_silas_evening",
+   "summary": "He stayed late at his vestry office sorting through a stack of client papers and tidying his files into neat bundles.",
+   "ordinary": true
+  }
+ ],
+ "signs": [
+  {
+   "id": "s_surface_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "surface": true,
+   "deceptive": false,
+   "title": "Dr Iris Marsh on the evening",
+   "text": "I was at the surgery when a call came through asking me to attend a lady at the manor, so I went up and sat with her a good while before coming back to the surgery and going to bed.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Dr Iris Marsh says she was called from the surgery to sit with a lady at the manor before returning home to bed. Do you know anything about that visit?",
+   "lines_for": "18b89d9766bb",
+   "confront": "You told me you were called to attend a lady at the manor and sat with her a while before returning to the surgery. Is that the whole of it?"
+  },
+  {
+   "id": "s_surface_clara",
+   "kind": "testimony",
+   "speaker": "clara",
+   "surface": true,
+   "deceptive": true,
+   "title": "Clara Vale on the evening",
+   "text": "I dined with Edmund and then retired early to my sitting room, as one of my headaches had come on badly, bad enough that I sent for Dr Marsh to attend me. She came and stayed with me some while, and after she left I lay a long time without sleeping, and that was the whole of my evening.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_why": "She omits that Edmund confessed and pressed the revolver on her and that she hid it in the linen press, and that she started a reply to Silas Voss about the pearls - but more critically, she claims this was 'the whole of my evening,' which falsely implies nothing else happened, concealing the revolv",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Clara Vale says she dined with Edmund, then kept to her sitting room with a bad headache, and that Dr Marsh came and sat with her a while before she lay awake. Do you know if that's true?",
+   "lines_for": "a733d3ebbdf0",
+   "confront": "You told me you dined with Edmund, then suffered a headache and had Dr Marsh sit with you before lying awake. Is that the whole of it?"
+  },
+  {
+   "id": "s_surface_edmund",
+   "kind": "testimony",
+   "speaker": "edmund",
+   "surface": true,
+   "deceptive": true,
+   "title": "Edmund Vale on the evening",
+   "text": "I dined with my sister and then sat alone in my study with a drink, same as any other night. After that I was about the house and turned in for the night, nothing more to tell.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_why": "He claims he merely sat alone in his study then stayed about the house all evening, omitting (and thereby concealing) that he actually went out with his revolver, confronted and shot Jonah, then snuck back in unseen — the account falsely implies he never left the house that night.",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Edmund Vale says he dined with his sister, then sat alone in his study before turning in for the night. Do you know if that's true?",
+   "confront": "You told me you dined with your sister, then sat alone in your study and turned in for the night, nothing more. Is that the whole of it?",
+   "lines_for": "fd48b43a80a1"
+  },
+  {
+   "id": "s_surface_hugo",
+   "kind": "testimony",
+   "speaker": "hugo",
+   "surface": true,
+   "deceptive": false,
+   "title": "Hugo Vale on the evening",
+   "text": "Oh, nothing thrilling, I'm afraid - just propping up the bar at the Rook & Lantern, nursing a pint and swapping chatter about cattle prices with a couple of the local fellows. Needed to get out of the manor for a bit, you know how it is, four walls and all that.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Hugo Vale says he spent the evening at the Rook & Lantern, having a pint and talking cattle prices with some local fellows. Do you know if that's true?",
+   "confront": "You told me you spent the evening at the Rook & Lantern, having a pint and talking cattle prices with the locals. Is that the whole of it?",
+   "lines_for": "0132cdb7c5d3"
+  },
+  {
+   "id": "s_surface_silas",
+   "kind": "testimony",
+   "speaker": "silas",
+   "surface": true,
+   "deceptive": false,
+   "title": "Silas Voss on the evening",
+   "text": "I was at the vestry office, as it happens, squaring away a quantity of client papers into something resembling order. A tidy desk, Mr. Detective, is half the battle in my profession - I kept at it until I judged the files fit for tomorrow and then went home.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Silas Voss says he was at the vestry office tidying client papers until he judged the files fit for tomorrow, then went home. Do you know if that's true?",
+   "confront": "You told me you were at the vestry office tidying client papers until you judged the files fit, then went home. Is that the whole of it?",
+   "lines_for": "7fa5888c3c00"
+  },
+  {
+   "id": "s_medical",
+   "kind": "record",
+   "medical": true,
+   "medical_v": 2,
+   "source": "e_exam",
+   "at": "surgery",
+   "title": "The doctor’s examination notes",
+   "text": "Examination of the deceased shows a gunshot wound. Death was from a gunshot wound, and it occurred between five to ten and twenty past ten.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1315,
+    "to": 1340
+   },
+   "reactions": {
+    "iris": "That's consistent with what I found when Bell brought me to the body - a single gunshot wound, and nothing in my examination to put the time outside that window. I've nothing to add to it.",
+    "bell": "That fits with what the doctor told me straight off, when she looked him over. Puts the business square in the time I was at my chess - not that I'm proud of where I was, mind.",
+    "edmund": "Gunshot, is it. Could've been anyone's gun, anyone's hand - a man like Reed had enemies enough along that river. I shan't pretend to grieve, but I didn't put a bullet in him."
+   },
+   "to": null,
+   "show": "The doctor's examination notes show the cause of death was a gunshot wound, occurring between five to ten and twenty past ten. Does that match what you know?",
+   "art": "notes",
+   "lines_for": "d7972cff6a22"
+  },
+  {
+   "id": "s_medical_iris",
+   "kind": "testimony",
+   "medical": true,
+   "medical_v": 2,
+   "speaker": "iris",
+   "source": "e_exam",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1315,
+    "to": 1340
+   },
+   "title": "Dr Marsh on the body",
+   "text": "Death was from a gunshot wound, and it occurred between five to ten and twenty past ten.",
+   "ask": "Doctor, what did you find when you examined Mr Reed?",
+   "to": null,
+   "show": "Dr Marsh says the death was from a gunshot wound, occurring between five to ten and twenty past ten. Do you have anything to add to that?",
+   "confront": "You told me the death was from a gunshot wound, occurring between five to ten and twenty past ten. Is that the whole of it?",
+   "lines_for": "b068e899664c"
+  },
+  {
+   "id": "s_surface_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "surface": true,
+   "deceptive": false,
+   "title": "Arthur Bell on the evening",
+   "text": "I did my round of the square and then kept my regular chess evening with the vicar in the vestry before going home to the police house to sleep.",
+   "ask": "Where were you last night?",
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Constable Bell says he did his round, kept his regular chess evening with the vicar in the vestry, then went home to the police house to sleep. Does that match what you recall?",
+   "confront": "You told me you did your round, then kept your chess evening with the vicar before going home to sleep. Is that the whole of it?",
+   "agrees_checked": 3,
+   "lines_for": "198ec9f24986"
+  },
+  {
+   "id": "s_surface_vicar",
+   "kind": "testimony",
+   "speaker": "vicar",
+   "surface": true,
+   "deceptive": true,
+   "title": "The Reverend Thomas Hale on the evening",
+   "text": "I had my chess evening with Constable Bell in the vestry, as is our custom, and wrote up the games afterward before turning in to my lodging.",
+   "ask": "Where were you last night?",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "The Reverend Hale says he had his usual chess evening with Constable Bell in the vestry, wrote up the games, then turned in to his lodging. Does that tally with what you know?",
+   "confront": "You told me you had your chess evening with Constable Bell, wrote up the games, then turned in. Is that the whole of it?",
+   "agrees_checked": 3,
+   "lines_for": "21f363ab34b2"
+  },
+  {
+   "id": "s_surface_dora",
+   "kind": "testimony",
+   "speaker": "dora",
+   "surface": true,
+   "deceptive": false,
+   "title": "Dorothy Pruett on the evening",
+   "text": "I was at my post as usual, minding the switchboard and keeping my book in order, and then went up to bed above the office as I always do.",
+   "ask": "Where were you last night?",
+   "surface_checked": "honest",
+   "to": null,
+   "confront": "You told me you were at your post minding the switchboard, then went up to bed above the office. Is that the whole of it?",
+   "show": "Dorothy Pruett says she was at the switchboard as usual that evening, then went up to bed above the office. Do you know if that's true?",
+   "agrees_checked": 3,
+   "lines_for": "c7291b498944"
+  },
+  {
+   "id": "s_morning_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "morning": true,
+   "deceptive": false,
+   "title": "Arthur Bell on the morning",
+   "text": "The vicar came hurrying to the square at about quarter to six and woke me with word of the death. I went straight and woke Dr Marsh at five to six and told her of it, and at quarter past six, while she examined the body, I secured the boathouse.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "confront": "You told me the vicar woke you at quarter to six, you roused Dr Marsh at five to six, and secured the boathouse at quarter past six. Is that the whole of it?",
+   "show": "Constable Bell says the vicar woke him near six with news of the death, and he fetched Dr Marsh before securing the boathouse. Do you know if that matches what happened?",
+   "lines_for": "c95fed01e37e"
+  },
+  {
+   "id": "s_morning_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "morning": true,
+   "deceptive": false,
+   "title": "Dr Iris Marsh on the morning",
+   "text": "Bell woke me at five to six and told me of the death. At quarter past six I examined the body, while Bell secured the boathouse.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Dr Marsh says Bell woke her at five to six with news of the death, and at quarter past six she examined the body while Bell secured the boathouse. Does that match what you recall?",
+   "confront": "You told me Bell woke you at five to six, and at quarter past six you examined the body while he secured the boathouse. Is that the whole of it?",
+   "lines_for": "20e481b5d377"
+  },
+  {
+   "id": "s_morning_vicar",
+   "kind": "testimony",
+   "speaker": "vicar",
+   "morning": true,
+   "deceptive": false,
+   "title": "The Reverend Thomas Hale on the morning",
+   "text": "At half past five, as I took my first-light walk, I came upon poor Jonah Reed lying dead in the boathouse. I hurried to the square at about a quarter to six to wake Constable Bell and tell him of it, and then, at six o'clock, I went back to the vestry to pray.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "confront": "You told me you found Jonah Reed dead at half past five, woke Constable Bell at quarter to six, then returned to the vestry at six. Is that the whole of it?",
+   "show": "The Reverend Hale says he found Jonah Reed's body in the boathouse during his first-light walk, then went to wake Constable Bell before returning to the vestry to pray. Do you know if that is true?",
+   "lines_for": "2d97f96b0ae4"
+  },
+  {
+   "id": "s_log",
+   "kind": "record",
+   "title": "The night switchboard log",
+   "text": "The post office call book, in a neat hand: '21.25 No. 3 to No. 7, connected. D.P.' '22.04 No. 11 to Mkt Ashby 40, connected. D.P.' '22.31 Trunk booked, Mkt Ashby 40, no reply. D.P.' Each entry is in the same ink, with no names anywhere.",
+   "at": "post",
+   "source": "e_dora_board",
+   "claim": {
+    "pred": "wasAt",
+    "person": "dora",
+    "place": "post",
+    "from": 1285,
+    "to": 1351
+   },
+   "needs": [
+    "s_exchange_card"
+   ],
+   "reading": "The subscribers' card turns the numbers into names. The 21.25 entry is a call from Vale Manor to the surgery, the one Miss Vale made for the doctor. So the book was written up as each call went through, and D.P. was at the board at 21.25, 22.04 and 22.31.",
+   "requires": [
+    "s_iris_visit"
+   ],
+   "unlock": "Miss Pruett will not let strangers see her call book. When you tell her Dr Marsh wants the time of Miss Vale's call confirmed, she gives way for the doctor's sake and opens it on the counter.",
+   "art": "switchboard",
+   "to": "dora",
+   "reactions": {
+    "dora": "That's my book, kept proper, same as every night - exchange numbers only, no names, as it should be. I'll not have anyone reading more into my ledger than ink and figures allow.",
+    "edmund": "Calls through the exchange, numbers not names - means nothing to me, I wasn't on the telephone that evening at all. You'll have to ask whoever rang whoever."
+   },
+   "direct": "You logged calls at 21.25, 22.04, and a trunk call at 22.31 with no reply, all in your hand. Is that the whole of it?",
+   "show": "The post office call book shows calls at 21.25, 22.04, and a trunk call booked at 22.31 with no reply, all logged by the same hand, D.P. Can you tell me anything about these entries?",
+   "lines_for": "7961aa325ff2"
+  },
+  {
+   "id": "s_bell_chess",
+   "kind": "testimony",
+   "title": "Constable Bell's evening",
+   "text": "\"Should've been walking my round. Wasn't. Chess with Mr Hale, same as every Tuesday. Got to the vestry half nine. He lost two games and talked through both. Didn't leave his chair. I left about twenty to eleven. Keep that last bit to yourself.\"",
+   "at": "square",
+   "speaker": "bell",
+   "ask": "Where were you last night, Constable?",
+   "source": "e_chess",
+   "claim": {
+    "pred": "wasAt",
+    "person": "vicar",
+    "place": "vestry",
+    "from": 1290,
+    "to": 1360
+   },
+   "requires": [
+    "s_scoresheet"
+   ],
+   "unlock": "At first Bell will only say he was 'on duty, nothing to report'. Shown the vicar's scoresheet with his name on it, he grunts, asks that the Superintendent not hear of it, and tells you plainly.",
+   "because": [
+    "a_bell_shame"
+   ],
+   "to": "vicar",
+   "reactions": {
+    "vicar": "Oh dear, I'd quite forgotten he'd ask me to keep the leaving time to myself—well, there it is now. Yes, half ten he said, and I confess I lost both games most thoroughly, as my scoresheet will show. I did not leave my chair, that much I can swear to in good conscience."
+   },
+   "same_as": "night",
+   "show": "Constable Bell says he spent Tuesday evening playing chess with Mr Hale in the vestry, leaving around twenty to eleven. Do you know if that's true?",
+   "lines_for": "ba378767ebcc",
+   "confront": "You told me you were playing chess with Mr Hale in the vestry that Tuesday evening, leaving about twenty to eleven. Is that the whole of it?",
+   "direct": "Constable Bell says he was playing chess with you in the vestry that Tuesday evening until twenty to eleven. Is that so?"
+  },
+  {
+   "id": "s_iris_visit",
+   "kind": "testimony",
+   "title": "Dr Marsh's late call",
+   "text": "\"Miss Vale telephoned at twenty-five past nine; Miss Pruett put her through. Migraine. I was at the manor by twenty-five to ten and sat with her in her sitting room until half past ten. She was in no state to go anywhere. I gave her a powder and walked home.\"",
+   "at": "surgery",
+   "speaker": "iris",
+   "ask": "Were you called out last night, Doctor?",
+   "source": "e_iris_visit",
+   "claim": {
+    "pred": "wasAt",
+    "person": "clara",
+    "place": "manor",
+    "from": 1295,
+    "to": 1350
+   },
+   "requires": [
+    "s_powder"
+   ],
+   "unlock": "The wrapper carries Dr Marsh's label and Miss Vale's name, so you take it to the surgery. Once she sees the visit is already known, the doctor agrees to describe it.",
+   "to": "clara",
+   "confront": "You say you were called out to Miss Vale at twenty-five to ten and stayed with her until half past ten. Is that the whole of it?",
+   "reactions": {
+    "clara": "That is exactly as it happened, Doctor - you were kind enough to come promptly, and I was in no fit state to stir from that chair the whole while. My head does not permit exaggeration, even now."
+   },
+   "direct": "Dr Marsh says she sat with you from twenty-five to ten until half past ten after you telephoned with a migraine. Does that match what happened?",
+   "show": "Dr Marsh says Miss Vale telephoned at twenty-five past nine with a migraine, and she sat with her at the manor from twenty-five to ten until half past ten, giving her a powder. Does that match what you know?",
+   "same_as": "night",
+   "lines_for": "68aeec1abd69"
+  },
+  {
+   "id": "s_edmund_story",
+   "kind": "testimony",
+   "title": "Mr Vale's account",
+   "text": "\"Last night? Dined with my sister, then took the port into the study, as I always do. Clara had one of her heads, so the house was quiet. Shocking business about Reed. Shocking. The man was a fixture.\"",
+   "at": "manor",
+   "speaker": "edmund",
+   "ask": "Where were you last night, Mr Vale?",
+   "because": [
+    "a_fear"
+   ],
+   "to": null,
+   "show": "Mr Vale says he dined with his sister, then sat alone with his port in the study while the house was quiet because she had one of her heads. Does that match what you know of his evening?",
+   "confront": "You told me you dined with your sister and then sat alone in the study with your port. Is that the whole of it?",
+   "same_as": "night",
+   "lines_for": "01020eb15c13"
+  },
+  {
+   "id": "s_clara_story",
+   "kind": "testimony",
+   "title": "Miss Vale's account",
+   "text": "\"I was unwell. I dined with my brother and went to lie down. The doctor came. Beyond that I can tell you very little, and I would rather not try.\"",
+   "at": "manor",
+   "speaker": "clara",
+   "ask": "Where were you last night, Miss Vale?",
+   "because": [
+    "a_protect"
+   ],
+   "to": null,
+   "show": "Miss Vale says she was unwell, dined with her brother, then went to lie down, and that the doctor came after that. Does that match what you saw of her evening?",
+   "confront": "You told me you were unwell, dined with your brother, then went to lie down until the doctor came. Is that the whole of it?",
+   "same_as": "night",
+   "lines_for": "97cbef2115f1"
+  },
+  {
+   "id": "s_dora_story",
+   "kind": "testimony",
+   "title": "Miss Pruett's account",
+   "text": "\"At my switchboard, naturally. Someone must be, though nobody in this village ever thinks to thank one. Every call is written down. I keep proper books, whatever others may keep.\"",
+   "at": "post",
+   "speaker": "dora",
+   "ask": "Where were you last night, Miss Pruett?",
+   "source": "e_dora_board",
+   "to": null,
+   "show": "Miss Pruett says she was at her switchboard all evening and keeps every call written down properly. Does that match what you know of her evening?",
+   "confront": "You told me you were at your switchboard the whole evening and keep proper books of every call. Is that the whole of it?",
+   "same_as": "night",
+   "lines_for": "2975f091f4c5"
+  },
+  {
+   "id": "s_vicar_story",
+   "kind": "testimony",
+   "title": "Mr Hale's account",
+   "text": "\"Oh, our chess night, the constable and I. I was thoroughly beaten, which is good for the soul, I tell myself. And then this morning, at first light, by the water... poor Jonah. I could not believe it.\"",
+   "at": "vestry",
+   "speaker": "vicar",
+   "ask": "Where were you last night, Mr Hale?",
+   "source": "e_chess",
+   "to": null,
+   "show": "Mr Hale says he and the constable had their usual chess night, and that he was the one who found poor Jonah by the water this morning. Does that match what you know?",
+   "confront": "You told me you had your usual chess night with the constable, and that you found Mr Reed by the water this morning. Is that the whole of it?",
+   "same_as": "night",
+   "lines_for": "76a97427d99e"
+  },
+  {
+   "id": "s_body_key",
+   "kind": "observation",
+   "title": "A key on a string",
+   "text": "Around the dead man's neck, under his jersey, a small brass key hangs on a length of tarred string.",
+   "at": "boathouse",
+   "source": "e_exam",
+   "art": "key",
+   "to": null,
+   "show": "There's a small brass key on a length of tarred string, hanging round the dead man's neck under his jersey. Do you know what it opens?",
+   "reactions": {
+    "iris": "A small key, brass, on string - nothing I touched or disturbed in my examination. You'll want to ask Bell or the family what it opens; it told me nothing about the cause of death.",
+    "bell": "Aye, I saw it when the doctor had him laid out - didn't think to mention it, it being no business of a copper's beat what a boatman wears round his neck. Boathouse key, like as not, for his own lock."
+   },
+   "lines_for": "9da20c767973"
+  },
+  {
+   "id": "s_letter",
+   "kind": "document",
+   "title": "A note in the tin",
+   "text": "In the small tin from the oar locker, under ferry receipts: 'Reed. You will be out of the boathouse by Michaelmas. My father's scrawl binds me to nothing, and you will not wave it at the county. Speak of it again and you will regret it. E.V.'",
+   "at": "boathouse",
+   "requires": [
+    "s_locker"
+   ],
+   "unlock": "The tin from the oar locker is locked as well, and the same brass key opens it.",
+   "source": "e_quarrel",
+   "claim": {
+    "pred": "related",
+    "a": "edmund",
+    "rel": "quarrelled_with",
+    "b": "jonah"
+   },
+   "art": "letter",
+   "to": "edmund",
+   "direct": "You wrote telling Reed he'd be out of the boathouse by Michaelmas and warned him not to speak of your father's note again. Is that so?",
+   "show": "I found a note in the boathouse tin, signed E.V., warning Reed he'd be out by Michaelmas and telling him not to wave his father's scrawl at the county. Do you know anything about this?",
+   "reactions": {
+    "edmund": "A man's entitled to warn off a trespasser on his own land in his own words. I'll not apologise for plain speaking to a boatman who forgot his place - that note proves temper, not murder."
+   },
+   "lines_for": "b98750343367"
+  },
+  {
+   "id": "s_peg",
+   "kind": "absence",
+   "title": "An empty peg",
+   "text": "In the manor gun room, a row of shotguns on their pegs, and one short peg with nothing on it. A faint oiled outline on the panelling shows where something small has hung for years.",
+   "at": "manor",
+   "source": "e_edmund_study",
+   "art": "hook",
+   "to": null,
+   "show": "In the manor gun room there's a row of shotguns, but one short peg stands empty, with an oiled outline on the panelling showing something small hung there for years. Do you know what used to hang there?",
+   "reactions": {
+    "edmund": "That peg's been empty since my father's day, so far as I recall - I keep no close account of every piece in that gun room. You'll find half the county can't tell you what hung where twenty years back."
+   },
+   "lines_for": "b1ce3db7dd66"
+  },
+  {
+   "id": "s_revolver",
+   "kind": "item",
+   "title": "In the linen press",
+   "text": "Folded among the pillowslips, a revolver wrapped in a linen handkerchief embroidered C.V. One chamber holds a spent case.",
+   "at": "manor",
+   "requires": [
+    "s_peg",
+    "s_letter"
+   ],
+   "unlock": "You show Miss Vale her brother's note to Reed and ask what hung on the empty peg. Her eyes go to the linen press on the landing, and you open it.",
+   "source": "e_hide",
+   "claim": {
+    "pred": "culpritHad",
+    "item": "revolver"
+   },
+   "art": "gun",
+   "to": "clara",
+   "direct": "I found a revolver wrapped in your handkerchief, folded in the linen press, with one spent chamber. Can you explain that?",
+   "show": "I found a revolver wrapped in a linen handkerchief marked C.V., folded among the pillowslips in the linen press, with one chamber fired. Do you know how it came to be there?",
+   "reactions": {
+    "edmund": "That's my sister's hand on it, not mine - whatever she's done with some old revolver is her own affair, and no proof of anything against me. I'll not have her dragged in for keeping a thing out of sentiment.",
+    "clara": "That is my handkerchief, yes — I shan't pretend otherwise, you've found it. But a cloth and a gun prove only that someone trusted me enough, or desperate enough, to leave it in my keeping; it was not fired by my hand, and I will not say whose was."
+   },
+   "lines_for": "fe96bd4667c9"
+  },
+  {
+   "id": "s_powder",
+   "kind": "trace",
+   "title": "A powder wrapper by the bed",
+   "text": "On the bedside table in Miss Vale's sitting room, a glass with a chalky white film and a folded paper wrapper, emptied. Its printed label reads 'Dr I. Marsh, Bellweather. Miss C. Vale. One powder, to be taken at once.' Beneath, in pencil: '21.40'.",
+   "at": "manor",
+   "source": "e_iris_visit",
+   "requires": [
+    "s_waste_book"
+   ],
+   "unlock": "The waste-book names an emptied glass and binned wrapper from Miss Vale's sitting room; asking after it, you are shown where the wrapper was actually set aside rather than thrown out.",
+   "art": "bottle",
+   "to": "clara",
+   "reactions": {
+    "iris": "That's my own prescription, timed as I wrote it - I gave Miss Vale that powder myself at that hour, and stayed with her well past it. It confirms what I already told you of my visit.",
+    "clara": "Yes - the doctor gave it to me herself, and I was glad enough of it, with my head as it was. There is nothing in a chalky glass to trouble you, Inspector."
+   },
+   "direct": "I found an emptied powder wrapper from Dr Marsh addressed to you, timed at 21.40. Is that when you took it?",
+   "show": "In Miss Vale's sitting room there's an emptied powder wrapper from Dr Marsh, labelled for Miss Vale, with '21.40' pencilled beneath. Does that match the time she was given it?",
+   "lines_for": "a9527c66c8e9"
+  },
+  {
+   "id": "s_exchange_card",
+   "kind": "item",
+   "title": "A card in the telephone cabinet",
+   "text": "Pinned inside the Halt's public telephone cabinet, a fly-spotted printed card: 'BELLWEATHER EXCHANGE. Subscribers. 2 Police House. 3 Vale Manor. 5 Rook & Lantern. 7 Dr I. Marsh, Surgery. 9 St. Alden's Vestry. 11 This Halt (public). Trunk calls through the operator.'",
+   "at": "halt",
+   "art": "card",
+   "to": null,
+   "show": "There's a printed exchange card in the Halt's telephone cabinet listing the subscribers' numbers for the village. Can you tell me who uses that public telephone?",
+   "lines_for": "7779ae95638a"
+  },
+  {
+   "id": "s_clara_blotter",
+   "kind": "behavior",
+   "title": "A hand pressed flat",
+   "text": "Shown in to see her, Miss Vale is caught in the midst of writing. She slips a sheet of notepaper and an opened envelope out of sight, puts her pen down too quickly, and turns pink to the ears. She keeps her hand pressed flat before her while you talk.",
+   "at": "manor",
+   "source": "e_clara_reply",
+   "about": "clara",
+   "explainedBy": [
+    "s_pearl_letter"
+   ],
+   "to": "clara",
+   "direct": "I noticed you slide a letter under your blotter and keep your hand over it as we spoke. What was it you didn't want me to see?",
+   "confront": "When I came in, you slid a letter under your blotter and put your pen down quickly, and you've kept your hand there since. What is it you don't want me to see?",
+   "reactions": {
+    "clara": "You've a sharp eye, Inspector, but a woman may have private correspondence that has nothing to do with your boathouse. I'd rather not discuss it, if it's all the same to you."
+   },
+   "show": "When I came in, Miss Vale slid a sheet of notepaper and an opened envelope under her blotter and kept her hand flat on it while we spoke. Do you know what she might have been hiding?",
+   "lines_for": "079ec7549988",
+   "watch": true
+  },
+  {
+   "id": "s_pearl_letter",
+   "kind": "document",
+   "title": "Letters under the blotter",
+   "text": "An envelope addressed to Miss C. Vale in a tidy legal hand: 'Dear Miss Vale, Spink's will give three hundred pounds for your late mother's pearls. I shall bring the paste copy on Thursday. Mr Hugo's creditors will wait no longer. Your brother need know nothing. S. Voss.' Beneath it, in her hand, a reply that breaks off: 'Thursday, then. Pray tell no one, least of all'",
+   "at": "manor",
+   "requires": [
+    "s_clara_blotter"
+   ],
+   "unlock": "When Miss Vale goes out to answer her brother's call from the hall, you lift the blotter where you watched her hide the papers.",
+   "source": "e_clara_reply",
+   "art": "envelope",
+   "to": "clara",
+   "direct": "You wrote asking Mr Voss to say nothing of selling your mother's pearls to cover Hugo's debts, and began a reply asking that no one be told. Is that so?",
+   "show": "Under Miss Vale's blotter I found a letter from Mr Voss about selling her mother's pearls to cover Hugo's debts, and her unfinished reply asking that no one be told. Do you know anything of this arrangement?",
+   "reactions": {
+    "clara": "Very well - the pearls, not murder, Inspector. My brother Hugo's debts are a family shame I hoped to settle quietly, through Mr Voss, without Edmund ever learning of them. It has nothing to do with Reed."
+   },
+   "lines_for": "463e192e8ab6"
+  },
+  {
+   "id": "s_scoresheet",
+   "kind": "item",
+   "title": "A scoresheet by the chessboard",
+   "text": "On the vestry table a chessboard still holds a finished position. Beside it lies a foolscap sheet in pencil: 'Tues. Hale (W) v. Bell. Game 1 ... White resigns. Game 2 ... White resigns.' In the margin, in the same hand: 'Began 9.30. A.B. off at 10.40, to his round.'",
+   "at": "vestry",
+   "source": "e_score",
+   "art": "card",
+   "to": null,
+   "show": "The vestry scoresheet records two games finished, with a note that play began at 9.30 and that A.B. left at 10.40 for his round. Does that match what you remember of the evening?",
+   "reactions": {
+    "vicar": "Yes, that's my own pencil, kept just as I always keep my games - and Bell's hour there is quite correctly set down, written while it happened, not after. I only wish my play that evening deserved less shame than my memory.",
+    "bell": "Aye, that's my hand on the margin right enough, 'A.B. off at 10.40, to his round.' I'd rather the Superintendent not see it, mind, seeing as I'd no business leaving my beat for a chessboard that night. But it's the truth, and I'll not deny what's written plain."
+   },
+   "lines_for": "df1444662093"
+  },
+  {
+   "id": "s_waste_book",
+   "kind": "behavior",
+   "title": "A line in the waste-book",
+   "text": "Under this morning's date, in a careful round hand: 'Sitting room - glass, chalky, rinsed. Paper wrapper, folded, binned. Miss Vale unwell in the night.' The entry is the only one marked for that room.",
+   "at": "manor",
+   "source": "e_tidy",
+   "about": "clara",
+   "explainedBy": [
+    "s_powder"
+   ],
+   "to": "clara",
+   "direct": "The waste-book notes your glass rinsed and your wrapper binned that night, marked for your room alone. Can you tell me more of that night?",
+   "show": "This morning's waste-book entry notes a chalky glass, rinsed, and a folded wrapper binned in the sitting room, marked only for Miss Vale, who was unwell in the night. Do you know who wrote this?",
+   "reactions": {
+    "clara": "Yes, I was unwell in the night - one of my headaches, nothing more. The girl tidies after me each morning; there's no mystery in a rinsed glass. I'll thank you not to read more into my health than is there."
+   },
+   "lines_for": "ad7cce87c5ae"
+  },
+  {
+   "id": "s_locker",
+   "kind": "observation",
+   "title": "The oar locker",
+   "text": "Under the workbench, a padlocked oar locker. Inside: spare rowlocks, a coil of tarred rope and, pushed to the back, a small dented tin. On the shelf above the bench, a clean square in the dust where something stood until recently.",
+   "at": "boathouse",
+   "requires": [
+    "s_body_key"
+   ],
+   "unlock": "The brass key from the dead man's neck does not fit anything on the shelf, but it opens the padlock on the oar locker beneath the bench.",
+   "source": "e_jonah_stow",
+   "art": "tin",
+   "to": null,
+   "show": "In the boathouse's padlocked oar locker I found a small dented tin, and on the shelf above a clean square in the dust where something had stood until recently. Do you know what used to be kept there?",
+   "lines_for": "e60033ec8ce3"
+  },
+  {
+   "id": "s_saw_iris_edmund_manor",
+   "kind": "testimony",
+   "speaker": "iris",
+   "sighting": true,
+   "source": "e_iris_visit",
+   "claim": {
+    "pred": "wasAt",
+    "person": "edmund",
+    "place": "manor",
+    "from": 1340,
+    "to": 1350
+   },
+   "title": "Dr Iris Marsh saw Edmund Vale",
+   "text": "I saw Mr Vale at Vale Manor at twenty-five past ten.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "show": "Dr Marsh says she saw Mr Vale at Vale Manor at twenty-five past ten. Can you confirm that?",
+   "confront": "You told me you saw Mr Vale at Vale Manor at twenty-five past ten. Is that correct?",
+   "to": "edmund",
+   "direct": "Dr Marsh says she saw you at Vale Manor at twenty-five past ten. Is that so?",
+   "lines_for": "e1108613e0a4",
+   "reactions": {}
+  },
+  {
+   "id": "pub_window",
+   "kind": "public",
+   "title": "When it happened",
+   "text": "Jonah Reed died between 21:55 and 22:20.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1315,
+    "to": 1340
+   }
+  },
+  {
+   "id": "pub_holders_revolver",
+   "kind": "public",
+   "title": "Who had the revolver",
+   "text": "Everyone knows only Edmund Vale and Clara Vale had the revolver.",
+   "claim": {
+    "pred": "onlyHad",
+    "item": "revolver",
+    "people": [
+     "edmund",
+     "clara"
+    ]
+   }
+  }
+ ],
+ "premise": {
+  "victim": "jonah",
+  "culprit": "edmund",
+  "suspects": [
+   "clara",
+   "dora",
+   "edmund",
+   "vicar"
+  ],
+  "bystanders": [
+   "vera",
+   "ada",
+   "silas",
+   "hugo",
+   "rowan"
+  ],
+  "method": "gun",
+  "motive": "quarrel",
+  "place": "boathouse",
+  "shape": "accomplice_after"
+ },
+ "id": "mk-live-20261003-130902",
+ "answer": {
+  "method": "gun",
+  "motive": "quarrel",
+  "methods": [
+   "gun"
+  ],
+  "motives": [
+   "blackmail",
+   "quarrel"
+  ],
+  "accepted_scores": {
+   "methods": {
+    "poison": 0,
+    "blow": 0,
+    "fall": 0,
+    "smother": 0,
+    "drown": 0,
+    "blade": 0,
+    "gun": 3,
+    "gas": 0,
+    "staged": 0
+   },
+   "motives": {
+    "money": 1,
+    "inheritance": 1,
+    "love": 0,
+    "revenge": 1,
+    "secret": 1,
+    "protect": 0,
+    "blackmail": 3,
+    "quarrel": 1
+   }
+  },
+  "accepted_v": 3
+ },
+ "synopsis": "Jonah Reed was found dead at the boathouse.",
+ "moods": {
+  "edmund": "Quiet and composed; going about the morning as usual, giving nothing away.",
+  "clara": "Pale and tense with one of her sick headaches, fussing to have the sickroom tidied before anyone calls.",
+  "dora": "Brisk but watchful at her counter, keeping her call book close and her lips closed to any prying questions.",
+  "iris": "Alert and discreet, ready to answer any call but careful to say nothing of who she has seen.",
+  "silas": "Businesslike and discreet, quietly attending to a delicate matter of sale for a client."
+ },
+ "knowledge": {
+  "edmund": [
+   "I am master of Vale Manor and I manage the estate's accounts and tenants from my study there.",
+   "Clara is my younger sister and has run the household for years; my nephew Hugo is up from London staying with us.",
+   "Jonah Reed kept the boathouse down by the river, which is part of the manor grounds, and I'd see him about from time to time.",
+   "I understand the vicar found poor Reed this morning and roused Constable Bell straight away."
+  ],
+  "clara": [
+   "I keep house at Vale Manor, overseeing the maids and the running of the place, and have done for years.",
+   "Edmund is my elder brother and Hugo our nephew, down from London; Jonah Reed was a man about the grounds whom I knew only to nod to.",
+   "I spend my mornings in my sitting room dealing with correspondence and household accounts.",
+   "I live at the manor and keep my own writing desk and keys to my sitting room.",
+   "The maid attends to my sitting room each morning, tidying as she always does.",
+   "I gather the vicar found Mr Reed this morning down at the boathouse and fetched the constable."
+  ],
+  "dora": [
+   "I know everyone in Bellweather by their correspondence and comings and goings, including the Vales, the vicar, and Dr Marsh.",
+   "I heard this morning that the vicar found Jonah Reed dead in the boathouse and fetched Constable Bell."
+  ],
+  "vicar": [
+   "I am vicar of St Alden's and have served this parish twenty years, visiting the sick and tending the church.",
+   "I know the Vale family well, having christened and married several of them, and I knew Jonah Reed as a quiet, hardworking man.",
+   "I live in the vestry, where I also keep the parish registers and my own small study.",
+   "Mr Voss keeps an office in the vestry too, so I see him often about parish and legal business.",
+   "It was I who found poor Jonah this morning on my walk by the river, and I went straight to wake Constable Bell before returning to pray."
+  ],
+  "iris": [
+   "I am the village doctor and attend anyone in Bellweather who is hurt or ill, day or night.",
+   "I know the Vale family, the vicar, and the constable well through my work, as I do most of the village.",
+   "I live and keep my surgery in the same building, with my instruments and records there.",
+   "Constable Bell woke me this morning with news of Mr Reed's death, and I went at once to examine him.",
+   "I keep my own keys to the surgery and dispensary, as is proper for my practice."
+  ],
+  "bell": [
+   "I am the village constable, keeping the peace and watching over the square and the lanes at night.",
+   "I know everyone in the village in the way of my duties, including the Vales, the vicar, and Dr Marsh.",
+   "I live near the square, in the constable's cottage, where I keep my office and papers.",
+   "The vicar woke me at first light with news of a death at the boathouse, and I went to wake Dr Marsh and then secure the scene.",
+   "I now hold the boathouse secure until the detective has looked it over."
+  ],
+  "silas": [
+   "I am a solicitor with an office in the vestry, handling the legal affairs of a good half of the parish.",
+   "I keep my office in the vestry, where I store my clients' papers under lock.",
+   "I live near the vestry and keep regular hours there for appointments.",
+   "I understand the vicar found Mr Reed dead this morning and the constable was sent for straight away."
+  ],
+  "hugo": [
+   "I am Edmund's nephew, down from London by train for a stay at the manor.",
+   "I know my uncle Edmund and my aunt Clara well, of course, and have met the vicar and the doctor since arriving.",
+   "I am staying at the manor, in one of the guest rooms, with my own trunk and belongings there.",
+   "I don't know Jonah Reed well, only as someone about the grounds near the boathouse.",
+   "I gather the vicar found him dead this morning and roused the constable, who then fetched the doctor."
+  ]
+ },
+ "reviewed": [
+  "s_bell_chess|direct",
+  "s_bell_chess|reactions|vicar",
+  "s_body_key|reactions|bell",
+  "s_body_key|reactions|iris",
+  "s_clara_blotter|direct",
+  "s_clara_blotter|reactions|clara",
+  "s_iris_visit|direct",
+  "s_iris_visit|reactions|clara",
+  "s_letter|direct",
+  "s_letter|reactions|edmund",
+  "s_log|direct",
+  "s_log|reactions|dora",
+  "s_log|reactions|edmund",
+  "s_medical_iris|text",
+  "s_medical|reactions|bell",
+  "s_medical|reactions|edmund",
+  "s_medical|reactions|iris",
+  "s_medical|text",
+  "s_morning_bell|text",
+  "s_morning_iris|text",
+  "s_morning_vicar|text",
+  "s_pearl_letter|direct",
+  "s_pearl_letter|reactions|clara",
+  "s_peg|reactions|edmund",
+  "s_powder|direct",
+  "s_powder|reactions|clara",
+  "s_powder|reactions|iris",
+  "s_revolver|direct",
+  "s_revolver|reactions|clara",
+  "s_revolver|reactions|edmund",
+  "s_saw_iris_edmund_manor|direct",
+  "s_saw_iris_edmund_manor|text",
+  "s_scoresheet|reactions|bell",
+  "s_scoresheet|reactions|vicar",
+  "s_surface_bell|text",
+  "s_surface_clara|text",
+  "s_surface_dora|text",
+  "s_surface_edmund|text",
+  "s_surface_hugo|text",
+  "s_surface_iris|text",
+  "s_surface_silas|text",
+  "s_surface_vicar|text",
+  "s_waste_book|direct",
+  "s_waste_book|reactions|clara"
+ ],
+ "difficulty": {
+  "v": 1,
+  "score": 4.0,
+  "level": "easy",
+  "features": {
+   "depth": 3,
+   "lies_on_path": 0,
+   "lies_other": 0,
+   "herrings_aimed": 2,
+   "herrings_other": 0,
+   "lenient_motives": 1
+  }
+ },
+ "declines": {
+  "edmund": [
+   "There's nothing in that for you, and that's the end of it.",
+   "I've nothing to tell you there, so leave it be.",
+   "You'll get no more words from me on that matter.",
+   "That's a dry well, Inspector; nothing more to draw from it."
+  ],
+  "clara": [
+   "I find I have nothing further to offer on that point.",
+   "There is simply nothing to tell, and I shan't invent it.",
+   "I'm afraid that question meets with nothing from me.",
+   "On that subject I have no words to spare you."
+  ],
+  "dora": [
+   "There's nothing filed, nothing noted, and nothing to tell you.",
+   "That's not a matter I can account for, Inspector, and that's that.",
+   "I've nothing on that score, and I won't pretend otherwise.",
+   "Nothing to enter in the book on that one, I'm afraid."
+  ],
+  "vicar": [
+   "Ah, well—there I find I have nothing to offer you, my friend.",
+   "That particular matter leaves me, I confess, quite empty-handed.",
+   "I've turned it over and find nothing there to give you.",
+   "On that I'm afraid my cupboard is quite bare, Inspector."
+  ],
+  "iris": [
+   "I've nothing clinical or otherwise to report on that.",
+   "There's no finding there; I have nothing to tell you.",
+   "That falls outside what I can tell you anything about.",
+   "Nothing to note on that question, I'm afraid."
+  ],
+  "bell": [
+   "Nothing to report there. That's all I'll say on it.",
+   "Can't help you there. Nothing in it for either of us.",
+   "That's a blank, far as I'm concerned.",
+   "No account to give on that one, and that's final."
+  ],
+  "silas": [
+   "I have nothing to tender on that point, de minimis as it were.",
+   "That matter yields nothing further from me, I'm afraid.",
+   "On that score, res nulla—there is simply nothing to tell.",
+   "I offer no further particulars on that question."
+  ],
+  "hugo": [
+   "Ha—nothing doing on that front, old thing, nothing at all.",
+   "Can't help you there, honestly, there's just nothing to it.",
+   "Zip, zero, nothing to tell you on that one.",
+   "That's a blank page, I'm afraid, nothing writ on it."
+  ]
+ },
+ "declines_version": 3,
+ "review_version": 2,
+ "holdings": [
+  {
+   "person": "edmund",
+   "item": "revolver"
+  },
+  {
+   "person": "clara",
+   "item": "revolver"
+  },
+  {
+   "person": "jonah",
+   "item": "tin_key"
+  },
+  {
+   "person": "jonah",
+   "item": "tin_box"
+  },
+  {
+   "person": "dora",
+   "item": "log"
+  },
+  {
+   "person": "clara",
+   "item": "pearl_letter"
+  },
+  {
+   "person": "vicar",
+   "item": "scoresheet"
+  },
+  {
+   "person": "clara",
+   "item": "waste_book"
+  }
+ ],
+ "vocabulary": {
+  "relations": [
+   {
+    "rel": "employed_by"
+   },
+   {
+    "rel": "knows_secret_of"
+   },
+   {
+    "rel": "owes"
+   },
+   {
+    "rel": "quarrelled_with"
+   },
+   {
+    "rel": "sibling_of"
+   }
+  ]
+ },
+ "claims_version": 2
+}

@@ -100,7 +100,9 @@ def default_runner(job):
     job.emit({'kind': 'phase', 'phase': 'publish', 't': round(time.time() - job.started, 1),
               'message': 'Writing the questions you can ask and every suspect\u2019s account of the evening'})
     result['case']['difficulty_target'] = job.level
-    entry, cert = publish.publish_live(result['case'], job.brief, job.id)
+    # the whole-case review blocks publication unless LM_STRICT_PUBLICATION_REVIEW=0
+    entry, cert = publish.publish_live(result['case'], job.brief, job.id,
+                                       strict_publication_review=os.environ.get('LM_STRICT_PUBLICATION_REVIEW', '1') != '0')
     return {'file': entry['file'], 'id': entry['id'], 'title': entry['title'], 'solveDepth': cert['solveDepth'],
             'difficulty': entry.get('difficulty'), 'target': job.level, 'seconds': round(time.time() - job.started)}
 

@@ -55,7 +55,9 @@ Every step cites the knowledge it rests on, by id from that person's own knowled
 1. **Code (epistemic, causal, temporal).** Ids, places and people exist; the victim does nothing; steps start after now,
    in order, within the half hour, with travel time between them; the constable keeps his post; every citation is from that
    person's own knowledge (a person cannot act on what they do not know); `conceal` only for a clue the person made or
-   that is about them, not yet found, by someone whose attitudes give a reason.
+   that is about them, not yet found, by someone whose attitudes give a reason, and never a clue that explains a red
+   herring (hidden, it would leave an innocent looking guilty with nothing in the village to settle it). The doctor,
+   like the constable, hides nothing unless she is a suspect.
 2. **Model (what is said).** Each `meet` line is checked against the knowledge it cites: no new facts, nothing the
    speaker does not know; their own cover story may be repeated, never improved.
 3. **Kernels (at least one playable solution).** A `conceal` is admitted only if the case still certifies without that

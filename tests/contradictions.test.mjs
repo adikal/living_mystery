@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {certify} from '../dist/mk/kernel.mjs';
 
-const kc = JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-222517.json', import.meta.url), 'utf8'));
+const kc = JSON.parse(readFileSync(new URL('../dist/cases/archive/2026-10/mk-live-20261002-222517.json', import.meta.url), 'utf8'));
 // true from the history (Miss Pruett was home at the post office from 22:55), against her false account (the inn)
 const seen = {id: 's_test_seen', kind: 'testimony', speaker: 'silas', title: 'x', text: '',
   claim: {pred: 'wasAt', person: 'dora', place: 'post', from: 1380, to: 1390}};

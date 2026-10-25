@@ -170,6 +170,7 @@ For a research or external-review snapshot, associate a report edition with a re
 | 0.24 | 2026-10-05 | Bug track (detectors, correctness judge, investigation; six general bugs fixed), epoch 3 on fresh cases, dead ends and blocked replies across versions; a contradiction law in both kernels |
 | 0.25 | 2026-10-10 | A worked example (chapter 12): one case's records, the kernel and Z3 at design time and at run time, with real refusals and solver results |
 | 0.26 | 2026-10-11 | Claims version 2: eleven predicates over fluents with temporal modes; truth computed in the history; elimination from the player's knowledge only (public signs), sound and complete with respect to it, checked against Z3 both ways; published cases migrated |
+| 0.27 | 2026-10-25 | Fairness from human play: the constable as the detective's ally (checked at generation and publication) and a doctor-only briefing in medium and hard cases; concessions that say why; red herrings pressed, hinted, never hidden and explained in the closing file; a fact-checker that allows common knowledge and what was already said; stress from confrontation; item and trait knowledge held back until a clue is understood; a curated menu of six; characters on a Claude or OpenAI API key; the doctor's rule, lock-scope review and blocking whole-case review; kept clues handed over; expert comparisons; two cases regenerated |
 
 ### Forensic milestone source map
 

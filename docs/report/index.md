@@ -151,6 +151,20 @@ Bellweather setting with the original cast, map and art, the generator produced 
 through a bridge (`dist/cases/kernel-case.mjs`) including free-text character dialogue grounded in each character's
 memories and beliefs. See `docs/mystery-kernel.md`.
 
+### Edition 0.27: fairness found in human play
+
+Three human plays led to general rules (see [4.9](characters.md#4-9-fairness-rules-from-human-play)). The constable is
+the detective's ally: never a suspect, never untrue, holding nothing back, which code checks on every generation step
+and at publication; his briefing names only the doctor in medium and hard cases. An innocent caught lying says why; a
+red herring pressed twice gives its reason, its explanation is hinted and cannot be hidden in the morning, and the
+closing file explains the lies and herrings left. The fact-checker allows common knowledge and what a person has
+already said; stress follows confrontation. The characters can run on a Claude or OpenAI API key as well as on Bedrock
+(generation stays on Bedrock). A later play led to a doctor's rule (her findings never wait behind another account of
+hers), a step critic that re-judges every clue whose gate changed, a blocking whole-case review, clues that go with the
+person who keeps them, and an expert's comparison when evidence is shown; its two affected cases were regenerated. The menu offers six cases, one easy, two medium and three hard, that keep
+these rules; public knowledge of who had an item or a trait enters the notebook only once a clue about it is
+understood ([10](generation.md)).
+
 ### Edition 0.26: claims that are sound and complete
 
 The language of clues was audited predicate by predicate and replaced. A claim is now an instance of one of eleven

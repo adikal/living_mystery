@@ -1,0 +1,112 @@
+[
+ {
+  "id": "mk-live-20261002-222517",
+  "file": "mk-live-20261002-222517.json",
+  "title": "Sealing Wax and Steel",
+  "solveDepth": 6,
+  "blurb": "The Reverend Thomas Hale was found dead at Bellweather Halt. Depth 6, 29 clues, 4 suspects.",
+  "generated": "20261002-222517",
+  "difficulty": {
+   "level": "medium",
+   "score": 7.25
+  }
+ },
+ {
+  "id": "mk-live-20261003-082809",
+  "file": "mk-live-20261003-082809.json",
+  "title": "The Millpond Letters",
+  "solveDepth": 3,
+  "blurb": "Dorothy Pruett was found dead at Alder Mill. Depth 3, 28 clues, 4 suspects.",
+  "generated": "20261003-082809",
+  "difficulty": {
+   "level": "easy",
+   "score": 4.25
+  }
+ },
+ {
+  "id": "mk-live-20261003-082813",
+  "file": "mk-live-20261003-082813.json",
+  "title": "The Lamb Asleep Upstairs",
+  "solveDepth": 7,
+  "blurb": "Rowan Pike was found dead at the Rook & Lantern. Depth 7, 45 clues, 4 suspects.",
+  "generated": "20261003-082813",
+  "difficulty": {
+   "level": "hard",
+   "score": 10.5
+  }
+ },
+ {
+  "id": "mk-live-20261003-085134",
+  "file": "mk-live-20261003-085134.json",
+  "title": "Death Among the Orchids",
+  "solveDepth": 8,
+  "blurb": "Ada Finch was found dead at the greenhouse. Depth 8, 37 clues, 4 suspects.",
+  "generated": "20261003-085134",
+  "difficulty": {
+   "level": "hard",
+   "score": 12.5
+  }
+ },
+ {
+  "id": "mk-live-20261003-130902",
+  "file": "mk-live-20261003-130902.json",
+  "title": "The Boathouse at Michaelmas",
+  "solveDepth": 3,
+  "blurb": "Jonah Reed was found dead at the boathouse. Depth 3, 29 clues, 4 suspects.",
+  "generated": "20261003-130902",
+  "difficulty": {
+   "level": "easy",
+   "score": 4.0
+  }
+ },
+ {
+  "id": "mk-live-20261003-130906",
+  "file": "mk-live-20261003-130906.json",
+  "title": "The Quarter-Past Watch",
+  "solveDepth": 7,
+  "blurb": "Clara Vale was found dead at the post office. Depth 7, 42 clues, 4 suspects.",
+  "generated": "20261003-130906",
+  "difficulty": {
+   "level": "hard",
+   "score": 11.5
+  }
+ },
+ {
+  "id": "mk-live-20261003-135210",
+  "file": "mk-live-20261003-135210.json",
+  "title": "Under the Memorial Lamp",
+  "solveDepth": 5,
+  "blurb": "Edmund Vale was found dead at the village square. Depth 5, 36 clues, 4 suspects.",
+  "generated": "20261003-135210",
+  "difficulty": {
+   "level": "medium",
+   "score": 7.25
+  }
+ },
+ {
+  "id": "mk-live-20261011-112405",
+  "file": "mk-live-20261011-112405.json",
+  "title": "Still Water at Alder Mill",
+  "solveDepth": 5,
+  "blurb": "Hugo Vale was found dead at Alder Mill. Depth 5, 37 clues, 4 suspects.",
+  "generated": "20261011-112405",
+  "difficulty": {
+   "level": "medium",
+   "score": 6.75,
+   "target": "medium"
+  }
+ },
+ {
+  "id": "mk-live-20261017-223841",
+  "file": "mk-live-20261017-223841.json",
+  "title": "A Tin from Fortnum's",
+  "solveDepth": 8,
+  "blurb": "Dorothy Pruett was found dead at St. Alden’s vestry. Depth 8, 35 clues, 4 suspects.",
+  "generated": "20261017-223841",
+  "difficulty": {
+   "level": "hard",
+   "score": 11.0,
+   "target": "hard"
+  }
+ }
+]

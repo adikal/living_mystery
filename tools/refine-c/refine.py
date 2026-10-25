@@ -540,6 +540,7 @@ def llm_json_audited(system, user, max_tokens=9000, model=None, schema=None, _pr
                          'inputSchema': {'json': schema or {'type': 'object', 'additionalProperties': True}}}}
     forced = FORCED_OK.get(m, True)
     request_ids = tuple(_prior_request_ids)
+    empty_retries = 0   # an empty reply (no tool call, no text; often out of room) is asked again with twice the room
     while True:
         kw = dict(modelId=m,
                   system=[{'text': system + ('' if forced else '\n\nAlways answer by calling the submit tool.')},
@@ -591,7 +592,19 @@ def llm_json_audited(system, user, max_tokens=9000, model=None, schema=None, _pr
         if audit and logical_request_id:
             audit.response(logical_request_id, r, content, None,
                            {'ok': False, 'mode': 'empty', 'error': 'model did not call submit'})
-        raise LLMJSONResponseError('model did not call submit', content, m, request_ids, logical_request_id)
+        # Out of room: ask again with twice the room. Declined (a refusal or filter on mystery content): ask the story
+        # model instead, once. Either way the attempt is recorded above.
+        stop = r.get('stopReason')
+        if stop == 'max_tokens' and empty_retries < 2:
+            empty_retries += 1
+            max_tokens = min(max_tokens * 2, 32000)
+            continue
+        if m != MODEL and empty_retries < 3:
+            empty_retries = 3
+            m = MODEL
+            forced = FORCED_OK.get(m, True)
+            continue
+        raise LLMJSONResponseError(f'model did not call submit (stop reason {stop})', content, m, request_ids, logical_request_id)
 
 
 def schedule_llm_json_audited(executor, system, user, max_tokens=9000, model=None, schema=None, audit_metadata=None):
@@ -716,12 +729,24 @@ you decide how and why, as a novelist would. Rules you must follow:
 - An 'unlock' must be a real in-world reason the detective would go and look: the prerequisite must point to the new
   sign's place or person (a name, a key, a mention), not merely precede it.
 - Keep times, places and travel physically consistent. People are at events you add; add events for new whereabouts.
+- The constable is the detective's ally: never a candidate, never the speaker of a false account, never the one who
+  hides, moves, stages or tampers with evidence, and never the one who holds anything back. What he knows or keeps is
+  given when first asked: no 'requires' on his accounts, and none on signs that come from his own events. When evidence
+  must be earned, someone else keeps it, for a reason of their own.
+- An item someone took away (the doctor emptying the dead man's pockets) lies where that person keeps it, not where it
+  was taken; the doctor's findings on the body come with her account of the examination.
+- A red herring's innocent secret is an attitude of the person it concerns (what they fear, want or believe), and the
+  event behind the behaviour (or behind what explains it) is caused by that attitude, so they can say why when pressed.
 - Respond with ONE JSON object only."""
 
 CHECKLIST = """BEFORE ANSWERING, CHECK YOUR PATCH AGAINST WHAT THE REVIEWER WILL REJECT:
 - Every 'unlock' follows in the world: obtaining the prerequisite would really lead to finding, or being given, this sign.
 - Characters act from their attitudes. Someone who wants a thing hidden needs a stated reason to reveal it; a careful
   culprit does not keep damning evidence without a reason.
+- The constable neither lies nor holds anything back: none of his accounts, and nothing from his own doing, has 'requires'.
+- A keeper's reason covers only what it is about. When you make a sign harder to reach, check every sign that requires
+  it: its unlock must still make sense behind the new gate. Never hold the doctor's findings on the body, her notes on
+  it or the dead man's effects behind her confidence to a living patient or any other account of hers.
 - Every clock time in text matches the events (1320 = 22:00, 1380 = 23:00, 1440 = midnight, 1500 = 01:00). Time-of-day
   words (morning, night) must fit too.
 - A trace lies where its source event happened, unless a later event moved it (then that event is its source).
@@ -745,8 +770,8 @@ SEED_RICH = """- A FIRST-LAYER CASE (later steps will deepen it; keep each part 
      and a MEANS sign (a culpritHad or culpritTrait claim the culprit satisfies, with the matching holding or trait, and
      public signs that say who else had it or what the others' traits are, so that it rules out the other candidates),
      each on the surface or one step deep.
-  4. A RED HERRING: a surface 'behavior' sign about an innocent candidate (no claim), caused by an innocent secret, with
-     a deeper sign that explains it in 'explainedBy'. If it is the person's own manner (a look, a gesture, something on
+  4. A RED HERRING: a surface 'behavior' sign about an innocent candidate (no claim), caused by an innocent secret (an
+     attitude of theirs that causes the behaviour's source event), with a deeper sign that explains it in 'explainedBy'. If it is the person's own manner (a look, a gesture, something on
      them), set "watch":true and name no place in its text (it is watched wherever they are); if it is an object they
      left, omit 'watch' and it keeps its place.
   5. Alibi signs (wasAt claims) that, together with the above, leave exactly the truth once everything is found.
@@ -810,8 +835,8 @@ def step_prompt(case, report, target, mode, preferred, feedback=None):
                 "Do not put it on the surface: hide it (Conceal) or make it need another clue (Fragment), justified by someone's reason.")
     elif mode == 'herring':
         task = (f"RED HERRING STEP. Give innocent candidate '{target}' a suspicious visible behaviour (kind 'behavior', about "
-                f"'{target}', on the surface) caused by an innocent secret (an attitude and, if needed, an event), and a deeper "
-                "sign that explains it innocently (list it in 'explainedBy'). The behaviour sign carries no claim. If it is "
+                f"'{target}', on the surface, with 'source' an event of theirs caused by an innocent secret: an attitude of "
+                f"'{target}'s), and a deeper sign that explains it innocently (list it in 'explainedBy'). The behaviour sign carries no claim. If it is "
                 f"'{target}'s own manner (a look, a gesture, something on them), set \"watch\":true and name no place in its "
                 "text (it is watched wherever they are); if it is an object they left behind, omit 'watch' and keep its place.")
     elif mode == 'pillar':
@@ -826,7 +851,8 @@ def step_prompt(case, report, target, mode, preferred, feedback=None):
         task = (f"REFINE sign '{target}' (the player currently gets it too easily). The thread it belongs to is currently settled "
                 f"at depth {settle['depth']} by these signs: {settle['signs']}. To make progress ALL of them must end up deeper "
                 "(you may hide or fragment several in one patch, or give them a shared deeper prerequisite). First answer the story question: who in "
-                "this world would have a reason to make this sign harder to see, and why? Then apply one operator: "
+                "this world would have a reason to make this sign harder to see, and why? The reason must be that keeper's own "
+                "and must be about this sign: do not reuse a gate that exists for something else. Then apply one operator: "
                 "CONCEAL (put it behind something the player must first obtain: an item, a favour, trust, a search - add those "
                 "as new signs and list them in its 'requires'), FRAGMENT (make it need a second sign or a rule to be understood - "
                 "add it to 'needs'; or split it), or MISLEAD (add a deception on the surface, defeated deeper). "
@@ -858,22 +884,30 @@ checked by code; do not re-check them. Judge only what code cannot: COMMON-SENSE
 You see the whole case; judge the step's new or changed signs (signs_touched) in that context.
 Fail the step if any of these hold:
 - LOCK: an 'unlock' reason is arbitrary (moon logic): obtaining the prerequisite would not, in this world, lead the
-  detective to the new sign (e.g. an account at the inn opening a letter at the manor with no reason to go and look)
+  detective to the new sign (e.g. an account at the inn opening a letter at the manor with no reason to go and look);
+  or the reason someone withholds a sign does not cover THAT sign. A keeper's reason covers only what it is about: a
+  doctor's duty of confidence to a living patient covers that patient's treatment, never the dead man's effects or her
+  notes on his body; a promise to one person covers that person's secret, nothing else. Judge every touched sign's
+  unlock against what its prerequisite now is (a sign whose prerequisite this step changed is touched too)
+- BOTTLENECK: one narrow reason (a confidence, a promise, a locked drawer) now holds back several unrelated kinds of
+  evidence at once, so the case's depth comes from one arbitrary door rather than from the story
 - READING: a 'reading' reason does not actually make sense of the clue
 - CHARACTER: a character acts against their established attitudes or knowledge, or with no believable reason
 - LOOSE END: a sign names or implicates a person (holds a key, was seen, owns an item) and nothing in the case explains
   it, so an innocent looks guilty for a reason the case never resolves
 - GIVEAWAY: a sign's text names the culprit or announces what it proves, instead of being a neutral observation
 - CONTRADICTION: the step contradicts something already established in the case
+- ALLY: the constable lies, hides, moves or tampers with evidence, or withholds what he knows or keeps until the detective
+  earns it (he is the detective's ally; give the deception or the keeping to someone with a reason)
 Be strict but fair; small stylistic issues are not failures. Every "fail" MUST list at least one issue that names the
-sign id, the check (LOCK, READING, CHARACTER, LOOSE END, GIVEAWAY, CONTRADICTION) and what to change.
+sign id, the check (LOCK, READING, CHARACTER, LOOSE END, GIVEAWAY, CONTRADICTION, ALLY, BOTTLENECK) and what to change.
 Reply with ONE JSON object: {"verdict":"pass"|"fail","issues":["<sign id>: <CHECK>: specific, actionable problem", ...]}"""
 
 CRITIC_SCHEMA = {'type': 'object', 'properties': {'verdict': {'type': 'string', 'enum': ['pass', 'fail']},
                                                   'issues': {'type': 'array', 'items': {'type': 'string'}}},
                  'required': ['verdict', 'issues']}
 CRITIC_UNAVAILABLE_REASON = 'plausibility review: unavailable'
-CRITIC_CHECKS = ('LOCK', 'READING', 'CHARACTER', 'LOOSE END', 'GIVEAWAY', 'CONTRADICTION')
+CRITIC_CHECKS = ('LOCK', 'READING', 'CHARACTER', 'LOOSE END', 'GIVEAWAY', 'CONTRADICTION', 'ALLY', 'BOTTLENECK')
 
 
 class CriticStatus(str, Enum):
@@ -936,6 +970,8 @@ def _critic_shape(raw):
 
 def critic(case, patch):
     ids = {x['id'] for x in (patch.get('add') or {}).get('signs', [])} | set(((patch.get('modify') or {}).get('signs') or {}).keys())
+    # A sign behind a touched one now waits behind whatever that one waits behind: its unlock is judged again.
+    ids |= {x['id'] for x in case['signs'] if set(x.get('requires') or []) & ids}
     ctx = {'setting': case['setting'].get('summary'), 'question': case['question'].get('text'),
            'truth': hyp_map(case)[case['question']['truth']].get('label'),
            'people': [{k: p.get(k) for k in ('id', 'name', 'role', 'traits')} for p in case['people']],
@@ -1058,8 +1094,9 @@ def history_errors(case):
     if not FIXED:
         return []
     import premise as P
+    import roles
     unb = unbacked_accounts(case)
-    return P.morning_errors(case) + P.evening_errors(case) + ([f"accounts not backed by the true history (an event the speaker took part in or saw, or a 'knows' "
+    return P.morning_errors(case) + P.evening_errors(case) + roles.ally_errors(case) + roles.examiner_errors(case) + roles.herring_errors(case) + ([f"accounts not backed by the true history (an event the speaker took part in or saw, or a 'knows' "
                                       f"attitude of theirs cited in 'because'): {unb}; back each one, or drop it"] if unb else [])
 
 

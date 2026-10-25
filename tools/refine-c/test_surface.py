@@ -9,7 +9,7 @@ sys.path.insert(0, HERE)
 import publish  # noqa: E402
 import refine  # noqa: E402
 
-CASE = os.path.join(HERE, '..', '..', 'dist', 'cases', 'generated', 'live', 'mk-live-20261003-133036.json')
+CASE = os.path.join(HERE, '..', '..', 'dist', 'cases', 'generated', 'mk-live-20261003-133036.json')
 
 
 class Surface(unittest.TestCase):

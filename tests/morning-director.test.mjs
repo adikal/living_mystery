@@ -6,8 +6,11 @@ import {context, criticise, stillSolvable, directMorning, DIRECTOR_PROMPT} from 
 import * as Morning from '../dist/morning.mjs';
 
 const load = () => JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
-function questioned() {
-  const kc = load(), s = createSession(1, registerKernelCase(kc)), T = caseTables(s), ctx = T.behavior.morningCtx;
+// The same case with its red herrings' explanations unmarked, so the register book (otherwise the innocent reason for Ada's
+// behaviour, which nobody may hide) can serve as a second concealable clue in the cumulative-concealment tests.
+const loadWithoutHerrings = () => { const kc = load(); for (const x of kc.signs) delete x.explainedBy; return kc; };
+function questioned(kc = load()) {
+  const s = createSession(1, registerKernelCase(kc)), T = caseTables(s), ctx = T.behavior.morningCtx;
   const [a, b] = Morning.actors(s, kc, ctx.roles, ctx.victim);
   for (const p of [a, b]) { if (s.world.player.location !== s.world.npcs[p].location) dispatch(s, {type: 'move', to: s.world.npcs[p].location}); dispatch(s, {type: 'ask', person: p, topic: 'night'}); }
   return {kc, s, ctx, a, b};
@@ -177,7 +180,7 @@ test('committed availability includes only pending and active concealments outsi
 });
 
 test('every same-round concealment is checked cumulatively and failure cuts only that actor', async () => {
-  const {s} = questioned();
+  const {s} = questioned(loadWithoutHerrings());
   const proposal = {agendas: {
     clara: [
       {kind: 'conceal', clue: 's_telegram', because: ['k_att_a_clara_fear']},
@@ -194,7 +197,7 @@ test('every same-round concealment is checked cumulatively and failure cuts only
 });
 
 test('retained pending concealments constrain planning, while a replanned actor\'s old concealments do not', async () => {
-  const {s} = questioned();
+  const {s} = questioned(loadWithoutHerrings());
   s.world.flags.morning = {...(s.world.flags.morning ?? {}), agendas: {
     clara: [{kind: 'conceal', clue: 's_letter', state: 'pending'}],
   }};

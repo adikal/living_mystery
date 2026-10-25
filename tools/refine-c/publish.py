@@ -11,7 +11,7 @@ SIGNS = threading.Lock()   # individual maintenance helpers can also be called d
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 OUT = f'{ROOT}/dist/cases/generated'
-PUBLICATION_REVIEW_VERSION = 'whole-case-publication-review-v2'
+PUBLICATION_REVIEW_VERSION = 'whole-case-publication-review-v3'
 PUBLICATION_REVIEW_SCHEMA_VERSION = 'whole-case-publication-review-schema-v1'
 PUBLICATION_CERTIFICATE_VERSION = 'publication-review-certificate-v2'
 PUBLICATION_REVIEW_PROMPT = """You are the final independent publication reviewer for a complete 1932 English village mystery.
@@ -19,7 +19,11 @@ The deterministic logic, timing, reachability and uniqueness checks are separate
 Integer times are minutes after midnight, not HHMM: 1320 means 22:00. Values above 1440 are on the next day;
 for example, 1770 means 05:30 the next day. Convert every integer time this way before comparing chronology or prose.
 Judge the WHOLE case only for common-sense plausibility, fairness and craft. Fail if any material problem remains:
-- LOCK: obtaining a prerequisite would not naturally lead the detective to the gated clue.
+- LOCK: obtaining a prerequisite would not naturally lead the detective to the gated clue; or the reason a person
+  withholds a clue does not cover that clue (a doctor's confidence to a living patient never covers the dead man's
+  effects or her notes on his body); or a clue someone hands over is placed somewhere they are not.
+- BOTTLENECK: one narrow reason (a confidence, a promise, a locked drawer) holds back several unrelated kinds of evidence,
+  so the case's depth comes from one arbitrary door rather than from the story.
 - READING: a prerequisite does not actually make sense of the clue.
 - CHARACTER: a person acts or speaks against their established attitudes, knowledge, events or voice.
 - LOOSE END: a player-facing person or suspicion is materially implicated without a fair explanation or resolution. Hidden
@@ -41,7 +45,7 @@ PUBLICATION_REVIEW_SCHEMA = {
     },
     'required': ['verdict', 'issues'],
 }
-PUBLICATION_REVIEW_CHECKS = ('LOCK', 'READING', 'CHARACTER', 'LOOSE END', 'GIVEAWAY', 'CONTRADICTION', 'FAIRNESS', 'CRAFT')
+PUBLICATION_REVIEW_CHECKS = ('LOCK', 'BOTTLENECK', 'READING', 'CHARACTER', 'LOOSE END', 'GIVEAWAY', 'CONTRADICTION', 'FAIRNESS', 'CRAFT')
 # Blinding removes labels that reveal a requested experimental level. They remain in the candidate hash when present.
 PUBLICATION_REVIEW_BLIND_FIELDS = ('id', 'difficulty', 'difficulty_target', 'publication_review')
 # Blurbs state only the certified public premise (who is dead, where they were found). Anything more
@@ -233,10 +237,22 @@ def publication_certificate_errors(case):
     return errors
 
 
+def claim_subject(c):
+    """What a claim is about, for public knowledge that matters only alongside a clue: an item or a trait (kernel.mjs
+    claimSubject)."""
+    if not c:
+        return None
+    if c.get('item'):
+        return f"item:{c['item']}"
+    if c.get('trait') and c.get('pred') in ('hasTrait', 'culpritTrait'):
+        return f"trait:{c['trait']}"
+    return None
+
+
 def held_back_public(case, A=None):
-    """{public sign id: [trigger ids]} for public knowledge about who held an item that decides nothing until a clue about
-    that item is understood. The game records such a sign only when a trigger is understood (kernel.mjs heldBackPublic,
-    which this mirrors): told at the start it would name a suspect before any such clue is found."""
+    """{public sign id: [trigger ids]} for public knowledge about an item or a trait that decides nothing until a clue about
+    it is understood. The game records such a sign only when a trigger is understood (kernel.mjs heldBackPublic, which
+    this mirrors): told at the start it would name a suspect before any such clue is found."""
     from refine import analyse, survivors, closure_dependent
     from claims import claim_of
     A = A or analyse(case)
@@ -244,9 +260,9 @@ def held_back_public(case, A=None):
     out = {}
     for p in case['signs']:
         c = claim_of(p) if p.get('kind') == 'public' else None
-        if not c or not c.get('item') or p.get('defeats'):
+        if not claim_subject(c) or p.get('defeats'):
             continue
-        triggers = sorted(x['id'] for x in case['signs'] if x.get('kind') != 'public' and (claim_of(x) or {}).get('item') == c['item'])
+        triggers = sorted(x['id'] for x in case['signs'] if x.get('kind') != 'public' and claim_subject(claim_of(x)) == claim_subject(c))
         if not triggers:
             continue
         without = frozenset().union(*(closure_dependent(case, t) for t in triggers))
@@ -257,15 +273,15 @@ def held_back_public(case, A=None):
 
 
 def public_spoiler_errors(case):
-    """Public knowledge shown at the start must not tie a suspect to the culprit's item: a public sign about an item a
-    culprit claim names is allowed only when the game can hold it back until a clue about the item is understood."""
+    """Public knowledge shown at the start must not tie a suspect to the culprit: a public sign about an item or trait a
+    culprit claim names is allowed only when the game can hold it back until a clue about it is understood."""
     from claims import claim_of
-    culprit_items = {(claim_of(x) or {}).get('item') for x in case['signs'] if (claim_of(x) or {}).get('pred') == 'culpritHad'}
+    culprit = {claim_subject(claim_of(x)) for x in case['signs']
+               if (claim_of(x) or {}).get('pred') in ('culpritHad', 'culpritTrait')} - {None}
     held = held_back_public(case)
-    return [f"public sign {p['id']} names who had {claim_of(p)['item']}, the culprit's item, from the start: "
-            f"carry it on a clue the player finds, or make it decide nothing until a clue about the item is understood"
-            for p in case['signs'] if p.get('kind') == 'public' and (claim_of(p) or {}).get('item') in culprit_items - {None}
-            and p['id'] not in held]
+    return [f"public sign {p['id']} tells everyone about {claim_subject(claim_of(p))}, which a culprit clue tests, from the "
+            f"start: carry it on a clue the player finds, or make it decide nothing until a clue about it is understood"
+            for p in case['signs'] if p.get('kind') == 'public' and claim_subject(claim_of(p)) in culprit and p['id'] not in held]
 
 
 def deterministic_gate(case):
@@ -280,9 +296,12 @@ def deterministic_gate(case):
     finally:
         os.remove(handle.name)
     z = case_oracle.check_case(case)
+    import roles
     errors = ([f'python: {error}' for error in py.get('errors', [])]
               + [f'js: {error}' for error in js.get('errors', [])]
-              + z['errors'] + question_alias_errors(case) + public_spoiler_errors(case))
+              + z['errors'] + question_alias_errors(case) + public_spoiler_errors(case)
+              # the constable is the detective's ally, and every red herring has a reason its subject can give
+              + roles.ally_errors(case) + roles.examiner_errors(case) + roles.herring_errors(case))
     if py['ok'] and js['ok'] and (py['solve_depth'], py['pillars']) != (js['solveDepth'], js['pillars']):
         errors.append(f"python and js disagree: {py['solve_depth']}/{py['pillars']} vs {js['solveDepth']}/{js['pillars']}")
     return {'ok': not errors, 'errors': errors, 'python': py, 'js': js, 'z3': z}
@@ -720,6 +739,14 @@ def add_morning_accounts(case, rounds=3):
     own = lambda pid: sorted([e for e in case['events'] if (pid == e.get('agent') or pid in (e.get('others') or []))
                               and morning <= e['start'] < start and e['id'] != crime
                               and (e.get('type') in ('discovery', 'examination') or e['id'] not in sources)], key=lambda e: e['start'])
+    # The discovery and the examination are always told, but what they produced that the detective must still find
+    # (the notebook from the pockets) is not: the writer sees them by their type alone, and code rejects a line that
+    # names a clue still to be found.
+    locked = [x for x in case['signs'] if x.get('requires') and x.get('kind') not in ('testimony', 'public')]
+    locked_sources = {x.get('source') for x in locked}
+    nouns = enrich.clue_nouns({**case, 'signs': locked})
+    said = lambda e: (f"{'found the body' if e.get('type') == 'discovery' else 'examined the body'}"
+                      if e['id'] in locked_sources else e.get('summary'))
     n, failed = 0, {}
     for _ in range(rounds):
         have = {x['speaker'] for x in case['signs'] if x.get('morning')}
@@ -728,13 +755,17 @@ def add_morning_accounts(case, rounds=3):
         if not todo:
             break
         items = [{'id': pid, 'name': people[pid]['name'], 'voice': people[pid].get('voice'), 'culprit': pid == truth,
-                  'morning': [f"at {spoken_about(e['start'])}: {e.get('summary')}" for e in own(pid)],
+                  'morning': [f"at {spoken_about(e['start'])}: {said(e)}" for e in own(pid)],
                   **({'previous_attempt': failed[pid]} if pid in failed else {}),
                   # only the culprit needs to know what to hide
                   'hides': [a['content'] for a in case['attitudes'] if a['agent'] == pid] if pid == truth else []} for pid in todo]
         out = llm_json(MORNING, json.dumps(items), 2500, model=CRITIC_MODEL).get('accounts', {})
+        named = {}
         for pid in todo:
             text = str(out.get(pid, '')).strip()
+            if text and enrich.mentions_clue(text, nouns):
+                named[pid] = {'text': text, 'not_true_because': 'it names something the detective has yet to find; leave it out'}
+                continue
             if text and not re.search(r'\d', text) and len(text.split()) <= 80:
                 with SIGNS: case['signs'].insert(0, {'id': f's_morning_{pid}', 'kind': 'testimony', 'speaker': pid, 'morning': True,
                                                      'deceptive': pid == truth, 'title': f"{people[pid]['name']} on the morning",
@@ -743,7 +774,7 @@ def add_morning_accounts(case, rounds=3):
         mark_surface_truth(case)
         # an innocent's morning that is not honest is the wording's fault, not a lie with a reason: rewrite, then drop
         bad = [x['id'] for x in case['signs'] if x.get('morning') and x['speaker'] != truth and x.get('surface_checked') == 'cover']
-        failed = {x['speaker']: {'text': x['text'], 'not_true_because': x.get('surface_why', '')} for x in case['signs'] if x['id'] in bad}
+        failed = {**named, **{x['speaker']: {'text': x['text'], 'not_true_because': x.get('surface_why', '')} for x in case['signs'] if x['id'] in bad}}
         case['signs'] = [x for x in case['signs'] if x['id'] not in bad]
         if _ == rounds - 1 and bad:
             case.setdefault('morning_dropped', []).extend(bad)
@@ -1125,13 +1156,25 @@ def mark_surface_truth(case):
     from refine import llm_json, CRITIC_MODEL
     import enrich
     ta = enrich.truth_actor(case)
-    todo = [x for x in case['signs'] if (x.get('surface') or x.get('morning')) and 'surface_checked' not in x]
+    # every account without a checkable claim (a claim's truth is computed) and that is not a sighting (read from the
+    # history): the evening and morning summaries, and any other claimless account, such as a culprit's cover story
+    todo = [x for x in case['signs'] if x.get('kind') == 'testimony' and not x.get('claim') and not x.get('sighting')
+            and 'surface_checked' not in x]
     if not todo:
         return 0
+    # An evening account is judged against the speaker's evening, a morning account against their morning: leaving out
+    # what the other question covers (the discovery of the body, in an evening account) is not a cover story.
+    morning = enrich.day(case, 'morning')
+    in_window = lambda x, e: ((e['start'] >= morning) == bool(x.get('morning'))
+                              if morning is not None and (x.get('surface') or x.get('morning')) else True)
     items = [{'id': x['id'], 'account': x['text'],
-              'really': [e.get('summary') for e in case['events'] if x['speaker'] == e.get('agent') or x['speaker'] in e.get('others', [])]}
+              'really': [e.get('summary') for e in case['events'] if (x['speaker'] == e.get('agent') or x['speaker'] in e.get('others', []))
+                         and in_window(x, e)]}
              for x in todo]
-    out = _as_map(llm_json(SURFACE_TRUTH, json.dumps(items), 1500, model=CRITIC_MODEL).get('verdicts', {}))
+    # judged a dozen at a time: one long batch can run out of room and come back with no verdicts at all
+    out = {}
+    for i in range(0, len(items), 12):
+        out.update(_as_map(llm_json(SURFACE_TRUTH, json.dumps(items[i:i + 12]), 2500, model=CRITIC_MODEL).get('verdicts', {})))
     n = 0
     for x in todo:
         got = out.get(x['id'], out.get(x['speaker'], ''))
@@ -1140,7 +1183,8 @@ def mark_surface_truth(case):
             x['surface_why'] = str(got['why'])[:300]
         if v not in ('honest', 'cover'):
             continue
-        x['deceptive'] = x['speaker'] == ta or v == 'cover'
+        # a summary from the culprit is always a cover story; any other account is a lie only where it misstates
+        x['deceptive'] = (x['speaker'] == ta and bool(x.get('surface') or x.get('morning'))) or v == 'cover'
         x['surface_checked'] = v
         n += 1
     return n
@@ -1192,6 +1236,12 @@ def involved_pairs(case):
     behaviour clue, the teller of a contradicted account, and the culprit for any clue carrying a claim."""
     evs = {e['id']: e for e in case['events']}
     truth = next(h for h in case['question']['candidates'] if h['id'] == case['question']['truth'])['facts']['actor']
+    setting_people = {p['id']: p for p in enrich.SETTING.get('people', [])}
+    in_case = {p['id'] for p in case['people']}
+    def name_forms(p):
+        full = setting_people.get(p['id'], {}).get('name') or p.get('name') or ''
+        parts = [w for w in full.split() if w not in ('Dr', 'The', 'Reverend', 'Mr', 'Mrs', 'Miss', 'Constable')]
+        return [f for f in {full, setting_people.get(p['id'], {}).get('address'), *(parts[:1] + parts[-1:])} if f and len(f) > 2]
     pairs = []
     for x in case['signs']:
         who = set()
@@ -1225,8 +1275,14 @@ def involved_pairs(case):
                 who.add(t['speaker'])
         if x.get('claim'):
             who.add(truth)
+        # whoever keeps the place a record or document is found in (the postmistress and her own docket), and anyone
+        # the clue's words name (a letter about a man's pearls and his sister)
+        if x['kind'] in ('record', 'document', 'item'):
+            who |= {pid for pid, p in setting_people.items() if p.get('home') == x.get('at') and pid in in_case}
+        text = str(x.get('text') or '')
+        who |= {p['id'] for p in case['people'] if any(re.search(rf"\b{re.escape(n)}\b", text) for n in name_forms(p))}
         for pid in who:
-            if pid and pid != enrich.victim_of(case) and not (x.get('reactions') or {}).get(pid):
+            if pid and pid in in_case and pid != enrich.victim_of(case) and not (x.get('reactions') or {}).get(pid):
                 pairs.append((x, pid))
     return pairs
 

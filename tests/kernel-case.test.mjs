@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync, existsSync} from 'node:fs';
+import * as fsSync from 'node:fs';
 import {certify} from '../dist/mk/kernel.mjs';
 import {registerKernelCase, createSession, exportSession, importSession, caseTables, dispatch} from '../dist/engine.mjs';
 import {autoplay} from './kernel-autoplay.mjs';
@@ -435,16 +436,16 @@ test('a hint never quotes a question that no longer leads to the account', () =>
   assert.doesNotMatch(h.levels[1], /account of last night/i, 'the completed night question is not quoted again');
 });
 
-test('who had an item is recorded when a clue about it is understood, never at the start, in every case', async () => {
-  const {heldBackPublic} = await import('../dist/mk/kernel.mjs');
+test('who had an item or has a trait is recorded when a clue about it is understood, never at the start, in every case', async () => {
+  const {heldBackPublic, claimSubject} = await import('../dist/mk/kernel.mjs');
   const {readdirSync} = await import('node:fs');
-  const files = ['../dist/cases/generated/', '../dist/cases/generated/live/'].flatMap(d => { try { return readdirSync(new URL(d, import.meta.url)).filter(f => f.startsWith('mk-') && f.endsWith('.json')).map(f => new URL(d + f, import.meta.url)); } catch { return []; } });
+  const files = ['../dist/cases/generated/', '../dist/cases/generated/live/', '../dist/cases/archive/2026-10/'].flatMap(d => { try { return readdirSync(new URL(d, import.meta.url)).filter(f => f.startsWith('mk-') && f.endsWith('.json')).map(f => new URL(d + f, import.meta.url)); } catch { return []; } });
   let checked = 0;
   for (const f of files) {
     const kc = JSON.parse(readFileSync(f, 'utf8')), held = heldBackPublic(kc);
-    const culpritItems = new Set(kc.signs.filter(x => x.claim?.pred === 'culpritHad').map(x => x.claim.item));
-    for (const p of kc.signs.filter(x => x.kind === 'public' && culpritItems.has(x.claim?.item)))
-      assert.ok(held[p.id], `${kc.id}: ${p.id} would name who had the culprit's item from the start`);
+    const culpritSubjects = new Set(kc.signs.filter(x => ['culpritHad', 'culpritTrait'].includes(x.claim?.pred)).map(x => claimSubject(x.claim)));
+    for (const p of kc.signs.filter(x => x.kind === 'public' && culpritSubjects.has(claimSubject(x.claim))))
+      assert.ok(held[p.id], `${kc.id}: ${p.id} would tell everyone what a culprit clue tests from the start`);
     const s = createSession(1, registerKernelCase(kc)), B = caseTables(s).behavior;
     for (const [pid, triggers] of Object.entries(held)) {
       checked++;
@@ -462,10 +463,21 @@ test('who had an item is recorded when a clue about it is understood, never at t
 });
 
 test('The Lamb Asleep Upstairs opens without naming who had the button', (t) => {
-  const file = new URL('../dist/cases/generated/live/mk-live-20261003-082813.json', import.meta.url);
+  const file = new URL('../dist/cases/archive/2026-10/mk-live-20261003-082813.json', import.meta.url);
   if (!existsSync(file)) return t.skip('generated on this machine only (live cases are not shipped)');
   const kc = JSON.parse(readFileSync(file, 'utf8'));
   const s = createSession(1, registerKernelCase(kc));
   const opening = s.events.filter(e => e.kind === 'evidence').map(e => e.playerText).join('\n');
   assert.doesNotMatch(opening, /button|Hale/);
+});
+
+test('no suspect description reveals a trait a culprit clue tests', () => {
+  const {readdirSync} = fsSync;
+  for (const d of ['../dist/cases/generated/', '../dist/cases/generated/live/']) {
+    let files = []; try { files = readdirSync(new URL(d, import.meta.url)).filter(f => f.startsWith('mk-') && f.endsWith('.json')); } catch {}
+    for (const f of files) {
+      const kc = JSON.parse(readFileSync(new URL(d + f, import.meta.url), 'utf8')), T = caseTables(createSession(1, registerKernelCase(kc)));
+      for (const p of Object.values(T.PEOPLE)) assert.doesNotMatch(p.public ?? '', /You notice/, `${kc.id}: ${p.name}`);
+    }
+  }
 });

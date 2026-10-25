@@ -142,8 +142,9 @@ function dispatch(s, action) {
 }
 
 // Called by the validated character pipeline on an isolated session copy.
-// how far one exchange moves a character's trust in the detective (the model judges the direction)
-const TRUST_STEP = .08;
+// how far one exchange moves a character's trust in the detective (the model judges the direction): large enough that
+// two or three exchanges visibly change how someone feels about the detective
+const TRUST_STEP = .15;
 const placeIn = id => inSentence(LOCATIONS[id]);
 function dispatchCharacter(s,{person,text,proposal,action,audit,useAuthored=false,presented=null,origin=null,queuedPlan=null}){
   if(s.world.status==='solved'||!PEOPLE[person]||!K.local(s,person)||s.world.npcs[person].travel)throw Error('Conversation is no longer available.');
@@ -180,6 +181,8 @@ function dispatchCharacter(s,{person,text,proposal,action,audit,useAuthored=fals
     disclosures:[...new Set([...prior.disclosures,...(proposal.account?[proposal.account]:[])])],lastDecision:decision};
   const delta=useAuthored?0:proposal.trust==='warmer'?TRUST_STEP:proposal.trust==='cooler'?-TRUST_STEP:0;
   commit(s,{kind:'relationship',title:`${PEOPLE[person].name} retains this exchange`,actor:person,parents:[decision,reply.id],changes:{[`npcs.${person}.dialogueState`]:dialogueState,[`npcs.${person}.trust`]:Math.max(0,Math.min(1,npc.trust+delta))}});
+  // an exchange that cooled them (accused, pressed, disbelieved, caught out) also presses them: their stress rises
+  if(!useAuthored&&proposal.trust==='cooler')B.pressed?.(s,person,decision);
   if(queuedPlan)scheduleCharacterPlan(s,queuedPlan,decision);
   if(proposal.engagement==='end'&&!useAuthored)dispatch(s,{type:'endConversation'});
   commit(s,{kind:'checkpoint',title:'Character turn complete',actor:'player',parents:[command,decision],data:{boundary:true}});

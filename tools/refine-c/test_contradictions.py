@@ -11,7 +11,7 @@ sys.path.insert(0, HERE)
 import publish  # noqa: E402
 from refine import certify  # noqa: E402
 
-CASE = os.path.join(HERE, '..', '..', 'dist', 'cases', 'generated', 'mk-live-20261002-222517.json')
+CASE = os.path.join(HERE, '..', '..', 'dist', 'cases', 'archive', '2026-10', 'mk-live-20261002-222517.json')
 # true from the history (Miss Pruett was home at the post office from 22:55), against her false accounts (the inn)
 SEEN = {'id': 's_test_seen', 'kind': 'testimony', 'speaker': 'silas', 'title': 'x', 'text': '',
         'claim': {'pred': 'wasAt', 'person': 'dora', 'place': 'post', 'from': 1380, 'to': 1390}}

@@ -339,6 +339,13 @@ function aggregate(scenarios, modeId) {
 }
 
 export function buildExperiment() {
+  // the experiment's recorded proposals ran when the doctor could still hide her own records in the morning
+  const rules = {...Morning.CONCEALMENT_RULES};
+  Morning.CONCEALMENT_RULES.examinerMayConceal = true;
+  try { return buildExperimentUnderRecordedRules(); } finally { Object.assign(Morning.CONCEALMENT_RULES, rules); }
+}
+
+function buildExperimentUnderRecordedRules() {
   const definitions = scenarioDefinitions();
   const scenarios = definitions.map(definition => {
     const arms = MODES.map(mode => runArm(definition, mode));

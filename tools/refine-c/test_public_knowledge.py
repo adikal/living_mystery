@@ -40,6 +40,27 @@ class PublicKnowledge(unittest.TestCase):
             with open(f) as handle:
                 self.assertEqual(publish.public_spoiler_errors(json.load(handle)), [], f)
 
+    def test_trait_facts_are_held_back_behind_the_clue_that_tests_them(self):
+        # every suspect's trait made public, beside a culprit clue that tests it
+        culprit = next(h for h in self.case['question']['candidates'] if h['id'] == self.case['question']['truth'])['facts']['actor']
+        actors = [h['facts']['actor'] for h in self.case['question']['candidates']]
+        clue = next(x for x in self.case['signs'] if x.get('kind') not in ('public', 'testimony') and (x.get('requires') or []) and not x.get('claim'))
+        clue['claim'] = {'pred': 'culpritTrait', 'trait': 'gait', 'value': 'limping'}
+        for p in self.case['people']:
+            if p['id'] in actors:
+                p.setdefault('traits', {})['gait'] = 'limping' if p['id'] == culprit else 'steady'
+                self.case['signs'].append({'id': f"pub_trait_{p['id']}_gait", 'kind': 'public', 'title': 't', 'text': 't',
+                                           'claim': {'pred': 'hasTrait', 'person': p['id'], 'trait': 'gait', 'value': p['traits']['gait']}})
+        held = publish.held_back_public(self.case)
+        for p in self.case['people']:
+            if p['id'] in actors:
+                self.assertEqual(held.get(f"pub_trait_{p['id']}_gait"), [clue['id']])
+
+    def test_trait_wording_reads_naturally(self):
+        self.assertEqual(migrate.trait_wording('Vera Lacey', 'foot', 'small'), ("Vera Lacey's feet", 'Vera Lacey has small feet.'))
+        self.assertEqual(migrate.trait_wording('Jonah Reed', 'handed', 'left'), ("Jonah Reed's hand", 'Jonah Reed is left-handed.'))
+        self.assertEqual(migrate.trait_wording('Clara Vale', 'shoe', 'small'), ("Clara Vale's shoes", 'Clara Vale wears small shoes.'))
+
     def test_holder_wording_reads_naturally(self):
         case = {'objects': [{'id': 'b', 'name': 'A coat button'}, {'id': 'r', 'name': "Hugo's boar signet ring"},
                             {'id': 'm', 'name': 'Rook & Lantern mug'}],

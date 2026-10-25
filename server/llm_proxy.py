@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Loopback-only model proxy for Living Mystery's optional AI dialogue (Bedrock, or a local open-weight model).
+"""Loopback-only model proxy for Living Mystery's optional AI dialogue (Bedrock, the Claude or OpenAI APIs, or a local
+open-weight model).
 
-The game is a static site, so the browser must not hold AWS credentials. This proxy holds them, calls the model each
+The game is a static site, so the browser must not hold AWS credentials or API keys. This proxy holds them, calls the model each
 request's role is routed to (``llm_backends``), and returns text. It never changes game state. It is a development
 server: it binds to loopback and checks Host, Origin and a custom header, which restricts browser pages but is not
 authentication against local programs. Do not expose it.
@@ -31,12 +32,17 @@ Environment
     LM_PROXY_PORT       default 8787
     LM_ALLOWED_ORIGINS  comma-separated explicit local game origins (local_origins.py); default
                         http://127.0.0.1:8000,http://localhost:8000
-    LM_ROUTES           role=backend:model pairs, e.g. character=ollama:gemma4:26b (default: every role on Bedrock)
+    LM_PROVIDER         bedrock (default), anthropic or openai: where every role goes, with that provider's models
+    LM_ROUTES           role=backend:model pairs, e.g. character=ollama:gemma4:26b, overriding single roles
+    ANTHROPIC_API_KEY, ANTHROPIC_BASE_URL, LM_ANTHROPIC_MODEL, LM_ANTHROPIC_FAST_MODEL   the Claude API (llm_backends)
+    OPENAI_API_KEY, OPENAI_BASE_URL, LM_OPENAI_MODEL, LM_OPENAI_FAST_MODEL, LM_OPENAI_REASONING_EFFORT   the OpenAI API
+                        (or a compatible one; a loopback OPENAI_BASE_URL needs no key). Keys are read only when a route
+                        uses that provider, sent only to it, and never logged.
     LM_BEDROCK_MODEL    Bedrock model for 'dialogue' (default us.anthropic.claude-haiku-4-5-20251001-v1:0)
     LM_CHARACTER_MODEL  Bedrock model for the character-v1 roles (default us.anthropic.claude-sonnet-4-5-20250929-v1:0)
     LM_TEMPERATURE      default temperature, 0.7
-    LM_TURN_TIMEOUT_MS  the character-turn timeout /health advertises (default 45 s; 240 s with a local character or
-                        checker)
+    LM_TURN_TIMEOUT_MS  the character-turn timeout /health advertises (default 45 s; 90 s with OpenAI; 240 s with a
+                        local character or checker)
     AWS_REGION, AWS_DEFAULT_REGION   Bedrock region (default us-west-2); credentials come from the standard AWS chain
     OLLAMA_URL, OLLAMA_NUM_CTX, OLLAMA_TIMEOUT, OLLAMA_KEEP_ALIVE   the local Ollama backend, read only when a route
                         uses it; OLLAMA_URL must be a loopback root URL (default http://127.0.0.1:11434)
@@ -57,12 +63,17 @@ import threading
 import time as _time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from llm_backends import ROLES, backends_from_env, parse_routes, turn_timeout_ms
+from llm_backends import ROLES, backends_from_env, parse_routes, routes_from_env, turn_timeout_ms  # noqa: F401 (parse_routes for tests)
 from local_origins import DEFAULT_ALLOWED_ORIGINS, allowed_hosts, parse_allowed_origins
 
 REGION = os.environ.get("AWS_REGION") or os.environ.get("AWS_DEFAULT_REGION") or "us-west-2"
-ROUTES = parse_routes(os.environ.get("LM_ROUTES"))
-BACKENDS = backends_from_env(REGION, ROUTES)
+try:
+    ROUTES = routes_from_env()
+    BACKENDS = backends_from_env(REGION, ROUTES)
+except ValueError as _config_error:   # a missing key or a bad setting: say which, and do not start
+    if __name__ == "__main__":
+        sys.exit(f"llm_proxy: {_config_error}")
+    raise
 PROFILE_ROLES = {"dialogue-v2": ("dialogue",), "character-v1": tuple(r for r in ROLES if r != "dialogue")}
 HOST = os.environ.get("LM_PROXY_HOST", "127.0.0.1")
 PORT = int(os.environ.get("LM_PROXY_PORT", "8787"))

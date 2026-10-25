@@ -80,13 +80,15 @@ export function loadCurrentCorpus() {
   const indexes = [
     {classification: 'stable', source: 'dist/cases/generated/index.json'},
     {classification: 'live', source: 'dist/cases/generated/live/index.json'},
+    {classification: 'archive', source: 'dist/cases/archive/2026-10/index.json', base: 'dist/cases/archive/2026-10'},
   ];
   const byId = new Map();
   const excluded = [];
   for (const index of indexes) {
+    if (!fs.existsSync(path.join(ROOT, index.source))) continue;
     const entries = JSON.parse(fs.readFileSync(path.join(ROOT, index.source), 'utf8'));
     for (const entry of entries) {
-      const source = `dist/cases/generated/${entry.file}`;
+      const source = `${index.base ?? 'dist/cases/generated'}/${entry.file}`;
       const payload = JSON.parse(fs.readFileSync(path.join(ROOT, source), 'utf8'));
       if (payload.claims_version !== 2) {
         excluded.push({case_id: entry.id, source_path: source, claims_version: payload.claims_version ?? null});

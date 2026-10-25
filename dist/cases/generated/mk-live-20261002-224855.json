@@ -1475,7 +1475,10 @@
    },
    "to": "rowan",
    "direct": "You told me you were home all night, but Mrs Finch says you were in your usual corner by the fire, waiting on your pint. Is that the whole of it?",
-   "lines_for": "ac14c9f03da8"
+   "lines_for": "ac14c9f03da8",
+   "because": [
+    "a_rowan_wary"
+   ]
   },
   {
    "id": "s_dora_mentions_call",
@@ -1496,7 +1499,10 @@
    },
    "to": "dora",
    "direct": "You've told me a call is logged in the exchange book that night, but you won't say more. Why not?",
-   "lines_for": "d7cd72b26524"
+   "lines_for": "d7cd72b26524",
+   "because": [
+    "a_dora_prim"
+   ]
   },
   {
    "id": "s_bruise",
@@ -1563,7 +1569,10 @@
    "to": "ada",
    "direct": "Mr Pike says he saw a lamp crossing the yard to the coal shed at twenty to twelve, and that you came back in alone after, dusting your hands. Can you explain that?",
    "lines_for": "6415e53f87d5",
-   "watch": true
+   "watch": true,
+   "because": [
+    "a_ada_hide"
+   ]
   },
   {
    "id": "s_ada_strongbox",

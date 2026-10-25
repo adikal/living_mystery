@@ -6,7 +6,7 @@ import {readFileSync} from 'node:fs';
 import {registerKernelCase, createSession, dispatch} from '../dist/engine.mjs';
 import {prepareCharacterTurn, validateCharacterProposal} from '../dist/character-turn.mjs';
 
-const kc = JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-222517.json', import.meta.url), 'utf8'));
+const kc = JSON.parse(readFileSync(new URL('../dist/cases/archive/2026-10/mk-live-20261002-222517.json', import.meta.url), 'utf8'));
 function ticketWith(statement, question = 'What is your account of last night?', deceptive = false) {
   const s = createSession(1, registerKernelCase(kc));
   if (s.world.player.location !== s.world.npcs.ada.location) dispatch(s, {type: 'move', to: s.world.npcs.ada.location});

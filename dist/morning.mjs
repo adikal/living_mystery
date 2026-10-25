@@ -1,5 +1,6 @@
 import {certify} from './mk/kernel.mjs';
 import {inSentence} from './places.mjs';
+import {BW_ROLES} from './cases/village.mjs';
 // A morning that moves (docs/living-village.md). People in a generated case follow short agendas during the
 // investigation: go somewhere, stay a while, meet someone and tell them something, or conceal a clue that is theirs to
 // hide. A director (morning-director.mjs) proposes the agendas; everything here is deterministic and replayable:
@@ -181,7 +182,13 @@ export function actors(s, kc, roles, victim) {
 // person has a reason in their own attitudes (one of their fears or wants is cited).
 // `replanning`: people whose pending steps this round replaces, so their own planned concealments do not count against
 // them (re-planning the same intention is allowed).
+// Rules a recorded experiment can set back to those it ran under (tools/paper-evidence/e1_gate_ablation.mjs).
+export const CONCEALMENT_RULES = {examinerMayConceal: false};
+
 export function concealable(s, kc, pid, replanning = [pid]) {
+  // the doctor, like the constable, works for the investigation this morning: she hides nothing (unless she is a suspect)
+  const examiner = kc.setting?.roles?.examiner ?? BW_ROLES.examiner;
+  if (!CONCEALMENT_RULES.examinerMayConceal && pid === examiner && !arr(kc.question?.candidates).some(c => c.facts?.actor === pid)) return [];
   const held = new Set(s.world.player.evidence.map(e => e.clue));
   const replaced = new Set(arr(replanning));
   // gone already, refused by the kernel (the case needs it; more hidden only makes that worse), or already another
@@ -191,7 +198,10 @@ export function concealable(s, kc, pid, replanning = [pid]) {
       .filter(x => x?.kind === 'conceal' && ['pending', 'active'].includes(x.state)).map(x => x.clue))]);
   // only things a hand can move: documents, items, records, traces (not behaviour, absences or observations)
   // (a lead not yet open to the detective is still there to be moved: locked only means not yet reachable for them)
-  return kc.signs.filter(x => PHYSICAL.has(x.kind) && !held.has(x.id) && !gone.has(x.id)
+  // Never what explains someone's suspicious behaviour (a red herring's innocent reason): hidden, it would leave an
+  // innocent looking guilty for good, with nothing in the village to settle it.
+  const explains = new Set(kc.signs.filter(x => x.kind === 'behavior').flatMap(x => arr(x.explainedBy)));
+  return kc.signs.filter(x => PHYSICAL.has(x.kind) && !held.has(x.id) && !gone.has(x.id) && !explains.has(x.id)
     && (kc.events.find(e => e.id === x.source)?.agent === pid || x.about === pid
       || [x.claim?.person, x.claim?.a, x.claim?.b].includes(pid))).map(x => x.id);
 }

@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from collections import Counter
 from pathlib import Path
 from typing import Any
@@ -238,16 +239,23 @@ def prose(record: dict[str, Any]) -> dict[str, str]:
 
 
 def load_manifest_cases() -> tuple[list[dict[str, Any]], dict[str, Any], list[Path]]:
-    manifest_specs = (("stable", GENERATED_ROOT / "index.json"), ("live", GENERATED_ROOT / "live" / "index.json"))
+    archive = GENERATED_ROOT.parent / "archive" / "2026-10" / "index.json"
+    manifest_specs = (("stable", GENERATED_ROOT / "index.json"), ("live", GENERATED_ROOT / "live" / "index.json"), ("archive", archive))
     cases: dict[str, dict[str, Any]] = {}
     manifest_paths: list[Path] = []
     entries = 0
     exclusions: list[dict[str, Any]] = []
     for classification, manifest_path in manifest_specs:
+        if classification == "archive" and not manifest_path.is_file():
+            continue
         manifest_paths.append(manifest_path)
         for entry in load_json(manifest_path):
+            # cases generated after the paper's evidence date are not in its corpus
+            m = re.search(r"(\d{8}-\d{6})", str(entry.get("id", "")))
+            if m and m.group(1) > CORPUS_FREEZE:
+                continue
             entries += 1
-            case_path = GENERATED_ROOT / entry["file"]
+            case_path = (manifest_path.parent if classification == "archive" else GENERATED_ROOT) / entry["file"]
             payload = load_json(case_path)
             if payload.get("id") != entry.get("id"):
                 raise ValueError(f"Manifest/payload ID mismatch for {case_path}")
@@ -402,13 +410,24 @@ def structured_delta(before: dict[str, Any], after: dict[str, Any]) -> dict[str,
     return delta
 
 
+CORPUS_FREEZE = "20261024-235959"   # generation runs and cases after this are not in the paper's corpus
+GAME_LOG_FREEZE = "2026-10-13T00:00:00"   # the game log's play sessions in the paper's corpus end on 12 October
+
+
+def _run_stamp(path: Path) -> str:
+    """The timestamp a run directory is named with (live-YYYYMMDD-HHMMSS), or '' for one without."""
+    m = re.search(r"(\d{8}-\d{6})", path.parent.name)
+    return m.group(1) if m else ""
+
+
 def generation_candidates() -> tuple[list[tuple[dict[str, Any], dict[str, Any]]], dict[str, Any], list[Path]]:
     exported: list[tuple[dict[str, Any], dict[str, Any]]] = []
     inspected_paths: list[Path] = []
     exclusions = Counter()
     history_entries = 0
+    # the corpus is frozen at the paper's evidence date: generation runs made later (regenerated menu cases) are not in it
     result_files = sorted((path for path in RUNS_ROOT.rglob("result.json")
-                           if "experiments" not in path.relative_to(RUNS_ROOT).parts), key=relative)
+                           if "experiments" not in path.relative_to(RUNS_ROOT).parts and _run_stamp(path) <= CORPUS_FREEZE), key=relative)
     for result_path in result_files:
         inspected_paths.append(result_path)
         result = load_json(result_path)
@@ -504,8 +523,10 @@ def inspect_game_log(retained_case_ids: set[str]) -> tuple[dict[str, Any], list[
     spoken_turns = 0
     with_rejections = 0
     for line in GAME_LOG.read_text(encoding="utf-8").splitlines():
-        rows += 1
         row = json.loads(line)
+        if str(row.get("server", "")) > GAME_LOG_FREEZE:   # play after the paper's evidence date is not in its corpus
+            continue
+        rows += 1
         if row.get("kind") != "character_turn":
             continue
         turns += 1

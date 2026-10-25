@@ -192,13 +192,35 @@ showing each clue and reactions for the characters involved, then JavaScript cer
 Two pieces of content bear on fairness, and both are what everyone in the village knows: *public signs*, which the
 player holds from the start and which appear in the notebook as common knowledge. One gives when the crime happened
 (the crime window), which the player needs in order to use alibis. The others give each suspect's physical traits that
-a clue tests (also shown in each person's description), because a trait clue can rule someone out only if the player
-knows who has the trait. A third kind says who had an item a clue ties to the culprit ("only Dr Marsh had the
-surgery key"). Shown at the start it would name a suspect before any such clue is found, so the notebook records it
-only when the player first understands a clue about that item; certification still holds it from the start, which is
+a clue tests, because a trait clue can rule someone out only if the player
+knows who has the trait. Trait signs, and a third kind that says who had an item a clue ties to the culprit ("only Dr Marsh had the surgery
+key"), would name a suspect if shown at the start, before any print or item is found. The notebook therefore records
+them only when the player first understands a clue about that trait or item; certification still holds it from the start, which is
 exact because the game publishes such a sign only after proving it decides nothing without those clues
 (`heldBackPublic` in both kernels; the publish gate refuses one that would have to be shown at the start). Reasoning uses
-nothing else the player is not told. Other generated lines are claimless
+nothing else the player is not told.
+
+Two rules about people are checked by code on every generation step and again by the publish gate
+(`tools/refine-c/roles.py`), because play showed that certification alone allows cases that feel unfair. The constable
+is the detective's ally: he is never a candidate, never tells an untrue account, never stages or hides evidence, and
+nothing of his waits behind `requires` (neither his accounts nor signs that come from his own events). A case in which
+the constable keeps the evidence locked in his tin until the detective earns it certifies, but the player is left asking
+why their ally is in the way. And every red herring has a reason: its source event, or that of what explains it, is
+caused by an attitude of the person it concerns, so that pressed in play they can say why, and the closing file can
+tell the player what each herring they did not get to the bottom of really was.
+
+A third rule protects the doctor's findings (`roles.examiner_errors`): what she found on the body, her notes on it and
+the dead man's effects she took never wait behind another account of hers, directly or through more of her own clues,
+unless she is a suspect. A later play found two cases whose depth came from one such door: a refinement step made her
+account of treating a patient wait for that patient's leave, and the notebook from the dead man's pockets and her notes
+on the wound, chained behind that account, inherited a confidence that has nothing to do with them. Three changes stop
+that kind of drift. The step critic re-judges every sign whose prerequisite a step touched, and checks that a keeper's
+reason covers the sign it withholds (LOCK) and that one narrow reason does not hold back unrelated evidence
+(BOTTLENECK); the whole-case publication review checks the same, and on the generator's path it now blocks
+publication. Publishing also keeps morning accounts from naming a clue still to be found (the writer sees the
+examination by its type alone, and code rejects a line naming a locked clue), writes reactions for the keeper of the
+place a record is found in and for anyone a clue names, and judges every claimless account for a cover story, not
+only the evening and morning summaries. Other generated lines are claimless
 and do not enter certification; they are checked mechanically (no times or numbers that are not in the source, length
 limits, no second-person address in third-person lines).
 

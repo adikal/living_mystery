@@ -1,0 +1,2545 @@
+{
+ "title": "Under the Memorial Lamp",
+ "victim": "edmund",
+ "story": "Edmund Vale met the newcomer Vera Lacey in the square to tell her he would acknowledge her as his natural daughter, and he embraced her. Jonah Reed, who loved her, and Dorothy Pruett, who was clearing the pillar box, both saw the embrace and took it for an affair; at 23:00 Jonah waited for the squire on his nightly walk to post his letters and struck him down.",
+ "setting": {
+  "name": "Bellweather",
+  "era": "An English village, 1932",
+  "summary": "A small English village: a square, a manor with its greenhouse and boathouse on the river, an inn, the church vestry, a doctor's surgery, a post office, a railway halt and a disused mill. Someone is dead; the investigation begins the next morning.",
+  "places": [
+   {
+    "id": "square",
+    "name": "Village square"
+   },
+   {
+    "id": "manor",
+    "name": "Vale Manor"
+   },
+   {
+    "id": "inn",
+    "name": "The Rook & Lantern"
+   },
+   {
+    "id": "greenhouse",
+    "name": "The greenhouse"
+   },
+   {
+    "id": "vestry",
+    "name": "St. Alden’s vestry"
+   },
+   {
+    "id": "surgery",
+    "name": "Dr Marsh’s surgery"
+   },
+   {
+    "id": "halt",
+    "name": "Bellweather Halt"
+   },
+   {
+    "id": "post",
+    "name": "The post office"
+   },
+   {
+    "id": "mill",
+    "name": "Alder Mill"
+   },
+   {
+    "id": "boathouse",
+    "name": "The boathouse"
+   }
+  ],
+  "links": [
+   {
+    "a": "square",
+    "b": "manor",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "inn",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "vestry",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "surgery",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "post",
+    "minutes": 2
+   },
+   {
+    "a": "square",
+    "b": "halt",
+    "minutes": 6
+   },
+   {
+    "a": "manor",
+    "b": "greenhouse",
+    "minutes": 3
+   },
+   {
+    "a": "manor",
+    "b": "boathouse",
+    "minutes": 6
+   },
+   {
+    "a": "inn",
+    "b": "greenhouse",
+    "minutes": 6
+   },
+   {
+    "a": "inn",
+    "b": "post",
+    "minutes": 3
+   },
+   {
+    "a": "greenhouse",
+    "b": "mill",
+    "minutes": 7
+   },
+   {
+    "a": "vestry",
+    "b": "halt",
+    "minutes": 5
+   },
+   {
+    "a": "surgery",
+    "b": "post",
+    "minutes": 3
+   },
+   {
+    "a": "halt",
+    "b": "mill",
+    "minutes": 5
+   },
+   {
+    "a": "mill",
+    "b": "boathouse",
+    "minutes": 4
+   }
+  ],
+  "roles": {
+   "examiner": "iris",
+   "constable": "bell"
+  },
+  "day": {
+   "evening": 1080,
+   "morning": 1740,
+   "start": 1920
+  }
+ },
+ "rules": [
+  {
+   "id": "r_hand",
+   "text": "A blow from the front to the right side of the head is most naturally struck by a left-handed swing.",
+   "knowledge": "common"
+  }
+ ],
+ "people": [
+  {
+   "id": "edmund",
+   "name": "Edmund Vale",
+   "role": "Master of Vale Manor",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "he",
+   "address": "Mr Vale",
+   "voice": "Loud, confident and used to being obeyed; bluff good humour that turns cold when crossed.",
+   "public": "Master of Vale Manor: a man of fixed habits, generous in public and hard in private.",
+   "home": "manor",
+   "role_words": [
+    "squire"
+   ]
+  },
+  {
+   "id": "clara",
+   "name": "Clara Vale",
+   "role": "Mistress of the household",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "she",
+   "address": "Miss Vale",
+   "voice": "Composed, dry and exact; she chooses words like a woman choosing gloves. Polite to the point of chill with strangers, warmer once she respects you.",
+   "public": "Edmund’s younger sister. She has run Vale Manor’s household for years and guards its privacy.",
+   "home": "manor",
+   "role_words": []
+  },
+  {
+   "id": "jonah",
+   "name": "Jonah Reed",
+   "role": "The boathouse keeper",
+   "traits": {
+    "handed": "left",
+    "height": "tall"
+   },
+   "pronoun": "he",
+   "address": "Mr Reed",
+   "voice": "Slow, weathered and wry; a river man who speaks in the present tense and weighs every word like a stone.",
+   "public": "Keeper of the manor’s boathouse and ferryman when the river is up. He knows the water and keeps his own counsel.",
+   "home": "boathouse",
+   "role_words": [
+    "boatman",
+    "boathouse keeper",
+    "ferryman"
+   ]
+  },
+  {
+   "id": "dora",
+   "name": "Dorothy Pruett",
+   "role": "The postmistress",
+   "traits": {
+    "handed": "right",
+    "height": "short"
+   },
+   "pronoun": "she",
+   "address": "Miss Pruett",
+   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people’s business.",
+   "public": "The postmistress. Every letter, parcel and telegram in Bellweather passes over her counter, and she forgets nothing.",
+   "home": "post",
+   "role_words": [
+    "postmistress"
+   ]
+  },
+  {
+   "id": "rowan",
+   "name": "Rowan Pike",
+   "role": "The groundskeeper",
+   "traits": {
+    "handed": "right",
+    "height": "tall"
+   },
+   "pronoun": "he",
+   "address": "Mr Pike",
+   "voice": "A plain-spoken countryman: short, blunt, practical, with a gardener’s patience and the odd dour joke.",
+   "public": "The manor’s groundskeeper. He lives among his glasshouses and says little to anyone.",
+   "home": "greenhouse",
+   "role_words": [
+    "groundskeeper",
+    "gardener"
+   ]
+  },
+  {
+   "id": "vera",
+   "name": "Vera Lacey",
+   "role": "A newcomer, lodging at the Rook",
+   "traits": {
+    "handed": "left",
+    "height": "medium"
+   },
+   "pronoun": "she",
+   "address": "Mrs Lacey",
+   "voice": "Low, amused and worldly: a London polish over something harder. Answers a question with a question and watches your face while you answer.",
+   "public": "A widow down from London three weeks ago, lodging in the Rook’s back bedroom. Says she is sketching old churches for a book, and asks a great many questions.",
+   "home": "inn",
+   "role_words": [
+    "newcomer",
+    "lodger",
+    "widow"
+   ]
+  },
+  {
+   "id": "ada",
+   "name": "Ada Finch",
+   "role": "The innkeeper",
+   "traits": {},
+   "pronoun": "she",
+   "address": "Mrs Finch",
+   "voice": "Warm, chatty and colloquial; calls people \"love\", runs on a little, and enjoys a bit of news more than she should.",
+   "public": "Proprietor of the Rook & Lantern. She knows everyone’s habits and most of their business.",
+   "home": "inn",
+   "role_words": [
+    "innkeeper",
+    "landlady"
+   ]
+  },
+  {
+   "id": "iris",
+   "name": "Dr Iris Marsh",
+   "role": "The village doctor",
+   "traits": {},
+   "pronoun": "she",
+   "address": "Dr Marsh",
+   "voice": "Clinical and direct, with brisk warmth underneath; says exactly what she observed and no more.",
+   "public": "The village doctor. Methodical and direct; she is called whenever anyone in Bellweather is hurt or ill.",
+   "home": "surgery",
+   "role_words": [
+    "doctor"
+   ]
+  },
+  {
+   "id": "bell",
+   "name": "Arthur Bell",
+   "role": "The village constable",
+   "traits": {},
+   "pronoun": "he",
+   "address": "Constable Bell",
+   "voice": "A gruff country constable: terse, dry and matter-of-fact, with a soft spot he hides badly.",
+   "public": "The village constable. He has secured the scene and asked you to investigate; he will hear an accusation when you can back it with evidence.",
+   "home": "square",
+   "role_words": [
+    "constable"
+   ]
+  },
+  {
+   "id": "silas",
+   "name": "Silas Voss",
+   "role": "The solicitor",
+   "pronoun": "he",
+   "address": "Mr Voss",
+   "voice": "Measured, formal and faintly amused; speaks in tidy clauses and likes a Latin tag. Never rambles.",
+   "public": "A precise, courteous solicitor who keeps an office in the vestry and handles the affairs of half the parish.",
+   "home": "vestry",
+   "role_words": [
+    "solicitor"
+   ],
+   "traits": {}
+  },
+  {
+   "id": "vicar",
+   "name": "The Reverend Thomas Hale",
+   "role": "The vicar",
+   "pronoun": "he",
+   "address": "Mr Hale",
+   "voice": "Gentle and rambling, with a scholar’s digressions and a surprising steel when conscience is touched.",
+   "public": "Vicar of St. Alden’s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
+   "home": "vestry",
+   "role_words": [
+    "vicar",
+    "rector",
+    "parson"
+   ],
+   "traits": {}
+  },
+  {
+   "id": "hugo",
+   "name": "Hugo Vale",
+   "role": "The nephew from London",
+   "pronoun": "he",
+   "address": "Mr Hugo",
+   "voice": "Quick, flippant and charming, full of London slang; hides nerves behind jokes and talks a little too fast.",
+   "public": "Edmund’s nephew, down from London by train. Charming, restless and plainly bored by the country.",
+   "home": "manor",
+   "role_words": [
+    "nephew"
+   ],
+   "traits": {}
+  }
+ ],
+ "objects": [
+  {
+   "id": "o_pin",
+   "name": "iron mooring pin",
+   "desc": "A heavy iron pin from the boathouse landing stage, used to make fast the punts."
+  },
+  {
+   "id": "o_envelope",
+   "name": "sealed envelope",
+   "desc": "A stamped letter in Edmund Vale's hand, addressed to his solicitor, never posted."
+  },
+  {
+   "id": "o_notebook",
+   "name": "pocket notebook",
+   "desc": "Edmund Vale's leather pocket notebook of memoranda."
+  },
+  {
+   "id": "o_notice",
+   "name": "handwritten letter",
+   "desc": "A week's notice of dismissal, signed E. Vale, pinned in the potting shed."
+  },
+  {
+   "id": "o_card",
+   "name": "constable's card of authority",
+   "desc": "A printed police card, written over in pencil and signed A. Bell, asking all parties to assist the bearer."
+  },
+  {
+   "id": "o_slate",
+   "name": "chalk slate",
+   "desc": "The Rook's reckoning slate behind the bar, where Ada chalks the regulars' drinks and when each settled."
+  },
+  {
+   "id": "o_burnt",
+   "name": "half-burnt paper",
+   "desc": "Charred pages from a small sorting-room memorandum book, found in the post office grate."
+  },
+  {
+   "id": "o_bell_note",
+   "name": "scrap of notepaper",
+   "desc": "A torn leaf from a police pocket book, weighted with a stone on the memorial step."
+  },
+  {
+   "id": "o_tag",
+   "name": "luggage label",
+   "desc": "A railway luggage label tied to the cordon rope, pencilled in a heavy hand."
+  }
+ ],
+ "relations": [
+  {
+   "a": "jonah",
+   "rel": "loves",
+   "b": "vera"
+  },
+  {
+   "a": "jonah",
+   "rel": "jealous_of",
+   "b": "edmund"
+  },
+  {
+   "a": "vera",
+   "rel": "daughter_of",
+   "b": "edmund"
+  },
+  {
+   "a": "edmund",
+   "rel": "dismissed",
+   "b": "rowan"
+  },
+  {
+   "a": "edmund",
+   "rel": "threatened_to_report",
+   "b": "dora"
+  },
+  {
+   "a": "clara",
+   "rel": "sister_of",
+   "b": "edmund"
+  },
+  {
+   "a": "hugo",
+   "rel": "nephew_of",
+   "b": "edmund"
+  }
+ ],
+ "question": {
+  "text": "Who killed Edmund Vale?",
+  "candidates": [
+   {
+    "id": "c_dora",
+    "label": "Dorothy Pruett",
+    "facts": {
+     "actor": "dora"
+    }
+   },
+   {
+    "id": "c_jonah",
+    "label": "Jonah Reed",
+    "facts": {
+     "actor": "jonah"
+    }
+   },
+   {
+    "id": "c_rowan",
+    "label": "Rowan Pike",
+    "facts": {
+     "actor": "rowan"
+    }
+   },
+   {
+    "id": "c_vera",
+    "label": "Vera Lacey",
+    "facts": {
+     "actor": "vera"
+    }
+   }
+  ],
+  "truth": "c_jonah",
+  "crime": {
+   "event": "e_crime",
+   "place": "square",
+   "window": [
+    1370,
+    1395
+   ]
+  }
+ },
+ "attitudes": [
+  {
+   "id": "a_jonah_love",
+   "agent": "jonah",
+   "mode": "feels",
+   "content": "Jonah has fallen in love with Vera Lacey since she came to the village.",
+   "motive": "love"
+  },
+  {
+   "id": "a_jonah_believes",
+   "agent": "jonah",
+   "mode": "believes",
+   "content": "Having seen the embrace, Jonah believes Edmund is Vera's lover.",
+   "because": [
+    "a_jonah_love"
+   ]
+  },
+  {
+   "id": "a_jonah_intends",
+   "agent": "jonah",
+   "mode": "intends",
+   "content": "Kill Edmund on his nightly walk to the pillar box.",
+   "because": [
+    "a_jonah_believes",
+    "a_jonah_love"
+   ],
+   "motive": "love"
+  },
+  {
+   "id": "a_jonah_routine",
+   "agent": "jonah",
+   "mode": "intends",
+   "content": "Tend the boats, then take a glass at the Rook."
+  },
+  {
+   "id": "a_jonah_fear",
+   "agent": "jonah",
+   "mode": "fears",
+   "content": "Being found out for the killing.",
+   "because": [
+    "a_jonah_intends"
+   ]
+  },
+  {
+   "id": "a_edmund_ack",
+   "agent": "edmund",
+   "mode": "intends",
+   "content": "Acknowledge Vera as his natural daughter and tell his solicitor so."
+  },
+  {
+   "id": "a_edmund_habit",
+   "agent": "edmund",
+   "mode": "intends",
+   "content": "Dine, write letters, and post them at the square pillar box at eleven, as always."
+  },
+  {
+   "id": "a_vera_wants",
+   "agent": "vera",
+   "mode": "wants",
+   "content": "To be acknowledged by her father, and a share of what is his.",
+   "motive": "gain"
+  },
+  {
+   "id": "a_vera_routine",
+   "agent": "vera",
+   "mode": "intends",
+   "content": "Sketch in the inn parlour for the evening."
+  },
+  {
+   "id": "a_dora_fears",
+   "agent": "dora",
+   "mode": "fears",
+   "content": "Edmund will report her to the Postmaster General for opening letters.",
+   "motive": "fear"
+  },
+  {
+   "id": "a_dora_duty",
+   "agent": "dora",
+   "mode": "intends",
+   "content": "Clear the pillar box at half past nine and do the accounts."
+  },
+  {
+   "id": "a_dora_believes",
+   "agent": "dora",
+   "mode": "believes",
+   "content": "Vera Lacey is Edmund's mistress.",
+   "because": []
+  },
+  {
+   "id": "a_rowan_grudge",
+   "agent": "rowan",
+   "mode": "feels",
+   "content": "Bitter at being given notice after eleven years.",
+   "motive": "revenge"
+  },
+  {
+   "id": "a_rowan_routine",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "Work late among the glasshouses."
+  },
+  {
+   "id": "a_ada_work",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "Keep the bar and parlour of the Rook."
+  },
+  {
+   "id": "a_clara_routine",
+   "agent": "clara",
+   "mode": "intends",
+   "content": "Dine with her brother and spend the evening at home."
+  },
+  {
+   "id": "a_bell_duty",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "Watch the late goods train at the halt, and walk his morning round."
+  },
+  {
+   "id": "a_iris_duty",
+   "agent": "iris",
+   "mode": "intends",
+   "content": "Write up notes at the surgery and answer any call."
+  },
+  {
+   "id": "a_vicar_sermon",
+   "agent": "vicar",
+   "mode": "intends",
+   "content": "Write Sunday's sermon in the vestry."
+  },
+  {
+   "id": "a_silas_work",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "Finish conveyancing papers in his vestry office."
+  },
+  {
+   "id": "a_hugo_bored",
+   "agent": "hugo",
+   "mode": "intends",
+   "content": "Stay in his room at the manor with a novel and a decanter."
+  },
+  {
+   "id": "a_bell_discreet",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "Keep the squire's death out of village gossip: hold his effects himself, and let only the investigator he appoints question people.",
+   "because": [
+    "a_bell_duty"
+   ]
+  },
+  {
+   "id": "a_ada_protect",
+   "agent": "ada",
+   "mode": "fears",
+   "content": "After his wild talk by her fire, Jonah will be taken up for the squire's death; she means to swear he never left the Rook.",
+   "because": [
+    "a_ada_work"
+   ]
+  },
+  {
+   "id": "a_dora_hide",
+   "agent": "dora",
+   "mode": "fears",
+   "content": "With the squire dead, the police will read his papers, learn of her letter-opening and search the office; she must destroy her private tally of steamed letters.",
+   "because": [
+    "a_dora_fears"
+   ]
+  },
+  {
+   "id": "a_bell_county",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "Ring the County police from the halt telephone before anyone is questioned, and hand his card to the investigator only there, in person.",
+   "because": [
+    "a_bell_discreet"
+   ]
+  },
+  {
+   "id": "a_ada_lodger",
+   "agent": "ada",
+   "mode": "intends",
+   "content": "Say nothing of her paying lodger's comings and goings to strangers unless the constable authorises it.",
+   "because": [
+    "a_ada_work"
+   ]
+  },
+  {
+   "id": "a_bell_note_private",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "Leave no note anyone can read in the public square; send the investigator to the doctor, who will hold his note.",
+   "because": [
+    "a_bell_discreet"
+   ]
+  }
+ ],
+ "events": [
+  {
+   "id": "e_jonah_boats",
+   "type": "work",
+   "agent": "jonah",
+   "others": [],
+   "place": "boathouse",
+   "start": 1180,
+   "end": 1270,
+   "causedBy": "a_jonah_routine",
+   "summary": "Jonah tends the punts at the boathouse."
+  },
+  {
+   "id": "e_dinner",
+   "type": "dinner",
+   "agent": "edmund",
+   "others": [
+    "clara"
+   ],
+   "place": "manor",
+   "start": 1200,
+   "end": 1278,
+   "causedBy": "a_edmund_habit",
+   "summary": "Edmund dines with Clara at the manor."
+  },
+  {
+   "id": "e_clara_home",
+   "type": "home",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1280,
+   "end": 1440,
+   "causedBy": "a_clara_routine",
+   "summary": "Clara sews in the drawing room and retires."
+  },
+  {
+   "id": "e_hugo_home",
+   "type": "home",
+   "agent": "hugo",
+   "others": [],
+   "place": "manor",
+   "start": 1200,
+   "end": 1440,
+   "causedBy": "a_hugo_bored",
+   "summary": "Hugo keeps to his room at the manor with a novel and a decanter."
+  },
+  {
+   "id": "e_vicar_sermon",
+   "type": "writing",
+   "agent": "vicar",
+   "others": [],
+   "place": "vestry",
+   "start": 1200,
+   "end": 1420,
+   "causedBy": "a_vicar_sermon",
+   "summary": "The vicar writes Sunday's sermon in the vestry and goes to bed."
+  },
+  {
+   "id": "e_silas_office",
+   "type": "work",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1200,
+   "end": 1380,
+   "causedBy": "a_silas_work",
+   "summary": "Silas Voss works over conveyancing papers in his vestry office."
+  },
+  {
+   "id": "e_vera_sketch",
+   "type": "sketch",
+   "agent": "vera",
+   "others": [],
+   "place": "inn",
+   "start": 1200,
+   "end": 1278,
+   "causedBy": "a_vera_routine",
+   "summary": "Vera sketches in the inn parlour before going out."
+  },
+  {
+   "id": "e_dora_counter",
+   "type": "work",
+   "agent": "dora",
+   "others": [],
+   "place": "post",
+   "start": 1200,
+   "end": 1280,
+   "causedBy": "a_dora_duty",
+   "summary": "Dora sorts the evening post behind her counter."
+  },
+  {
+   "id": "e_rowan_glass",
+   "type": "work",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1200,
+   "end": 1440,
+   "causedBy": "a_rowan_routine",
+   "summary": "Rowan works alone among the glasshouses until bed."
+  },
+  {
+   "id": "e_ada_bar",
+   "type": "work",
+   "agent": "ada",
+   "others": [],
+   "place": "inn",
+   "start": 1200,
+   "end": 1440,
+   "causedBy": "a_ada_work",
+   "summary": "Ada keeps the bar and parlour of the Rook."
+  },
+  {
+   "id": "e_iris_notes",
+   "type": "work",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1200,
+   "end": 1440,
+   "causedBy": "a_iris_duty",
+   "summary": "Dr Marsh writes up case notes at her surgery."
+  },
+  {
+   "id": "e_bell_halt",
+   "type": "duty",
+   "agent": "bell",
+   "others": [],
+   "place": "halt",
+   "start": 1290,
+   "end": 1440,
+   "causedBy": "a_bell_duty",
+   "summary": "Constable Bell watches the late goods train and the yard at the halt."
+  },
+  {
+   "id": "e_meeting",
+   "type": "meeting",
+   "agent": "edmund",
+   "others": [
+    "vera"
+   ],
+   "place": "square",
+   "start": 1290,
+   "end": 1300,
+   "causedBy": "a_edmund_ack",
+   "summary": "By the memorial lamp Edmund tells Vera he will acknowledge her, and embraces her."
+  },
+  {
+   "id": "e_dora_box",
+   "type": "duty",
+   "agent": "dora",
+   "others": [],
+   "place": "square",
+   "start": 1285,
+   "end": 1300,
+   "causedBy": "a_dora_duty",
+   "summary": "Dora clears the pillar box and sees Edmund embrace Vera."
+  },
+  {
+   "id": "e_jonah_sees",
+   "type": "observation",
+   "agent": "jonah",
+   "others": [],
+   "place": "square",
+   "start": 1285,
+   "end": 1300,
+   "causedBy": "a_jonah_routine",
+   "summary": "Crossing to the Rook, Jonah sees Edmund embrace Vera under the lamp."
+  },
+  {
+   "id": "e_dora_accounts",
+   "type": "work",
+   "agent": "dora",
+   "others": [],
+   "place": "post",
+   "start": 1305,
+   "end": 1440,
+   "causedBy": "a_dora_duty",
+   "summary": "Dora does the accounts at the post office and goes to bed."
+  },
+  {
+   "id": "e_letters",
+   "type": "writing",
+   "agent": "edmund",
+   "others": [],
+   "place": "manor",
+   "start": 1306,
+   "end": 1368,
+   "causedBy": "a_edmund_ack",
+   "summary": "Edmund writes to his solicitor and notes memoranda in his study."
+  },
+  {
+   "id": "e_vera_parlour",
+   "type": "evening",
+   "agent": "vera",
+   "others": [
+    "ada"
+   ],
+   "place": "inn",
+   "start": 1305,
+   "end": 1440,
+   "causedBy": "a_vera_routine",
+   "summary": "Vera sits in the parlour with her sketchbook while Ada keeps her cup filled."
+  },
+  {
+   "id": "e_jonah_drink",
+   "type": "drinking",
+   "agent": "jonah",
+   "others": [
+    "ada"
+   ],
+   "place": "inn",
+   "start": 1305,
+   "end": 1358,
+   "causedBy": "a_jonah_believes",
+   "summary": "Jonah broods by the fire and tells Ada what he saw."
+  },
+  {
+   "id": "e_jonah_wait",
+   "type": "waiting",
+   "agent": "jonah",
+   "others": [],
+   "place": "square",
+   "start": 1365,
+   "end": 1377,
+   "causedBy": "a_jonah_intends",
+   "summary": "Jonah waits in the shadow of the memorial with the mooring pin."
+  },
+  {
+   "id": "e_walk",
+   "type": "walk",
+   "agent": "edmund",
+   "others": [],
+   "place": "square",
+   "start": 1374,
+   "end": 1378,
+   "causedBy": "a_edmund_habit",
+   "summary": "Edmund walks to the pillar box with his letter and notebook."
+  },
+  {
+   "id": "e_crime",
+   "type": "murder",
+   "agent": "jonah",
+   "others": [
+    "edmund"
+   ],
+   "place": "square",
+   "start": 1378,
+   "end": 1382,
+   "causedBy": "a_jonah_intends",
+   "summary": "Jonah strikes Edmund on the right temple with the iron mooring pin.",
+   "facts": {
+    "method": "blow"
+   }
+  },
+  {
+   "id": "e_death",
+   "type": "death",
+   "agent": "edmund",
+   "others": [],
+   "place": "square",
+   "start": 1382,
+   "end": 1383,
+   "causedBy": "nature",
+   "summary": "Edmund dies behind the memorial, out of the lamplight."
+  },
+  {
+   "id": "e_jonah_home",
+   "type": "home",
+   "agent": "jonah",
+   "others": [],
+   "place": "boathouse",
+   "start": 1395,
+   "end": 1440,
+   "causedBy": "a_jonah_fear",
+   "summary": "Jonah returns to the boathouse and drops the pin in the river."
+  },
+  {
+   "id": "e_discovery",
+   "type": "discovery",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1830,
+   "end": 1835,
+   "causedBy": "a_bell_duty",
+   "summary": "On his morning round Bell finds Edmund's body behind the memorial."
+  },
+  {
+   "id": "e_summon",
+   "type": "summons",
+   "agent": "bell",
+   "others": [
+    "iris"
+   ],
+   "place": "surgery",
+   "start": 1838,
+   "end": 1840,
+   "causedBy": "a_bell_duty",
+   "summary": "Bell fetches Dr Marsh from the surgery."
+  },
+  {
+   "id": "e_exam",
+   "type": "examination",
+   "agent": "iris",
+   "others": [
+    "bell"
+   ],
+   "place": "square",
+   "start": 1845,
+   "end": 1900,
+   "causedBy": "a_iris_duty",
+   "summary": "Dr Marsh examines the body and the head wound."
+  },
+  {
+   "id": "e_inform",
+   "type": "inform",
+   "agent": "bell",
+   "others": [
+    "clara",
+    "hugo"
+   ],
+   "place": "manor",
+   "start": 1905,
+   "end": 1915,
+   "causedBy": "a_bell_duty",
+   "summary": "Bell breaks the news to Clara and Hugo Vale at the manor."
+  },
+  {
+   "id": "e_bell_card",
+   "type": "writing",
+   "agent": "bell",
+   "others": [],
+   "place": "square",
+   "start": 1919,
+   "end": 1925,
+   "causedBy": "a_bell_discreet",
+   "summary": "Back at the square, Bell writes a card of authority, pockets the dead man's effects, and ties a label to the cordon."
+  },
+  {
+   "id": "e_ada_slate",
+   "type": "record",
+   "agent": "ada",
+   "others": [
+    "jonah"
+   ],
+   "place": "inn",
+   "start": 1358,
+   "end": 1360,
+   "causedBy": "a_ada_work",
+   "summary": "Ada chalks Jonah's three pints on the slate and marks them paid at 22:40 as he leaves."
+  },
+  {
+   "id": "e_ada_resolve",
+   "type": "decision",
+   "agent": "ada",
+   "others": [],
+   "place": "inn",
+   "start": 1880,
+   "end": 1890,
+   "causedBy": "a_ada_protect",
+   "summary": "Hearing the squire is dead, Ada resolves to swear Jonah stayed by her fire past midnight."
+  },
+  {
+   "id": "e_dora_burn",
+   "type": "cover-up",
+   "agent": "dora",
+   "others": [],
+   "place": "post",
+   "start": 1890,
+   "end": 1915,
+   "causedBy": "a_dora_hide",
+   "summary": "Hearing the squire is dead, Dora burns her memorandum book of opened letters in the post office grate."
+  },
+  {
+   "id": "e_bell_phone",
+   "type": "telephone",
+   "agent": "bell",
+   "others": [],
+   "place": "halt",
+   "start": 1939,
+   "end": 1970,
+   "causedBy": "a_bell_county",
+   "summary": "Bell rings the County police from the halt telephone and waits there, card in his pocket, for the investigator."
+  },
+  {
+   "id": "e_bell_note_left",
+   "type": "errand",
+   "agent": "bell",
+   "others": [
+    "iris"
+   ],
+   "place": "surgery",
+   "start": 1928,
+   "end": 1930,
+   "causedBy": "a_bell_note_private",
+   "summary": "Bell leaves a folded note with Dr Marsh for the investigator, then heads to the halt."
+  },
+  {
+   "id": "e_gust",
+   "type": "weather",
+   "agent": null,
+   "others": [],
+   "place": "square",
+   "start": 1926,
+   "end": 1928,
+   "causedBy": "nature",
+   "summary": "A gust off the river snaps the cordon label's string and blows it against the foot of the pillar box."
+  }
+ ],
+ "signs": [
+  {
+   "id": "s_surface_jonah",
+   "kind": "testimony",
+   "speaker": "jonah",
+   "surface": true,
+   "deceptive": true,
+   "title": "Jonah Reed on the evening",
+   "text": "I'm down at the boathouse a good while, seeing to the punts same as always, and then I take myself to the Rook and sit by the fire with a glass, brooding on nothing much, before I turned in for the night.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_why": "He omits witnessing Edmund and Vera, waiting with the mooring pin, striking Edmund on the temple, and disposing of the pin in the river—claiming only he sat by the fire brooding and then went to bed, which conceals the murder.",
+   "surface_checked": "cover",
+   "to": null,
+   "show": "Jonah Reed says he spent the evening at the boathouse with the punts, then sat by the fire at the Rook before turning in. Do you know if that's true?",
+   "lines_for": "bbff53299a5b",
+   "confront": "You told me you were at the boathouse, then sat by the fire at the Rook before turning in for the night. Is that the whole of it?"
+  },
+  {
+   "id": "s_surface_clara",
+   "kind": "testimony",
+   "speaker": "clara",
+   "surface": true,
+   "deceptive": false,
+   "title": "Clara Vale on the evening",
+   "text": "My brother dined with me at the manor, and afterward I sat alone in the drawing room with my sewing until I retired. It was a quiet, ordinary evening, and I have little more to add.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Clara Vale says she dined with her brother at the manor, then sat alone in the drawing room with her sewing until she retired. Do you know if that's true?",
+   "lines_for": "5ef01810ea16",
+   "confront": "You told me you dined with your brother, then sat alone in the drawing room with your sewing until you retired. Is that the whole of it?"
+  },
+  {
+   "id": "s_medical",
+   "kind": "record",
+   "medical": true,
+   "medical_v": 2,
+   "source": "e_exam",
+   "at": "surgery",
+   "title": "The doctor’s examination notes",
+   "text": "Examination of the deceased shows a heavy blow to the head. Death was from a heavy blow to the head, and it occurred between ten to eleven and quarter past eleven.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1370,
+    "to": 1395
+   },
+   "reactions": {
+    "bell": "Aye, that's the doctor's finding, writ while I stood by. Between ten to eleven and quarter past, she said. I've nothing to add to a medical matter, that's hers to answer for.",
+    "iris": "Yes, that's my own examination, and I stand by it. A heavy blow to the head, death within that window - ten to eleven to quarter past eleven. I measured it as carefully as the light allowed.",
+    "jonah": "Doctor knows her trade, I don't doubt it. Window like that's wide enough for most of the village to walk through. Don't put me in it nor out of it."
+   },
+   "to": null,
+   "show": "The examination notes show the deceased died from a heavy blow to the head, sometime between ten to eleven and quarter past eleven. Does that fit with what you know?",
+   "art": "notes",
+   "lines_for": "472035cbc67d"
+  },
+  {
+   "id": "s_medical_iris",
+   "kind": "testimony",
+   "medical": true,
+   "medical_v": 2,
+   "speaker": "iris",
+   "source": "e_exam",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1370,
+    "to": 1395
+   },
+   "title": "Dr Marsh on the body",
+   "text": "Death was from a heavy blow to the head, and it occurred between ten to eleven and quarter past eleven.",
+   "ask": "Doctor, what did you find when you examined Mr Vale?",
+   "to": null,
+   "show": "Dr Marsh says the blow to the head that killed him came between ten to eleven and quarter past eleven. Does that match what you saw?",
+   "confront": "You've told me the blow to the head that killed him came between ten to eleven and quarter past eleven. Is that your full account?",
+   "lines_for": "f7b35f52fef4"
+  },
+  {
+   "id": "s_surface_hugo",
+   "kind": "testimony",
+   "speaker": "hugo",
+   "surface": true,
+   "deceptive": false,
+   "title": "Hugo Vale on the evening",
+   "text": "I kept to my room the whole evening, love, novel and a decanter for company - didn't stir from it, really. Dull as anything, but there it is.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Hugo Vale says he kept to his room all evening with a novel and a decanter, never stirring. Does that square with what you know?",
+   "confront": "You said you kept to your room the whole evening, with just a novel and a decanter for company. Is that the whole of it?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "lines_for": "bc19369c7075"
+  },
+  {
+   "id": "s_surface_vicar",
+   "kind": "testimony",
+   "speaker": "vicar",
+   "surface": true,
+   "deceptive": false,
+   "title": "The Reverend Thomas Hale on the evening",
+   "text": "I spent the evening in the vestry, wrestling with Sunday's sermon - a text that gave me more trouble than I'd like to admit. After that I went up to bed, rather later than I intended, as is so often the case.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "The Reverend Hale says he spent the evening in the vestry on his sermon before going up to bed rather late. Do you know if that's true?",
+   "confront": "You told me you spent the evening in the vestry working on your sermon, then went up to bed later than you meant. Is that all?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "lines_for": "38a9f6f0542d"
+  },
+  {
+   "id": "s_surface_silas",
+   "kind": "testimony",
+   "speaker": "silas",
+   "surface": true,
+   "deceptive": false,
+   "title": "Silas Voss on the evening",
+   "text": "I was in the vestry office the whole evening, over my conveyancing papers - tedious stuff, but it doesn't finish itself. I went to bed once I'd done, nothing more remarkable than that.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Silas Voss says he was in the vestry office all evening over his conveyancing papers, then went straight to bed. Does that match what you saw?",
+   "confront": "You said you were in the vestry office the whole evening with your papers, then went straight to bed. Is that everything?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "lines_for": "c9ef3f6e6b43"
+  },
+  {
+   "id": "s_surface_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "surface": true,
+   "deceptive": false,
+   "title": "Arthur Bell on the evening",
+   "text": "I was down at the halt watching the late goods train come through, as I do most nights. Quiet enough along the line, nothing to report till I did my round after.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Constable Bell says he spent the evening at the halt watching the goods train, then did his round. Do you know if that's true?",
+   "confront": "You told me you were at the halt watching the goods train come through, then did your round after. Is that the whole of it?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "lines_for": "69a2638a381e"
+  },
+  {
+   "id": "s_surface_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "surface": true,
+   "deceptive": false,
+   "title": "Dr Iris Marsh on the evening",
+   "text": "I was at the surgery the whole evening, writing up my notes, in case anyone should need calling out. Nothing disturbed me, and I went to bed at a reasonable hour.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Dr Marsh says she was at the surgery all evening writing up her notes, then went to bed at a reasonable hour. Does that fit with what you know?",
+   "confront": "You said you were at the surgery the whole evening writing notes, then went to bed at a reasonable hour. Is that everything?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "lines_for": "f4fab3061413"
+  },
+  {
+   "id": "s_surface_ada",
+   "kind": "testimony",
+   "speaker": "ada",
+   "surface": true,
+   "deceptive": false,
+   "title": "Ada Finch on the evening",
+   "text": "I was keeping the bar same as ever, love, cup of tea for Mrs Lacey and all - busy enough with the regulars in and out. Can't say as I noticed anything queer, just a quiet night at the Rook til everyone drifted off home.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "show": "Ada Finch says she was behind the bar at the Rook all evening, same as ever, and noticed nothing unusual. Does that match what you remember of that night?",
+   "lines_for": "ddc83bc7b86e",
+   "confront": "You told me you were behind the bar all evening, same as ever, and noticed nothing queer. Is that the whole of it?"
+  },
+  {
+   "id": "s_surface_vera",
+   "kind": "testimony",
+   "speaker": "vera",
+   "surface": true,
+   "deceptive": true,
+   "title": "Vera Lacey on the evening",
+   "text": "Oh, I sketched a while in the parlour, and later took a little air by the river - one does so like the lamp on the water at night, don't you think? Then back to my cocoa and my sketchbook, quite the dull evening really.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Vera Lacey says she sketched in the parlour, took some air by the river, then returned to her cocoa and sketchbook. Does that square with what you saw?",
+   "confront": "You said you sketched in the parlour, took some air by the river, then returned to your cocoa and sketchbook. Is that all?",
+   "agrees_checked": 3,
+   "surface_why": "She claims she merely took a little air by the river and admired the lamp, omitting and disguising that she actually met Edmund at the memorial lamp where he embraced her - a false, sanitized account of an innocent stroll rather than the real tryst.",
+   "surface_checked": "cover",
+   "lines_for": "5d7cbc893819"
+  },
+  {
+   "id": "s_surface_rowan",
+   "kind": "testimony",
+   "speaker": "rowan",
+   "surface": true,
+   "deceptive": false,
+   "title": "Rowan Pike on the evening",
+   "text": "I was out among the glasshouses most the evening, working on till I'd a mind for bed. Quiet enough night for it, nobody troubling me and me troubling nobody.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Rowan Pike says he was out among the glasshouses most of the evening before turning in. Do you know if that's true?",
+   "confront": "You told me you were out among the glasshouses most the evening before you went to bed. Is that the whole of it?",
+   "agrees_checked": 3,
+   "surface_checked": "honest",
+   "lines_for": "a7c43b4502fa"
+  },
+  {
+   "id": "s_surface_dora",
+   "kind": "testimony",
+   "speaker": "dora",
+   "surface": true,
+   "deceptive": true,
+   "title": "Dorothy Pruett on the evening",
+   "text": "I saw to the evening post and cleared the pillar box as I always do, then came back to do the accounts before bed. Nothing out of the ordinary occurred, Constable, and I retired at a sensible hour.",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Dorothy Pruett says she saw to the evening post, cleared the pillar box, then did the accounts before retiring at a sensible hour. Does that match what you know?",
+   "confront": "You said you saw to the post, cleared the pillar box, then did the accounts before retiring at a sensible hour. Is that everything?",
+   "agrees_checked": 3,
+   "surface_why": "She says nothing out of the ordinary occurred, but she actually witnessed Edmund embrace Vera and later burned her memorandum book of opened letters - an active concealment of material events, not mere omission of trivial detail.",
+   "surface_checked": "cover",
+   "lines_for": "d9cb1408e7da"
+  },
+  {
+   "id": "s_morning_hugo",
+   "kind": "testimony",
+   "speaker": "hugo",
+   "morning": true,
+   "deceptive": false,
+   "title": "Hugo Vale on the morning",
+   "text": "Quarter to eight, that's when Bell came and gave Clara and me the news - proper knocked the wind out of us, I don't mind saying. Up till then it's not much of a story, just me rattling about the manor on my own, nothing worth the telling.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Hugo Vale says Bell brought him and Clara the news at quarter to eight, and before that he was simply about the manor alone. Does that match what you know?",
+   "confront": "You said Bell brought you and Clara the news at quarter to eight, and before that you were simply about the manor alone. Is that all?",
+   "lines_for": "ce4ac57ea0d2"
+  },
+  {
+   "id": "s_morning_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "morning": true,
+   "deceptive": false,
+   "title": "Arthur Bell on the morning",
+   "text": "On my round, at half past six, I found Edmund's body behind the memorial. I fetched Dr Marsh from the surgery at about twenty to seven, she examined the body and the head wound at quarter to seven, and at quarter to eight I broke the news to Clara and Hugo Vale at the manor.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Constable Bell says he found Edmund's body behind the memorial at half past six, fetched Dr Marsh at twenty to seven, and told Clara and Hugo at quarter to eight. Do you know if that's right?",
+   "confront": "You told me you found the body at half past six, fetched Dr Marsh at twenty to seven, and broke the news to Clara and Hugo at quarter to eight. Is that everything?",
+   "lines_for": "72dcb4cb18ee"
+  },
+  {
+   "id": "s_morning_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "morning": true,
+   "deceptive": false,
+   "title": "Dr Iris Marsh on the morning",
+   "text": "Bell fetched me from the surgery at about twenty to seven, and at quarter to seven I examined the body and the head wound.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Dr Marsh says Bell fetched her from the surgery at twenty to seven and she examined the body and head wound at quarter to seven. Does that fit with what you know?",
+   "confront": "You told me Bell fetched you at twenty to seven and you examined the body and the wound at quarter to seven. Is that the whole of it?",
+   "lines_for": "fa43c9278fe4"
+  },
+  {
+   "id": "s_morning_clara",
+   "kind": "testimony",
+   "speaker": "clara",
+   "morning": true,
+   "deceptive": false,
+   "title": "Clara Vale on the morning",
+   "text": "At quarter to eight, Bell came to the manor and told Hugo and me of the death.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "to": null,
+   "show": "Clara Vale says Bell came to the manor at quarter to eight and told her and Hugo of the death. Do you know if that's true?",
+   "confront": "You told me Bell came to the manor at quarter to eight and told you and Hugo of the death. Is that everything?",
+   "lines_for": "ce216b9f611e"
+  },
+  {
+   "id": "s_wound",
+   "kind": "observation",
+   "title": "The head wound",
+   "text": "Dr Marsh: \"One blow, right temple, from the front; he was facing whoever did it. Something heavy and narrow, iron by the rust in the wound. Dead since round about eleven last night.\"",
+   "at": "square",
+   "source": "e_exam",
+   "claim": {
+    "pred": "culpritTrait",
+    "trait": "handed",
+    "value": "left"
+   },
+   "requires": [
+    "s_card"
+   ],
+   "unlock": "When Dr Marsh sees the card, she tells you what she found and had kept from everyone but Bell.",
+   "needs": [
+    "r_hand"
+   ],
+   "reading": "The blow came from the front and landed on the right side of his head. A right-handed swing from the front lands on the left side, so this was most naturally a left-handed swing.",
+   "art": "wound",
+   "to": null,
+   "show": "Dr Marsh tells me he died from a single blow to the right temple, struck from the front with something heavy and narrow, likely iron, around eleven last night. Does that match what you know?",
+   "reactions": {
+    "bell": "That's as the doctor told it to me, and I saw the wound myself behind the memorial. Iron and narrow, she said - I've turned that over more than once since.",
+    "iris": "Front-on, right temple, something heavy and narrow - iron, by the rust left in it. He was facing his attacker; I'll say nothing more than what the wound shows me.",
+    "jonah": "Facing him, you say. Man don't often turn his back on someone he trusts, nor on a stranger neither. Iron's common enough down by the river - don't make it mine."
+   },
+   "unlock_full": "Bell told Dr Marsh to keep her findings to herself. When she sees his signed card, she tells you what she found.",
+   "unlock_lead": "Bell handed over his signed card, naming its bearer the man he trusted with the dead man's effects.",
+   "lines_for": "0a52083826fa"
+  },
+  {
+   "id": "s_vera_alibi",
+   "kind": "testimony",
+   "title": "Mrs Finch on her lodger",
+   "text": "\"Mrs Lacey? Came in about twenty-five past nine, love, and sat in my parlour with her sketchbook till gone midnight. I was in and out with the pot all night and she never stirred, not even to the door.\"",
+   "at": "inn",
+   "speaker": "ada",
+   "source": "e_vera_parlour",
+   "ask": "Where was Mrs Lacey last night?",
+   "claim": {
+    "pred": "wasAt",
+    "person": "vera",
+    "place": "inn",
+    "from": 1305,
+    "to": 1440
+   },
+   "requires": [
+    "s_card"
+   ],
+   "unlock": "Mrs Finch won't talk about her paying lodger's comings and goings to a stranger. Once you show her the constable's card, she accepts that he has authorised you and tells you.",
+   "to": "vera",
+   "direct": "Mrs Finch says you came in about twenty-five past nine and sat in her parlour sketching till past midnight, never leaving. Is that true?",
+   "show": "Mrs Finch says you came in about twenty-five past nine and sat in her parlour sketching till past midnight, never leaving. Is that true?",
+   "confront": "You told me Mrs Lacey came in about twenty-five past nine and stayed in your parlour sketching till past midnight. Is that the whole of it?",
+   "reactions": {
+    "vera": "Mrs Finch keeps a good eye on her parlour, doesn't she. I sat with my sketchbook, as she says - what else would a woman do of an evening, with nowhere else to be acknowledged?"
+   },
+   "lines_for": "8b78206bc100"
+  },
+  {
+   "id": "s_ada_jonah",
+   "kind": "testimony",
+   "title": "Mrs Finch on the boatman",
+   "text": "\"Jonah Reed sat by my fire with a face like thunder. Said he'd seen the squire with his hands on her in the square, and him old enough to be her father. Mrs Lacey, he meant. Been sweet on her since the day she came, poor lamb. Talk, that's all it was.\"",
+   "at": "inn",
+   "speaker": "ada",
+   "source": "e_jonah_drink",
+   "ask": "Who else was in the bar last night?",
+   "claim": {
+    "pred": "related",
+    "a": "jonah",
+    "rel": "jealous_of",
+    "b": "edmund"
+   },
+   "requires": [
+    "s_card"
+   ],
+   "unlock": "Mrs Finch is fond of Jonah and won't gossip to a stranger about him, but when you show her the constable's card she tells you what she heard.",
+   "to": null,
+   "show": "Mrs Finch says Jonah Reed sat by her fire in a temper, saying he'd seen the squire with his hands on Mrs Lacey in the square. Do you know anything about that?",
+   "lines_for": "4631a00737df"
+  },
+  {
+   "id": "s_dora_saw",
+   "kind": "testimony",
+   "title": "Miss Pruett saw an embrace",
+   "text": "\"At half past nine precisely, clearing the box, I saw Mr Vale with that Lacey woman under the memorial lamp. In his arms. In the public square. I make no remarks; I merely record what I see.\"",
+   "at": "post",
+   "speaker": "dora",
+   "source": "e_dora_box",
+   "because": [
+    "a_dora_believes"
+   ],
+   "ask": "Did you see anything in the square last night?",
+   "to": null,
+   "show": "Miss Pruett says that at half past nine she saw Mr Vale and Mrs Lacey embracing under the memorial lamp in the square. Can you tell me about that?",
+   "same_as": "night",
+   "lines_for": "6691804dfe89"
+  },
+  {
+   "id": "s_envelope",
+   "kind": "document",
+   "title": "An unposted letter",
+   "text": "A stamped envelope in the dead man's coat, addressed to his solicitor. Inside: \"I mean to acknowledge Vera Lacey as my natural daughter by her late mother, and to provide for her. Draw up the papers. I told her so tonight. E.V.\"",
+   "at": "square",
+   "source": "e_walk",
+   "claim": {
+    "pred": "related",
+    "a": "vera",
+    "rel": "daughter_of",
+    "b": "edmund"
+   },
+   "requires": [
+    "s_card"
+   ],
+   "unlock": "Bell draws the letter he took from the dead man's coat from his tunic and hands it over.",
+   "art": "envelope",
+   "to": null,
+   "show": "I found an unposted letter in the dead man's coat, meaning to acknowledge Vera Lacey as his daughter and provide for her, and saying he'd told her so that night. Did you know of this?",
+   "reactions": {
+    "jonah": "His own hand, that - can't argue a dead man's letter. Natural daughter, is it. Puts a different shape on that embrace by the lamp, don't it, though it changes nothing of what I saw that night.",
+    "vera": "So he meant it—he'd actually written to his man about it. I'll not pretend to be sorry you found that; it's only what he told me himself, by the lamp, plain as anything. Funny, isn't it—I finally get acknowledged, and now it reads like a motive instead of a kindness."
+   },
+   "unlock_full": "Bell took the letter from the dead man's coat and keeps it in his tunic. He hands it over when you ask for it as the man his card appoints.",
+   "unlock_lead": "Bell handed over his signed card, naming its bearer the man he trusted with the dead man's effects.",
+   "lines_for": "42eae8d16da7"
+  },
+  {
+   "id": "s_notebook",
+   "kind": "document",
+   "title": "The pocket notebook",
+   "text": "A memorandum in pencil, dated yesterday: \"Write P.M.G. re Miss P. and the steamed envelopes. Third complaint.\"",
+   "at": "square",
+   "source": "e_walk",
+   "claim": {
+    "pred": "related",
+    "a": "edmund",
+    "rel": "threatened_to_report",
+    "b": "dora"
+   },
+   "requires": [
+    "s_card"
+   ],
+   "unlock": "Bell gives up the notebook from the dead man's effects he had been holding.",
+   "art": "notebook",
+   "to": null,
+   "show": "His notebook has a note from yesterday about writing to the Postmaster General regarding Miss P. and steamed envelopes, calling it a third complaint. Do you know what that refers to?",
+   "reactions": {
+    "jonah": "Steamed envelopes - that's post office business, not mine. Man's memorandum book's full of other folks' sins, I'd wager, not just one.",
+    "dora": "Dora's lips thin and her hands fuss with her collar. That's... that's a private note of no consequence, merely a reminder to myself about postal regulations, nothing more. I'm sure the squire had many complaints about many things, Inspector, and most of them came to nothing."
+   },
+   "unlock_full": "The notebook is among the effects Bell is holding. He gives it up to the bearer of his own card.",
+   "unlock_lead": "Bell handed over his signed card, naming its bearer the man he trusted with the dead man's effects.",
+   "lines_for": "217f728e9485"
+  },
+  {
+   "id": "s_notice",
+   "kind": "document",
+   "title": "A notice in the potting shed",
+   "text": "Pinned above the bench: \"R. Pike: one week's notice, the arrangement to end Saturday. E. Vale.\" Someone has driven a dibber through the signature.",
+   "at": "greenhouse",
+   "source": "e_rowan_glass",
+   "claim": {
+    "pred": "related",
+    "a": "edmund",
+    "rel": "dismissed",
+    "b": "rowan"
+   },
+   "requires": [
+    "s_card"
+   ],
+   "unlock": "Pike keeps strangers out of his potting shed. When you show him the constable's card, he lets you in with a grunt, and the notice is pinned above the bench.",
+   "art": "note",
+   "to": null,
+   "show": "In the potting shed there's a notice giving Mr Pike a week's notice ending Saturday, signed by Mr Vale, with the signature stabbed through by a dibber. Do you know anything about this?",
+   "reactions": {
+    "rowan": "Aye, that's his hand, right enough - gave me a week after eleven year, like I was nothing. I never touched that dibber through his name, though I'll not pretend I wasn't glad to see it done.",
+    "jonah": "Pike's trouble, not mine. Man drives a dibber through a name, he's angrier than I ever was with the squire - and I'd nothing against him over wages."
+   },
+   "lines_for": "01d431ce55c9"
+  },
+  {
+   "id": "t_dora",
+   "kind": "testimony",
+   "title": "Miss Pruett's evening",
+   "text": "\"I cleared the pillar box at half past nine, as regulations require, and then I was at my own accounts until half past ten and bed by eleven. I keep proper hours, unlike some.\"",
+   "at": "post",
+   "speaker": "dora",
+   "source": "e_dora_accounts",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Miss Pruett says she cleared the pillar box at half past nine, did her accounts until half past ten, and was in bed by eleven. Can you confirm any of that?",
+   "confront": "You told me you cleared the pillar box at half past nine, did your accounts, and were in bed by eleven. Is that the whole of it?",
+   "same_as": "night",
+   "lines_for": "7a3afefaf73b"
+  },
+  {
+   "id": "t_jonah",
+   "kind": "testimony",
+   "title": "Mr Reed's evening",
+   "text": "\"I see to the punts. I take a glass at the Rook. Then I go home to the river. That is my evening, and it is a short one to tell.\"",
+   "at": "boathouse",
+   "speaker": "jonah",
+   "source": "e_jonah_drink",
+   "because": [
+    "a_jonah_fear"
+   ],
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Mr Reed says his evening was seeing to the punts, a glass at the Rook, then home to the river. Does that fit with what you saw?",
+   "confront": "You told me your evening was seeing to the punts, a glass at the Rook, then home to the river. Is that the whole of it?",
+   "same_as": "night",
+   "lines_for": "f799996f2cab"
+  },
+  {
+   "id": "t_rowan",
+   "kind": "testimony",
+   "title": "Mr Pike's evening",
+   "text": "\"In the glasshouses till I couldn't see. Nobody to vouch but the tomatoes, and they're not talking.\"",
+   "at": "greenhouse",
+   "speaker": "rowan",
+   "source": "e_rowan_glass",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Mr Pike says he was in the glasshouses until he couldn't see, with no one to vouch for him. Can you confirm that?",
+   "confront": "You told me you were in the glasshouses until you couldn't see, with no one to vouch for you. Is that the whole of it?",
+   "same_as": "night",
+   "lines_for": "f595eb9cd8fa"
+  },
+  {
+   "id": "t_vera",
+   "kind": "testimony",
+   "title": "Mrs Lacey's evening",
+   "text": "\"Where would a widow be of an evening but in Mrs Finch's parlour with a pencil? Ask her. Didn't she keep filling my cup? And why do you look at me like that?\"",
+   "at": "inn",
+   "speaker": "vera",
+   "source": "e_vera_parlour",
+   "ask": "Where were you last night?",
+   "to": null,
+   "show": "Mrs Lacey says she spent the evening in Mrs Finch's parlour with her pencil, and that Mrs Finch kept filling her cup. Does that match what you saw?",
+   "confront": "You told me you spent the evening in Mrs Finch's parlour with your pencil, and that she kept filling your cup. Is that the whole of it?",
+   "same_as": "night",
+   "lines_for": "0afb2aea5dc1"
+  },
+  {
+   "id": "s_card",
+   "kind": "item",
+   "title": "The constable's card",
+   "text": "A printed police card, written over in pencil in a heavy hand: \"The bearer acts at my request in the matter of Mr E. Vale. All parties to assist. A. Bell, P.C.\" Bell taps his tunic pocket. \"His things stay with me till you ask proper. And the doctor's said nothing to nobody.\"",
+   "at": "halt",
+   "source": "e_bell_phone",
+   "requires": [
+    "s_bell_note"
+   ],
+   "unlock": "His note on the memorial step says to find him at the halt telephone. He is there, and gives you the card in person.",
+   "art": "card",
+   "to": "bell",
+   "reactions": {
+    "bell": "That's my own card, wrote plain so there's no mistaking my authority in this. His things stay with me till it's asked proper, same as I said - and the doctor's held her tongue as I bid her."
+   },
+   "direct": "This is your card, written in your own hand saying the bearer acts for you in the matter of Mr Vale. Can you tell me what this is about?",
+   "show": "This is Constable Bell's card, marked over in his own hand saying the bearer acts for him in the matter of Mr Vale. Did he ask you to assist in this?",
+   "lines_for": "881e3b335668"
+  },
+  {
+   "id": "s_ada_lie",
+   "kind": "testimony",
+   "title": "Mrs Finch on her regulars",
+   "text": "\"Jonah Reed? Sat in his corner by my fire from half nine till I called time past midnight, love. Never set foot out the door. I'd swear to it on my mother's Bible.\"",
+   "at": "inn",
+   "speaker": "ada",
+   "because": [
+    "a_ada_protect"
+   ],
+   "source": "e_ada_resolve",
+   "ask": "Was Mr Reed in the bar last night?",
+   "claim": {
+    "pred": "wasAt",
+    "person": "jonah",
+    "place": "inn",
+    "from": 1305,
+    "to": 1440
+   },
+   "to": "jonah",
+   "show": "Mrs Finch now says Jonah Reed sat by her fire from half nine till past midnight and never left, swearing to it on her mother's Bible. Is that true?",
+   "reactions": {
+    "jonah": "Ada's a kind soul and over-fond of her own Bible oaths. If she says I sat by her fire past midnight, I'll not call the woman a liar to her face."
+   },
+   "direct": "Mrs Finch says you sat by her fire from half nine till past midnight and never stepped out. Is that really so?",
+   "confront": "You told me Jonah Reed sat by your fire from half nine till past midnight, never once stepping out. Is that really so?",
+   "lines_for": "5a14fc9f4119"
+  },
+  {
+   "id": "s_slate",
+   "kind": "record",
+   "title": "The slate behind the bar",
+   "text": "Chalked on the reckoning slate behind the bar, among the regulars' names: \"J. Reed: 3 pts, pd 10.40.\" The entries beneath it run on to \"pd 12.05\". The chalk is unsmudged.",
+   "at": "inn",
+   "source": "e_ada_slate",
+   "requires": [
+    "s_card"
+   ],
+   "unlock": "Mrs Finch keeps the slate under the counter, out of customers' sight. When you show the constable's card and ask to see the night's reckonings, she can't refuse.",
+   "claim": {
+    "pred": "wasAt",
+    "person": "jonah",
+    "place": "inn",
+    "from": 1305,
+    "to": 1360
+   },
+   "defeats": [
+    "s_ada_lie"
+   ],
+   "art": "slate",
+   "to": null,
+   "show": "The reckoning slate behind the bar shows Jonah Reed paying for three drinks at ten forty, with later entries running to five past midnight and no chalk smudged. Can you account for that?",
+   "reactions": {
+    "ada": "Oh - well, that's my own chalk, love, I'll not deny it. I may have... misremembered the hour, is all, fretting as I was for him - but my heart was in the right place, swearing as I did.",
+    "jonah": "Chalk don't lie, I grant you, nor does Ada mean to - she's soft on me and said more than she ought out of kindness. Three pints and paid, that's all it shows; it don't put a pin in my hand."
+   },
+   "lines_for": "18da03d36674"
+  },
+  {
+   "id": "b_dora_grate",
+   "kind": "behavior",
+   "title": "A fire on a warm morning",
+   "text": "The post office is close and warm, yet a fire burns in the grate behind the counter, and the air smells of scorched paper. When you come in, Miss Pruett puts down the poker quickly and stands between you and the hearth. \"Damp in the sorting room,\" she says, before you have asked anything.",
+   "at": "post",
+   "source": "e_dora_burn",
+   "about": "dora",
+   "explainedBy": [
+    "s_burnt_pages"
+   ],
+   "to": "dora",
+   "direct": "You had a fire burning this morning though the office was already warm, and the air smelled of scorched paper, and you stood before the hearth as I came in. What were you burning?",
+   "show": "Miss Pruett had a fire burning in the post office on a warm morning, the air smelling of scorched paper, and she put down the poker and stood before the hearth when I came in. Do you know why?",
+   "confront": "You had a fire burning this morning though the office was already warm, and the air smelled of scorched paper, and you stood before the hearth as I came in. What were you burning?",
+   "reactions": {
+    "dora": "Damp in the sorting room, Inspector, that's all it is - paper takes the damp something terrible this time of year and I'll not have mould getting into the ledgers."
+   },
+   "lines_for": "cd01268a6e96"
+  },
+  {
+   "id": "s_burnt_pages",
+   "kind": "trace",
+   "title": "Pages in the grate",
+   "text": "Among the ashes are the curled remains of a small memorandum book in a neat, prim hand. A few lines can still be read: \"...Manor, to London, opened over kettle, re-gummed...\" and \"...3rd inst., from Bath, read, resealed...\" Every date is from earlier weeks. Nothing on them is dated yesterday.",
+   "at": "post",
+   "source": "e_dora_burn",
+   "requires": [
+    "s_card"
+   ],
+   "unlock": "The grate is on the private side of the counter, and Miss Pruett will not let you through until you show the constable's card. Then she has to stand aside, and you can stoop to the ashes.",
+   "art": "ashes",
+   "to": null,
+   "show": "In the grate I found the burnt remains of a memorandum book in a neat, prim hand, mentioning letters opened over a kettle and resealed, though none dated yesterday. Do you know whose book that might be?",
+   "reactions": {
+    "dora": "Old correspondence notes, nothing more - a post office keeps all manner of memoranda, and I burn what's past its use so the files don't clutter. There's nothing there that touches yesterday, as you can plainly see."
+   },
+   "lines_for": "5e1ba4f27d3d"
+  },
+  {
+   "id": "s_bell_note",
+   "kind": "document",
+   "title": "The constable's note",
+   "text": "Dr Marsh hands over a folded, torn pocket-book leaf in a heavy pencil hand: \"Gone to the Halt telephone to ring County. Investigator to find me there. Nobody to touch nothing. A.B.\" She adds nothing about the body.",
+   "at": "surgery",
+   "source": "e_bell_note_left",
+   "requires": [
+    "s_label"
+   ],
+   "unlock": "The fallen label sends enquiries to the surgery. There Dr Marsh gives you the note the constable left with her for the investigator.",
+   "art": "note",
+   "to": null,
+   "show": "Dr Marsh has given me a torn note from Constable Bell saying he'd gone to ring County from the Halt telephone and that nobody was to touch anything. Did you see him leave?",
+   "reactions": {
+    "bell": "That's my own note, left with the doctor as I said I would - nobody to touch nothing till the proper man came. I kept my word on that, whatever else wants sorting.",
+    "iris": "Aye, that's Bell's hand - heavy pencil, torn leaf, nothing fancy about him. He left it with me to pass on, and I've told you all I observed of the body myself; the note's his business, not mine."
+   },
+   "lines_for": "618b32395e6c"
+  },
+  {
+   "id": "s_cordon",
+   "kind": "absence",
+   "title": "An empty cordon",
+   "text": "The space behind the memorial is roped off, but no constable stands guard. On one post a short loop of fresh string hangs from the rope, snapped at the knot. The morning wind is coming in hard off the river.",
+   "at": "square",
+   "source": "e_bell_card",
+   "art": "cordon",
+   "to": null,
+   "show": "The cordon behind the memorial stands empty with no constable on guard, and a loop of fresh string hangs snapped from the rope. Did you see anyone near it?",
+   "reactions": {
+    "bell": "String's snapped where I tied it, nothing more sinister than this wind off the river - I ran the label myself before I went for the telephone. No constable's standing there because there's only one of me, and I was at the halt as I said I'd be."
+   },
+   "lines_for": "36ede7144cef"
+  },
+  {
+   "id": "s_label",
+   "kind": "item",
+   "title": "A label by the pillar box",
+   "text": "Caught against the foot of the pillar box, damp and creased, is a railway luggage label with a torn loop of string. It is pencilled in a heavy hand: \"POLICE. Keep off. Enquiries at the surgery.\"",
+   "at": "square",
+   "source": "e_gust",
+   "requires": [
+    "s_cordon"
+   ],
+   "unlock": "The snapped loop of string on the cordon rope shows that something was tied there and has gone. You search the square downwind and find it caught against the pillar box.",
+   "art": "label",
+   "to": null,
+   "show": "By the pillar box I found a damp luggage label with torn string, pencilled 'Police. Keep off. Enquiries at the surgery.' Do you know how it came to be there?",
+   "lines_for": "840fca9153d7"
+  },
+  {
+   "id": "s_saw_ada_vera_inn",
+   "kind": "testimony",
+   "speaker": "ada",
+   "sighting": true,
+   "source": "e_ada_bar",
+   "claim": {
+    "pred": "wasAt",
+    "person": "vera",
+    "place": "inn",
+    "from": 1200,
+    "to": 1278
+   },
+   "title": "Ada Finch saw Vera Lacey",
+   "text": "I saw Mrs Lacey in the Rook & Lantern at quarter past eight, love.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "vera",
+   "direct": "Ada Finch says she saw you in the Rook & Lantern at quarter past eight. Does that sound right to you?",
+   "show": "Ada Finch says she saw Mrs Lacey in the Rook & Lantern at quarter past eight. Can you confirm that?",
+   "confront": "You told me you saw Mrs Lacey in the Rook & Lantern at quarter past eight. Is that right?",
+   "lines_for": "76af1ade2b93",
+   "reactions": {
+    "vera": "Quarter past eight? Then that's where I was, sketching, with Ada keeping my cup filled. You'll find my drawing to prove it, if you doubt an innkeeper's word over mine."
+   }
+  },
+  {
+   "id": "s_saw_ada_jonah_inn",
+   "kind": "testimony",
+   "speaker": "ada",
+   "sighting": true,
+   "source": "e_ada_bar",
+   "claim": {
+    "pred": "wasAt",
+    "person": "jonah",
+    "place": "inn",
+    "from": 1305,
+    "to": 1358
+   },
+   "title": "Ada Finch saw Jonah Reed",
+   "text": "I saw Mr Reed in the Rook & Lantern at ten o'clock, love.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "jonah",
+   "direct": "Ada Finch says she saw you in the Rook & Lantern at ten o'clock. Is that so?",
+   "show": "Ada Finch says she saw Mr Reed in the Rook & Lantern at ten o'clock. Does that match what you know?",
+   "confront": "You told me you saw Mr Reed in the Rook & Lantern at ten o'clock. Is that correct?",
+   "lines_for": "5d018665c5a5",
+   "reactions": {
+    "jonah": "Ten o'clock, aye, that sounds about right. A man tends his boats, then takes his glass at the Rook, same as any other night. Ada keeps good time on the slate, you can trust her for that."
+   }
+  },
+  {
+   "id": "s_saw_dora_jonah_square",
+   "kind": "testimony",
+   "speaker": "dora",
+   "sighting": true,
+   "source": "e_dora_box",
+   "claim": {
+    "pred": "wasAt",
+    "person": "jonah",
+    "place": "square",
+    "from": 1285,
+    "to": 1300
+   },
+   "title": "Dorothy Pruett saw Jonah Reed",
+   "text": "I saw Mr Reed in the Village square at about half past nine.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "jonah",
+   "direct": "Dorothy Pruett says she saw you in the village square at about half past nine. Is that right?",
+   "show": "Dorothy Pruett says she saw Mr Reed in the village square at about half past nine. Can you tell me anything about that?",
+   "confront": "You told me you saw Mr Reed in the village square at about half past nine. Is that accurate?",
+   "lines_for": "3666991b2a57",
+   "reactions": {
+    "jonah": "Half past nine, in the square? Could be I crossed it on my way to the Rook, a man's got to pass through somewhere. I don't keep a clock on every step I take."
+   }
+  },
+  {
+   "id": "s_saw_dora_vera_square",
+   "kind": "testimony",
+   "speaker": "dora",
+   "sighting": true,
+   "source": "e_dora_box",
+   "claim": {
+    "pred": "wasAt",
+    "person": "vera",
+    "place": "square",
+    "from": 1290,
+    "to": 1300
+   },
+   "title": "Dorothy Pruett saw Vera Lacey",
+   "text": "I saw Mrs Lacey in the Village square at twenty-five to ten.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "vera",
+   "direct": "Dorothy Pruett says she saw you in the village square at twenty-five to ten. Does that sound right?",
+   "show": "Dorothy Pruett says she saw Mrs Lacey in the village square at twenty-five to ten. Do you know if that's true?",
+   "confront": "You told me you saw Mrs Lacey in the village square at twenty-five to ten. Is that correct?",
+   "lines_for": "e3f5e3f4f3f5",
+   "reactions": {
+    "vera": "Twenty-five to ten, in the square? I don't recall every corner I passed that night, Inspector. A woman out walking isn't always where she's expected to be."
+   }
+  },
+  {
+   "id": "s_saw_vera_dora_square",
+   "kind": "testimony",
+   "speaker": "vera",
+   "sighting": true,
+   "source": "e_meeting",
+   "claim": {
+    "pred": "wasAt",
+    "person": "dora",
+    "place": "square",
+    "from": 1290,
+    "to": 1300
+   },
+   "title": "Vera Lacey saw Dorothy Pruett",
+   "text": "I saw Miss Pruett in the Village square at twenty-five to ten.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "dora",
+   "direct": "Vera Lacey says she saw you in the village square at twenty-five to ten. Is that accurate?",
+   "show": "Vera Lacey says she saw Miss Pruett in the village square at twenty-five to ten. Can you confirm that?",
+   "confront": "You told me you saw Miss Pruett in the village square at twenty-five to ten. Is that so?",
+   "lines_for": "27c3c2ead11f",
+   "reactions": {
+    "dora": "Twenty-five to ten, you say. Yes, I should have been clearing the box about then, as is proper and regular. I keep to my hours, Inspector, whatever else is said of me."
+   }
+  },
+  {
+   "id": "s_saw_vera_jonah_square",
+   "kind": "testimony",
+   "speaker": "vera",
+   "sighting": true,
+   "source": "e_meeting",
+   "claim": {
+    "pred": "wasAt",
+    "person": "jonah",
+    "place": "square",
+    "from": 1290,
+    "to": 1300
+   },
+   "title": "Vera Lacey saw Jonah Reed",
+   "text": "I saw Mr Reed in the Village square at twenty-five to ten.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "jonah",
+   "direct": "Vera Lacey says she saw you in the village square at twenty-five to ten. Is that so?",
+   "show": "Vera Lacey says she saw Mr Reed in the village square at twenty-five to ten. Do you know anything about that?",
+   "confront": "You told me you saw Mr Reed in the village square at twenty-five to ten. Is that right?",
+   "lines_for": "d9a063f53395",
+   "reactions": {
+    "jonah": "The square, twenty-five to ten? Could be, could be not, a man don't check his watch crossing from the boathouse to the Rook. I'll not quarrel with a lady's memory."
+   }
+  },
+  {
+   "id": "s_saw_vera_jonah_inn",
+   "kind": "testimony",
+   "speaker": "vera",
+   "sighting": true,
+   "source": "e_vera_parlour",
+   "claim": {
+    "pred": "wasAt",
+    "person": "jonah",
+    "place": "inn",
+    "from": 1305,
+    "to": 1358
+   },
+   "title": "Vera Lacey saw Jonah Reed",
+   "text": "I saw Mr Reed in the Rook & Lantern at ten o'clock.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "jonah",
+   "direct": "Vera Lacey says she saw you in the Rook & Lantern at ten o'clock. Is that true?",
+   "show": "Vera Lacey says she saw Mr Reed in the Rook & Lantern at ten o'clock. Does that fit with what you know?",
+   "confront": "You told me you saw Mr Reed in the Rook & Lantern at ten o'clock. Is that correct?",
+   "lines_for": "f95fb103773b",
+   "reactions": {
+    "jonah": "Ten o'clock at the Rook, that sounds right enough. A glass after the boats, same as always. Mrs Lacey keeps sharper hours than I do, it seems."
+   }
+  },
+  {
+   "id": "s_saw_clara_edmund_manor",
+   "kind": "testimony",
+   "speaker": "clara",
+   "sighting": true,
+   "source": "e_dinner",
+   "claim": {
+    "pred": "wasAt",
+    "person": "edmund",
+    "place": "manor",
+    "from": 1200,
+    "to": 1278
+   },
+   "title": "Clara Vale saw Edmund Vale",
+   "text": "I saw Mr Vale at Vale Manor at quarter past eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "edmund",
+   "direct": "Clara Vale says she saw you at Vale Manor at quarter past eight. Is that so?",
+   "show": "Clara Vale says she saw Mr Vale at Vale Manor at quarter past eight. Can you confirm that for me?",
+   "confront": "You told me you saw Mr Vale at Vale Manor at quarter past eight. Is that correct?",
+   "lines_for": "a83e756f46c7"
+  },
+  {
+   "id": "s_saw_clara_hugo_manor",
+   "kind": "testimony",
+   "speaker": "clara",
+   "sighting": true,
+   "source": "e_dinner",
+   "claim": {
+    "pred": "wasAt",
+    "person": "hugo",
+    "place": "manor",
+    "from": 1200,
+    "to": 1278
+   },
+   "title": "Clara Vale saw Hugo Vale",
+   "text": "I saw Mr Hugo at Vale Manor at quarter past eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "hugo",
+   "direct": "Clara Vale says she saw you at Vale Manor at quarter past eight. Does that sound right?",
+   "show": "Clara Vale says she saw Mr Hugo at Vale Manor at quarter past eight. Do you know if that's accurate?",
+   "confront": "You told me you saw Mr Hugo at Vale Manor at quarter past eight. Is that right?",
+   "lines_for": "e3a4477127bd",
+   "reactions": {
+    "hugo": "Quarter past eight? Sounds about right, old thing had my nose in a novel and the decanter close by. Thrilling stuff, I know, hardly the makings of a scandal."
+   }
+  },
+  {
+   "id": "s_saw_dora_edmund_square",
+   "kind": "testimony",
+   "speaker": "dora",
+   "sighting": true,
+   "source": "e_dora_box",
+   "claim": {
+    "pred": "wasAt",
+    "person": "edmund",
+    "place": "square",
+    "from": 1290,
+    "to": 1300
+   },
+   "title": "Dorothy Pruett saw Edmund Vale",
+   "text": "I saw Mr Vale in the Village square at twenty-five to ten.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "edmund",
+   "direct": "Dorothy Pruett says she saw you in the village square at twenty-five to ten. Is that so?",
+   "show": "Dorothy Pruett says she saw Mr Vale in the village square at twenty-five to ten. Can you tell me more about that?",
+   "confront": "You told me you saw Mr Vale in the village square at twenty-five to ten. Is that correct?",
+   "lines_for": "9e85fd862ac6"
+  },
+  {
+   "id": "s_saw_hugo_clara_manor",
+   "kind": "testimony",
+   "speaker": "hugo",
+   "sighting": true,
+   "source": "e_hugo_home",
+   "claim": {
+    "pred": "wasAt",
+    "person": "clara",
+    "place": "manor",
+    "from": 1200,
+    "to": 1278
+   },
+   "title": "Hugo Vale saw Clara Vale",
+   "text": "I saw Miss Vale at Vale Manor at quarter past eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "clara",
+   "direct": "Hugo Vale says he saw you at Vale Manor at quarter past eight. Does that sound right?",
+   "show": "Hugo Vale says he saw Miss Vale at Vale Manor at quarter past eight. Do you know if that's true?",
+   "confront": "You told me you saw Miss Vale at Vale Manor at quarter past eight. Is that right?",
+   "lines_for": "b4d3e200bcad",
+   "reactions": {
+    "clara": "Quarter past eight - yes, that would be when Edmund and I were at dinner, and I daresay Hugo looked in, or near enough. I don't see what bearing my brother's whereabouts has on this."
+   }
+  },
+  {
+   "id": "s_saw_hugo_edmund_manor",
+   "kind": "testimony",
+   "speaker": "hugo",
+   "sighting": true,
+   "source": "e_hugo_home",
+   "claim": {
+    "pred": "wasAt",
+    "person": "edmund",
+    "place": "manor",
+    "from": 1200,
+    "to": 1278
+   },
+   "title": "Hugo Vale saw Edmund Vale",
+   "text": "I saw Mr Vale at Vale Manor at quarter past eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "edmund",
+   "direct": "Hugo Vale says he saw you at Vale Manor at quarter past eight. Is that so?",
+   "show": "Hugo Vale says he saw Mr Vale at Vale Manor at quarter past eight. Can you confirm that?",
+   "confront": "You told me you saw Mr Vale at Vale Manor at quarter past eight. Is that correct?",
+   "lines_for": "a83e756f46c7"
+  },
+  {
+   "id": "s_saw_silas_vicar_vestry",
+   "kind": "testimony",
+   "speaker": "silas",
+   "sighting": true,
+   "source": "e_silas_office",
+   "claim": {
+    "pred": "wasAt",
+    "person": "vicar",
+    "place": "vestry",
+    "from": 1200,
+    "to": 1380
+   },
+   "title": "Silas Voss saw The Reverend Thomas Hale",
+   "text": "I saw Mr Hale in St. Alden's vestry at quarter past eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "vicar",
+   "direct": "Silas Voss says he saw you in St. Alden's vestry at quarter past eight. Is that true?",
+   "show": "Silas Voss says he saw Mr Hale in St. Alden's vestry at quarter past eight. Can you confirm that?",
+   "confront": "You told me you saw Mr Hale in St. Alden's vestry at quarter past eight. Is that right?",
+   "lines_for": "037e81833256",
+   "reactions": {
+    "vicar": "Quarter past eight, in the vestry - yes, that would be about right, I was wrestling with Sunday's sermon, a rather stubborn passage from Corinthians. Mr Voss works later than I do, as a rule, bless him for his diligence."
+   }
+  },
+  {
+   "id": "s_saw_vicar_silas_vestry",
+   "kind": "testimony",
+   "speaker": "vicar",
+   "sighting": true,
+   "source": "e_vicar_sermon",
+   "claim": {
+    "pred": "wasAt",
+    "person": "silas",
+    "place": "vestry",
+    "from": 1200,
+    "to": 1380
+   },
+   "title": "The Reverend Thomas Hale saw Silas Voss",
+   "text": "I saw Mr Voss in St. Alden's vestry at quarter past eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "to": "silas",
+   "direct": "The Reverend Thomas Hale says he saw you in St. Alden's vestry at quarter past eight. Is that so?",
+   "show": "The Reverend Thomas Hale says he saw Mr Voss in St. Alden's vestry at quarter past eight. Do you know if that's accurate?",
+   "confront": "You told me you saw Mr Voss in St. Alden's vestry at quarter past eight. Is that correct?",
+   "lines_for": "c2ece3f96700",
+   "reactions": {
+    "silas": "Quarter past eight, yes, that accords with my recollection entirely. I was at my conveyancing papers; the vicar, I believe, at his sermon. A tidy coincidence of industry, Inspector, nothing more."
+   }
+  },
+  {
+   "id": "pub_window",
+   "kind": "public",
+   "title": "When it happened",
+   "text": "Edmund Vale died between 22:50 and 23:15.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1370,
+    "to": 1395
+   }
+  },
+  {
+   "id": "pub_trait_dora_handed",
+   "kind": "public",
+   "title": "Dorothy Pruett's hand",
+   "text": "Dorothy Pruett is right-handed.",
+   "claim": {
+    "pred": "hasTrait",
+    "person": "dora",
+    "trait": "handed",
+    "value": "right"
+   }
+  },
+  {
+   "id": "pub_trait_jonah_handed",
+   "kind": "public",
+   "title": "Jonah Reed's hand",
+   "text": "Jonah Reed is left-handed.",
+   "claim": {
+    "pred": "hasTrait",
+    "person": "jonah",
+    "trait": "handed",
+    "value": "left"
+   }
+  },
+  {
+   "id": "pub_trait_rowan_handed",
+   "kind": "public",
+   "title": "Rowan Pike's hand",
+   "text": "Rowan Pike is right-handed.",
+   "claim": {
+    "pred": "hasTrait",
+    "person": "rowan",
+    "trait": "handed",
+    "value": "right"
+   }
+  },
+  {
+   "id": "pub_trait_vera_handed",
+   "kind": "public",
+   "title": "Vera Lacey's hand",
+   "text": "Vera Lacey is left-handed.",
+   "claim": {
+    "pred": "hasTrait",
+    "person": "vera",
+    "trait": "handed",
+    "value": "left"
+   }
+  }
+ ],
+ "premise": {
+  "victim": "edmund",
+  "culprit": "jonah",
+  "suspects": [
+   "dora",
+   "jonah",
+   "rowan",
+   "vera"
+  ],
+  "bystanders": [
+   "clara",
+   "hugo",
+   "silas",
+   "ada",
+   "vicar"
+  ],
+  "method": "blow",
+  "motive": "love",
+  "place": "square",
+  "shape": "misread"
+ },
+ "id": "mk-live-20261003-135210",
+ "answer": {
+  "method": "blow",
+  "motive": "love",
+  "methods": [
+   "blow"
+  ],
+  "motives": [
+   "love"
+  ],
+  "accepted_scores": {
+   "methods": {
+    "poison": 0,
+    "blow": 3,
+    "fall": 0,
+    "smother": 0,
+    "drown": 0,
+    "blade": 0,
+    "gun": 0,
+    "gas": 0,
+    "staged": 0
+   },
+   "motives": {
+    "money": 0,
+    "inheritance": 0,
+    "love": 3,
+    "revenge": 0,
+    "secret": 0,
+    "protect": 1,
+    "blackmail": 0,
+    "quarrel": 2
+   }
+  },
+  "accepted_v": 3
+ },
+ "synopsis": "Edmund Vale was found dead at the village square.",
+ "moods": {
+  "clara": "Composed but subdued; keeping to quiet household routines and bracing herself for family nearby.",
+  "jonah": "Quiet and withdrawn, keeping to the boathouse and his own thoughts.",
+  "dora": "Jumpy and overly polite at the counter, eager to tidy her papers before anyone comes asking questions.",
+  "rowan": "Sullen and short-spoken, burying himself in work among the glasshouses to avoid talk.",
+  "ada": "Fretful and overly chatty, quick to vouch for her lodger before anyone can ask.",
+  "bell": "Brisk and tight-lipped, keeping his rounds official and his papers closer than usual.",
+  "vicar": "Reflective and a touch weary, seeking solace in his sermon writing.",
+  "hugo": "Lethargic and sulky, hiding from the day behind a book and a drink."
+ },
+ "knowledge": {
+  "clara": [
+   "I am Edmund's younger sister, and I have kept house at Vale Manor for years.",
+   "I live at the manor and keep the household keys and linens in my own charge.",
+   "My days are spent on household accounts and seeing the manor runs smoothly, with Rowan tending the grounds and Jonah the boathouse.",
+   "Hugo, my brother's nephew, is staying with us at the manor just now."
+  ],
+  "jonah": [
+   "I keep the manor's boathouse down on the river and ferry folk across when the water's high.",
+   "I live at the boathouse and keep my own tools and gear there.",
+   "I know the Vales as my employers up at the manor, and I take a glass now and then at the Rook with Ada and the others.",
+   "I keep to myself mostly and don't go in for village chatter."
+  ],
+  "dora": [
+   "I know everyone in the village through their post, including the Vales up at the manor."
+  ],
+  "rowan": [
+   "I'm groundskeeper at the manor and spend my days among the glasshouses and gardens.",
+   "I live in the greenhouse quarters and keep my tools and seed stores there.",
+   "I know Clara and Hugo as the family I serve, and Jonah as a fellow hand about the grounds.",
+   "I say little and keep to my work, same as always."
+  ],
+  "vera": [
+   "I'm a widow down from London three weeks past, lodging at the Rook & Lantern in the back bedroom.",
+   "I keep my sketching things and papers in my room there, and I pay Ada for my board.",
+   "I know Ada as my landlady and have passed the time of day with most folk in the village while out sketching.",
+   "I spend my days out sketching the old church and asking about its history."
+  ],
+  "ada": [
+   "I keep the Rook & Lantern, the bar and the parlour, and have done for years.",
+   "I live at the inn and keep the cellar key and the till myself.",
+   "I know most everyone in the village through their custom at the bar, including Jonah and Vera, who lodges with me."
+  ],
+  "iris": [
+   "I'm the village doctor and am called out whenever anyone is hurt or ill.",
+   "I live and keep my surgery and instruments at the surgery house.",
+   "I know the whole village as patients, including the Vale family up at the manor."
+  ],
+  "bell": [
+   "I live and keep my things at the station house by the square.",
+   "I know everyone in the village through my duties, and the Vale family especially as the manor's nearest neighbours."
+  ],
+  "silas": [
+   "I'm the solicitor and keep my office in the vestry, handling affairs for half the parish.",
+   "I live and keep my papers and deed boxes at the vestry.",
+   "I know the Vale family as clients, having handled matters for Edmund over the years.",
+   "I spend my days drawing up papers and seeing clients at the vestry office."
+  ],
+  "vicar": [
+   "I'm the vicar of St. Alden's and have served this parish for twenty years.",
+   "I live and keep my books and papers in the vestry alongside Mr Voss's office.",
+   "I know the whole village through church and parish business, including the Vale family.",
+   "I spend my days about parish duties and writing my sermons in the vestry."
+  ],
+  "hugo": [
+   "I'm Edmund's nephew, down from London by train to visit the manor.",
+   "I'm staying at the manor in a guest room, with my things there for the length of my visit.",
+   "I know Clara as my aunt who keeps the household, and have met Rowan and Jonah about the grounds.",
+   "I've been passing my days at the manor since I arrived, as the country offers little else to do."
+  ]
+ },
+ "reviewed": [
+  "b_dora_grate|direct",
+  "b_dora_grate|reactions|dora",
+  "s_ada_lie|direct",
+  "s_ada_lie|reactions|jonah",
+  "s_bell_note|reactions|bell",
+  "s_bell_note|reactions|iris",
+  "s_burnt_pages|reactions|dora",
+  "s_card|direct",
+  "s_card|reactions|bell",
+  "s_cordon|reactions|bell",
+  "s_envelope|reactions|jonah",
+  "s_envelope|reactions|vera",
+  "s_medical_iris|text",
+  "s_medical|reactions|bell",
+  "s_medical|reactions|iris",
+  "s_medical|reactions|jonah",
+  "s_medical|text",
+  "s_morning_bell|text",
+  "s_morning_clara|text",
+  "s_morning_hugo|text",
+  "s_morning_iris|text",
+  "s_notebook|reactions|dora",
+  "s_notebook|reactions|jonah",
+  "s_notice|reactions|jonah",
+  "s_notice|reactions|rowan",
+  "s_saw_ada_jonah_inn|direct",
+  "s_saw_ada_jonah_inn|reactions|jonah",
+  "s_saw_ada_jonah_inn|text",
+  "s_saw_ada_vera_inn|direct",
+  "s_saw_ada_vera_inn|reactions|vera",
+  "s_saw_ada_vera_inn|text",
+  "s_saw_clara_edmund_manor|direct",
+  "s_saw_clara_edmund_manor|text",
+  "s_saw_clara_hugo_manor|direct",
+  "s_saw_clara_hugo_manor|reactions|hugo",
+  "s_saw_clara_hugo_manor|text",
+  "s_saw_dora_edmund_square|direct",
+  "s_saw_dora_edmund_square|text",
+  "s_saw_dora_jonah_square|direct",
+  "s_saw_dora_jonah_square|reactions|jonah",
+  "s_saw_dora_jonah_square|text",
+  "s_saw_dora_vera_square|direct",
+  "s_saw_dora_vera_square|reactions|vera",
+  "s_saw_dora_vera_square|text",
+  "s_saw_hugo_clara_manor|direct",
+  "s_saw_hugo_clara_manor|reactions|clara",
+  "s_saw_hugo_clara_manor|text",
+  "s_saw_hugo_edmund_manor|direct",
+  "s_saw_hugo_edmund_manor|text",
+  "s_saw_silas_vicar_vestry|direct",
+  "s_saw_silas_vicar_vestry|reactions|vicar",
+  "s_saw_silas_vicar_vestry|text",
+  "s_saw_vera_dora_square|direct",
+  "s_saw_vera_dora_square|reactions|dora",
+  "s_saw_vera_dora_square|text",
+  "s_saw_vera_jonah_inn|direct",
+  "s_saw_vera_jonah_inn|reactions|jonah",
+  "s_saw_vera_jonah_inn|text",
+  "s_saw_vera_jonah_square|direct",
+  "s_saw_vera_jonah_square|reactions|jonah",
+  "s_saw_vera_jonah_square|text",
+  "s_saw_vicar_silas_vestry|direct",
+  "s_saw_vicar_silas_vestry|reactions|silas",
+  "s_saw_vicar_silas_vestry|text",
+  "s_slate|reactions|ada",
+  "s_slate|reactions|jonah",
+  "s_surface_ada|text",
+  "s_surface_bell|text",
+  "s_surface_clara|text",
+  "s_surface_dora|text",
+  "s_surface_hugo|text",
+  "s_surface_iris|text",
+  "s_surface_jonah|text",
+  "s_surface_rowan|text",
+  "s_surface_silas|text",
+  "s_surface_vera|text",
+  "s_surface_vicar|text",
+  "s_vera_alibi|direct",
+  "s_vera_alibi|reactions|vera",
+  "s_wound|reactions|bell",
+  "s_wound|reactions|iris",
+  "s_wound|reactions|jonah"
+ ],
+ "difficulty": {
+  "v": 1,
+  "score": 7.25,
+  "level": "medium",
+  "features": {
+   "depth": 5,
+   "lies_on_path": 1,
+   "lies_other": 0,
+   "herrings_aimed": 1,
+   "herrings_other": 0,
+   "lenient_motives": 0
+  }
+ },
+ "declines": {
+  "clara": [
+   "That is not a thing I am able to tell you.",
+   "I have nothing whatsoever to offer on that point.",
+   "There is simply nothing more I can add to that.",
+   "I'm afraid that question yields nothing further from me."
+  ],
+  "jonah": [
+   "Can't help you there. That's the end of it.",
+   "Nothing comes to me on that. River's quiet on it too.",
+   "That one's empty for me. Nothing more to weigh.",
+   "No answer sits in me for that. Let it be.",
+   "That's a stone with nothing under it, far as I know."
+  ],
+  "dora": [
+   "I have nothing on record for that, and nothing to add.",
+   "That matter yields nothing further from me, I'm afraid.",
+   "There is simply no entry in my memory for that one.",
+   "I can furnish nothing further on that particular question."
+  ],
+  "rowan": [
+   "Can't tell you a thing on that. Nothing to say.",
+   "That's a blank for me. Nothing more comes.",
+   "Nothing there, far as I can give you.",
+   "No sense pressing that one, I've nothing on it."
+  ],
+  "vera": [
+   "Nothing to give you there, darling. Shall we talk of something else?",
+   "Isn't it funny how some questions just come up empty? That's one.",
+   "I've nothing on that one at all. What else have you got?",
+   "That particular well's dry, Inspector. Try your luck elsewhere in the conversation."
+  ],
+  "ada": [
+   "Oh love, I've nothing at all to tell you on that one.",
+   "Can't help you there, I'm afraid, nothing comes to mind.",
+   "That's a blank for me, love, nothing more to say on it.",
+   "I've nothing further on that, not a scrap, sorry to say."
+  ],
+  "iris": [
+   "I have nothing to report on that matter.",
+   "No observation of mine bears on that question.",
+   "There is nothing further I can state on that.",
+   "That lies outside anything I can tell you."
+  ],
+  "bell": [
+   "Nothing on that. That's all I've got.",
+   "Can't tell you a thing there. Moving on.",
+   "No comment to make on that one.",
+   "That's nothing I can speak to. End of it."
+  ],
+  "silas": [
+   "I have nothing to tender on that matter, I'm afraid.",
+   "Nihil habeo, as it were; nothing further to offer there.",
+   "That question, I regret, admits no answer from me.",
+   "There is nothing further I am in a position to state."
+  ],
+  "vicar": [
+   "Ah, that one, I fear, leaves me with nothing to offer at all.",
+   "I find I have nothing further to say on that particular matter.",
+   "Nothing comes to me there, I'm afraid, nothing at all.",
+   "That question, alas, I cannot answer; there is simply nothing to tell."
+  ],
+  "hugo": [
+   "Haven't got a thing for you there, honestly. Zip, nada.",
+   "Nothing on that one, I'm afraid, drawing a total blank.",
+   "Can't help you there, old thing, nothing comes to mind.",
+   "That's a dead end, I've got nothing more on it."
+  ]
+ },
+ "declines_version": 3,
+ "review_version": 2,
+ "holdings": [
+  {
+   "person": "jonah",
+   "item": "o_pin"
+  },
+  {
+   "person": "edmund",
+   "item": "o_envelope"
+  },
+  {
+   "person": "edmund",
+   "item": "o_notebook"
+  },
+  {
+   "person": "rowan",
+   "item": "o_notice"
+  },
+  {
+   "person": "bell",
+   "item": "o_card"
+  },
+  {
+   "person": "ada",
+   "item": "o_slate"
+  },
+  {
+   "person": "dora",
+   "item": "o_burnt"
+  },
+  {
+   "person": "bell",
+   "item": "o_bell_note"
+  },
+  {
+   "person": "bell",
+   "item": "o_tag"
+  }
+ ],
+ "vocabulary": {
+  "relations": [
+   {
+    "rel": "daughter_of"
+   },
+   {
+    "rel": "dismissed"
+   },
+   {
+    "rel": "jealous_of"
+   },
+   {
+    "rel": "loves"
+   },
+   {
+    "rel": "nephew_of"
+   },
+   {
+    "rel": "sister_of"
+   },
+   {
+    "rel": "threatened_to_report"
+   }
+  ]
+ },
+ "claims_version": 2
+}
