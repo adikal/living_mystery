@@ -20,6 +20,7 @@ import {
   registerKernelCase,
 } from '../../dist/engine.mjs';
 import {searchInvestigation} from '../../dist/investigation.mjs';
+import {paperCorpus, missingFromCorpus} from './paper_evidence_helpers.mjs';
 
 const CLAIMS_VERSION = 2;
 const SEEDS = [1, 17, 31];
@@ -49,6 +50,8 @@ function withoutTiming(value) {
 }
 
 function loadCases() {
+  // the paper's cases (paper_corpus.json), wherever they are listed now, under the manifest that listed them then
+  const corpus = paperCorpus();
   const manifestSpecs = [
     {corpus: 'stable', url: new URL('index.json', CASE_ROOT)},
     {corpus: 'live', url: new URL('live/index.json', CASE_ROOT)},
@@ -79,6 +82,8 @@ function loadCases() {
     manifests[spec.corpus] = {path: fileURLToPath(spec.url), entries: entries.length, present: true};
 
     for (const entry of entries) {
+      if (!corpus.has(entry.id)) continue;
+      const listed = corpus.get(entry.id).classification;
       const sourceUrl = new URL(entry.file, spec.optional ? spec.url : CASE_ROOT);
       let records;
       try {
@@ -97,19 +102,19 @@ function loadCases() {
         continue;
       }
 
-      const source = {corpus: spec.corpus, manifestFile: fileURLToPath(spec.url), caseFile: entry.file};
+      const source = {corpus: listed, manifestFile: fileURLToPath(spec.url), caseFile: entry.file};
       const prior = byId.get(records.id);
       if (prior) {
-        if (!prior.corpora.includes(spec.corpus)) prior.corpora.push(spec.corpus);
+        if (!prior.corpora.includes(listed)) prior.corpora.push(listed);
         prior.sources.push(source);
-        duplicates.push({id: records.id, retainedCorpus: prior.primaryCorpus, additionalCorpus: spec.corpus, additionalFile: entry.file,
+        duplicates.push({id: records.id, retainedCorpus: prior.primaryCorpus, additionalCorpus: listed, additionalFile: entry.file,
           recordsExact: stableJson(prior.records) === stableJson(records)});
       } else {
         byId.set(records.id, {
           id: records.id,
           title: entry.title ?? records.title ?? records.id,
-          primaryCorpus: spec.corpus,
-          corpora: [spec.corpus],
+          primaryCorpus: listed,
+          corpora: [listed],
           sources: [source],
           records,
         });
@@ -117,6 +122,7 @@ function loadCases() {
     }
   }
 
+  missingFromCorpus(corpus, [...byId.keys(), ...skipped.map(x => x.id)]);
   const cases = [...byId.values()].sort((a, b) => ascii(a.id, b.id));
   for (const item of cases) {
     item.corpora.sort((a, b) => ['stable', 'live'].indexOf(a) - ['stable', 'live'].indexOf(b));

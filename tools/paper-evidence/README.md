@@ -33,11 +33,19 @@ To evaluate the final whole-case publication critic once on every completed stri
 
 Outputs are written to `tools/paper-evidence/results/` as JSON (full audit trail) and Markdown (readable report).
 
+The paper's 15 cases are pinned in `paper_corpus.json` (id, where each was listed on the evidence date, and its payload
+hash then). `certifier_experiments`, `witness_sweep` and `structural_depth` (used by `corpus_depth_planning` and
+`playtest_analysis`) read exactly these cases wherever the files now live, report them under their original listing and
+in their original order, and stop if one is missing; cases generated later are never added. Certification outputs on
+the current files match the committed results. Payload hashes, engine traces and search node counts differ on later code
+(the case wording and the game engine have changed since); exact reproduction needs the commit that produced each
+result.
+
 - `generation_funnel`: strict claims-v2 generation artifacts only; legacy claims-v1 runs are excluded.
 - `generation_cohort_pilot`: prospective C3/E2 denominator, terminal outcomes, requested-versus-achieved difficulty, request lifecycle, usage, certificates and hashes for the bounded cohort; raw prompts and cases remain private/ignored.
 - `publication_critic_pilot`: availability-selected, blinded final whole-case critic outcomes over every completed strictly gateable case in a frozen cohort; retains PASS/FAIL/UNAVAILABLE, issue counts/digests, request/usage totals, exact hashes and private audited provenance with finding text, and is not accuracy evidence.
 - `generation_policy_replay`: E3 offline replay of parse-only, deterministic code/kernel/refinement, and full typed-critic acceptance over the identical retained candidate pool; it does not reconstruct counterfactual final cases or measure end-to-end quality.
-- `certifier_experiments`: strict certification timing, fault injection, and metamorphic checks on every unique v2 case in the stable and live manifests.
+- `certifier_experiments`: strict certification timing, fault injection, and metamorphic checks on the paper's 15 cases (`paper_corpus.json`).
 - `witness_sweep`: deterministic real-engine autoplay under fixed NPC placement across seeds and initial-wait offsets, repeatability/save-import checks, pillar omission controls, and a native-search coverage-gap probe.
 - `committed_concealment_audit`: direct session-aware strict certification of every cumulative concealed-set state observed in the schema-selected 27-episode `e3c` cohort, kept separate from historical planning-audit association.
 - `e1_gate_ablation`: deterministic offline mechanism ablation over fixed captured/synthetic proposals, comparing planning+execution, planning-only, and no-kernel-gate enforcement without exposing unsafe modes to game saves or UI.

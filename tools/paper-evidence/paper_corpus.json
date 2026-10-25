@@ -1,0 +1,82 @@
+{
+ "description": "The paper's case corpus, as it was on its evidence date: every analysis of the paper's cases reads exactly these, wherever the files now live (cases move between the menu, live/ and the archive). The classification is where each case was listed then; sha256 is the canonical payload hash recorded by certifier_experiments; the order is the order the analyses report them in.",
+ "frozen": "2026-10-24",
+ "source": "results/certifier_experiments.json",
+ "cases": [
+  {
+   "id": "mk-live-20261002-235614",
+   "classification": "stable",
+   "sha256": "b1cf6de709f0bc654b2b3be9938197c2299c896e7a7d40d8acba3071f0469716"
+  },
+  {
+   "id": "mk-live-20261002-225824",
+   "classification": "stable",
+   "sha256": "d4b3c2cb3ddb242e8aa828d95f9082767d752954186ae75808079284c5db278e"
+  },
+  {
+   "id": "mk-live-20261002-224855",
+   "classification": "stable",
+   "sha256": "6592d79c6e7cb273a2d1caf83063878896471f4c203199560427d0fba9463162"
+  },
+  {
+   "id": "mk-live-20261002-222517",
+   "classification": "stable",
+   "sha256": "e2ffb5b8b3f742c6490867e64a06b6edd4ce09c446003392d118c9e5bb362753"
+  },
+  {
+   "id": "mk-live-20261017-223841",
+   "classification": "live",
+   "sha256": "f14ba5e90c01da8d3144eaddeefdb3de96ac48d3ca032d6d39522bb6b845a37c"
+  },
+  {
+   "id": "mk-live-20261011-112405",
+   "classification": "live",
+   "sha256": "639c5bab93abd949506ef0f2f5664957a4049fb9875cb94d2ca7edff899919d6"
+  },
+  {
+   "id": "mk-live-20261003-135210",
+   "classification": "live",
+   "sha256": "483f0951f7426115fa57a6805b6638728f30b14935e4f07e56c632e315765faf"
+  },
+  {
+   "id": "mk-live-20261003-133036",
+   "classification": "live",
+   "sha256": "e48703cc64b6a989a9638b3ea8ed1f0b03cb20252dd63cf5114cc5f36e897182"
+  },
+  {
+   "id": "mk-live-20261003-130906",
+   "classification": "live",
+   "sha256": "142e331e21abb10a1e09aa3b4a55b393f5708e0f5572011cdababebc6dad3337"
+  },
+  {
+   "id": "mk-live-20261003-130902",
+   "classification": "live",
+   "sha256": "0751273193b517682e99d2e3947e63e21b9dc7e88a401a1a34a57cd290e4087c"
+  },
+  {
+   "id": "mk-live-20261003-100726",
+   "classification": "live",
+   "sha256": "6d4a788f2064b4e001835c313fabe246bd29031753989d0b903e54b1d2813f00"
+  },
+  {
+   "id": "mk-live-20261003-085134",
+   "classification": "live",
+   "sha256": "07abdcb67f5d7b5598a855aabe0c199a0b45aafa3882799a0271b88d62a18f9f"
+  },
+  {
+   "id": "mk-live-20261003-082813",
+   "classification": "live",
+   "sha256": "a8030f736a50be1b78472f40ae50e17b51da62078ebf63e27e2d14e7e3cc2df5"
+  },
+  {
+   "id": "mk-live-20261003-082807",
+   "classification": "live",
+   "sha256": "3a8d103c3c608037f547e0f0cffa5b3274c497bf40c26048787efc15fdc931ee"
+  },
+  {
+   "id": "mk-live-20261003-082809",
+   "classification": "live",
+   "sha256": "a3a36477ffba5d45c5023f4cf848146916e92eb0efde0ef9531773307a7960af"
+  }
+ ]
+}

@@ -56,3 +56,21 @@ export function collectProvenance(root, {commands, manifests = [], inputs = [], 
     inputs: hashRows(inputs),
   };
 }
+
+// The paper's case corpus as of its evidence date (paper_corpus.json): id -> {classification, sha256}. The analyses of
+// the paper's cases keep to exactly these, and report where each was listed then, so a later menu change or a newly
+// generated case never changes their population.
+export function paperCorpus() {
+  const file = new URL('./paper_corpus.json', import.meta.url);
+  const data = JSON.parse(readFileSync(file, 'utf8'));
+  return new Map(data.cases.map((c, order) => [c.id, {classification: c.classification, sha256: c.sha256, order}]));
+}
+
+export function missingFromCorpus(corpus, foundIds) {
+  const found = new Set(foundIds);
+  const missing = [...corpus.keys()].filter(id => !found.has(id)).sort(ascii);
+  if (missing.length) throw new Error(`paper corpus cases not found in any manifest: ${missing.join(', ')}`);
+}
+
+// Sort found cases into the corpus's own order (the order the paper's analyses reported them in).
+export const inCorpusOrder = (corpus, idOf) => (a, b) => corpus.get(idOf(a)).order - corpus.get(idOf(b)).order;

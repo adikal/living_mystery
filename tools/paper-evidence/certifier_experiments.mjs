@@ -17,6 +17,7 @@ import {
   travelTable,
 } from '../../dist/mk/kernel.mjs';
 import { consistent } from '../../dist/mk/claims.mjs';
+import { paperCorpus, missingFromCorpus, inCorpusOrder } from './paper_evidence_helpers.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(SCRIPT_DIR, '../..');
@@ -49,7 +50,9 @@ function runCertify(input, requirePillars = true, requireBacking = true) {
 }
 
 function loadCases() {
-  // The retained research corpus: the cases offered in the menu, those generated here, and those retired to the archive.
+  // The retained research corpus: the paper's cases (paper_corpus.json), found in the menu, the live cases or the archive,
+  // each reported under the manifest that listed it on the evidence date.
+  const corpus = paperCorpus();
   const indexes = [
     { classification: 'stable', file: 'index.json' },
     { classification: 'live', file: 'live/index.json' },
@@ -62,11 +65,13 @@ function loadCases() {
     if (!fs.existsSync(indexPath)) continue;
     const entries = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
     for (const entry of entries) {
+      if (!corpus.has(entry.id)) continue;
+      const classification = corpus.get(entry.id).classification;
       const sourcePath = path.join(index.file.startsWith('../') ? path.dirname(indexPath) : GENERATED_DIR, entry.file);
       const sourceText = fs.readFileSync(sourcePath, 'utf8');
       const payload = JSON.parse(sourceText);
       if (payload.claims_version !== 2) {
-        excluded.push({ classification: index.classification, id: entry.id, file: entry.file, claimsVersion: payload.claims_version ?? null });
+        excluded.push({ classification, id: entry.id, file: entry.file, claimsVersion: payload.claims_version ?? null });
         continue;
       }
       if (entry.id !== payload.id) throw new Error(`Index ID ${entry.id} does not match payload ID ${payload.id}`);
@@ -74,15 +79,15 @@ function loadCases() {
       const prior = byId.get(payload.id);
       if (prior) {
         if (prior.sha256 !== digest) throw new Error(`Duplicate case ID ${payload.id} has different payloads`);
-        if (!prior.classifications.includes(index.classification)) prior.classifications.push(index.classification);
+        if (!prior.classifications.includes(classification)) prior.classifications.push(classification);
         if (!prior.files.includes(entry.file)) prior.files.push(entry.file);
         continue;
       }
       byId.set(payload.id, {
         id: payload.id,
         title: payload.title,
-        classification: index.classification,
-        classifications: [index.classification],
+        classification,
+        classifications: [classification],
         files: [entry.file],
         indexSolveDepth: entry.solveDepth,
         sha256: digest,
@@ -90,7 +95,8 @@ function loadCases() {
       });
     }
   }
-  return { cases: [...byId.values()], excluded };
+  missingFromCorpus(corpus, [...byId.keys(), ...excluded.map(x => x.id)]);
+  return { cases: [...byId.values()].sort(inCorpusOrder(corpus, c => c.id)), excluded };
 }
 
 function mapSorted(values, mapId = id => id) {

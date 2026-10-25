@@ -8,6 +8,7 @@ import process from 'node:process';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 
 import {certify} from '../../dist/mk/kernel.mjs';
+import {paperCorpus, missingFromCorpus} from './paper_evidence_helpers.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT = path.resolve(SCRIPT_DIR, '../..');
@@ -77,6 +78,8 @@ export function certifyCase(sourcePath, metadata = {}) {
 }
 
 export function loadCurrentCorpus() {
+  // the paper's cases (paper_corpus.json), wherever they are listed now, under the manifest that listed them then
+  const corpus = paperCorpus();
   const indexes = [
     {classification: 'stable', source: 'dist/cases/generated/index.json'},
     {classification: 'live', source: 'dist/cases/generated/live/index.json'},
@@ -88,6 +91,8 @@ export function loadCurrentCorpus() {
     if (!fs.existsSync(path.join(ROOT, index.source))) continue;
     const entries = JSON.parse(fs.readFileSync(path.join(ROOT, index.source), 'utf8'));
     for (const entry of entries) {
+      if (!corpus.has(entry.id)) continue;
+      const classification = corpus.get(entry.id).classification;
       const source = `${index.base ?? 'dist/cases/generated'}/${entry.file}`;
       const payload = JSON.parse(fs.readFileSync(path.join(ROOT, source), 'utf8'));
       if (payload.claims_version !== 2) {
@@ -99,19 +104,20 @@ export function loadCurrentCorpus() {
       const prior = byId.get(payload.id);
       if (prior) {
         if (prior.normalized_sha256 !== digest) throw new Error(`duplicate case ID ${payload.id} has different payloads`);
-        prior.classifications.add(index.classification);
+        prior.classifications.add(classification);
         prior.source_paths.add(source);
         continue;
       }
       byId.set(payload.id, {
         payload,
-        classification: index.classification,
-        classifications: new Set([index.classification]),
+        classification,
+        classifications: new Set([classification]),
         source_paths: new Set([source]),
         normalized_sha256: digest,
       });
     }
   }
+  missingFromCorpus(corpus, [...byId.keys(), ...excluded.map(x => x.case_id)]);
   const cases = [...byId.values()].map(item => certifyCase([...item.source_paths][0], {
     classification: item.classification,
     classifications: [...item.classifications],
