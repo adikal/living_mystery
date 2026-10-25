@@ -11,7 +11,7 @@ import * as Morning from '../../dist/morning.mjs';
 import {addNormalizedSha256, ascii, canonicalJson, collectProvenance, sha256, sortedUnique} from './paper_evidence_helpers.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const CASE_PATH = resolve(ROOT, 'dist/cases/generated/mk-live-20261002-235614.json');
+const CASE_PATH = resolve(ROOT, 'dist/cases/archive/2026-10/mk-live-20261002-235614.json');
 const RESULTS_DIR = resolve(ROOT, 'tools/paper-evidence/results');
 const JSON_OUTPUT = resolve(RESULTS_DIR, 'e1_gate_ablation.json');
 const MARKDOWN_OUTPUT = resolve(RESULTS_DIR, 'e1_gate_ablation.md');

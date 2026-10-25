@@ -13,16 +13,37 @@ import boto3
 from botocore.config import Config
 import difficulty as DF
 import provenance
+import timing
 from migrate import public_knowledge
 from claims import (CLAIMS_VERSION, PREDICATES, CULPRIT_PREDICATES, History, claim_errors, claim_of, consistent, defeat_free_sets,
                     instance_claims, record_errors, relation_reader, survivors_of, travel_table, truth_of, victim_of, actor_of)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MODEL = 'us.anthropic.claude-opus-5-5'          # story steps and seed
-CRITIC_MODEL = 'us.anthropic.claude-sonnet-5'     # plausibility review (short verdicts)
+CRITIC_MODEL = 'us.anthropic.claude-sonnet-5'     # short wording and judging calls in publishing
+# Reviews of a step and of the whole case use the story model. Measured on 25 October on a case with six real
+# problems: it found three in 33 s; Sonnet found one in 57 s at medium effort, and at its default effort thought through
+# a 16,000-token budget without answering.
+REVIEW_MODEL = MODEL
 FAST_MODEL = 'us.anthropic.claude-haiku-4-5-20251001-v1:0'   # small checks (e.g. near-duplicate questions)
 SEED_ROUNDS = 4                                  # draft, then up to three repairs of the best draft
-CANDIDATES = 2                                     # parallel speculative patches per round
+SEED_CANDIDATES = int(os.environ.get('LM_SEED_CANDIDATES', '6'))   # parallel seed drafts per round: a first round that
+                                                   # passes saves a whole repair round (about a minute and a half)
+CANDIDATES = 3                                     # parallel drafts per round, spread over the step's options
+# the models step drafts are spread over: diversity comes from the options (targets, operators). Over the October runs
+# Sonnet's drafts passed 3 of 41 times and Opus's 50 of 95, and Sonnet's took longer
+DRAFT_MODELS = tuple(os.environ.get('LM_DRAFT_MODELS', MODEL).split(','))
+STACK_MODES = ('refine', 'clear')                  # steps whose passing drafts for different targets are applied together
+REVISE_MIN = 45                                    # seconds a round must still have for a rejected draft to be revised in it
+STEP_GRACE = 25                                    # at most this many seconds for the other drafts once one has passed
+
+
+def grace(elapsed):
+    """How long the other drafts get once one has passed, `elapsed` seconds into the round: half as long again as the
+    winner took, at most STEP_GRACE. Siblings started together; one still thinking at 1.5 times the winner's time is
+    a long thinker, and waiting the full grace for it cost about 25 s a step (timings, October 25)."""
+    return min(STEP_GRACE, 0.5 * elapsed)
+ROUND_LIMIT = int(os.environ.get('LM_ROUND_LIMIT', '150'))   # seconds a round of drafts may take in all
 FIXED = None                                       # a fixed setting (e.g. Bellweather): its places, links and cast are locked
 # 'public' signs are what everyone in the setting knows: the player holds them from the start.
 SIGN_KINDS = {'trace', 'testimony', 'document', 'record', 'behavior', 'item', 'rule', 'observation', 'absence', 'public'}
@@ -152,6 +173,19 @@ def thread_depths(case, A, exclude=frozenset()):
             gone = [d for d in range(maxd + 1) if all(h['id'] not in surv[k] for k in range(d, maxd + 1))]
             out[h['id']] = min(gone) if gone else None
     return out
+
+
+def cleared_alone(case, report):
+    """The innocents still ruled out without any evidence that points at the culprit (claims about the culprit, and the
+    signs certification counts as the culprit's motive and means, with everything that depends on them): cleared on
+    evidence of their own, an alibi or a witness, so the player has suspects to eliminate rather than one chain that
+    convicts and clears everyone at once (The Iron Hound: none of its three)."""
+    A = report['A']
+    pillars = report.get('pillar_signs') or {}
+    pos = [s for s in A['understood'] if (claim_of(A['signs'][s]) or {}).get('pred') in CULPRIT_PREDICATES
+           or s in (pillars.get('motive') or []) or s in (pillars.get('means') or [])]
+    ex = frozenset().union(*[closure_dependent(case, s) for s in pos]) if pos else frozenset()
+    return sorted(t for t, d in thread_depths(case, A, ex).items() if t != 'truth' and d is not None)
 
 
 def critical_signs(case, A, thread, depth):
@@ -461,7 +495,7 @@ def _ensure_client():
         with _CLIENT_LOCK:
             if _client is None:
                 _client = boto3.client('bedrock-runtime', region_name=provenance.REGION,
-                                       config=Config(read_timeout=300, retries={'max_attempts': 2}, max_pool_connections=64))
+                                       config=Config(connect_timeout=10, read_timeout=240, retries={'max_attempts': 1}, max_pool_connections=64))
     return _client
 
 
@@ -475,6 +509,62 @@ def llm(system, user, max_tokens=9000, model=None):
     return ''.join(b.get('text', '') for b in r['output']['message']['content'])
 
 
+HEDGE = os.environ.get('LM_HEDGE', '1') == '1'   # send a copy of a call that runs past its usual time; the first reply wins
+_HEDGE_POOL = cf.ThreadPoolExecutor(max_workers=128, thread_name_prefix='converse')
+HEDGES = threading.BoundedSemaphore(int(os.environ.get('LM_MAX_HEDGES', '16')))   # extra copies in flight at once: at most
+_INTERNAL = ('llm_json', 'llm_json_audited', '_converse', 'run', '_phase', 'submit_with_context', '<lambda>',
+             'in_parallel', 'work', 'check')
+
+
+def _caller():
+    """The function a model call is made for (for timings), past the call helpers and thread-pool frames; in a pool
+    thread, where the caller's frames are gone, the innermost timing phase."""
+    f = sys._getframe(2)
+    while f and (f.f_code.co_name in _INTERNAL or 'concurrent' in f.f_code.co_filename or 'threading' in f.f_code.co_filename
+                 or f.f_code.co_filename.endswith('provenance.py')):
+        f = f.f_back
+    return f.f_code.co_name if f else timing.current().split('/')[-1]
+
+
+def _converse(kw, model, purpose):
+    """One provider call, timed. A call still running past the usual time for its kind (timing.hedge_after) gets a
+    second, identical copy, and the first reply wins: the slow tail of each phase is what most of a run waits for. The
+    copy that loses is left to finish (a call cannot be stopped); its tokens are still counted."""
+    started = time.time()
+    after = timing.hedge_after(model, purpose) if HEDGE else None
+    if after is None:
+        try:
+            r = _ensure_client().converse(**kw)
+        except Exception as e:
+            timing.record_call(model, purpose, time.time() - started, error=type(e).__name__)
+            raise
+        timing.record_call(model, purpose, time.time() - started, r.get('usage'))
+        return r, {}
+    client = _ensure_client()
+    first = _HEDGE_POOL.submit(client.converse, **kw)
+    done, _ = cf.wait([first], timeout=after)
+    futures, hedged = [first], False
+    if not done and HEDGES.acquire(blocking=False):   # when many calls are slow at once, the provider is: do not add load
+        second = _HEDGE_POOL.submit(client.converse, **kw)
+        second.add_done_callback(lambda _: HEDGES.release())
+        futures.append(second); hedged = True
+    error = None
+    while futures:
+        done, _ = cf.wait(futures, return_when=cf.FIRST_COMPLETED)
+        for f in done:
+            futures.remove(f)
+            if f.exception() is None:
+                for loser in futures:   # the other copy's tokens are spent either way
+                    loser.add_done_callback(lambda g: g.exception() is None and _add_usage(g.result().get('usage', {})))
+                r = f.result()
+                timing.record_call(model, purpose, time.time() - started, r.get('usage'), hedged=hedged, hedge_won=hedged and f is not first)
+                return r, ({'hedged': True, 'hedge_won': f is not first} if hedged else {})
+            error = error or f.exception()
+    timing.record_call(model, purpose, time.time() - started, hedged=hedged, error=type(error).__name__)
+    raise error
+
+
+TOKEN_FLOOR = 8000   # a model that thinks first returns nothing when a small budget is used up
 FORCED_OK = {MODEL: False, CRITIC_MODEL: False}  # these inference profiles reject forced tool choice; use audited auto directly
 
 
@@ -521,10 +611,43 @@ def _audit_metadata(metadata=None):
 
 
 def _schedule_audit_request(system, user, max_tokens, model, schema, metadata=None):
+    """Pre-register a request with the configuration it is sent with: the token floor, and the effort level."""
     audit = provenance.current_audit()
     if not audit:
         return None
-    return audit.schedule(system, user, schema, model or MODEL, max_tokens, _audit_metadata(metadata))
+    level = _effort_for(system, model or MODEL)
+    return audit.schedule(system, user, schema, model or MODEL, max(max_tokens, TOKEN_FLOOR),
+                          {**_audit_metadata(metadata), 'effort': level or 'default'})
+
+
+_EFFORT = __import__('contextvars').ContextVar('effort', default=None)
+# Judges (does this line contradict that, did this leak, would they have met) always think at the model's own effort,
+# inside a low-effort wording phase too: writing is cheap to get roughly right, a judge that does not think passes what
+# it should catch (the alias judge found nothing at low effort; the leak and cover-story judges missed). Registered by
+# the modules that define them.
+FULL_EFFORT = set()
+# ... at medium effort on the wording model: on a dozen reactions it took 13 s and flagged one, at its default 58 s and
+# none (October 25); low effort is what made judges pass what they should catch. The review model keeps its own.
+JUDGE_EFFORT = {CRITIC_MODEL: os.environ.get('LM_JUDGE_EFFORT', 'medium')}
+
+
+def _effort_for(system, model):
+    """The effort a call is made at: a judge's own (JUDGE_EFFORT, else the model's default), else the phase's."""
+    return JUDGE_EFFORT.get(model) if system in FULL_EFFORT else _EFFORT.get()
+_NO_EFFORT = set()   # models that refused the effort setting
+
+
+class effort:
+    """`with effort('low'):` asks every structured call made inside (threads included, through provenance's context
+    copies) to deliberate less: for short wording and judging calls, where thinking only adds minutes."""
+    def __init__(self, level):
+        self.level = level
+
+    def __enter__(self):
+        self.token = _EFFORT.set(self.level)
+
+    def __exit__(self, *exc):
+        _EFFORT.reset(self.token)
 
 
 def llm_json_audited(system, user, max_tokens=9000, model=None, schema=None, _prior_request_ids=(),
@@ -532,6 +655,7 @@ def llm_json_audited(system, user, max_tokens=9000, model=None, schema=None, _pr
     """Structured output with complete per-logical-request provider provenance."""
     audit = provenance.current_audit()
     m = model or MODEL
+    purpose = (audit_metadata or {}).get('purpose') or _caller()
     inherited_request_id = provenance.semantic_context().get('_audit_request_id')
     logical_request_id = _audit_request_id or inherited_request_id or _schedule_audit_request(system, user, max_tokens, m, schema, audit_metadata)
     if audit and logical_request_id:
@@ -540,6 +664,8 @@ def llm_json_audited(system, user, max_tokens=9000, model=None, schema=None, _pr
                          'inputSchema': {'json': schema or {'type': 'object', 'additionalProperties': True}}}}
     forced = FORCED_OK.get(m, True)
     request_ids = tuple(_prior_request_ids)
+    # the cap is only a ceiling: a model that thinks first returns nothing when a small one is used up
+    max_tokens = max(max_tokens, TOKEN_FLOOR)
     empty_retries = 0   # an empty reply (no tool call, no text; often out of room) is asked again with twice the room
     while True:
         kw = dict(modelId=m,
@@ -548,11 +674,19 @@ def llm_json_audited(system, user, max_tokens=9000, model=None, schema=None, _pr
                   messages=[{'role': 'user', 'content': [{'text': user}]}],
                   inferenceConfig={'maxTokens': max_tokens},
                   toolConfig={'tools': [tool], 'toolChoice': {'tool': {'name': 'submit'}} if forced else {'auto': {}}})
+        level = _effort_for(system, m)
+        if level and m not in _NO_EFFORT:
+            kw['additionalModelRequestFields'] = {'output_config': {'effort': level}}
         try:
-            r = _ensure_client().converse(**kw)
+            r, hedge = _converse(kw, m, purpose)
             if audit and logical_request_id:
                 audit.provider_attempt(logical_request_id, response=r)
+                if hedge:   # a second identical request was sent; the reply recorded is the one that came first
+                    audit.annotate(logical_request_id, **hedge)
         except Exception as e:
+            if 'additionalModelRequestFields' in kw and ('output_config' in str(e) or 'effort' in str(e)):
+                _NO_EFFORT.add(m)
+                continue
             if forced and 'tool_choice' in str(e):
                 FORCED_OK[m] = False
                 request_ids += _exception_request_ids(e)
@@ -611,7 +745,8 @@ def schedule_llm_json_audited(executor, system, user, max_tokens=9000, model=Non
     """Pre-register a logical request, then schedule it with the active audit context."""
     logical_request_id = _schedule_audit_request(system, user, max_tokens, model or MODEL, schema, audit_metadata)
     with provenance.semantics(_audit_request_id=logical_request_id):
-        future = provenance.submit_with_context(executor, llm_json_audited, system, user, max_tokens, model, schema)
+        future = provenance.submit_with_context(executor, llm_json_audited, system, user, max_tokens, model, schema,
+                                                audit_metadata=audit_metadata)
     return future, logical_request_id
 
 
@@ -631,7 +766,8 @@ def schedule_llm_json(executor, system, user, max_tokens=9000, model=None, schem
     """Pre-register a payload-only compatibility call before scheduling it."""
     logical_request_id = _schedule_audit_request(system, user, max_tokens, model or MODEL, schema, audit_metadata)
     with provenance.semantics(_audit_request_id=logical_request_id):
-        future = provenance.submit_with_context(executor, llm_json, system, user, max_tokens, model, schema)
+        future = provenance.submit_with_context(executor, llm_json, system, user, max_tokens, model, schema,
+                                                audit_metadata=audit_metadata)
     return future, logical_request_id
 
 
@@ -810,7 +946,7 @@ Requirements:
 Return the complete case JSON."""
 
 
-def step_prompt(case, report, target, mode, preferred, feedback=None):
+def step_prompt(case, report, target, mode, preferred, feedback=None, previous=None):
     A = report['A']
     kinds = {}
     for x in case['signs']:
@@ -846,10 +982,30 @@ def step_prompt(case, report, target, mode, preferred, feedback=None):
                 f"while the answer is only settled at depth {report['solve_depth']}) by these signs: {pil.get(key)}. Make ALL of them "
                 "harder to reach: CONCEAL them behind something the player must first obtain, with a real in-world reason, "
                 "or FRAGMENT them so they need another clue to be understood. Keep them TRUE and reachable.")
+    elif mode == 'clear':
+        who = actor_of(hyp_map(case)[target])
+        task = (f"CLEAR STEP. Innocent candidate '{target}' ({who}) is ruled out only because the evidence against the true "
+                f"culprit is found: without the means and motive evidence nothing clears them. Give them evidence of their own "
+                f"that rules them out by itself: a TRUE sign whose claim the kernel can check - e.g. {{\"pred\":\"wasAt\",\"person\":\"{who}\",...}} "
+                "placing them elsewhere during the crime window, from a witness who was with them or saw them, a record, or "
+                "a physical trace - with the events that make it true (who was there, and why). It must not make their thread "
+                f"shallower (now settled at depth {(report.get('threads') or {}).get(target)}): put it behind something the "
+                "player must first obtain (Conceal), or make it need another clue to be read (Fragment), with a reason "
+                f"of the keeper's own. Preferred operator this step: {preferred}.")
+    elif mode == 'repair':
+        task = ("REPAIR STEP. The case is deep enough; an independent whole-case reviewer found these problems. Fix every one "
+                "with the smallest change that does it (rewording a text, moving a sign, giving a person a stated reason, or "
+                "changing a gate to one whose reason really covers the sign), keeping every sign's depth, the twist, the "
+                "motive and the means as they are:\n- " + '\n- '.join(target))
     else:
         settle = settling_signs(case, report, target)
+        limits = lock_limits(case)
+        fixed = {s: limits[s] for s in settle['signs'] if s in limits}
+        note = ('' if not fixed else " Some of these may not be locked: " + '; '.join(f"'{s}': {why}" for s, why in fixed.items())
+                + ". Deepen them by making them need another clue (Fragment), or deepen the thread through its other signs, or "
+                "carry the same fact on a new sign someone keeps for a reason of their own and remove the target.")
         task = (f"REFINE sign '{target}' (the player currently gets it too easily). The thread it belongs to is currently settled "
-                f"at depth {settle['depth']} by these signs: {settle['signs']}. To make progress ALL of them must end up deeper "
+                f"at depth {settle['depth']} by these signs: {settle['signs']}.{note} To make progress ALL of them must end up deeper "
                 "(you may hide or fragment several in one patch, or give them a shared deeper prerequisite). First answer the story question: who in "
                 "this world would have a reason to make this sign harder to see, and why? The reason must be that keeper's own "
                 "and must be about this sign: do not reuse a gate that exists for something else. Then apply one operator: "
@@ -859,8 +1015,13 @@ def step_prompt(case, report, target, mode, preferred, feedback=None):
                 f"Preferred operator this step: {preferred}. The case already has sign kinds {kinds}; prefer a kind it has little of "
                 "(physical traces, behaviour, overheard talk, absences) over yet another record or document.")
     fb = f"\n\nYOUR PREVIOUS ATTEMPT WAS REJECTED BY THE CHECKER. Fix exactly these problems:\n- " + "\n- ".join(feedback) if feedback else ''
+    if previous is not None:
+        fb += ("\n\nTHAT PATCH (revise it: keep what was right, change only what those problems need, and return the "
+               "complete revised patch):\n" + json.dumps(previous, separators=(',', ':'))[:40000])
     return f"""CURRENT CASE:
 {json.dumps(case, separators=(',', ':'))}
+
+{case_rules(case)}
 
 KERNEL ANALYSIS (computed by code): {json.dumps(state)}
 
@@ -907,6 +1068,7 @@ CRITIC_SCHEMA = {'type': 'object', 'properties': {'verdict': {'type': 'string', 
                                                   'issues': {'type': 'array', 'items': {'type': 'string'}}},
                  'required': ['verdict', 'issues']}
 CRITIC_UNAVAILABLE_REASON = 'plausibility review: unavailable'
+REVIEW_REPAIRS = int(os.environ.get('LM_REVIEW_REPAIRS', '2'))   # repair steps after a failed whole-case review
 CRITIC_CHECKS = ('LOCK', 'READING', 'CHARACTER', 'LOOSE END', 'GIVEAWAY', 'CONTRADICTION', 'ALLY', 'BOTTLENECK')
 
 
@@ -983,7 +1145,7 @@ def critic(case, patch):
     attempts = []
     for semantic_attempt in range(2):
         try:
-            response = llm_json_audited(CRITIC, prompt, 2500, model=CRITIC_MODEL, schema=CRITIC_SCHEMA,
+            response = llm_json_audited(CRITIC, prompt, 8000, model=REVIEW_MODEL, schema=CRITIC_SCHEMA,
                                         audit_metadata={'purpose': 'typed-model-critic',
                                                         'semantic_retry': semantic_attempt})
         except Exception as e:
@@ -1167,6 +1329,16 @@ def schedule(case, report, step, hist, D, profile=None):
         pick = next((a for a in order if a not in used), order[0] if order else None)
         if pick and [h['mode'] for h in hist if h.get('accepted')].count('herring') < hi:
             return 'herring', pick, 'Mislead', None, None
+    # innocents cleared on evidence of their own (not only by the culprit's conviction): give one that has none its own
+    own = profile.get('own', 0)
+    if step >= 3 and own:
+        alone = cleared_alone(case, report)
+        threads = report.get('threads') or {}
+        todo = [t for t in sorted(threads, key=lambda t: -(threads[t] or 0)) if t != 'truth' and t not in alone and threads[t] is not None]
+        tried = [h['target'] for h in hist if h['mode'] == 'clear']
+        todo = [t for t in todo if tried.count(t) < 2]
+        if len(alone) < own and todo and [h['mode'] for h in hist[-2:]].count('clear') < 2:
+            return 'clear', todo[0], 'Fragment', todo[0], threads[todo[0]]
     # The means or motive evidence must not be obvious long before the answer: deepen a pillar more than two levels
     # shallower than the solve depth (at most twice in a row).
     pil = report.get('pillars') or {}
@@ -1179,8 +1351,18 @@ def schedule(case, report, step, hist, D, profile=None):
             shallow = [x for x in signs_ if A['eff'].get(x) == pd]
             if shallow:
                 return 'pillar', shallow[0], 'Conceal', key, pd
-    # Thread targeting: the case is solved when every innocent is ruled out and the truth survives. Deepen the
-    # SHALLOWEST thread by refining its critical signs (removing them would make that thread harder), shallowest first.
+    options = refine_options(case, report, hist, D, preferred)
+    if options:
+        return ('refine',) + options[0]
+    return None, None, None, None, None
+
+
+def refine_options(case, report, hist, D, preferred):
+    """Refinement options, best first and spread across threads: each thread's critical signs (removing them would make
+    that thread harder), the shallowest thread first, a sign that may only be fragmented after one that may be locked.
+    Thread targeting: the case is solved when every innocent is ruled out and the truth survives."""
+    A = report['A']
+    per_thread = []
     targeted = [h['target'] for h in hist if h.get('accepted')]
     recent = targeted[-2:] + [h['target'] for h in hist[-2:] if not h.get('accepted')]
     threads = {t: d for t, d in (report.get('threads') or {}).items() if d is not None and d < D}
@@ -1189,10 +1371,91 @@ def schedule(case, report, step, hist, D, profile=None):
         if not crit:  # redundant evidence: take any shallow sign that bears on this thread
             crit = [sid for sid in A['understood'] if A['eff'][sid] <= tdepth and claim_of(A['signs'][sid]) and A['truthval'].get(sid)]
         crit = [c for c in crit if c not in recent and targeted.count(c) < 3]
-        if crit:
-            crit.sort(key=lambda c: (A['eff'][c], targeted.count(c), c))
-            return 'refine', crit[0], preferred, thread, tdepth
-    return None, None, None, None, None
+        # never aim at what everyone knows (it can only stay); a sign that may not be locked can still be fragmented
+        limits = lock_limits(case)
+        crit = [c for c in crit if A['signs'][c]['kind'] != 'public']
+        crit.sort(key=lambda c: (c in limits, A['eff'][c], targeted.count(c), c))
+        per_thread.append([(c, 'Fragment' if c in limits else preferred, thread, tdepth) for c in crit])
+    # interleave: the best option of each thread, then the second of each, so parallel drafts try different threads
+    out, seen = [], set()
+    for rank in range(max((len(x) for x in per_thread), default=0)):
+        for options in per_thread:
+            if rank < len(options) and options[rank][0] not in seen:
+                seen.add(options[rank][0]); out.append(options[rank])
+    return out
+
+
+def schedule_options(case, report, step, hist, D, profile=None, k=None):
+    """The step's options for parallel drafts: the scheduled one first, then other refinement targets (other threads
+    first) or, for a structural step (twist, implicate, herring, pillar), the same task under other operators."""
+    k = k or CANDIDATES
+    first = schedule(case, report, step, hist, D, profile)
+    if not first[1]:
+        return []
+    options = [first]
+    if first[0] == 'refine':
+        for o in refine_options(case, report, hist, D, first[2]):
+            if len(options) >= k:
+                break
+            if all(o[0] != x[1] for x in options):
+                options.append(('refine',) + o)
+    elif first[0] == 'clear':
+        # the other innocents without evidence of their own, then other operators for the first
+        alone, threads = cleared_alone(case, report), report.get('threads') or {}
+        for t in sorted(threads, key=lambda t: -(threads[t] or 0)):
+            if len(options) < k and t not in ('truth', first[1]) and t not in alone and threads[t] is not None:
+                options.append(('clear', t, 'Fragment', t, threads[t]))
+        for op in ('Conceal', 'Mislead'):
+            if len(options) < k:
+                options.append(('clear', first[1], op, first[3], first[4]))
+    else:
+        for op in ('Conceal', 'Fragment', 'Mislead'):
+            if len(options) >= k:
+                break
+            if op != first[2]:
+                options.append((first[0], first[1], op, first[3], first[4]))
+    return options
+
+def lock_limits(case):
+    """{sign id: why it may not wait behind 'requires'} for signs the rules forbid locking: what everyone knows, the
+    constable's accounts and what comes from his own doing (roles.ally_errors), and the doctor's examination account
+    (her findings are given when she is asked about it; roles.examiner_errors)."""
+    import roles
+    con, ex = roles.role_of(case, 'constable'), roles.role_of(case, 'examiner')
+    ex_suspect = any((h.get('facts') or {}).get('actor') == ex for h in case['question']['candidates'])
+    morning = ((case.get('setting') or {}).get('day') or {}).get('morning', 1740)
+    events = {e['id']: e for e in case['events']}
+    out = {}
+    for x in case['signs']:
+        src = events.get(x.get('source')) or {}
+        if x['kind'] == 'public':
+            out[x['id']] = 'what everyone knows: it can never be hidden or need another clue'
+        elif con and (x.get('speaker') == con or (src.get('agent') == con and x['kind'] != 'testimony')):
+            out[x['id']] = 'the constable holds nothing back: it may need another clue to be read (Fragment), never wait behind one'
+        elif ex and not ex_suspect and x['kind'] == 'testimony' and x.get('speaker') == ex and src.get('agent') == ex and src.get('start', 0) >= morning:
+            out[x['id']] = "the doctor's account of her examination is given when asked: it may need another clue to be read, never wait behind one"
+    return out
+
+
+def case_rules(case):
+    """The rules code will check every patch against, stated for this case before the model drafts."""
+    import roles
+    con, ex = roles.role_of(case, 'constable'), roles.role_of(case, 'examiner')
+    return '\n'.join([
+        "CASE RULES (code checks every patch against these; a patch that breaks one is rejected):",
+        f"- The constable ('{con}') is the detective's ally: no false account of his, no 'requires' on his accounts or on signs "
+        "from his own events, never a candidate, never staging or hiding evidence.",
+        f"- The doctor ('{ex}') gives her findings on the body, her notes on it and the dead man's effects when asked about "
+        "the examination: never behind a patient's confidence or any other account of hers.",
+        "- Public signs (what everyone knows) carry no 'requires' and no 'needs'.",
+        "- A keeper's reason covers only what it is about; never reuse one gate for unrelated evidence.",
+        "- Every testimony is backed: its speaker took part in or saw its 'source' event, or a 'knows' attitude of theirs is cited "
+        "in 'because'. A rule sign names an existing acquirable rule id.",
+        "- Every claim must be decided by the events (add the events that place people where a claim says).",
+        "- Anyone you newly involve gets an ordinary evening at home automatically if they have none; give them one yourself "
+        "if they were somewhere else.",
+    ])
+
 
 def settling_signs(case, report, target):
     """The shallow signs that currently settle the thread the target belongs to (so the model can hide all of them)."""
@@ -1236,12 +1499,20 @@ def step_laws(case, report, new, rep, patch, mode, target, thread, tdepth):
         if (report.get('pillars') or {}).get(key) is not None and (rep.get('pillars') or {}).get(key) is None:
             law.append(f"the culprit's {key.upper()} evidence is no longer reachable and true; keep a way to it (it may lie deeper)")
     add = patch.get('add') or {}
-    if not (add.get('events') or add.get('attitudes') or (patch.get('modify') or {}).get('events')):
+    before_threads, after_threads = report.get('threads') or {}, rep.get('threads') or {}
+    # an innocent's thread never gets shallower (the truth's may: positive evidence is meant to be found)
+    shallower = [t for t, d in before_threads.items() if t != 'truth' and d is not None and (after_threads.get(t) is None or after_threads[t] < d)]
+    if shallower:
+        law.append(f"a thread got shallower ({', '.join(f'{t} {before_threads[t]}->{after_threads.get(t)}' for t in shallower)}): keep every thread at least as deep")
+    if mode != 'repair' and not (add.get('events') or add.get('attitudes') or (patch.get('modify') or {}).get('events')):
         law.append('no story beat: every refinement must add the event or attitude that causes it (who did what, and why)')
     if mode == 'implicate' and len([x for x in (rep.get('motive'), rep.get('means')) if x]) <= \
             len([x for x in (report.get('motive'), report.get('means')) if x]):
         law.append('no new positive evidence: add a TRUE motive (a related claim with a = the culprit) or means '
                    '(a culpritHad or culpritTrait claim the culprit satisfies) sign that is reachable and readable')
+    if mode == 'clear' and target not in cleared_alone(new, rep):
+        law.append(f"'{target}' is still ruled out only by the evidence against the culprit: add a TRUE sign of their own "
+                   "(an alibi or witness: a wasAt claim placing them elsewhere in the crime window) that clears them without it")
     if mode == 'herring' and not rep['herrings']:
         law.append(f"no surface behaviour sign about '{target}' with a deeper explainedBy sign was found")
     if mode == 'pillar':
@@ -1254,14 +1525,59 @@ def step_laws(case, report, new, rep, patch, mode, target, thread, tdepth):
         A2, nd = rep['A'], (rep.get('threads') or {}).get(thread)
         if target in {x['id'] for x in new['signs']} and target not in A2['understood']:
             law.append(f"the target '{target}' is no longer obtainable or readable at all; it must stay obtainable, only deeper")
-        elif nd is not None and tdepth is not None and nd <= tdepth:
-            law.append(f"no progress: the '{thread}' thread is still settled at depth {nd} (was {tdepth}); "
-                       f"another path still settles it that early - hide or fragment those signs too, or make the target's chain longer")
+        elif nd is not None and tdepth is not None and nd <= tdepth and \
+                sum(d or 0 for d in after_threads.values()) <= sum(d or 0 for d in before_threads.values()):
+            # progress is any thread getting deeper; when none does, say exactly which signs still settle the target's
+            still = settling_signs(new, rep, target)['signs']
+            law.append(f"no progress: no thread got deeper; the '{thread}' thread is still settled at depth {nd} by {still}. "
+                       f"Every one of those must end up deeper (hide it behind something, make it need another clue, or "
+                       f"carry its fact on a deeper sign instead)")
     return law
 
 
 class Cancelled(Exception):
     pass
+
+
+INFRA_ERROR = ('model call failed', 'patch could not be applied: Expecting', 'critic unavailable')
+
+
+def step_feedback(results):
+    """What the next round is told: every distinct problem the drafts had with the case (the draft closest to passing
+    first), never a failed model call or an unavailable reviewer, which say nothing about the case."""
+    lists = sorted((r[3] for r in results if r[3]), key=len)
+    out = []
+    for errs in lists:
+        for e in errs:
+            if not any(str(e).startswith(x) for x in INFRA_ERROR) and str(e) != CRITIC_UNAVAILABLE_REASON and e not in out:
+                out.append(e)
+    return out[:12] or None
+
+
+def with_ordinary_evenings(case):
+    """Everyone involved has an evening (premise.evening_errors): anyone without one spends it at home, done by code
+    (the model is not asked to repair a bookkeeping rule). Kept only when it changes nothing in the solve."""
+    import premise as P
+    need = sorted({m.split()[1] for m in P.evening_errors(case)})
+    if not need:
+        return case
+    day = (case.get('setting') or {}).get('day') or (FIXED or {}).get('day') or {}
+    homes = {p['id']: p.get('home') for p in (FIXED or {}).get('people', [])}
+    places = {pl['id'] for pl in case['setting']['places']}
+    out = copy.deepcopy(case)
+    for pid in need:
+        home = homes.get(pid)
+        if home not in places or not day.get('evening') or not day.get('morning'):
+            continue
+        name = next((p['name'] for p in out['people'] if p['id'] == pid), pid)
+        out['attitudes'].append({'id': f'a_{pid}_evening', 'agent': pid, 'mode': 'intends', 'content': 'To spend a quiet evening at home.', 'strength': 0.6})
+        out['events'].append({'id': f'e_{pid}_evening', 'type': 'routine', 'agent': pid, 'others': [], 'place': home,
+                              'start': day['evening'], 'end': day['morning'] - 1, 'causedBy': f'a_{pid}_evening',
+                              'summary': f'{name} spends the evening at home.', 'ordinary': True})
+    def shape(c):
+        r = certify(c, False)
+        return r['ok'], r.get('solve_depth'), tuple(sorted((r.get('threads') or {}).items())), tuple(sorted(r.get('surface') or []))
+    return out if shape(out) == shape(case) else case
 
 
 def metrics_of(rep):
@@ -1295,11 +1611,14 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
     def send(kind, **data):
         emit({'kind': kind, 't': round(time.time() - t0, 1), **data})
     hist = []
-    pool = cf.ThreadPoolExecutor(max_workers=CANDIDATES * 2)
+    # room for drafts that lost and are still finishing (a thread cannot be stopped mid-call), so they never queue the next step
+    pool = cf.ThreadPoolExecutor(max_workers=CANDIDATES * 8)
 
-    # SEED: CANDIDATES in parallel per round; first that certifies wins
+    # SEED: SEED_CANDIDATES in parallel per round; first that certifies wins
     case, fb, best_case, seen, seed_candidates = None, None, None, [], []
     send('phase', phase='seed', message='Writing the setting, cast, secrets and what really happened')
+    timing.reset()
+    seed_phase = timing.phase('seed').__enter__()
     for rnd in range(SEED_ROUNDS):
         check_stop()
         # after the first round, repair the best draft so far rather than start again (a fresh draft fixes one error
@@ -1311,14 +1630,14 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
             + ('\n\nTHE PREVIOUS DRAFT:\n' + json.dumps(best_case)[:60000] if best_case else ''))
         prompt = seed_prompt(brief, premise) + extra
         futs = {}
-        for candidate_index in range(1, CANDIDATES + 1):
+        for candidate_index in range(1, SEED_CANDIDATES + 1):
             future, logical_request_id = schedule_llm_json(
                 pool, SYSTEM_GEN, prompt, 20000, MODEL,
                 audit_metadata={'purpose': 'seed-generation', 'phase': 'seed', 'round': rnd + 1,
                                 'candidate': candidate_index})
             futs[future] = {'candidate_id': f'seed.{rnd + 1}.{candidate_index}',
                             'logical_request_id': logical_request_id}
-        send('drafting', round=rnd + 1, drafts=CANDIDATES)
+        send('drafting', round=rnd + 1, drafts=SEED_CANDIDATES)
         best, winner_future = None, None
         for f in cf.as_completed(futs):
             raw, response = None, None
@@ -1326,7 +1645,10 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
             try:
                 response = f.result()
                 raw = response.payload if isinstance(response, LLMJSONResponse) else response
-                cand = lock_setting(unwrap_case(parse_json(raw))); rep = certify(cand, False)
+                cand = lock_setting(unwrap_case(parse_json(raw)))
+                if FIXED:
+                    cand = with_ordinary_evenings(cand)
+                rep = certify(cand, False)
                 pe = premise_errors(cand, premise) + history_errors(cand)
                 if pe or (rep['ok'] and setting_errors(cand)):
                     rep = {'ok': False, 'errors': pe + setting_errors(cand) + (rep.get('errors') or [])}
@@ -1365,6 +1687,8 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
             break
         fb = (best or [])[:12]; seen += [x for x in fb if x not in seen]; log(f'[{name}] seed round {rnd+1} rejected: {fb[:2]}')
         send('seed_rejected', round=rnd + 1, errors=fb)
+    seed_phase.__exit__(None, None, None)
+    timing.save(outdir)
     if case is None:
         pool.shutdown(wait=False, cancel_futures=True)
         send('failed', message='The first draft of the case never passed the checks', errors=fb)
@@ -1379,13 +1703,221 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
     log(f"[{name}] seed ok at {time.time()-t0:.0f}s: surface {report['surface']} solve {report['solve_depth']} threads {report['threads']} "
         f"twist {report['twist']} motive {bool(report['motive'])} means {bool(report['means'])} herring {bool(report['herrings'])}")
 
-    def evaluate(patch_text, mode, target, thread, tdepth):
+    def evaluate(patch_text, mode, target, thread, tdepth, base=None):
+        base_case, base_report = base or (case, report)
         try:
-            patch = parse_json(patch_text); new = apply_patch(case, patch, target); rep = certify(new, False)
+            patch = parse_json(patch_text); new = with_ordinary_evenings(apply_patch(base_case, patch, target)); rep = certify(new, False)
         except Exception as e:
             return None, None, None, [f'patch could not be applied: {e}']
-        errs = setting_errors(new) + premise_errors(new, premise) + history_errors(new) + (rep.get('errors') or []) + (step_laws(case, report, new, rep, patch, mode, target, thread, tdepth) if rep['ok'] else [])
+        errs = setting_errors(new) + premise_errors(new, premise) + history_errors(new) + (rep.get('errors') or []) + (step_laws(base_case, base_report, new, rep, patch, mode, target, thread, tdepth) if rep['ok'] else [])
         return patch, new, rep, errs
+
+    def annotate(meta, **fields):
+        audit = provenance.current_audit()
+        if audit and meta.get('logical_request_id'):
+            audit.annotate(meta['logical_request_id'], **fields)
+
+    def stack(passed, options, log_id):
+        """The passing drafts of one round, applied together: the winner, then each other passing draft for a different
+        target on top of it, kept if it still passes the code (its laws against the combined case and its thread's depth
+        now) and the critic on the combined case, and moves it further. Drafts aim at different threads, so a round often
+        deepens two at once instead of one. For a clear step, further means more innocents cleared on their own evidence."""
+        def gain(new_, rep_, mode_):
+            return ((len(cleared_alone(new_, rep_)) if mode_ == 'clear' else 0),) + progress(rep_)
+        passed = sorted(passed, key=lambda pm: gain(pm[0][1], pm[0][2], options[pm[1]['option']][0]), reverse=True)
+        (patch, new, rep, _), meta = passed[0]
+        stacked, first = [], options[meta['option']]
+        for (p2, _, _, _), m2 in passed[1:]:
+            o = options[m2['option']]
+            if o[0] not in STACK_MODES or first[0] not in STACK_MODES or o[1] in [first[1]] + [options[x['option']][1] for x in stacked]:
+                continue
+            _, new2, rep2, errs = evaluate(p2, o[0], o[1], o[3], (rep.get('threads') or {}).get(o[3]), base=(new, rep))
+            if errs or gain(new2, rep2, o[0]) <= gain(new, rep, o[0]):
+                continue
+            try:
+                with provenance.semantics(parent_operation='refinement-critic', phase='refinement', candidate=m2['candidate_id'], stacked=True):
+                    outcome = critic(new2, p2)
+                accepted, _ = critic_feedback(outcome)
+                m2['stack_review'] = outcome.history(m2['candidate_id'])
+            except Exception:
+                accepted = False
+            if accepted:
+                new, rep = new2, rep2
+                m2['patch'] = p2
+                stacked.append(m2)
+                m2['candidate']['selected'] = True
+                log(f"[{name}] {log_id}: stacked {m2['candidate_id']} ({o[0]}:{o[1]}) on the winner: solve {rep['solve_depth']} threads {rep.get('threads')}")
+        return (patch, new, rep), meta, stacked
+
+    def progress(rep):
+        """How far a case has come: its solve depth, then how deep its threads are in all."""
+        return (rep.get('solve_depth') or 0, sum(d or 0 for d in (rep.get('threads') or {}).values()))
+
+    def run_step(step, options):
+        """One step, explored in parallel: each option (a mode, target and operator) gets its own draft, drafts from two
+        models; code checks each as it lands and the critic reviews every draft that passes, in parallel. Once one
+        passes, the others have a short grace to finish, and the passing draft that moves the case furthest wins. A
+        round that finds nothing passes each option its own feedback (the code's and the critic's), and tries again."""
+        nonlocal case, report
+        mode, target, preferred, thread, tdepth = options[0]
+        fbs = [None] * len(options)
+        entry = {'step': step, 'mode': mode, 'target': target, 'thread': thread, 'preferred': preferred, 'attempts': [],
+                 'options': [list(o[:3]) for o in options]}
+        ts = time.time()
+        before = case
+        send('step_start', step=step, mode=mode, target=target, thread=thread, operator=preferred,
+             target_title=next((x.get('title') for x in case['signs'] if x['id'] == target), target) if isinstance(target, str) else 'repair')
+        for rnd in range(2):
+            check_stop()
+            models = DRAFT_MODELS
+            n = max(CANDIDATES, len(options))
+            futures = {}
+            for i in range(n):
+                k = i % len(options)
+                o_mode, o_target, o_pref, o_thread, o_tdepth = options[k]
+                candidate_id = f'{step}.{rnd + 1}.{i + 1}'
+                inference_profile = models[i % len(models)]
+                future, logical_request_id = schedule_llm_json_audited(
+                    pool, SYSTEM_GEN, step_prompt(case, report, o_target, o_mode, o_pref, fbs[k]), 9000, inference_profile,
+                    audit_metadata={'purpose': 'refinement-candidate', 'phase': 'refinement', 'step': step, 'round': rnd + 1,
+                                    'candidate': candidate_id, 'mode': o_mode, 'target': o_target if isinstance(o_target, str) else 'repair'})
+                futures[future] = {'kind': 'draft', 'candidate_id': candidate_id, 'option': k,
+                                   'inference_profile': inference_profile, 'logical_request_id': logical_request_id}
+            send('drafting', step=step, round=rnd + 1, drafts=n)
+            # a round has a hard limit (a draft that thinks for minutes is abandoned, its siblings' feedback still used);
+            # once one draft passes, the others get only a short grace
+            round_start = time.time()
+            results, passed, deadline = [[] for _ in options], [], round_start + ROUND_LIMIT
+            pending = set(futures)
+
+            def revise(meta, r, response):
+                """A rejected draft is revised once, in this round, with its own problems and its own patch: most
+                rejections are one fixable slip (a reading still naming the old place), and starting over costs a round."""
+                patch_ = r[0] if r[0] is not None else (parse_json(response.payload) if response is not None and isinstance(response.payload, (dict, str)) else None)
+                problems = step_feedback([r])
+                if meta.get('revision') or passed or not problems or patch_ is None or deadline - time.time() < REVISE_MIN:
+                    return
+                o_mode, o_target, o_pref, _, _ = options[meta['option']]
+                candidate_id = meta['candidate_id'] + 'r'
+                future, logical_request_id = schedule_llm_json_audited(
+                    pool, SYSTEM_GEN, step_prompt(case, report, o_target, o_mode, o_pref, problems, previous=patch_), 9000, MODEL,
+                    audit_metadata={'purpose': 'refinement-revision', 'phase': 'refinement', 'step': step, 'round': rnd + 1,
+                                    'candidate': candidate_id, 'mode': o_mode, 'target': o_target if isinstance(o_target, str) else 'repair'})
+                futures[future] = {'kind': 'draft', 'candidate_id': candidate_id, 'option': meta['option'], 'revision': 1,
+                                   'inference_profile': MODEL, 'logical_request_id': logical_request_id}
+                pending.add(future)
+                send('drafting', step=step, round=rnd + 1, drafts=1, revision=True)
+            while pending:
+                wait = max(0.0, deadline - time.time())
+                done, pending = cf.wait(pending, timeout=wait, return_when=cf.FIRST_COMPLETED)
+                if not done:          # the grace after the first passing draft is over
+                    break
+                for f in done:
+                    meta = futures[f]
+                    o_mode, o_target, o_pref, o_thread, o_tdepth = options[meta['option']]
+                    if meta['kind'] == 'draft':
+                        response, ids, raw_error = None, (), None
+                        try:
+                            response = f.result(); ids = response.request_ids
+                            r = evaluate(response.payload, o_mode, o_target, o_thread, o_tdepth)
+                        except Exception as error:
+                            ids = response.request_ids if response else _exception_request_ids(error)
+                            raw_error = getattr(error, 'raw_response', None)
+                            r = (None, None, None, [f'model call failed: {error}'])
+                        candidate = {'candidate_id': meta['candidate_id'], 'round': rnd + 1, 'option': meta['option'],
+                                     'logical_request_id': meta['logical_request_id'],
+                                     'generation_inference_profile': meta['inference_profile'],
+                                     'generation_request_ids': list(ids),
+                                     'candidate_hash': provenance.sha256(response.payload) if response else None,
+                                     'parseable': response is not None, 'code_errors': list(r[3]), 'selected': False,
+                                     **({'revision_of': meta['candidate_id'][:-1]} if meta.get('revision') else {})}
+                        if raw_error is not None:
+                            candidate['generation_error_raw_response'] = raw_error
+                        entry.setdefault('candidates', []).append(candidate)
+                        entry['attempts'].append(r[3])
+                        annotate(meta, candidate_hash=candidate['candidate_hash'], code_verdict='PASS' if not r[3] else 'FAIL',
+                                 code_errors=list(r[3]), selection='not-selected')
+                        send('draft_checked', step=step, ok=not r[3], errors=r[3][:2])
+                        if r[3]:
+                            log(f"[{name}] step {step} draft {meta['candidate_id']} ({o_mode}:{o_target if isinstance(o_target, str) else 'repair'}) "
+                                f"rejected by code: {[str(e)[:140] for e in r[3][:2]]}")
+                            candidate['status'] = 'CODE_REJECTED'
+                            results[meta['option']].append(r)
+                            revise(meta, r, response)
+                            continue
+                        # passed the code: the critic reviews it in parallel with the drafts still being written
+                        send('reviewing', step=step, drafts=1)
+                        with provenance.semantics(parent_operation='refinement-critic', phase='refinement', step=step, round=rnd + 1,
+                                                  candidate=meta['candidate_id'], mode=o_mode, target=o_target if isinstance(o_target, str) else 'repair'):
+                            cfut = provenance.submit_with_context(pool, critic, r[1], r[0])
+                        futures[cfut] = {**meta, 'kind': 'critic', 'result': r, 'candidate': candidate}
+                        pending.add(cfut)
+                    else:
+                        r, candidate = meta['result'], meta['candidate']
+                        try:
+                            outcome = f.result()
+                        except Exception as error:
+                            outcome = None
+                            annotate(meta, typed_critic_outcome='UNAVAILABLE', code_verdict='PASS', refinement_verdict='FAIL')
+                            candidate['status'] = 'UNAVAILABLE'
+                            r[3].append(CRITIC_UNAVAILABLE_REASON)
+                            results[meta['option']].append(r)
+                            continue
+                        review = outcome.history(meta['candidate_id'])
+                        entry.setdefault('critic', []).append(review)
+                        candidate['critic'] = review
+                        candidate['status'] = outcome.status.value
+                        accepted, review_errors = critic_feedback(outcome)
+                        annotate(meta, typed_critic_outcome=outcome.status.value, critic_issues=list(outcome.issues),
+                                 code_verdict='PASS', refinement_verdict='PASS' if accepted else 'FAIL')
+                        log(f"[{name}] step {step} review ({meta['inference_profile']} draft for {o_mode}:{o_target if isinstance(o_target, str) else 'repair'}): "
+                            f"{outcome.status.value} {list(outcome.issues)[:3]}")
+                        if accepted:
+                            passed.append((r, meta))
+                            deadline = min(deadline, time.time() + grace(time.time() - round_start))
+                        else:
+                            r[3].extend(review_errors)
+                            candidate['code_errors'] = list(r[3])
+                            results[meta['option']].append(r)
+                            revise(meta, r, None)
+            for f, meta in futures.items():
+                if not f.done():
+                    f.cancel()
+                    if meta['kind'] == 'draft':
+                        cancel_audited_future(f, meta['logical_request_id'])
+            if passed:
+                (patch, new, rep), meta, stacked = stack(passed, options, f'step {step}')
+                meta['candidate']['selected'] = True
+                for m in [meta] + stacked:
+                    annotate(m, selection='selected' if m is meta else 'stacked')
+                case, report = new, rep
+                entry['stacked'] = [{'candidate_id': m['candidate_id'], 'mode': options[m['option']][0], 'target': options[m['option']][1],
+                                     'story': m['patch'].get('story'), 'operator': m['patch'].get('operator'), 'critic': m.get('stack_review')}
+                                    for m in stacked]
+                o_mode, o_target, o_pref, o_thread, _ = options[meta['option']]
+                entry.update(accepted=True, mode=o_mode, target=o_target, thread=o_thread, preferred=o_pref,
+                             operator=patch.get('operator'), blocks=patch.get('blocks'), story=patch.get('story'),
+                             solve_depth=rep['solve_depth'], surface=rep['surface'], threads=rep.get('threads'))
+                break
+            fbs = [step_feedback(rs) for rs in results]
+        entry.setdefault('accepted', False)
+        entry['seconds'] = round(time.time() - ts)
+        hist.append(entry)
+        send('step', step=step, mode=entry['mode'], target=entry['target'], thread=entry['thread'], accepted=entry['accepted'],
+             operator=entry.get('operator'), blocks=entry.get('blocks'), story=entry.get('story'),
+             attempts=[a[:4] for a in entry['attempts']], critic=entry.get('critic', []), seconds=entry['seconds'],
+             added=case_added(before, case) if entry['accepted'] else {}, metrics=metrics_of(report))
+        with open(f'{outdir}/{step:02d}-case.json', 'w') as output:
+            json.dump(case, output, indent=1)
+        shown = entry['target'] if isinstance(entry['target'], str) else 'repair'
+        log(f"[{name}] step {step} {entry['mode']}:{shown} -> {'OK ' + str(entry.get('operator')) if entry['accepted'] else 'REJECTED'}"
+            f"{' +' + str(len(entry['stacked'])) + ' stacked' if entry.get('stacked') else ''}"
+            f" ({len(entry['attempts'])} drafts over {len(options)} option(s), {entry['seconds']}s, solve {report['solve_depth']})")
+
+    def timed_step(step, options, name='step'):
+        with timing.phase(f'{name} {step}'):
+            run_step(step, options)
+        timing.save(outdir)
 
     for step in range(1, steps + 1):
         th = [d for d in (report.get('threads') or {}).values() if d is not None]
@@ -1403,109 +1935,28 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
         mode, target, preferred, thread, tdepth = schedule(case, report, step, hist, D, profile)
         if not target:
             log(f'[{name}] step {step}: no qualifying target, stopping'); break
-        fb, entry = None, {'step': step, 'mode': mode, 'target': target, 'thread': thread, 'preferred': preferred, 'attempts': []}
-        ts = time.time()
-        before = case
-        send('step_start', step=step, mode=mode, target=target, thread=thread, operator=preferred,
-             target_title=next((x.get('title') for x in case['signs'] if x['id'] == target), target))
-        for rnd in range(2):
+        timed_step(step, schedule_options(case, report, step, hist, D, profile))
+    # The whole-case review sees what step reviews cannot (a gate inherited across steps, a lie mislabelled): run it now
+    # and repair what it finds with ordinary steps, instead of rejecting the finished case at publication.
+    review_rounds = []
+    if FIXED and REVIEW_REPAIRS:
+        import publish
+        for round_ in range(REVIEW_REPAIRS + 1):
             check_stop()
-            prompt = step_prompt(case, report, target, mode, preferred, fb)
-            # drafts from two models in parallel; the first one that passes the code checks AND the review wins,
-            # so a step waits only for the fastest good draft (the slower one is cancelled)
-            models = ([MODEL, CRITIC_MODEL] * CANDIDATES)[:CANDIDATES]
-            gens = {}
-            for candidate_index, inference_profile in enumerate(models, start=1):
-                candidate_id = f'{step}.{rnd + 1}.{candidate_index}'
-                future, logical_request_id = schedule_llm_json_audited(
-                    pool, SYSTEM_GEN, prompt, 9000, inference_profile,
-                    audit_metadata={'purpose': 'refinement-candidate', 'phase': 'refinement',
-                                    'step': step, 'round': rnd + 1, 'candidate': candidate_id,
-                                    'mode': mode, 'target': target})
-                gens[future] = {'candidate_id': candidate_id,
-                                'inference_profile': inference_profile,
-                                'logical_request_id': logical_request_id}
-            send('drafting', step=step, round=rnd + 1, drafts=CANDIDATES)
-            results, winner, winner_future = [], None, None
-            for g in cf.as_completed(gens):
-                meta, response, generation_request_ids, generation_error_raw_response = gens[g], None, (), None
-                try:
-                    response = g.result()
-                    generation_request_ids = response.request_ids
-                    r = evaluate(response.payload, mode, target, thread, tdepth)
-                except Exception as e:
-                    generation_request_ids = response.request_ids if response else _exception_request_ids(e)
-                    generation_error_raw_response = getattr(e, 'raw_response', None)
-                    r = (None, None, None, [f'model call failed: {e}'])
-                results.append(r)
-                candidate = {'candidate_id': meta['candidate_id'], 'round': rnd + 1,
-                             'logical_request_id': meta['logical_request_id'],
-                             'generation_inference_profile': meta['inference_profile'],
-                             'generation_request_ids': list(generation_request_ids),
-                             'candidate_hash': provenance.sha256(response.payload) if response else None,
-                             'parseable': response is not None,
-                             'code_errors': list(r[3]), 'selected': False}
-                if generation_error_raw_response is not None:
-                    candidate['generation_error_raw_response'] = generation_error_raw_response
-                entry.setdefault('candidates', []).append(candidate)
-                entry['attempts'].append(r[3])
-                audit = provenance.current_audit()
-                if audit and meta['logical_request_id']:
-                    audit.annotate(meta['logical_request_id'], candidate_hash=candidate['candidate_hash'],
-                                   code_verdict='PASS' if not r[3] else 'FAIL', code_errors=list(r[3]),
-                                   selection='not-selected')
-                send('draft_checked', step=step, ok=not r[3], errors=r[3][:2])
-                if r[3]:
-                    candidate['status'] = 'CODE_REJECTED'
-                    continue
-                send('reviewing', step=step, drafts=1)
-                with provenance.semantics(parent_operation='refinement-critic', phase='refinement', step=step,
-                                          round=rnd + 1, candidate=meta['candidate_id'], mode=mode, target=target):
-                    outcome = critic(r[1], r[0])
-                review = outcome.history(meta['candidate_id'])
-                entry.setdefault('critic', []).append(review)
-                candidate['critic'] = review
-                accepted, review_errors = critic_feedback(outcome)
-                candidate['status'] = outcome.status.value
-                if audit and meta['logical_request_id']:
-                    audit.annotate(meta['logical_request_id'], typed_critic_outcome=outcome.status.value,
-                                   critic_issues=list(outcome.issues),
-                                   code_verdict='PASS', refinement_verdict='PASS' if accepted else 'FAIL')
-                log(f"[{name}] step {step} review ({meta['inference_profile']} candidate; {outcome.inference_profile} critic): "
-                    f"{outcome.status.value} {list(outcome.issues)[:3]}")
-                if accepted:
-                    candidate['selected'] = True
-                    if audit and meta['logical_request_id']:
-                        audit.annotate(meta['logical_request_id'], selection='selected')
-                    winner = r
-                    winner_future = g
-                    break
-                r[3].extend(review_errors)
-                candidate['code_errors'] = list(r[3])
-            for future, meta in gens.items():
-                if future is not winner_future:
-                    cancel_audited_future(future, meta['logical_request_id'])
-            if winner:
-                patch, new, rep, _ = winner
-                case, report = new, rep
-                entry.update(accepted=True, operator=patch.get('operator'), blocks=patch.get('blocks'), story=patch.get('story'),
-                             solve_depth=rep['solve_depth'], surface=rep['surface'], threads=rep.get('threads'))
+            send('phase', phase='review', message='An independent reviewer reads the whole case')
+            with timing.phase(f'review {round_ + 1}'):
+                outcome = publish.publication_critic(case)
+            review_rounds.append({'round': round_ + 1, 'status': outcome.status.value, 'issues': list(outcome.issues)})
+            log(f"[{name}] whole-case review {round_ + 1}: {outcome.status.value} {list(outcome.issues)[:4]}")
+            if outcome.status is not CriticStatus.FAIL or round_ == REVIEW_REPAIRS:
                 break
-            fb = min((r[3] for r in results), key=len)[:12]
-        entry.setdefault('accepted', False)
-        entry['seconds'] = round(time.time() - ts)
-        hist.append(entry)
-        send('step', step=step, mode=mode, target=target, thread=thread, accepted=entry['accepted'],
-             operator=entry.get('operator'), blocks=entry.get('blocks'), story=entry.get('story'),
-             attempts=[a[:4] for a in entry['attempts']], critic=entry.get('critic', []), seconds=entry['seconds'],
-             added=case_added(before, case) if entry['accepted'] else {}, metrics=metrics_of(report))
-        with open(f'{outdir}/{step:02d}-case.json', 'w') as output:
-            json.dump(case, output, indent=1)
-        log(f"[{name}] step {step} {mode}:{target} -> {'OK ' + str(entry.get('operator')) if entry['accepted'] else 'REJECTED'}"
-            f" ({len(entry['attempts'])} candidates, {entry['seconds']}s, solve {report['solve_depth']})")
+            timed_step(len(hist) + 1, [('repair', list(outcome.issues), 'Repair', None, None)], 'repair')
+            if not hist[-1].get('accepted'):   # nothing changed: reviewing the same case again would only re-roll it
+                log(f"[{name}] repair rejected; the case stands as reviewed")
+                break
     pool.shutdown(wait=False, cancel_futures=True)
     final = certify(case, False)
-    result = {'name': name, 'brief': brief, 'ok': final['ok'], 'history': hist,
+    result = {'name': name, 'brief': brief, 'ok': final['ok'], 'history': hist, 'review_rounds': review_rounds,
               'seed_candidates': seed_candidates,
               'requested_difficulty_profile': copy.deepcopy(profile),
               'generation_certificate': {'ok': final['ok'], 'errors': list(final.get('errors') or []),
@@ -1520,7 +1971,9 @@ def run_case(name, brief, steps, D, outdir, log, emit=None, should_stop=None, pr
         json.dump(result, output, indent=1)
     with open(f'{outdir}/report.md', 'w') as output:
         output.write(render(case, final, result))
+    timing.save(outdir)
     log(f"[{name}] DONE in {result['seconds']}s: solve {final.get('solve_depth')} threads {final.get('threads')}")
+    log(timing.table())
     result['case'] = case
     send('generated', metrics=metrics_of(final), seconds=result['seconds'])
     return result

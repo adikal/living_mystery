@@ -5,7 +5,7 @@ import {registerKernelCase, createSession, dispatch, caseTables, exportSession, 
 import {context, criticise, stillSolvable, directMorning, DIRECTOR_PROMPT} from '../dist/morning-director.mjs';
 import * as Morning from '../dist/morning.mjs';
 
-const load = () => JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
+const load = () => JSON.parse(readFileSync(new URL('../dist/cases/archive/2026-10/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
 // The same case with its red herrings' explanations unmarked, so the register book (otherwise the innocent reason for Ada's
 // behaviour, which nobody may hide) can serve as a second concealable clue in the cumulative-concealment tests.
 const loadWithoutHerrings = () => { const kc = load(); for (const x of kc.signs) delete x.explainedBy; return kc; };

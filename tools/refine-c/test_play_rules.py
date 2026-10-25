@@ -102,6 +102,7 @@ class Wording(unittest.TestCase):
                 text = ('I examined the body and found a notebook in his pocket.' if len(prompts) == 1
                         else 'Mrs Finch fetched me at about twenty to seven, and I examined the body.')
                 return {'accounts': {i['id']: text for i in items}}
+            items = items['accounts'] if isinstance(items, dict) else items
             return {'verdicts': {i['id']: {'v': 'honest'} for i in items}}
         refine.llm_json = fake
         publish.add_morning_accounts(case)
@@ -127,6 +128,7 @@ class Wording(unittest.TestCase):
 
         def fake(system, prompt, *a, **k):
             items = json.loads(prompt)
+            items = items['accounts'] if isinstance(items, dict) else items
             judged.extend(i['id'] for i in items)
             return {'verdicts': {i['id']: {'v': 'cover' if i['id'] == 's_clara_test' else 'honest'} for i in items}}
         refine.llm_json = fake
@@ -134,6 +136,26 @@ class Wording(unittest.TestCase):
         self.assertIn('s_clara_test', judged)
         self.assertTrue(next(x for x in case['signs'] if x['id'] == 's_clara_test')['deceptive'])
         self.assertFalse(any(x.get('sighting') for x in case['signs'] if x['id'] in judged))
+
+
+class ParallelWording(unittest.TestCase):
+    def test_phases_run_on_copies_and_their_changes_merge(self):
+        case = {'signs': [{'id': 'a', 'text': 'x'}, {'id': 'b', 'text': 'y'}], 'moods': {}}
+
+        def adds_front(c):
+            c['signs'].insert(0, {'id': 's_surface_p', 'text': 'evening'})
+
+        def sets_show(c):
+            c['signs'][1]['show'] = 'shown'
+
+        def drops_b_reaction_and_sets_moods(c):
+            c['moods'] = {'p': 'calm'}
+            c['signs'] = [x for x in c['signs'] if x['id'] != 'a']
+
+        publish.parallel_phases(case, [adds_front, sets_show, drops_b_reaction_and_sets_moods], log=lambda *_: None)
+        self.assertEqual([x['id'] for x in case['signs']], ['s_surface_p', 'b'])
+        self.assertEqual(case['signs'][1]['show'], 'shown')
+        self.assertEqual(case['moods'], {'p': 'calm'})
 
 
 if __name__ == '__main__':

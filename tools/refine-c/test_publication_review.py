@@ -229,11 +229,17 @@ class EnrichmentPhases(unittest.TestCase):
             for patcher in patches:
                 stack.enter_context(patcher)
             with publish.provenance.activate(audit, phase='publication-enrichment'):
-                publish.enrich_case({'synopsis': 'A neutral premise.'}, log=lambda *_: None)
-        self.assertEqual([name for name, _, _ in calls], [
-            'prune', 'evenings', 'answer', 'accepted', 'surface', 'morning', 'medical', 'concessions',
-            'knowledge', 'moods', 'show', 'art', 'truth', 'questions', 'reactions', 'sightings',
-            'contradictions', 'declines', 'show', 'art', 'unlock', 'review', 'finish'])
+                publish.enrich_case({'synopsis': 'A neutral premise.', 'signs': []}, log=lambda *_: None)
+        names = [name for name, _, _ in calls]
+        # structure first, in order; then two waves of independent wording phases (any order within a wave, each on
+        # its own copy, merged back); then the serial review and the last pass
+        self.assertEqual(names[:4], ['prune', 'evenings', 'answer', 'accepted'])
+        first = {'surface', 'morning', 'medical', 'concessions', 'knowledge', 'moods', 'declines', 'sightings', 'contradictions'}
+        second = {'truth', 'questions', 'reactions', 'show', 'art'}
+        self.assertEqual(set(names[4:4 + len(first)]), first)
+        self.assertLess(names.index('sightings'), names.index('contradictions'))
+        self.assertEqual(set(names[4 + len(first):4 + len(first) + len(second)]), second)
+        self.assertEqual(names[-3:], ['unlock', 'review', 'finish'])
         self.assertTrue(all(seen is audit for _, seen, _ in calls))
         self.assertTrue(all(context['phase'] == 'publication-enrichment' for _, _, context in calls))
 

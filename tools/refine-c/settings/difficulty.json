@@ -47,7 +47,8 @@
    ],
    "herrings_aimed": 0,
    "steps": 8,
-   "seconds": 480
+   "seconds": 480,
+   "own": 0
   },
   "medium": {
    "depth": 5,
@@ -60,7 +61,8 @@
    ],
    "herrings_aimed": 0,
    "steps": 16,
-   "seconds": 900
+   "seconds": 900,
+   "own": 2
   },
   "hard": {
    "depth": 7,
@@ -73,7 +75,8 @@
    ],
    "herrings_aimed": 1,
    "steps": 28,
-   "seconds": 1500
+   "seconds": 1500,
+   "own": 2
   }
  }
 }

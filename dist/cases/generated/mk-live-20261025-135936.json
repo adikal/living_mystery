@@ -1,0 +1,2717 @@
+{
+ "title": "The Last Train Waits",
+ "victim": "silas",
+ "story": "Silas Voss, quietly ruined by his own thefts from a trust he managed, waited at Bellweather Halt for the 22:15 train out of the county. He never boarded it: the man whose legacy he had spent met him on the platform first.",
+ "setting": {
+  "name": "Bellweather",
+  "era": "An English village, 1932",
+  "summary": "A small English village: a square, a manor with its greenhouse and boathouse on the river, an inn, the church vestry, a doctor’s surgery, a post office, a railway halt and a disused mill. Someone is dead; the investigation begins the next morning.",
+  "places": [
+   {
+    "id": "square",
+    "name": "Village square",
+    "called": "the village square"
+   },
+   {
+    "id": "manor",
+    "name": "Vale Manor"
+   },
+   {
+    "id": "inn",
+    "name": "The Rook & Lantern"
+   },
+   {
+    "id": "greenhouse",
+    "name": "The greenhouse"
+   },
+   {
+    "id": "vestry",
+    "name": "St. Alden’s vestry"
+   },
+   {
+    "id": "surgery",
+    "name": "Dr Marsh’s surgery"
+   },
+   {
+    "id": "halt",
+    "name": "Bellweather Halt"
+   },
+   {
+    "id": "post",
+    "name": "The post office"
+   },
+   {
+    "id": "mill",
+    "name": "Alder Mill"
+   },
+   {
+    "id": "boathouse",
+    "name": "The boathouse"
+   }
+  ],
+  "links": [
+   {
+    "a": "square",
+    "b": "manor",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "inn",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "vestry",
+    "minutes": 4
+   },
+   {
+    "a": "square",
+    "b": "surgery",
+    "minutes": 3
+   },
+   {
+    "a": "square",
+    "b": "post",
+    "minutes": 2
+   },
+   {
+    "a": "square",
+    "b": "halt",
+    "minutes": 6
+   },
+   {
+    "a": "manor",
+    "b": "greenhouse",
+    "minutes": 3
+   },
+   {
+    "a": "manor",
+    "b": "boathouse",
+    "minutes": 6
+   },
+   {
+    "a": "inn",
+    "b": "greenhouse",
+    "minutes": 6
+   },
+   {
+    "a": "inn",
+    "b": "post",
+    "minutes": 3
+   },
+   {
+    "a": "greenhouse",
+    "b": "mill",
+    "minutes": 7
+   },
+   {
+    "a": "vestry",
+    "b": "halt",
+    "minutes": 5
+   },
+   {
+    "a": "surgery",
+    "b": "post",
+    "minutes": 3
+   },
+   {
+    "a": "halt",
+    "b": "mill",
+    "minutes": 5
+   },
+   {
+    "a": "mill",
+    "b": "boathouse",
+    "minutes": 4
+   }
+  ],
+  "roles": {
+   "examiner": "iris",
+   "constable": "bell"
+  },
+  "day": {
+   "evening": 1080,
+   "morning": 1740,
+   "start": 1920
+  }
+ },
+ "rules": [],
+ "people": [
+  {
+   "id": "silas",
+   "name": "Silas Voss",
+   "role": "The solicitor",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "he",
+   "address": "Mr Voss",
+   "voice": "Measured, formal and faintly amused; speaks in tidy clauses and likes a Latin tag. Never rambles.",
+   "public": "A precise, courteous solicitor who keeps an office in the vestry and handles the affairs of half the parish.",
+   "home": "vestry",
+   "role_words": [
+    "solicitor"
+   ]
+  },
+  {
+   "id": "rowan",
+   "name": "Rowan Pike",
+   "role": "The groundskeeper",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "he",
+   "address": "Mr Pike",
+   "voice": "A plain-spoken countryman: short, blunt, practical, with a gardener’s patience and the odd dour joke.",
+   "public": "The manor’s groundskeeper. He lives among his glasshouses and says little to anyone.",
+   "home": "greenhouse",
+   "role_words": [
+    "groundskeeper",
+    "gardener"
+   ]
+  },
+  {
+   "id": "edmund",
+   "name": "Edmund Vale",
+   "role": "Master of Vale Manor",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "he",
+   "address": "Mr Vale",
+   "voice": "Loud, confident and used to being obeyed; bluff good humour that turns cold when crossed.",
+   "public": "Master of Vale Manor: a man of fixed habits, generous in public and hard in private.",
+   "home": "manor",
+   "role_words": [
+    "squire"
+   ]
+  },
+  {
+   "id": "hugo",
+   "name": "Hugo Vale",
+   "role": "The nephew from London",
+   "traits": {
+    "handed": "left"
+   },
+   "pronoun": "he",
+   "address": "Mr Hugo",
+   "voice": "Quick, flippant and charming, full of London slang; hides nerves behind jokes and talks a little too fast.",
+   "public": "Edmund’s nephew, down from London by train. Charming, restless and plainly bored by the country.",
+   "home": "manor",
+   "role_words": [
+    "nephew"
+   ]
+  },
+  {
+   "id": "jonah",
+   "name": "Jonah Reed",
+   "role": "The boathouse keeper",
+   "traits": {
+    "handed": "right"
+   },
+   "pronoun": "he",
+   "address": "Mr Reed",
+   "voice": "Slow, weathered and wry; a river man of few words, who weighs every one like a stone.",
+   "public": "Keeper of the manor’s boathouse and ferryman when the river is up. He knows the water and keeps his own counsel.",
+   "home": "boathouse",
+   "role_words": [
+    "boatman",
+    "boathouse keeper",
+    "ferryman"
+   ]
+  },
+  {
+   "id": "bell",
+   "name": "Arthur Bell",
+   "role": "The village constable",
+   "traits": {},
+   "pronoun": "he",
+   "address": "Constable Bell",
+   "voice": "A gruff country constable: terse, dry and matter-of-fact, with a soft spot he hides badly.",
+   "public": "The village constable. He has secured the scene and asked you to investigate; he will hear an accusation when you can back it with evidence.",
+   "home": "square",
+   "role_words": [
+    "constable"
+   ]
+  },
+  {
+   "id": "iris",
+   "name": "Dr Iris Marsh",
+   "role": "The village doctor",
+   "traits": {},
+   "pronoun": "she",
+   "address": "Dr Marsh",
+   "voice": "Clinical and direct, with brisk warmth underneath; says exactly what she observed and no more.",
+   "public": "The village doctor. Methodical and direct; she is called whenever anyone in Bellweather is hurt or ill.",
+   "home": "surgery",
+   "role_words": [
+    "doctor"
+   ]
+  },
+  {
+   "id": "clara",
+   "name": "Clara Vale",
+   "role": "Mistress of the household",
+   "pronoun": "she",
+   "address": "Miss Vale",
+   "voice": "Composed, dry and exact; she chooses words like a woman choosing gloves. Polite to the point of chill with strangers, warmer once she respects you.",
+   "public": "Edmund’s younger sister. She has run Vale Manor’s household for years and guards its privacy.",
+   "home": "manor",
+   "role_words": [],
+   "traits": {}
+  },
+  {
+   "id": "vicar",
+   "name": "The Reverend Thomas Hale",
+   "role": "The vicar",
+   "pronoun": "he",
+   "address": "Mr Hale",
+   "voice": "Gentle and rambling, with a scholar’s digressions and a surprising steel when conscience is touched.",
+   "public": "Vicar of St. Alden’s these twenty years. Gentle, absent-minded, and trusted with more secrets than anyone in the parish.",
+   "home": "vestry",
+   "role_words": [
+    "vicar",
+    "rector",
+    "parson"
+   ],
+   "traits": {}
+  },
+  {
+   "id": "dora",
+   "name": "Dorothy Pruett",
+   "role": "The postmistress",
+   "pronoun": "she",
+   "address": "Miss Pruett",
+   "voice": "Brisk, prim and precise, with relish for procedure and a keen, disapproving memory for other people’s business.",
+   "public": "The postmistress. Every letter, parcel and telegram in Bellweather passes over her counter, and she forgets nothing.",
+   "home": "post",
+   "role_words": [
+    "postmistress",
+    "Dora"
+   ],
+   "traits": {}
+  }
+ ],
+ "objects": [
+  {
+   "id": "pruning_knife",
+   "name": "hooked pruning knife",
+   "desc": "A narrow hooked blade with a horn handle, worn on a gardener's belt."
+  },
+  {
+   "id": "trust_ledger",
+   "name": "trust account ledger",
+   "desc": "A leather-bound ledger of trust accounts kept in the solicitor's office."
+  },
+  {
+   "id": "will_draft",
+   "name": "draft will",
+   "desc": "A handwritten draft of a new will for Edmund Vale."
+  },
+  {
+   "id": "fee_ledger",
+   "name": "letter of final demand",
+   "desc": "A handwritten letter demanding settlement of unpaid fees."
+  },
+  {
+   "id": "notice_to_quit",
+   "name": "notice to quit",
+   "desc": "A typed notice to quit the boathouse cottage."
+  },
+  {
+   "id": "stove_log",
+   "name": "glasshouse stove book",
+   "desc": "A dog-eared pencil logbook hung on a nail by the greenhouse boiler, recording each stoking."
+  },
+  {
+   "id": "telegram_receipt",
+   "name": "telegram receipt",
+   "desc": "A buff Post Office counterfoil for a telegram sent to London."
+  },
+  {
+   "id": "piquet_card",
+   "name": "piquet scorecard",
+   "desc": "A printed piquet scorecard filled in pencil, each partie's score with the clock time beside it."
+  },
+  {
+   "id": "iou_slips",
+   "name": "IOU slips",
+   "desc": "Torn scraps of notepaper, each a pencilled IOU with a clock time."
+  },
+  {
+   "id": "belt_sheath",
+   "name": "belt with hooked sheath",
+   "desc": "A worn leather belt carrying a sheath curved at the tip like a hook, made for a pruning knife."
+  },
+  {
+   "id": "grit_bin",
+   "name": "bin of potting grit",
+   "desc": "A wooden bin of coarse sharp grit under the potting bench."
+  },
+  {
+   "id": "hugo_brogues",
+   "name": "tan-and-white brogues",
+   "desc": "A pair of London two-tone brogues, too smart for country lanes."
+  }
+ ],
+ "vocabulary": {
+  "relations": [
+   {
+    "rel": "trustee_of",
+    "inverse": "ward_of"
+   },
+   {
+    "rel": "heir_of",
+    "inverse": "testator_of"
+   },
+   {
+    "rel": "owes",
+    "inverse": "owed_by"
+   },
+   {
+    "rel": "evicting",
+    "inverse": "evicted_by"
+   }
+  ]
+ },
+ "relations": [
+  {
+   "a": "silas",
+   "rel": "trustee_of",
+   "b": "rowan"
+  },
+  {
+   "a": "hugo",
+   "rel": "heir_of",
+   "b": "edmund"
+  },
+  {
+   "a": "edmund",
+   "rel": "owes",
+   "b": "silas"
+  },
+  {
+   "a": "silas",
+   "rel": "evicting",
+   "b": "jonah"
+  }
+ ],
+ "holdings": [
+  {
+   "person": "rowan",
+   "item": "pruning_knife"
+  }
+ ],
+ "question": {
+  "text": "Who killed Silas Voss?",
+  "candidates": [
+   {
+    "id": "c_edmund",
+    "label": "Edmund Vale",
+    "facts": {
+     "actor": "edmund",
+     "method": "blade",
+     "motive": "debt"
+    }
+   },
+   {
+    "id": "c_hugo",
+    "label": "Hugo Vale",
+    "facts": {
+     "actor": "hugo",
+     "method": "blade",
+     "motive": "inheritance"
+    }
+   },
+   {
+    "id": "c_jonah",
+    "label": "Jonah Reed",
+    "facts": {
+     "actor": "jonah",
+     "method": "blade",
+     "motive": "eviction"
+    }
+   },
+   {
+    "id": "c_rowan",
+    "label": "Rowan Pike",
+    "facts": {
+     "actor": "rowan",
+     "method": "blade",
+     "motive": "inheritance"
+    }
+   }
+  ],
+  "truth": "c_rowan",
+  "crime": {
+   "event": "e_crime",
+   "place": "halt",
+   "window": [
+    1290,
+    1320
+   ]
+  }
+ },
+ "attitudes": [
+  {
+   "id": "a_silas_fears",
+   "agent": "silas",
+   "mode": "fears",
+   "content": "His theft of the Pike trust money will soon come to light.",
+   "because": []
+  },
+  {
+   "id": "a_silas_intends",
+   "agent": "silas",
+   "mode": "intends",
+   "content": "To leave Bellweather for good on the 22:15 train.",
+   "because": [
+    "a_silas_fears"
+   ]
+  },
+  {
+   "id": "a_rowan_knows",
+   "agent": "rowan",
+   "mode": "knows",
+   "content": "Voss, trustee of the £800 legacy old Squire Henry Vale left him, has spent nearly all of it and means to flee by the late train.",
+   "because": [],
+   "motive": "inheritance"
+  },
+  {
+   "id": "a_rowan_intends",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "To meet Voss at the halt before the train and make him pay for the stolen legacy.",
+   "because": [
+    "a_rowan_knows"
+   ],
+   "motive": "inheritance"
+  },
+  {
+   "id": "a_edmund_wants",
+   "agent": "edmund",
+   "mode": "wants",
+   "content": "A quiet evening at cards, and to keep an eye on his spendthrift nephew.",
+   "because": []
+  },
+  {
+   "id": "a_hugo_fears",
+   "agent": "hugo",
+   "mode": "fears",
+   "content": "That his uncle will cut him out of the will.",
+   "because": []
+  },
+  {
+   "id": "a_hugo_wants",
+   "agent": "hugo",
+   "mode": "wants",
+   "content": "To stay in his uncle's good graces by humouring him at cards.",
+   "because": [
+    "a_hugo_fears"
+   ]
+  },
+  {
+   "id": "a_jonah_wants",
+   "agent": "jonah",
+   "mode": "wants",
+   "content": "To mend his nets before the river rises.",
+   "because": []
+  },
+  {
+   "id": "a_bell_intends",
+   "agent": "bell",
+   "mode": "intends",
+   "content": "To warn the manor about poachers and walk his usual rounds.",
+   "because": []
+  },
+  {
+   "id": "a_bell_knows_knife",
+   "agent": "bell",
+   "mode": "knows",
+   "content": "Rowan Pike's hooked pruning knife is his alone; he lends it to nobody.",
+   "because": []
+  },
+  {
+   "id": "a_iris_wants",
+   "agent": "iris",
+   "mode": "wants",
+   "content": "A quiet evening writing up her case notes.",
+   "because": []
+  },
+  {
+   "id": "a_vicar_evening",
+   "agent": "vicar",
+   "mode": "intends",
+   "content": "To spend a quiet evening at home.",
+   "strength": 0.6
+  },
+  {
+   "id": "a_rowan_fears_knife",
+   "agent": "rowan",
+   "mode": "fears",
+   "content": "That his snapped knife, known as his alone, would hang him if it were found.",
+   "because": [
+    "a_rowan_intends"
+   ]
+  },
+  {
+   "id": "a_rowan_alibi",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "To leave a written record that he spent the whole evening tending his stoves.",
+   "because": [
+    "a_rowan_intends"
+   ]
+  },
+  {
+   "id": "a_clara_frost",
+   "agent": "clara",
+   "mode": "wants",
+   "content": "To have the glasshouse stoves banked against the coming frost, so her brother's orchids survive the night.",
+   "because": []
+  },
+  {
+   "id": "a_edmund_shame",
+   "agent": "edmund",
+   "mode": "fears",
+   "content": "That the parish will learn the master of Vale Manor cannot pay his own solicitor.",
+   "because": []
+  },
+  {
+   "id": "a_hugo_debt",
+   "agent": "hugo",
+   "mode": "fears",
+   "content": "That his London moneylender will press for payment and his uncle will hear of the debt.",
+   "because": [
+    "a_hugo_fears"
+   ]
+  },
+  {
+   "id": "a_edmund_score",
+   "agent": "edmund",
+   "mode": "wants",
+   "content": "Every partie scored and timed in his own hand, so his nephew can never dispute what he owes.",
+   "because": [
+    "a_edmund_wants"
+   ]
+  },
+  {
+   "id": "a_hugo_chits",
+   "agent": "hugo",
+   "mode": "intends",
+   "content": "To write his uncle an IOU after every lost partie, timed as Uncle insists, so as not to seem a welsher.",
+   "because": [
+    "a_hugo_wants"
+   ]
+  },
+  {
+   "id": "a_rowan_hide_sheath",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "To get the empty sheath off his belt and out of sight, so that nobody asks where his knife has gone.",
+   "because": [
+    "a_rowan_fears_knife"
+   ]
+  },
+  {
+   "id": "a_hugo_hand_shame",
+   "agent": "hugo",
+   "mode": "feels",
+   "content": "Ashamed of his left hand, after schoolmasters caned him for it; in front of strangers he writes right-handed, badly, and slips back only when flustered.",
+   "because": []
+  },
+  {
+   "id": "a_rowan_apron",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "To keep his potting apron tied high over his waist, so nobody sees the twine where his belt used to be.",
+   "because": [
+    "a_rowan_hide_sheath"
+   ]
+  },
+  {
+   "id": "a_clara_privacy",
+   "agent": "clara",
+   "mode": "wants",
+   "content": "To keep the manor's servants' affairs out of strangers' mouths unless something is plainly wrong with one of them.",
+   "because": []
+  },
+  {
+   "id": "a_iris_unsure_blade",
+   "agent": "iris",
+   "mode": "believes",
+   "content": "The steel sliver came off some small blade curved like a claw, but she knows nothing of garden tools and will not guess which kind.",
+   "because": [
+    "a_iris_wants"
+   ]
+  },
+  {
+   "id": "a_vicar_save",
+   "agent": "vicar",
+   "mode": "intends",
+   "content": "To save whatever Voss left burning in the vestry grate, since parish papers should not go up in smoke.",
+   "because": []
+  },
+  {
+   "id": "a_vicar_shield_pike",
+   "agent": "vicar",
+   "mode": "fears",
+   "content": "That the ledger showing Voss robbed Pike's legacy would make the village suspect Pike, a man already wronged.",
+   "because": [
+    "a_vicar_save"
+   ]
+  },
+  {
+   "id": "a_edmund_glove",
+   "agent": "edmund",
+   "mode": "intends",
+   "content": "To keep his cut right hand covered by a glove, so nobody asks how the master of Vale Manor came to hurt it.",
+   "because": [
+    "a_edmund_shame"
+   ]
+  },
+  {
+   "id": "a_rowan_soot_excuse",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "To make the boiler look as if it is smoking, so nobody wonders why he wears his heavy apron all morning.",
+   "because": [
+    "a_rowan_apron"
+   ]
+  },
+  {
+   "id": "a_rowan_spare_orchids",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "To keep his faked soot off the orchids, which he has tended for years and will not see spoiled.",
+   "because": [
+    "a_rowan_soot_excuse"
+   ]
+  },
+  {
+   "id": "a_edmund_pocket",
+   "agent": "edmund",
+   "mode": "intends",
+   "content": "To keep even the gloved hand in his jacket pocket around visitors, so nobody wonders about the glove.",
+   "because": [
+    "a_edmund_glove"
+   ]
+  },
+  {
+   "id": "a_hugo_hide_wire",
+   "agent": "hugo",
+   "mode": "intends",
+   "content": "To make out he never left the manor last evening, so nobody asks what took him to the post office.",
+   "because": [
+    "a_hugo_debt"
+   ]
+  },
+  {
+   "id": "a_clara_screen",
+   "agent": "clara",
+   "mode": "intends",
+   "content": "To hide the smashed bookcase pane from morning callers, so no stranger learns that Edmund lost his temper over Voss's letter.",
+   "because": [
+    "a_clara_privacy"
+   ]
+  },
+  {
+   "id": "a_rowan_orchid_warmth",
+   "agent": "rowan",
+   "mode": "wants",
+   "content": "To keep the orchids warm through the frost by letting the stokehole's heat flow through to them.",
+   "because": []
+  },
+  {
+   "id": "a_clara_lock",
+   "agent": "clara",
+   "mode": "intends",
+   "content": "To keep the library locked and tell callers the chimney has just been swept, so nobody goes in and looks behind the screen.",
+   "because": [
+    "a_clara_screen"
+   ]
+  },
+  {
+   "id": "a_hugo_bury_shoes",
+   "agent": "hugo",
+   "mode": "intends",
+   "content": "To get his muddy London brogues out of sight before the investigator arrives, so nothing shows he walked the lanes last evening.",
+   "because": [
+    "a_hugo_hide_wire"
+   ]
+  },
+  {
+   "id": "a_rowan_lock_orchids",
+   "agent": "rowan",
+   "mode": "intends",
+   "content": "To keep everyone out of the orchid house, so nobody notices the blooms are clean of the smoke his boiler is supposed to be blowing back.",
+   "because": [
+    "a_rowan_soot_excuse"
+   ]
+  },
+  {
+   "id": "a_clara_spare_key",
+   "agent": "clara",
+   "mode": "knows",
+   "content": "She keeps the spare key to the orchid-house partition door on her household ring, and Edmund has forbidden the orchids ever to be locked away from him.",
+   "because": [
+    "a_clara_frost"
+   ]
+  },
+  {
+   "id": "a_clara_glass_drop",
+   "agent": "clara",
+   "mode": "intends",
+   "content": "To catch Pike the moment the glass drops sharply after nine and have the stoves banked before the frost settles.",
+   "because": [
+    "a_clara_frost"
+   ]
+  }
+ ],
+ "events": [
+  {
+   "id": "e_silas_work",
+   "type": "work",
+   "agent": "silas",
+   "others": [],
+   "place": "vestry",
+   "start": 1140,
+   "end": 1260,
+   "causedBy": "a_silas_intends",
+   "summary": "Voss sorts and burns papers in his vestry office before leaving.",
+   "effects": []
+  },
+  {
+   "id": "e_silas_wait",
+   "type": "wait",
+   "agent": "silas",
+   "others": [],
+   "place": "halt",
+   "start": 1270,
+   "end": 1300,
+   "causedBy": "a_silas_intends",
+   "summary": "Voss waits alone on the platform for the 22:15 train.",
+   "effects": []
+  },
+  {
+   "id": "e_rowan_potting",
+   "type": "work",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1140,
+   "end": 1255,
+   "causedBy": "a_rowan_intends",
+   "summary": "Pike tends his glasshouse stoves, waiting for full dark.",
+   "effects": []
+  },
+  {
+   "id": "e_crime",
+   "type": "murder",
+   "agent": "rowan",
+   "others": [
+    "silas"
+   ],
+   "place": "halt",
+   "start": 1300,
+   "end": 1305,
+   "causedBy": "a_rowan_intends",
+   "summary": "Pike confronts Voss on the platform and stabs him with his pruning knife; the tip snaps off.",
+   "effects": [],
+   "facts": {
+    "method": "blade",
+    "motive": "inheritance"
+   }
+  },
+  {
+   "id": "e_death",
+   "type": "death",
+   "agent": "silas",
+   "others": [],
+   "place": "halt",
+   "start": 1305,
+   "end": 1306,
+   "causedBy": "nature",
+   "summary": "Silas Voss dies on the platform.",
+   "effects": []
+  },
+  {
+   "id": "e_rowan_return",
+   "type": "rest",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1320,
+   "end": 1440,
+   "causedBy": "a_rowan_intends",
+   "summary": "Pike returns to his glasshouses and stays there the rest of the night.",
+   "effects": []
+  },
+  {
+   "id": "e_cards",
+   "type": "cards",
+   "agent": "edmund",
+   "others": [
+    "hugo"
+   ],
+   "place": "manor",
+   "start": 1200,
+   "end": 1380,
+   "causedBy": "a_edmund_wants",
+   "summary": "Edmund and Hugo play piquet in the manor library.",
+   "effects": []
+  },
+  {
+   "id": "e_hugo_cards",
+   "type": "cards",
+   "agent": "hugo",
+   "others": [],
+   "place": "manor",
+   "start": 1200,
+   "end": 1380,
+   "causedBy": "a_hugo_wants",
+   "summary": "Hugo humours his uncle at cards all evening.",
+   "effects": []
+  },
+  {
+   "id": "e_bell_visit",
+   "type": "visit",
+   "agent": "bell",
+   "others": [
+    "edmund",
+    "hugo"
+   ],
+   "place": "manor",
+   "start": 1290,
+   "end": 1350,
+   "causedBy": "a_bell_intends",
+   "summary": "Constable Bell calls at the manor about poachers and takes a glass with the Vales.",
+   "effects": []
+  },
+  {
+   "id": "e_jonah_nets",
+   "type": "work",
+   "agent": "jonah",
+   "others": [],
+   "place": "boathouse",
+   "start": 1140,
+   "end": 1400,
+   "causedBy": "a_jonah_wants",
+   "summary": "Jonah Reed mends nets alone in the boathouse.",
+   "effects": []
+  },
+  {
+   "id": "e_iris_home",
+   "type": "rest",
+   "agent": "iris",
+   "others": [],
+   "place": "surgery",
+   "start": 1140,
+   "end": 1440,
+   "causedBy": "a_iris_wants",
+   "summary": "Dr Marsh writes up case notes at her surgery.",
+   "effects": []
+  },
+  {
+   "id": "e_discovery",
+   "type": "discovery",
+   "agent": "bell",
+   "others": [],
+   "place": "halt",
+   "start": 1800,
+   "end": 1805,
+   "causedBy": "a_bell_intends",
+   "summary": "On his dawn rounds Bell finds Voss dead on the platform.",
+   "effects": []
+  },
+  {
+   "id": "e_summon",
+   "type": "summon",
+   "agent": "bell",
+   "others": [
+    "iris"
+   ],
+   "place": "surgery",
+   "start": 1815,
+   "end": 1820,
+   "causedBy": "a_bell_intends",
+   "summary": "Bell knocks up Dr Marsh and tells her of the death.",
+   "effects": []
+  },
+  {
+   "id": "e_exam",
+   "type": "examination",
+   "agent": "iris",
+   "others": [
+    "bell"
+   ],
+   "place": "halt",
+   "start": 1830,
+   "end": 1870,
+   "causedBy": "a_iris_wants",
+   "summary": "Dr Marsh examines the body on the platform.",
+   "effects": []
+  },
+  {
+   "id": "e_vicar_evening",
+   "type": "routine",
+   "agent": "vicar",
+   "others": [],
+   "place": "vestry",
+   "start": 1080,
+   "end": 1261,
+   "causedBy": "a_vicar_evening",
+   "summary": "The Reverend Thomas Hale spends the evening at home.",
+   "ordinary": true
+  },
+  {
+   "id": "e_rowan_sink",
+   "type": "dispose",
+   "agent": "rowan",
+   "others": [],
+   "place": "mill",
+   "start": 1310,
+   "end": 1313,
+   "causedBy": "a_rowan_fears_knife",
+   "summary": "Walking home by the mill path, Pike drops the broken pruning knife into the millrace.",
+   "effects": [
+    {
+     "lose": "pruning_knife"
+    }
+   ]
+  },
+  {
+   "id": "e_rowan_log",
+   "type": "forge",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1255,
+   "end": 1265,
+   "causedBy": "a_rowan_alibi",
+   "summary": "Pike pencils the evening's stokings into his stove book in advance, through 22:00, then slips out.",
+   "effects": []
+  },
+  {
+   "id": "e_rowan_lurk",
+   "type": "wait",
+   "agent": "rowan",
+   "others": [],
+   "place": "mill",
+   "start": 1278,
+   "end": 1294,
+   "causedBy": "a_rowan_intends",
+   "summary": "Pike waits in the shadow of Alder Mill until it is time to cross to the halt.",
+   "effects": []
+  },
+  {
+   "id": "e_clara_home_early",
+   "type": "routine",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1080,
+   "end": 1272,
+   "causedBy": "a_clara_frost",
+   "summary": "Clara sees to the household at the manor and notes the falling glass.",
+   "effects": []
+  },
+  {
+   "id": "e_clara_greenhouse",
+   "type": "errand",
+   "agent": "clara",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1275,
+   "end": 1282,
+   "causedBy": "a_clara_glass_drop",
+   "summary": "The glass dropping sharply, Clara hurries down at 21:15 to ask Pike to bank the stoves; finds the glasshouses dark and empty.",
+   "effects": []
+  },
+  {
+   "id": "e_clara_home_late",
+   "type": "routine",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1285,
+   "end": 1739,
+   "causedBy": "a_clara_frost",
+   "summary": "Clara returns to the manor and spends the rest of the night there.",
+   "effects": []
+  },
+  {
+   "id": "e_edmund_fist",
+   "type": "outburst",
+   "agent": "edmund",
+   "others": [
+    "clara"
+   ],
+   "place": "manor",
+   "start": 1185,
+   "end": 1195,
+   "causedBy": "a_edmund_shame",
+   "summary": "Rereading Voss's demand, Edmund smashes the library bookcase glass with his fist; Clara binds his cut knuckles.",
+   "effects": []
+  },
+  {
+   "id": "e_hugo_telegram",
+   "type": "errand",
+   "agent": "hugo",
+   "others": [
+    "dora"
+   ],
+   "place": "post",
+   "start": 1140,
+   "end": 1150,
+   "causedBy": "a_hugo_debt",
+   "summary": "Hugo wires a London moneylender begging a month's grace, and pockets the counterfoil.",
+   "effects": [
+    {
+     "take": "telegram_receipt"
+    }
+   ]
+  },
+  {
+   "id": "e_edmund_score",
+   "type": "record",
+   "agent": "edmund",
+   "others": [
+    "hugo"
+   ],
+   "place": "manor",
+   "start": 1200,
+   "end": 1380,
+   "causedBy": "a_edmund_score",
+   "summary": "At the card table Edmund pencils each partie's score and the clock time, his cut hand spotting the card.",
+   "effects": []
+  },
+  {
+   "id": "e_hugo_chits",
+   "type": "record",
+   "agent": "hugo",
+   "others": [
+    "edmund"
+   ],
+   "place": "manor",
+   "start": 1200,
+   "end": 1380,
+   "causedBy": "a_hugo_chits",
+   "summary": "At the card table Hugo pencils a timed IOU after each lost partie; Edmund keeps the slips in a pile at his elbow.",
+   "effects": []
+  },
+  {
+   "id": "e_rowan_bury_belt",
+   "type": "conceal",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1441,
+   "end": 1446,
+   "causedBy": "a_rowan_hide_sheath",
+   "summary": "Pike unbuckles his belt with its empty hooked sheath and pushes it deep into the grit bin, then ties his trousers up with twine.",
+   "effects": []
+  },
+  {
+   "id": "e_hugo_mask_hand",
+   "type": "routine",
+   "agent": "hugo",
+   "others": [],
+   "place": "manor",
+   "start": 1740,
+   "end": 1920,
+   "causedBy": "a_hugo_hand_shame",
+   "summary": "Through the morning at the manor Hugo makes a point of writing and lighting cigarettes with his right hand.",
+   "effects": []
+  },
+  {
+   "id": "e_rowan_apron",
+   "type": "routine",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1740,
+   "end": 1920,
+   "causedBy": "a_rowan_apron",
+   "summary": "All morning Pike works in his heavy potting apron, tied high and tight, and never takes it off.",
+   "effects": []
+  },
+  {
+   "id": "e_vicar_rescue",
+   "type": "conceal",
+   "agent": "vicar",
+   "others": [],
+   "place": "vestry",
+   "start": 1262,
+   "end": 1270,
+   "causedBy": "a_vicar_save",
+   "summary": "Smelling smoke after Voss leaves, the vicar pulls a scorched ledger from the office grate and locks it in the parish strongbox.",
+   "effects": [
+    {
+     "take": "trust_ledger"
+    }
+   ]
+  },
+  {
+   "id": "e_vicar_late",
+   "type": "routine",
+   "agent": "vicar",
+   "others": [],
+   "place": "vestry",
+   "start": 1271,
+   "end": 1739,
+   "causedBy": "a_vicar_shield_pike",
+   "summary": "The vicar spends the rest of the night at home and says nothing of the ledger.",
+   "ordinary": true
+  },
+  {
+   "id": "e_edmund_glove",
+   "type": "routine",
+   "agent": "edmund",
+   "others": [],
+   "place": "manor",
+   "start": 1740,
+   "end": 1920,
+   "causedBy": "a_edmund_glove",
+   "summary": "All morning at the manor Edmund wears a tan driving glove on his right hand and greets visitors with his left.",
+   "effects": []
+  },
+  {
+   "id": "e_rowan_soot",
+   "type": "stage",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1700,
+   "end": 1710,
+   "causedBy": "a_rowan_soot_excuse",
+   "summary": "Before dawn Pike tips the ash pan across the stokehole, smears soot up the boiler front and leaves the door hanging open.",
+   "effects": []
+  },
+  {
+   "id": "e_rowan_seal_door",
+   "type": "prepare",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1695,
+   "end": 1699,
+   "causedBy": "a_rowan_spare_orchids",
+   "summary": "Before faking the soot, Pike shuts the partition door to the orchid house and lays a wet sack along its foot.",
+   "effects": []
+  },
+  {
+   "id": "e_hugo_shoes",
+   "type": "conceal",
+   "agent": "hugo",
+   "others": [],
+   "place": "manor",
+   "start": 1156,
+   "end": 1159,
+   "causedBy": "a_hugo_hide_wire",
+   "summary": "Back from the post office, Hugo kicks off his mud-caked brogues in the boot room and changes into pumps before cards.",
+   "effects": []
+  },
+  {
+   "id": "e_clara_screen",
+   "type": "conceal",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1745,
+   "end": 1752,
+   "causedBy": "a_clara_screen",
+   "summary": "Early in the morning Clara drags the lacquered drawing-room screen into the library and stands it squarely before the broken bookcase.",
+   "effects": []
+  },
+  {
+   "id": "e_rowan_louvres",
+   "type": "work",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1200,
+   "end": 1203,
+   "causedBy": "a_rowan_orchid_warmth",
+   "summary": "With frost coming, Pike props open the louvred vent above the partition door so the boiler's warmth reaches the orchids.",
+   "effects": []
+  },
+  {
+   "id": "e_clara_lock",
+   "type": "conceal",
+   "agent": "clara",
+   "others": [],
+   "place": "manor",
+   "start": 1753,
+   "end": 1756,
+   "causedBy": "a_clara_lock",
+   "summary": "Clara locks the library door, pockets the key, and settles on a story about the sweep for callers.",
+   "effects": []
+  },
+  {
+   "id": "e_hugo_hide_brogues",
+   "type": "conceal",
+   "agent": "hugo",
+   "others": [],
+   "place": "manor",
+   "start": 1760,
+   "end": 1764,
+   "causedBy": "a_hugo_bury_shoes",
+   "summary": "Hugo wraps his muddy brogues in yesterday's Times and pushes them to the bottom of the boot-room coal scuttle.",
+   "effects": []
+  },
+  {
+   "id": "e_rowan_lock_orchids",
+   "type": "conceal",
+   "agent": "rowan",
+   "others": [],
+   "place": "greenhouse",
+   "start": 1711,
+   "end": 1714,
+   "causedBy": "a_rowan_lock_orchids",
+   "summary": "With the soot laid, Pike locks the partition door to the orchid house and pockets the key.",
+   "effects": []
+  },
+  {
+   "id": "e_edmund_pocketbook",
+   "type": "record",
+   "agent": "edmund",
+   "others": [],
+   "place": "manor",
+   "start": 1380,
+   "end": 1383,
+   "causedBy": "a_edmund_score",
+   "summary": "When cards end, Edmund folds the scorecard and Hugo's IOU slips into his pocketbook, ready to settle up.",
+   "effects": [
+    {
+     "take": "piquet_card"
+    },
+    {
+     "take": "iou_slips"
+    }
+   ]
+  }
+ ],
+ "signs": [
+  {
+   "id": "s_medical",
+   "kind": "record",
+   "medical": true,
+   "medical_v": 2,
+   "source": "e_exam",
+   "at": "surgery",
+   "title": "The doctor’s examination notes",
+   "text": "Examination of the deceased shows a stab wound. Death was from a stab wound, and it occurred between half past nine and ten o'clock.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1290,
+    "to": 1320
+   },
+   "to": null,
+   "show": "The doctor's examination shows Voss died from a stab wound, between half past nine and ten o'clock. Does that match what you know?",
+   "art": "wound",
+   "reactions": {
+    "rowan": "Stabbed, you say. Well, that's a bad business, but it's none of mine — I was at my stoves all evening, as my book'll show.",
+    "bell": "Stab wound, half nine to ten — that fits with what I found on the platform come morning, right enough.",
+    "iris": "That's as I told you — rigor and the body's heat put it between half past nine and ten, one wound, from the front. I stand by it."
+   },
+   "lines_for": "979bbde123fe"
+  },
+  {
+   "id": "s_morning_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "morning": true,
+   "deceptive": false,
+   "title": "Dr Iris Marsh on the morning",
+   "text": "Constable Bell knocked me up at quarter past six and told me of the death. I went straight along and at half past six I examined the body on the platform.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "confront": "You told me Bell knocked you up at quarter past six and you examined the body by half past six. Is that the whole of it?",
+   "to": null,
+   "show": "Dr Marsh says Constable Bell roused her at quarter past six and she examined the body on the platform by half past six. Does that match what you recall?",
+   "lines_for": "5e0f195e3671"
+  },
+  {
+   "id": "s_morning_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "morning": true,
+   "deceptive": false,
+   "title": "Arthur Bell on the morning",
+   "text": "At six o'clock I was on my dawn rounds when I found Voss lying dead on the platform. At quarter past six I went and knocked up Dr Marsh and told her of it, and by half past six she was examining the body there on the platform.",
+   "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "confront": "You told me you found Voss at six and fetched Dr Marsh by quarter past six. Is that the whole of it?",
+   "to": null,
+   "show": "Constable Bell says he found Voss dead on the platform at six, then fetched Dr Marsh by quarter past six, who examined the body by half past six. Does that match what you recall?",
+   "lines_for": "2e45d5065caa"
+  },
+  {
+   "id": "s_surface_dora",
+   "kind": "testimony",
+   "speaker": "dora",
+   "surface": true,
+   "deceptive": true,
+   "title": "Dorothy Pruett on the evening",
+   "text": "I closed up the post office at the usual hour and spent the evening at home, as I always do. I saw no one and nothing out of the ordinary.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 5,
+   "surface_why": "She claims she saw no one and nothing out of the ordinary, but Hugo came to the post office that evening to wire a London moneylender, which she would have seen as postmistress; she is concealing his visit.",
+   "surface_checked": "cover",
+   "confront": "You told me you closed up and stayed home all evening, seeing nothing out of the ordinary. Is that the whole of it?",
+   "to": null,
+   "show": "Miss Pruett says she closed the post office and spent the evening at home, seeing no one. Do you know if that's true?",
+   "lines_for": "1765d90beb23"
+  },
+  {
+   "id": "s_surface_vicar",
+   "kind": "testimony",
+   "speaker": "vicar",
+   "surface": true,
+   "deceptive": false,
+   "title": "The Reverend Thomas Hale on the evening",
+   "text": "I spent a quiet evening at home, as is my habit, with my books and my own thoughts. I didn't stir out again once I'd settled in.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 5,
+   "surface_checked": "honest",
+   "confront": "You told me you stayed in all evening with your books and didn't stir out. Is that the whole of it?",
+   "to": null,
+   "show": "The Reverend Hale says he spent a quiet evening at home with his books and didn't go out again. Do you know if that's true?",
+   "lines_for": "39793410dfdc"
+  },
+  {
+   "id": "s_surface_clara",
+   "kind": "testimony",
+   "speaker": "clara",
+   "surface": true,
+   "deceptive": false,
+   "title": "Clara Vale on the evening",
+   "text": "I was seeing to the household as usual, minding the stoves against the frost and the general run of things. I was back in the manor for the rest of the night.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 5,
+   "surface_checked": "honest",
+   "confront": "You told me you were minding the stoves and stayed in the manor the rest of the night. Is that the whole of it?",
+   "to": null,
+   "show": "Miss Vale says she spent the evening minding the household and stoves, and was back in the manor the rest of the night. Do you know if that's true?",
+   "lines_for": "afb73c670c2c"
+  },
+  {
+   "id": "s_surface_iris",
+   "kind": "testimony",
+   "speaker": "iris",
+   "surface": true,
+   "deceptive": false,
+   "title": "Dr Iris Marsh on the evening",
+   "text": "I was at the surgery writing up my case notes, as I generally am of an evening. Nothing called me out, so I stayed in till I went to bed.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 5,
+   "surface_checked": "honest",
+   "confront": "You told me you stayed at the surgery writing notes all evening, with no calls out. Is that the whole of it?",
+   "to": null,
+   "show": "Dr Marsh says she was at the surgery writing case notes all evening and wasn't called out. Do you know if that's true?",
+   "lines_for": "203a47609e0a"
+  },
+  {
+   "id": "s_surface_bell",
+   "kind": "testimony",
+   "speaker": "bell",
+   "surface": true,
+   "deceptive": false,
+   "title": "Arthur Bell on the evening",
+   "text": "Called at the manor about these poachers that've been at the woods, and the Vales had me in for a glass. Walked my usual rounds after, and then home.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 5,
+   "surface_checked": "honest",
+   "confront": "You told me you called at the manor over poachers, had a glass, then walked your rounds home. Is that the whole of it?",
+   "to": null,
+   "show": "Constable Bell says he called at the manor about poachers, took a glass with the Vales, then walked his rounds home. Do you know if that's true?",
+   "lines_for": "443846af0c6c"
+  },
+  {
+   "id": "s_surface_jonah",
+   "kind": "testimony",
+   "speaker": "jonah",
+   "surface": true,
+   "deceptive": false,
+   "title": "Jonah Reed on the evening",
+   "text": "Mending nets in the boathouse, same as most evenings. River's been restless and I wanted them fit before it rose further. Stayed down there till I turned in.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 5,
+   "surface_checked": "honest",
+   "confront": "You told me you were mending nets in the boathouse all evening until you turned in. Is that the whole of it?",
+   "to": null,
+   "show": "Jonah Reed says he spent the evening mending nets in the boathouse, same as most nights, until he turned in. Do you know if that's true?",
+   "lines_for": "6a404357db19"
+  },
+  {
+   "id": "s_surface_hugo",
+   "kind": "testimony",
+   "speaker": "hugo",
+   "surface": true,
+   "deceptive": true,
+   "title": "Hugo Vale on the evening",
+   "text": "Oh, I was stuck in with Uncle Edmund all evening, slogging through piquet while he fleeced me blind. Constable Bell dropped by for a tipple too, and then it was off to bed, dull as you like.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 5,
+   "surface_why": "He claims he was 'stuck in with Uncle Edmund all evening' playing cards, but he actually left the manor to visit the post office and wire a London moneylender (pocketing the counterfoil) and changed his muddy boots before joining the game - he was not with Edmund the whole evening as stated.",
+   "surface_checked": "cover",
+   "confront": "You told me you played piquet with your uncle all evening, with Bell dropping by, before bed. Is that the whole of it?",
+   "to": null,
+   "show": "Hugo Vale says he was playing piquet with his uncle Edmund all evening, with Constable Bell dropping by for a drink, before bed. Do you know if that's true?",
+   "lines_for": "63239e7d057b"
+  },
+  {
+   "id": "s_surface_edmund",
+   "kind": "testimony",
+   "speaker": "edmund",
+   "surface": true,
+   "deceptive": false,
+   "title": "Edmund Vale on the evening",
+   "text": "Hugo and I sat at cards in the library most of the evening, and Constable Bell looked in for a glass with us at one point. After that I turned in, same as any other night.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 5,
+   "surface_checked": "honest",
+   "confront": "You told me you and Hugo played cards in the library, with Bell looking in, before you turned in. Is that the whole of it?",
+   "to": null,
+   "show": "Edmund Vale says he and Hugo played cards in the library most of the evening, with Constable Bell looking in, before he turned in. Do you know if that's true?",
+   "lines_for": "292c4e9b82fb"
+  },
+  {
+   "id": "s_surface_rowan",
+   "kind": "testimony",
+   "speaker": "rowan",
+   "surface": true,
+   "deceptive": true,
+   "title": "Rowan Pike on the evening",
+   "text": "I were about my glasshouses most the evening, same as always, banking the stoves against the frost. Didn't go nowhere special, just back and forth along the mill path and home to bed.",
+   "ask": "Where were you last night?",
+   "agrees_checked": 5,
+   "surface_why": "He claims he 'didn't go nowhere special' and only moved between his glasshouses and the mill path home, but he actually went to the train platform, confronted and stabbed Voss with his pruning knife, then disposed of the broken blade in the millrace and faked evidence at his boiler - a direct falseh",
+   "surface_checked": "cover",
+   "confront": "You told me you were about your glasshouses banking the stoves, then went home to bed. Is that the whole of it?",
+   "to": null,
+   "show": "Rowan Pike says he spent the evening about his glasshouses, banking the stoves, then went home to bed. Do you know if that's true?",
+   "lines_for": "6fae50d28dd8"
+  },
+  {
+   "id": "s_wound_tip",
+   "kind": "trace",
+   "title": "A sliver in the wound",
+   "text": "Dr Marsh draws a thin curl of steel from the wound beneath Mr Voss's ribs: the snapped tip of a narrow blade, bent inward at the point like a claw. \"Not a kitchen knife, nor a pocket knife,\" she says. \"Beyond that I couldn't tell you what it broke off. I'm no gardener.\"",
+   "at": "halt",
+   "source": "e_exam",
+   "claim": {
+    "pred": "culpritHad",
+    "item": "pruning_knife"
+   },
+   "needs": [
+    "s_rowan_sheath"
+   ],
+   "reading": "The empty sheath in the grit bin is curved at the tip like a hook. It was made for a hooked pruning blade, and only that kind of blade ends in a claw-shaped point like the sliver from the wound. So the weapon was a hooked pruning knife.",
+   "to": null,
+   "show": "Dr Marsh pulled this broken blade tip from the wound. Do you recognise what tool it might have snapped off of?",
+   "art": "knife",
+   "reactions": {
+    "bell": "A curl of steel, bent like a claw — not from any knife I'd know offhand. Sounds like a gardener's tool to me, Doctor, begging your pardon.",
+    "iris": "I drew it out myself — a narrow blade, snapped and curled inward at the tip. What it broke off I can't say; that's for you gentlemen who know tools, not me.",
+    "rowan": "A broken bit of steel, is it. Knives snap on all sorts of men's belts, Constable — doesn't make it mine, nor any of my business what Voss got stuck with."
+   },
+   "lines_for": "4865429ac951"
+  },
+  {
+   "id": "s_knife_owner",
+   "kind": "testimony",
+   "title": "The constable on hooked knives",
+   "text": "\"Pike's knife? The one he keeps in that old sheath on his belt. His alone, that is. Won't let another soul touch it, and never lends it. Been that way twenty year.\"",
+   "at": "square",
+   "speaker": "bell",
+   "because": [
+    "a_bell_knows_knife"
+   ],
+   "ask": "Does Mr Pike lend his tools about the village?",
+   "claim": {
+    "pred": "onlyHad",
+    "item": "pruning_knife",
+    "people": [
+     "rowan"
+    ]
+   },
+   "needs": [
+    "s_rowan_sheath"
+   ],
+   "reading": "The constable only says Pike's belt knife is his alone. The empty sheath, curved like a hook, shows that the knife Bell means is a hooked blade, the kind whose tip was found in the wound, and that it is missing.",
+   "to": null
+  },
+  {
+   "id": "s_time_of_death",
+   "kind": "testimony",
+   "title": "The doctor's estimate",
+   "text": "\"Rigor and the temperature of the body put death between half past nine and ten last night. Ten at the very latest. One wound, from the front.\"",
+   "at": "halt",
+   "speaker": "iris",
+   "source": "e_exam",
+   "ask": "When did he die, Doctor?",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1290,
+    "to": 1320
+   },
+   "to": null,
+   "show": "Dr Marsh puts the time of death between half past nine and ten last night, a single wound from the front. Does that fit with what you saw?",
+   "lines_for": "1da7d8db85d8"
+  },
+  {
+   "id": "s_trust_ledger",
+   "kind": "document",
+   "title": "A scorched ledger in the strongbox",
+   "text": "The vicar unlocks the parish strongbox and hands over a leather ledger with blackened edges. In it: 'Trust for R. Pike, legacy of the late Squire Henry Vale, £800.' Below that is a column of withdrawals in Voss's hand. Balance carried: £12 4s.",
+   "at": "vestry",
+   "claim": {
+    "pred": "related",
+    "a": "silas",
+    "rel": "trustee_of",
+    "b": "rowan"
+   },
+   "requires": [
+    "s_rowan_sheath"
+   ],
+   "unlock": "The vicar saved this ledger from Voss's grate and kept it locked away so the village would not turn on Pike. When you tell him Pike has buried his belt and empty knife sheath in the grit bin, he decides that keeping quiet for Pike's sake is no longer right, and he opens the strongbox.",
+   "to": "rowan",
+   "art": "ledger",
+   "lines_for": "8464c7e72c2c"
+  },
+  {
+   "id": "s_will_draft",
+   "kind": "document",
+   "title": "A draft will",
+   "text": "A draft will for Edmund Vale in Voss's neat hand. The clause 'to my nephew and heir Hugo Vale' has been struck through, with 'to be discussed' written beside it.",
+   "at": "vestry",
+   "claim": {
+    "pred": "related",
+    "a": "hugo",
+    "rel": "heir_of",
+    "b": "edmund"
+   },
+   "reactions": {
+    "edmund": "'To be discussed' - yes, well, I'd every right to discuss my own money with my own solicitor. Hugo needn't look so wounded about it, nothing's settled yet. A man may change his mind, that's hardly a hanging matter.",
+    "clara": "I knew nothing of the wording, only that Edmund was in a temper over something Voss had sent. Family matters, Inspector - not, I think, for the village to chew over.",
+    "vicar": "Oh - oh dear, I hadn't known it was struck through. Poor Mr Voss kept so much close to his chest. I suppose even solicitors have their private griefs to manage.",
+    "rowan": "That's Vale business, not mine. I tend the glasshouses, not his will - whatever Voss scribbled there's no concern of a gardener like me.",
+    "hugo": "Ha— well. That's old Voss being his usual cautious self, I expect. Doesn't mean a thing's decided, does it? Uncle and I are thick as ever, whatever that scribble says."
+   },
+   "show": "This draft will for Mr Vale once named Hugo Vale as heir, but the clause is struck through and marked 'to be discussed.' Were you aware your inheritance was in doubt?",
+   "to": "hugo",
+   "direct": "This draft will once named you as Mr Vale's heir, but the clause has been struck through and marked 'to be discussed.' Were you aware your inheritance was in doubt?",
+   "art": "letter",
+   "lines_for": "bfe7365514dd"
+  },
+  {
+   "id": "s_fee_demand",
+   "kind": "document",
+   "title": "A letter of final demand",
+   "text": "On the library desk, a letter from S. Voss: 'Fees outstanding these four years, £400. I must ask for settlement in full this month.'",
+   "at": "manor",
+   "claim": {
+    "pred": "related",
+    "a": "edmund",
+    "rel": "owes",
+    "b": "silas"
+   },
+   "requires": [
+    "s_library_screen"
+   ],
+   "unlock": "Miss Vale locked the library so that no stranger would learn Edmund lost his temper over Voss's letter. Now the room is open, and that letter lies on the desk beside the screen.",
+   "reactions": {
+    "clara": "Yes - that letter is what set my brother off that evening. I kept the room shut so no stranger would make something ugly of a temper lost over money. There's no more to it than that.",
+    "edmund": "Four years unpaid, is it. Voss was forever dunning me, the man had no patience. A letter like that would try any man's temper, but it hardly makes me his killer.",
+    "rowan": "That's between Mr Vale and his solicitor. I never saw that letter and I've no business with the master's debts - my concern was the stoves, nothing more.",
+    "hugo": "I say, that's between Uncle and his man of business, not me. Haven't the foggiest what Voss was dunning him for — ask Uncle, not me, old thing."
+   },
+   "show": "This letter from Mr Voss demands four hundred pounds in outstanding fees, to be settled this month. Did you know of this debt to him?",
+   "to": null,
+   "art": "letter",
+   "lines_for": "5a4e309135d8"
+  },
+  {
+   "id": "s_notice_quit",
+   "kind": "document",
+   "title": "A notice to quit",
+   "text": "Pinned behind the boathouse door: a notice to quit the boathouse cottage by Lady Day, signed 'S. Voss, agent for the estate'. Someone has scored it through with a knife.",
+   "at": "boathouse",
+   "claim": {
+    "pred": "related",
+    "a": "silas",
+    "rel": "evicting",
+    "b": "jonah"
+   },
+   "reactions": {
+    "rowan": "Quit notice? Aye, I've seen it pinned there like everyone else. Who scored it through with a knife I couldn't say — plenty of knives about a boathouse, and none of mine missing that I'd swear to.",
+    "jonah": "Aye, that's been pinned there a while — Voss wanting us out by Lady Day. I never touched it with a blade, mending nets was all I was about."
+   },
+   "show": "This notice to quit the boathouse cottage by Lady Day is signed by Mr Voss as agent for the estate, and someone has scored it through with a knife. Do you know who did that?",
+   "to": "jonah",
+   "direct": "This notice to quit your boathouse cottage by Lady Day was signed by Mr Voss, and someone has scored it through with a knife. Was that you?",
+   "art": "letter",
+   "lines_for": "a529375b1a71"
+  },
+  {
+   "id": "s_rowan_account",
+   "kind": "testimony",
+   "title": "The groundskeeper's evening",
+   "text": "\"Glasshouses. Same as every night. Frost coming, so I was seeing to the stoves. Plants don't keep themselves.\"",
+   "at": "greenhouse",
+   "speaker": "rowan",
+   "source": "e_rowan_potting",
+   "ask": "Where were you last night, Mr Pike?",
+   "surface_why": "Pike claims he was tending his glasshouse stoves all night 'same as every night,' but he actually left the glasshouses to confront and kill Voss on the platform, then faked a boiler mishap and hid evidence; he was not there the whole time.",
+   "surface_checked": "cover",
+   "deceptive": true,
+   "same_as": "night",
+   "confront": "You told me you spent the evening in the glasshouses tending the stoves. Is that the whole of it?",
+   "to": null,
+   "show": "Pike says he spent the evening in the glasshouses tending the stoves against the frost. Can you confirm that's where he was?",
+   "lines_for": "d32b96d307ed"
+  },
+  {
+   "id": "s_edmund_account",
+   "kind": "testimony",
+   "title": "The squire's evening",
+   "text": "\"Cards with my nephew in the library, and the boy lost, as usual. Bell looked in about poachers. Voss? Never saw the fellow.\"",
+   "at": "manor",
+   "speaker": "edmund",
+   "source": "e_cards",
+   "ask": "Where were you last night, Mr Vale?",
+   "surface_checked": "honest",
+   "deceptive": false,
+   "same_as": "night",
+   "confront": "You told me you were playing cards with your nephew all evening and never saw Mr Voss. Is that the whole of it?",
+   "to": null,
+   "show": "Mr Vale says he played cards with his nephew in the library all evening and never saw Mr Voss. Does that match what you saw?",
+   "lines_for": "0a7599f705b7"
+  },
+  {
+   "id": "s_hugo_account",
+   "kind": "testimony",
+   "title": "The nephew's evening",
+   "text": "\"Piquet with Uncle, dear chap, the whole blessed evening. Riveting stuff. I was down a fiver by ten. Not exactly the Embassy Club.\"",
+   "at": "manor",
+   "speaker": "hugo",
+   "source": "e_hugo_cards",
+   "ask": "Where were you last night, Mr Hugo?",
+   "surface_why": "Hugo claims he was at piquet with his uncle 'the whole blessed evening,' but he actually slipped out to the post office to wire a moneylender, returning with mud-caked boots before changing and joining cards — he was not there the entire evening.",
+   "surface_checked": "cover",
+   "deceptive": true,
+   "same_as": "night",
+   "confront": "You told me you played piquet with your uncle the whole evening, down five pounds by ten. Is that the whole of it?",
+   "to": null,
+   "show": "Mr Vale's nephew Hugo says he played piquet with his uncle the whole evening, losing five pounds by ten o'clock. Does that match what you saw?",
+   "lines_for": "1d2cdfa31421"
+  },
+  {
+   "id": "s_jonah_account",
+   "kind": "testimony",
+   "title": "The boatman's evening",
+   "text": "\"Nets. River's on the rise. Sat in the boathouse with a lamp till late. Nobody came by. Nobody does.\"",
+   "at": "boathouse",
+   "speaker": "jonah",
+   "source": "e_jonah_nets",
+   "ask": "Where were you last night, Mr Reed?",
+   "surface_checked": "honest",
+   "deceptive": false,
+   "same_as": "night",
+   "confront": "You told me you sat alone in the boathouse mending nets by lamplight, with no one calling by. Is that the whole of it?",
+   "to": null,
+   "show": "Reed says he sat alone in the boathouse mending nets by lamplight all evening, with no one calling by. Can you confirm that?",
+   "lines_for": "a709c0b086bc"
+  },
+  {
+   "id": "pub_window",
+   "kind": "public",
+   "title": "When it happened",
+   "text": "Silas Voss died between 21:30 and 22:00.",
+   "claim": {
+    "pred": "crimeBetween",
+    "from": 1290,
+    "to": 1320
+   },
+   "reactions": {
+    "rowan": "Half nine to ten, you say. I was banked down at my stoves same as always of an evening, frost coming on and all. Can't rightly help you with times beyond that."
+   },
+   "art": "clock",
+   "show": "I've established that Mr Voss died sometime between half past nine and ten o'clock that night. Does that time mean anything to you?",
+   "to": null,
+   "lines_for": "c3793fe7bd2b"
+  },
+  {
+   "id": "s_rowan_sheath",
+   "kind": "trace",
+   "title": "A belt in the grit bin",
+   "text": "Pushed deep into the bin of potting grit under the bench, a worn leather belt is coiled up. On it hangs a sheath worn shiny from years of use, curved at the tip like a hook. It is empty. Grit has packed into the buckle holes.",
+   "at": "greenhouse",
+   "about": "rowan",
+   "watch": false,
+   "source": "e_rowan_bury_belt",
+   "explainedBy": [],
+   "requires": [
+    "s_rowan_twine"
+   ],
+   "unlock": "Pike has suddenly stopped wearing the belt he has worn for years. You search the glasshouses for it and find the grit in the bin under the potting bench freshly disturbed.",
+   "to": "rowan",
+   "direct": "I found your belt and sheath buried in the potting grit, empty of its knife. Can you explain that?",
+   "show": "I found an empty knife sheath on a worn belt hidden in the potting grit here. Does this belong to Rowan Pike?",
+   "art": "knife",
+   "reactions": {
+    "rowan": "That's mine, aye. Knife's gone missing, that's all — a man can lose a knife without losing his head. I've nothing more to say about it."
+   },
+   "lines_for": "0c2e300dfb8f"
+  },
+  {
+   "id": "s_stove_log",
+   "kind": "document",
+   "title": "The stove book",
+   "text": "A pencil logbook on a nail by the boiler. 'Night of the 14th. 9.15 stoked Nos. 1 & 2. 9.30 stoked. 9.45 dampers half. 10.0 stoked, frost coming. R.P.' Every entry is in the same even hand, written with the same blunt pencil.",
+   "at": "greenhouse",
+   "source": "e_rowan_log",
+   "claim": {
+    "pred": "wasAt",
+    "person": "rowan",
+    "place": "greenhouse",
+    "from": 1275,
+    "to": 1320
+   },
+   "reactions": {
+    "rowan": "That's my book, aye, and my hand wrote it — I keep a tidy record of the stoking, always have. A man likes to know his fires are seen to proper, that's all there is to it."
+   },
+   "show": "This is the stove logbook from the boiler, with entries timed through the night in one steady hand. Can you tell me anything about these entries?",
+   "to": null,
+   "art": "notebook",
+   "lines_for": "1def7ebd037f"
+  },
+  {
+   "id": "s_clara_greenhouse",
+   "kind": "testimony",
+   "title": "Miss Vale's errand",
+   "text": "\"Quarter past nine? I was down there myself at a quarter past nine. The glass was falling, so I went to tell Pike to bank the stoves for Edmund's orchids. The houses were dark and the boiler door was shut. No Pike. I waited a few minutes and came back cross.\"",
+   "at": "manor",
+   "speaker": "clara",
+   "source": "e_clara_greenhouse",
+   "because": [
+    "a_clara_frost",
+    "a_clara_privacy"
+   ],
+   "ask": "Miss Vale, the stove book says Pike was stoking at a quarter past nine. Is that right?",
+   "requires": [
+    "s_stove_log",
+    "s_rowan_twine"
+   ],
+   "unlock": "Miss Vale will not talk about the staff with a stranger. When you tell her Pike has stopped wearing the belt he has worn for twenty years and is hiding the fact under his apron, and you show her the stove book's 21:15 entry, she decides this is something wrong, not gossip, and remembers she was in the glasshouses herself at that hour.",
+   "claim": {
+    "pred": "wasAt",
+    "person": "rowan",
+    "place": "greenhouse",
+    "from": 1275,
+    "to": 1282,
+    "when": "never"
+   },
+   "defeats": [
+    "s_stove_log"
+   ],
+   "reactions": {
+    "rowan": "Can't say where I was every minute, Miss Clara's welcome to her memory of it. Maybe I'd stepped out for coal or such — a man can't be chained to the boiler all night."
+   },
+   "confront": "You told me the glasshouses were dark and empty when you went looking for Pike at quarter past nine. Is that the whole of it?",
+   "show": "Miss Vale says she went down to the glasshouses at quarter past nine to fetch Pike, but found them dark and empty. Do you know if that's true?",
+   "to": "rowan",
+   "lines_for": "454177548b4d",
+   "direct": "I'm told you were nowhere to be found at the glasshouses at a quarter past nine, though the stoves wanted banking. Where were you?"
+  },
+  {
+   "id": "s_edmund_bandage",
+   "kind": "behavior",
+   "title": "Under the glove",
+   "text": "At last Mr Vale reaches for a cigar and finds he can't strike the match with his glove on. He tugs it off. Underneath, the knuckles are wrapped in fresh linen with brown spots on it. He sees you looking, lights up quickly and pushes the bare hand deep into his jacket pocket.",
+   "about": "edmund",
+   "watch": true,
+   "source": "e_edmund_fist",
+   "explainedBy": [
+    "s_bookcase_glass",
+    "s_clara_bandage"
+   ],
+   "requires": [
+    "s_edmund_glove"
+   ],
+   "unlock": "The single glove makes you stay with Mr Vale and keep watching his hand. Nobody can strike a match in a stiff driving glove, so when he wants his cigar he has to take it off in front of you.",
+   "to": "edmund",
+   "lines_for": "e4ac4ab312c6"
+  },
+  {
+   "id": "s_bookcase_glass",
+   "kind": "trace",
+   "title": "A broken pane",
+   "text": "Behind the folded screen, one pane of the glass-fronted bookcase is cracked in a star around a hole the size of a fist. A brown smear is drying on the jagged edge. The missing pieces match the slivers in the grate.",
+   "at": "manor",
+   "source": "e_edmund_fist",
+   "requires": [
+    "s_library_screen"
+   ],
+   "unlock": "Glass in the grate and a screen dragged in front of the only glazed furniture in the room: you fold the screen back to see what it is hiding.",
+   "show": "There's a star-cracked pane in the bookcase here, with a bloody smear on the broken edge, and the missing glass matches slivers found in the grate. Can you account for this?",
+   "to": null,
+   "art": "glass",
+   "reactions": {
+    "clara": "Yes, well — my brother has a temper and that bookcase bore the brunt of it one evening. I put the screen there so the servants shouldn't gossip over broken glass, nothing more sinister than that.",
+    "edmund": "Confound it, that's nothing—a man's temper gets the better of him over some tiresome paper, and the glass pays for it. My sister saw to my hand well enough. I'll not have you making a murder out of a broken bookcase."
+   },
+   "lines_for": "c0e3a44358a6"
+  },
+  {
+   "id": "s_clara_bandage",
+   "kind": "testimony",
+   "title": "Miss Vale on her brother's hand",
+   "text": "\"He read that wretched letter of Voss's again at a quarter to eight, before cards, and put his fist through the bookcase. Edmund has never forgiven a debt, least of all his own. I bound the hand myself. He would rather be suspected than pitied, so he will not tell you.\"",
+   "at": "manor",
+   "speaker": "clara",
+   "source": "e_edmund_fist",
+   "ask": "Miss Vale, how did your brother hurt his hand?",
+   "requires": [
+    "s_edmund_bandage"
+   ],
+   "unlock": "Once you mention her brother's bandaged hand, Miss Vale would rather you heard the embarrassing truth from her than guessed at something worse.",
+   "surface_checked": "honest",
+   "deceptive": false,
+   "confront": "You told me you bound your brother's hand yourself after he put his fist through the bookcase over Voss's letter. Is that the whole of it?",
+   "to": null,
+   "show": "Miss Vale says her brother put his fist through the bookcase after reading Voss's letter, and that she bound his hand herself. Do you know if that's true?",
+   "lines_for": "b108b1d3e88f"
+  },
+  {
+   "id": "s_hugo_pocket",
+   "kind": "behavior",
+   "title": "A paper he keeps touching",
+   "text": "Mr Hugo keeps patting his breast pocket, where the corner of a buff form peeps out. When you glance at it he tucks it deeper, laughs a little too loudly, and asks whether you've seen the London papers.",
+   "about": "hugo",
+   "watch": true,
+   "source": "e_hugo_telegram",
+   "explainedBy": [
+    "s_dora_telegram"
+   ],
+   "requires": [
+    "s_hugo_shoes"
+   ],
+   "unlock": "When you mention the muddy brogues buried in the boot-room coal scuttle, Mr Hugo's hand goes straight to his breast pocket. You keep watching that pocket while he jokes his way round it.",
+   "to": "hugo",
+   "lines_for": "37429c232462"
+  },
+  {
+   "id": "s_dora_telegram",
+   "kind": "testimony",
+   "title": "The postmistress on a telegram",
+   "text": "\"Telegrams are confidential, as a rule. But since you've seen the counterfoil yourself... Mr Hugo sent a wire at five past seven last night, to a Mr Isaacs of Jermyn Street, Bond Street end. 'Expectations uncertain. Cannot pay now. Beg one month. Hugo.' A moneylender, if you ask me. He went off up the manor road directly.\"",
+   "at": "post",
+   "speaker": "dora",
+   "source": "e_hugo_telegram",
+   "ask": "Miss Pruett, did Mr Hugo send anything from your counter yesterday?",
+   "requires": [
+    "s_hugo_pocket"
+   ],
+   "unlock": "Once you describe the buff Post Office form Mr Hugo keeps in his pocket, Miss Pruett, who disapproves of him, decides it is no breach to confirm a counterfoil you have already seen.",
+   "claim": {
+    "pred": "wasAt",
+    "person": "hugo",
+    "place": "post",
+    "from": 1140,
+    "to": 1150
+   },
+   "defeats": [
+    "s_hugo_denial"
+   ],
+   "to": "hugo",
+   "lines_for": "4b8714fb75df"
+  },
+  {
+   "id": "s_piquet_card",
+   "kind": "document",
+   "title": "Mr Vale's scorecard",
+   "text": "Mr Vale pulls a folded piquet card from his pocketbook. Pencil scores in a heavy, sprawling hand, with a clock time beside each partie: 'P.4 — 8.50. P.5 — 9.20. P.6 — 9.42. P.7 — 10.05. P.8 — 10.40.' Small brown fingermarks run down the margin beside every line, from the first partie to the last.",
+   "at": "manor",
+   "source": "e_edmund_score",
+   "claim": {
+    "pred": "wasAt",
+    "person": "edmund",
+    "place": "manor",
+    "from": 1290,
+    "to": 1320
+   },
+   "needs": [
+    "s_clara_bandage"
+   ],
+   "reading": "Miss Vale says Edmund cut his knuckles at a quarter to eight, before cards began. So the brown fingermarks beside every entry are his blood, which means the man keeping score at the table, partie after partie through half past nine and ten, was Edmund himself.",
+   "requires": [
+    "s_edmund_account"
+   ],
+   "unlock": "When you ask Mr Vale to prove his evening at cards, he likes to have every debt on paper, so he gladly takes the scorecard out of his pocketbook to show how badly the boy lost.",
+   "reactions": {
+    "edmund": "Of course it's mine — I keep every score and every minute of it, so the boy can't wriggle out of what he owes me. As for the marks, my hand was cut that night, as my sister can tell you, and a man can't help a little blood getting on his own cards.",
+    "rowan": "Cards and scores, that's the house's business, not mine. I had my stoves to see to, same as I told you.",
+    "hugo": "Ha, there's the evidence of my ruin in black and white — Uncle never lets a partie go unrecorded, worse luck for my pocketbook. Those marks are his, not mine; I was too busy losing to bleed on anything.",
+    "clara": "My brother keeps his scores most particularly, as you see. There's nothing in a card of numbers, surely — he and Hugo play most evenings, it's hardly news."
+   },
+   "to": "edmund",
+   "show": "This is Mr Vale's piquet scorecard, timed through the evening, with small brown fingermarks running down the margin on every line. Can you account for those marks?",
+   "art": "card",
+   "direct": "This is your piquet scorecard, with times beside each hand and small brown fingermarks down the margin. Can you explain those marks?",
+   "lines_for": "ace82e8665c8"
+  },
+  {
+   "id": "s_hugo_hand",
+   "kind": "behavior",
+   "title": "A pencil changes hands",
+   "text": "At the name of Jermyn Street Mr Hugo grabs his little notebook to add up what he owes. The pencil has jumped to his left hand, wrist curled over the line, and the side of his little finger is grey with lead. A moment later he notices, flushes, and shifts it clumsily into his right.",
+   "about": "hugo",
+   "watch": true,
+   "source": "e_hugo_mask_hand",
+   "claim": {
+    "pred": "hasTrait",
+    "person": "hugo",
+    "trait": "handed",
+    "value": "left"
+   },
+   "requires": [
+    "s_dora_telegram"
+   ],
+   "unlock": "In company Mr Hugo makes a show of writing right-handed. Once you tell him you know about his wire to the Jermyn Street moneylender, he loses his composure and forgets the act, reaching for his notebook to prove he can pay.",
+   "reactions": {
+    "rowan": "I wouldn't know a thing about which hand the young gentleman writes with. I keep to my glasshouses, not to other men's notebooks.",
+    "hugo": "Ha — caught me out, haven't you? Fine, fine, I write left when I'm rattled, always have, schoolmasters thrashed it out of me but the hand remembers. Doesn't mean anything, old thing, except that Jermyn Street makes me nervous as a cat."
+   },
+   "confront": "I saw the pencil jump to your left hand just now, with lead grey on your little finger, before you shifted it back to your right. Why the switch?",
+   "to": "hugo",
+   "direct": "At the mention of Jermyn Street you switched your pencil to your left hand, your little finger grey with lead, then shifted it back when you noticed me watching. Can you account for that?",
+   "show": "At the mention of Jermyn Street, Mr Hugo switched his pencil to his left hand, his little finger grey with lead, before shifting it back when he noticed. Can you account for that?",
+   "lines_for": "077ea2fafa1a"
+  },
+  {
+   "id": "s_iou_slips",
+   "kind": "document",
+   "title": "The nephew's IOUs",
+   "text": "Out of the same pocketbook Mr Vale counts a pile of scraps torn from notepaper. Each reads 'IOU Uncle E.' with a sum and a time: '£1 — 9.20', '£2 — 9.42', '£1 10s — 10.05', and later ones. The pencil on every slip is smeared along the line, as if the writing hand had dragged through each word while it was fresh.",
+   "at": "manor",
+   "source": "e_hugo_chits",
+   "claim": {
+    "pred": "wasAt",
+    "person": "hugo",
+    "place": "manor",
+    "from": 1290,
+    "to": 1320
+   },
+   "needs": [
+    "s_hugo_hand"
+   ],
+   "reading": "A left-handed writer pushes the pencil and drags his hand through what he has just written. Mr Hugo writes left-handed, and Edmund keeps score in his own right hand, so the slips timed 9.20, 9.42 and 10.05 were written by Hugo at that table, all through the half hour of the death.",
+   "requires": [
+    "s_hugo_account"
+   ],
+   "unlock": "Mr Hugo says he was down a fiver by ten. When you put that to Mr Vale, who never lets a debt go unrecorded, he produces the boy's IOUs from his pocketbook to show you the exact sum.",
+   "reactions": {
+    "clara": "My brother keeps every debt scored to the minute, Inspector — it is a habit, not a confession of anything. You will find Hugo's slips tiresome but entirely in order, I should think.",
+    "rowan": "That's Vale business, not mine. Cards and scraps of paper — nothing to do with my stoves.",
+    "hugo": "Down a fiver by ten, just as I said — Uncle's got it all in black and white, hasn't he. I'm a rotten card player but an honest one, see.",
+    "edmund": "There you are — the boy owed me a tidy sum by the end, and I've the proof of every partie in his own hand. I don't let debts go unrecorded, not even a nephew's."
+   },
+   "to": null,
+   "show": "These are the nephew's IOU slips to his uncle, each timed and smeared along the pencil line as if the hand dragged through while writing. Can you tell me about these?",
+   "art": "note",
+   "lines_for": "836ae8bada51"
+  },
+  {
+   "id": "s_rowan_twine",
+   "kind": "behavior",
+   "title": "A belt gone missing",
+   "text": "When Mr Pike stoops, the apron rides up. His trousers are held up with a length of garden twine knotted at the hip, and a darker, shiny band on his waistcoat shows where a belt has rubbed for years. He straightens quickly, yanks the apron down and turns away.",
+   "at": "greenhouse",
+   "about": "rowan",
+   "watch": true,
+   "source": "e_rowan_bury_belt",
+   "explainedBy": [
+    "s_rowan_sheath"
+   ],
+   "requires": [
+    "s_rowan_apron"
+   ],
+   "unlock": "Pike's oddly tight apron makes you keep an eye on his waist. When he bends to rake out a stove in front of you, the apron rides up and shows what it was covering.",
+   "reactions": {
+    "rowan": "A man loses his belt in the glasshouse, it happens. String does the job well enough — no crime in that, is there."
+   },
+   "confront": "I noticed your trousers are held up with garden twine, and a worn mark on your waistcoat where a belt used to sit. What happened to your belt?",
+   "to": "rowan",
+   "direct": "Your trousers are held up with garden twine, and your waistcoat shows a worn band where a belt used to sit. What became of your belt?",
+   "show": "Mr Pike's trousers are held up with garden twine, and his waistcoat shows a worn band where a belt once sat for years. Do you know what became of his belt?",
+   "lines_for": "b9a55ff94d02"
+  },
+  {
+   "id": "s_rowan_apron",
+   "kind": "behavior",
+   "title": "An apron tied high",
+   "text": "Mr Pike wears a heavy leather potting apron tied high and knotted tight, though he is doing no potting. Twice he tugs it down over his middle. When you offer to hold it while he works, he says gruffly that he'll keep it on.",
+   "about": "rowan",
+   "watch": true,
+   "source": "e_rowan_apron",
+   "explainedBy": [
+    "s_rowan_twine"
+   ],
+   "requires": [
+    "s_boiler_flue"
+   ],
+   "unlock": "Now you know the boiler draws clean and the soot was tipped out by hand, Pike's excuse for the heavy apron is gone, and you start watching how he wears it.",
+   "reactions": {
+    "rowan": "I keep it on because the boiler spits and I've no mind for burns on my middle. A gardener's apron's his own business, same as yours is yours."
+   },
+   "confront": "You've kept that apron tied high and tight all morning, though you're doing no potting, and wouldn't let me hold it. Why is that?",
+   "to": "rowan",
+   "direct": "You've kept that apron tied high and tight all morning, though you're doing no potting, and wouldn't let me hold it. Why is that?",
+   "show": "Mr Pike keeps his potting apron tied high and knotted tight, though he's doing no potting, and won't take it off. Does that strike you as odd?",
+   "lines_for": "005c7e842053"
+  },
+  {
+   "id": "s_edmund_glove",
+   "kind": "behavior",
+   "title": "One glove indoors",
+   "text": "Mr Vale keeps his right hand in his jacket pocket. When he finally draws it out, it is wearing a single tan driving glove, though he is indoors by the fire. He holds out his left hand to shake, makes a joke about the cold, and rests the gloved fist on his knee.",
+   "about": "edmund",
+   "watch": true,
+   "source": "e_edmund_glove",
+   "explainedBy": [
+    "s_edmund_bandage",
+    "s_clara_bandage"
+   ],
+   "requires": [
+    "s_bookcase_glass"
+   ],
+   "unlock": "The blood on the broken bookcase pane makes you watch the hands of everyone in the household. Mr Vale has kept his right hand in his pocket, and you keep watching until he takes it out.",
+   "reactions": {
+    "clara": "My brother feels the cold in that hand, that's all — he's worn a glove about the house before now. I'd thank you not to make a mystery of a man keeping warm.",
+    "edmund": "Cold hands, that's the whole of it. A man's entitled to a glove in his own house without the county constabulary taking notes on it.",
+    "hugo": "Uncle's hand? Lord knows — touch of rheumatism, I shouldn't wonder. Never thought twice about it, I was rather occupied losing at piquet."
+   },
+   "confront": "You've kept that right hand gloved in your pocket by the fire, and only offered your left to shake. Why not show me your hand?",
+   "to": "edmund",
+   "direct": "You've kept that right hand gloved in your pocket by the fire, and only offered your left to shake. Why not show me your hand?",
+   "show": "Mr Vale keeps his right hand gloved and in his pocket, even by the fire indoors, and only draws it out to shake with his left. Did you notice that?",
+   "lines_for": "6a17893bc64a"
+  },
+  {
+   "id": "s_rowan_soot",
+   "kind": "trace",
+   "title": "Soot in the stokehole",
+   "text": "Soot lies across the stokehole floor and is smeared up the front of the boiler, whose door hangs open. Mr Pike, black to the elbows, mutters that the boiler has been blowing back since first light. \"Hence the apron,\" he says.",
+   "at": "greenhouse",
+   "source": "e_rowan_soot",
+   "needs": [
+    "s_orchid_house"
+   ],
+   "reading": "A boiler blowing back since first light would have sent smuts through the open louvres into the orchid house. Instead the orchids are spotless. So the soot never came out of the flue: it stayed where it was tipped, on the stokehole floor.",
+   "reactions": {
+    "rowan": "Aye, blowing back something terrible since first light, that's why I'm black to the elbows and wearing the apron. Nasty old flue, always was temperamental in a frost."
+   },
+   "show": "There's soot smeared across the stokehole floor and up the boiler door, which hangs open. Can you tell me why it's in such a state?",
+   "to": null,
+   "art": "apron",
+   "lines_for": "39789788bf42"
+  },
+  {
+   "id": "s_boiler_flue",
+   "kind": "trace",
+   "title": "A boiler that draws clean",
+   "text": "A lit spill held at the boiler door is pulled straight in; the flue draws hard and clean. The soot on the floor sits in a neat cone with the curved rim of a pan pressed into it. The ash pan beside it has been scraped empty.",
+   "at": "greenhouse",
+   "source": "e_rowan_soot",
+   "requires": [
+    "s_orchid_house"
+   ],
+   "unlock": "The spotless orchids don't fit Pike's story of a boiler blowing back, so you go back to the boiler and test it yourself: you hold a lit spill to its door and examine the soot on the floor.",
+   "defeats": [
+    "s_rowan_soot"
+   ],
+   "reactions": {
+    "rowan": "Drawing clean now, is it? Well, it cleared itself then, didn't it — these old flues come right of a sudden. I can't account for every puff of smoke, sir."
+   },
+   "to": null,
+   "show": "The flue draws clean when I test it, yet the soot on the floor sits neat with a pan's rim pressed into it, and the ash pan's been scraped bare. Can you account for that?",
+   "art": "grate",
+   "lines_for": "2db1643b050d"
+  },
+  {
+   "id": "s_orchid_house",
+   "kind": "trace",
+   "title": "The orchid house",
+   "text": "On the far side of the partition door from the stokehole, the orchid house is spotless. The white blooms are unmarked, the panes are clear and there are no smuts on the staging. A wet sack lies pressed along the foot of the shut door, damp on the stokehole side.",
+   "at": "greenhouse",
+   "source": "e_rowan_seal_door",
+   "requires": [
+    "s_clara_orchid_key"
+   ],
+   "unlock": "With Miss Vale's spare key you unlock the partition door Pike kept shut, and step through into the orchid house to see what the smoke has done there.",
+   "needs": [
+    "s_vent_louvres"
+   ],
+   "reading": "The vent above the partition stands open, and the boiler's air flows straight through it into the orchid house. Any smoke blown back from the boiler would have carried smuts onto the blooms and panes. Clean orchids mean no smoke ever came through.",
+   "reactions": {
+    "rowan": "Course they're spotless, I shut the door quick so the smoke didn't get at 'em — I've nursed those blooms too many years to let 'em choke. That sack keeps the worst of it off."
+   },
+   "to": null,
+   "show": "The orchid house beyond the partition is spotless, with a damp sack pressed along the foot of the door on the stokehole side. Do you know how that sack came to be wet?",
+   "art": "flowers",
+   "lines_for": "02f6a63d7dae"
+  },
+  {
+   "id": "s_hugo_denial",
+   "kind": "testimony",
+   "title": "The nephew stayed in",
+   "text": "\"Out? In this mud? Not likely, old thing. Never set a foot outside the house all evening, from seven o'clock on. Ask anyone.\"",
+   "at": "manor",
+   "speaker": "hugo",
+   "because": [
+    "a_hugo_hide_wire"
+   ],
+   "ask": "Did you go out at all last evening, Mr Hugo?",
+   "claim": {
+    "pred": "wasAt",
+    "person": "hugo",
+    "place": "manor",
+    "from": 1140,
+    "to": 1150
+   },
+   "same_as": "night",
+   "confront": "You told me you never set foot outside the house all evening from seven on. Is that the whole truth?",
+   "to": null,
+   "show": "Mr Hugo Vale tells me he never set foot outside the house all evening from seven on. Can you confirm that's true?",
+   "lines_for": "1e0d4443921d"
+  },
+  {
+   "id": "s_hugo_shoes",
+   "kind": "trace",
+   "title": "Brogues in the coal scuttle",
+   "text": "Under the coal at the bottom of the scuttle is a bundle in yesterday's Times. Inside is a pair of tan-and-white brogues with yellow lane mud caked up to the welts, the seams still faintly damp. 'H.V.' is inked inside the tongue.",
+   "at": "manor",
+   "source": "e_hugo_hide_brogues",
+   "requires": [
+    "s_boot_rack"
+   ],
+   "unlock": "The trail of mud flakes from the empty slot on the rack ends at the coal scuttle with its crooked lid. You lift the lid and dig down through the coal.",
+   "reactions": {
+    "hugo": "Ah. Well. Caught red-handed, or muddy-footed, rather. Look, I did pop out — just to the post office, nothing sinister, old thing — I just didn't fancy explaining why, so I shoved the wretched things in the coal. Silly of me, I know."
+   },
+   "to": "hugo",
+   "direct": "I found your brogues buried under the coal, caked with mud and still damp, marked 'H.V.' inside. How did they come to be there?",
+   "show": "Hidden under the coal I found a pair of mud-caked brogues, still damp, wrapped in yesterday's paper, marked 'H.V.' inside. Do you know how Mr Vale's shoes came to be buried there?",
+   "art": "shoes",
+   "lines_for": "7caa9082817f"
+  },
+  {
+   "id": "s_library_screen",
+   "kind": "observation",
+   "title": "A screen in the library",
+   "text": "A tall lacquered folding screen, of the kind meant for a drawing room, stands squarely in front of the glass-fronted bookcase and hides its shelves. Its feet have left fresh scrapes in the polished boards. In the cold grate next to it, thin slivers of glass glint among the ashes.",
+   "at": "manor",
+   "source": "e_clara_screen",
+   "requires": [
+    "s_library_keyhole"
+   ],
+   "unlock": "You tell Miss Vale you have looked through the keyhole and seen no sheets and no soot. She would rather not be caught in a second fib, so she takes the key from her pocket and unlocks the library herself.",
+   "show": "There's a drawing-room screen set squarely in front of the library bookcase, its feet freshly scraped into the boards, with glass slivers in the cold grate beside it. Can you explain that arrangement?",
+   "to": null,
+   "art": null,
+   "reactions": {
+    "clara": "You've caught me out, I see. I'd rather callers thought the sweep had been than have them whispering about my brother's temper and a broken bookcase. There's no more to it than that."
+   },
+   "lines_for": "2478e41c89b6"
+  },
+  {
+   "id": "s_vent_louvres",
+   "kind": "trace",
+   "title": "Louvres over the partition",
+   "text": "Inside the orchid house, high above the partition door, there is a louvred wooden vent. Its slats are propped wide open with a wedge of cane. Holding up a hand, you can feel warm air moving steadily through from the boiler side.",
+   "at": "greenhouse",
+   "source": "e_rowan_louvres",
+   "requires": [
+    "s_orchid_house"
+   ],
+   "unlock": "Once you are inside the orchid house, you look up at the partition wall you have just come through and see the vent above the door.",
+   "reactions": {
+    "rowan": "That vent's always propped, frost or no frost — the orchids want the warmth off the boiler, nothing queer in that. A man tends his glasshouse as he sees fit."
+   },
+   "show": "High over the partition between the stokehole and the orchid house, a louvred vent stands wedged wide open, letting warm air through. Do you know who propped it that way?",
+   "to": null,
+   "art": null,
+   "lines_for": "e5d0c3cf31c7"
+  },
+  {
+   "id": "s_clara_sweep",
+   "kind": "testimony",
+   "title": "The library is shut",
+   "text": "\"The library? I'm afraid it's out of the question this morning. The sweep came at first light, and everything in there is under dust sheets and soot. Edmund will see you in the drawing room.\"",
+   "at": "manor",
+   "speaker": "clara",
+   "source": "e_clara_lock",
+   "because": [
+    "a_clara_lock"
+   ],
+   "ask": "Miss Vale, may I see the library where your brother played cards?",
+   "surface_why": "Clara claims the library is closed because the sweep came and left it under soot and dust sheets, but in truth she dragged a screen to hide the smashed bookcase and locked the room herself, inventing the sweep story as cover.",
+   "surface_checked": "cover",
+   "deceptive": true,
+   "confront": "You told me the library was shut up under dust sheets after the sweep's visit this morning. Is that really the state of it?",
+   "to": null,
+   "show": "Miss Vale says the library is shut up this morning under dust sheets and soot from the sweep's visit. Can you confirm that's so?",
+   "lines_for": "455bee708451"
+  },
+  {
+   "id": "s_library_keyhole",
+   "kind": "observation",
+   "title": "Through the keyhole",
+   "text": "The library door is locked. Through the keyhole you can see a narrow strip of the room: bare polished boards, a card table with its chairs uncovered, and no dust sheets anywhere. There is no soot on the threshold, and no sweep's cloth hangs over the fireplace.",
+   "at": "manor",
+   "source": "e_clara_lock",
+   "requires": [
+    "s_clara_sweep"
+   ],
+   "unlock": "Miss Vale's talk of a sweep and dust sheets makes you curious. On your way down the passage you stop at the locked library door and bend to the keyhole.",
+   "defeats": [
+    "s_clara_sweep"
+   ],
+   "reactions": {
+    "clara": "Very well — there is no sweep, and I knew you would see as much through that keyhole eventually. I told you otherwise because what passed in that room last night is my brother's affair, not for strangers to pick over."
+   },
+   "to": null,
+   "show": "Through the library keyhole I see bare polished boards and an uncovered card table, with no soot on the threshold and no sweep's cloth over the fireplace. Can you account for that?",
+   "art": "door",
+   "lines_for": "b17a31f7044e"
+  },
+  {
+   "id": "s_boot_rack",
+   "kind": "trace",
+   "title": "A gap on the boot rack",
+   "text": "In the manor boot room every slot on the rack holds boots or galoshes except one. There a ring of dried yellow lane mud marks where a pair of shoes stood until recently. Flakes of the same mud lead across the flags to the coal scuttle in the corner, whose lid sits crooked.",
+   "at": "manor",
+   "source": "e_hugo_hide_brogues",
+   "requires": [
+    "s_hugo_denial"
+   ],
+   "unlock": "Mr Hugo swears he never stepped out of the house all evening. So you go to the boot room to look at the household's shoes.",
+   "reactions": {
+    "hugo": "Oh, bother. All right, I did step out for a bit — the post office, if you must know — I only said otherwise because it seemed simpler than explaining myself. Hardly a hanging matter, is it?"
+   },
+   "show": "One slot on the boot rack stands empty, ringed with dried yellow lane mud, with flakes leading across the flags to a coal scuttle left sitting crooked-lidded. Do you know whose boots stood there?",
+   "to": null,
+   "art": "shoes",
+   "lines_for": "e14e9184a1b3"
+  },
+  {
+   "id": "s_rowan_orchid_lock",
+   "kind": "behavior",
+   "title": "A locked partition door",
+   "text": "The partition door from the stokehole into the orchid house will not open: it is locked. Mr Pike, wiping his blackened hands, says the key has gone astray somewhere and that the orchids want no draughts on a frosty morning anyhow. He stands in front of the door while he says it.",
+   "at": "greenhouse",
+   "about": "rowan",
+   "source": "e_rowan_lock_orchids",
+   "explainedBy": [
+    "s_orchid_house"
+   ],
+   "requires": [
+    "s_rowan_soot"
+   ],
+   "unlock": "Pike says the boiler has been blowing back since first light, so you go to the partition door to see what the smoke has done to the orchids next door.",
+   "reactions": {
+    "rowan": "Key's gone astray somewhere, I told you. No sense letting draughts in on the orchids this time of year, locked or not — they're delicate things."
+   },
+   "confront": "You stood in front of this locked door and told me the key had gone astray. Is that really the whole of it?",
+   "to": "rowan",
+   "direct": "You stood in front of this locked door and told me the key had gone astray. Is that really the whole of it?",
+   "show": "Mr Pike stood in front of the locked partition door to the orchid house, saying the key had gone astray. Does that sound right to you?",
+   "lines_for": "0d130f2cb324"
+  },
+  {
+   "id": "s_clara_orchid_key",
+   "kind": "testimony",
+   "title": "Miss Vale's spare key",
+   "text": "\"Locked? Edmund's orchids? Pike has no business locking that door. My brother won't have it, ever.\" She unhooks a small brass key from the ring at her waist. \"The spare. Bring it back to me, please, and tell Pike I shall want a word.\"",
+   "at": "manor",
+   "speaker": "clara",
+   "because": [
+    "a_clara_spare_key",
+    "a_clara_privacy"
+   ],
+   "ask": "Miss Vale, is there another key to the orchid house?",
+   "requires": [
+    "s_rowan_orchid_lock"
+   ],
+   "unlock": "You tell Miss Vale that Pike has locked the orchid house and says the key is lost. A servant locking her brother's orchids away is plainly something wrong, not gossip, so she offers you the spare from her own ring.",
+   "surface_checked": "honest",
+   "deceptive": false,
+   "confront": "You told me Pike had no business locking that door and gave me your spare key. Is that the whole of it?",
+   "to": null,
+   "show": "Miss Vale handed me her spare key, saying Pike had no business locking that orchid house door. Did you know she'd done that?",
+   "lines_for": "b677e90df1f9"
+  },
+  {
+   "id": "s_saw_clara_edmund_manor",
+   "kind": "testimony",
+   "speaker": "clara",
+   "sighting": true,
+   "seen_checked": true,
+   "source": "e_clara_home_early",
+   "claim": {
+    "pred": "wasAt",
+    "person": "edmund",
+    "place": "manor",
+    "from": 1185,
+    "to": 1195
+   },
+   "title": "Clara Vale saw Edmund Vale",
+   "text": "I saw him at Vale Manor at ten to eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "reactions": {
+    "edmund": "Quite right, my sister saw me at the house, as she says. I was at home that evening, as I've told you."
+   },
+   "confront": "You told me you saw Edmund Vale at Vale Manor at ten to eight. Is that the whole of it?",
+   "to": "edmund",
+   "direct": "Clara Vale says she saw you at Vale Manor at ten to eight. Does that match your recollection?",
+   "show": "Clara Vale says she saw Edmund Vale at Vale Manor at ten to eight. Can you confirm that?",
+   "lines_for": "5157e6ff5a27"
+  },
+  {
+   "id": "s_saw_bell_clara_manor",
+   "kind": "testimony",
+   "speaker": "bell",
+   "sighting": true,
+   "seen_checked": true,
+   "source": "e_bell_visit",
+   "claim": {
+    "pred": "wasAt",
+    "person": "clara",
+    "place": "manor",
+    "from": 1290,
+    "to": 1350
+   },
+   "title": "Arthur Bell saw Clara Vale",
+   "text": "I saw her at Vale Manor at quarter to ten.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "reactions": {
+    "clara": "Quarter to ten sounds right enough, Constable. I was seeing to the household that evening, as I do every evening — there's nothing remarkable in finding me at the manor."
+   },
+   "confront": "You told me you saw Clara Vale at Vale Manor at quarter to ten. Is that the whole of it?",
+   "to": "clara",
+   "direct": "Constable Bell says he saw you at Vale Manor at quarter to ten. Is that so?",
+   "show": "Constable Bell says he saw Clara Vale at Vale Manor at quarter to ten. Can you confirm that?",
+   "lines_for": "b425fa05e349"
+  },
+  {
+   "id": "s_saw_edmund_clara_manor",
+   "kind": "testimony",
+   "speaker": "edmund",
+   "sighting": true,
+   "seen_checked": true,
+   "source": "e_edmund_fist",
+   "claim": {
+    "pred": "wasAt",
+    "person": "clara",
+    "place": "manor",
+    "from": 1185,
+    "to": 1195
+   },
+   "title": "Edmund Vale saw Clara Vale",
+   "text": "I saw her at Vale Manor at ten to eight.",
+   "ask": "Did you see anyone last night?",
+   "deceptive": false,
+   "reactions": {
+    "clara": "Yes, ten to eight — my brother and I were together in the house. I don't see what else you'd have me say about it."
+   },
+   "confront": "You told me you saw Clara Vale at Vale Manor at ten to eight. Is that the whole of it?",
+   "to": "clara",
+   "direct": "Edmund Vale says he saw you at Vale Manor at ten to eight. Does that match your recollection?",
+   "show": "Edmund Vale says he saw Clara Vale at Vale Manor at ten to eight. Can you confirm that?",
+   "lines_for": "3f628c85a513"
+  }
+ ],
+ "claims_version": 2,
+ "premise": {
+  "victim": "silas",
+  "culprit": "rowan",
+  "suspects": [
+   "edmund",
+   "hugo",
+   "jonah",
+   "rowan"
+  ],
+  "bystanders": [
+   "dora",
+   "vicar",
+   "vera",
+   "ada",
+   "clara"
+  ],
+  "method": "blade",
+  "motive": "inheritance",
+  "place": "halt",
+  "shape": "obvious_wrong"
+ },
+ "id": "mk-live-20261025-135936",
+ "answer": {
+  "method": "blade",
+  "motive": "inheritance",
+  "methods": [
+   "blade"
+  ],
+  "motives": [
+   "inheritance",
+   "money"
+  ],
+  "accepted_scores": {
+   "methods": {
+    "poison": 0,
+    "blow": 0,
+    "fall": 0,
+    "smother": 0,
+    "drown": 0,
+    "blade": 3,
+    "gun": 0,
+    "gas": 0,
+    "staged": 0
+   },
+   "motives": {
+    "money": 3,
+    "inheritance": 1,
+    "love": 0,
+    "revenge": 0,
+    "secret": 0,
+    "protect": 0,
+    "blackmail": 0,
+    "quarrel": 0
+   }
+  },
+  "accepted_v": 3
+ },
+ "synopsis": "Silas Voss was found dead at Bellweather Halt.",
+ "knowledge": {
+  "edmund": [
+   "I understand Bell found Voss dead on the platform this morning and the doctor was sent for."
+  ],
+  "hugo": [
+   "I know my uncle Edmund and my aunt Clara well, having stayed here before.",
+   "I spend my evenings at cards with my uncle, as he likes it kept proper.",
+   "I know Bell and the doctor as anyone visiting the village does.",
+   "The whole village is talking this morning of how Bell found Voss dead at the halt and brought Dr Marsh to see him."
+  ],
+  "jonah": [
+   "I know Bell and Dr Marsh as everyone in the village does."
+  ],
+  "bell": [
+   "I found Voss dead on my dawn round this morning and went straight to knock up Dr Marsh."
+  ],
+  "iris": [
+   "Bell knocked me up this morning and I went to examine Voss's body on the platform."
+  ],
+  "vicar": [
+   "I'm vicar of St Alden's and have served the parish twenty years."
+  ]
+ },
+ "moods": {
+  "rowan": "Quietly going about his morning chores, looking a little tired.",
+  "jonah": "Busy and unbothered, intent on mending his nets before the river rises.",
+  "bell": "Alert and dutiful, already planning his usual rounds and a word of warning up at the manor.",
+  "vicar": "Subdued and preoccupied, anxious to see what can be salvaged from the vestry before anyone asks questions.",
+  "dora": "Cheerfully busy sorting the morning post, nothing troubling her at all."
+ },
+ "declines": {
+  "rowan": [
+   "Can't help you there, that's all there is to it.",
+   "Nothing to tell on that score, I'm afraid.",
+   "That's the whole of it from me, nothing more.",
+   "No more to say on that, and there's an end of it."
+  ],
+  "edmund": [
+   "That's all I have to say on the matter, full stop.",
+   "Nothing further from me on that, and that's final.",
+   "I've nothing to add, so let's leave it there.",
+   "There's simply no more I can tell you about it."
+  ],
+  "hugo": [
+   "Honestly, that's the lot, nothing else to spill.",
+   "Drawn a blank there, mate, nothing more to give you.",
+   "That's me done on that one, nothing left to say.",
+   "Can't add a thing more, I'm all out on that.",
+   "Fraid that's the end of the line with me."
+  ],
+  "jonah": [
+   "Nothing more in me on that.",
+   "That's all there is. No more to it.",
+   "Can't give you more than that.",
+   "Said what I can say. No more to tell."
+  ],
+  "bell": [
+   "Nothing further to report on that matter.",
+   "That's all I've got, no more to add.",
+   "Can't take it any further than that.",
+   "Nothing more to say on it, and that's that."
+  ],
+  "iris": [
+   "I have nothing further to tell you on that.",
+   "That exhausts what I can say about it.",
+   "No more to add there, I'm afraid.",
+   "That's the full extent of what I can tell you."
+  ],
+  "clara": [
+   "I'm afraid that's quite all I have to say on it.",
+   "There is nothing more I can tell you about that.",
+   "That concludes what I have to offer on the subject.",
+   "I have nothing further to add on that matter."
+  ],
+  "vicar": [
+   "Ah, I'm afraid that's quite all I can tell you.",
+   "I find I have nothing further to offer on that.",
+   "That, I'm sorry to say, is the whole of it from me.",
+   "I have no more to add there, I'm afraid."
+  ],
+  "dora": [
+   "That's all I have on that, and properly so.",
+   "Nothing further to add, and that's the end of it.",
+   "I've nothing more to tell you on that matter.",
+   "That concludes all I can say about it."
+  ]
+ },
+ "declines_version": 3,
+ "review_version": 2,
+ "reviewed": [
+  "pub_window|reactions|rowan",
+  "s_boiler_flue|reactions|rowan",
+  "s_bookcase_glass|reactions|clara",
+  "s_boot_rack|reactions|hugo",
+  "s_clara_greenhouse|reactions|rowan",
+  "s_dora_telegram|direct",
+  "s_dora_telegram|reactions|hugo",
+  "s_dora_telegram|reactions|rowan",
+  "s_edmund_bandage|direct",
+  "s_edmund_bandage|reactions|clara",
+  "s_edmund_bandage|reactions|edmund",
+  "s_edmund_bandage|reactions|hugo",
+  "s_edmund_glove|direct",
+  "s_edmund_glove|reactions|clara",
+  "s_edmund_glove|reactions|edmund",
+  "s_edmund_glove|reactions|hugo",
+  "s_fee_demand|reactions|clara",
+  "s_fee_demand|reactions|edmund",
+  "s_fee_demand|reactions|hugo",
+  "s_fee_demand|reactions|rowan",
+  "s_hugo_hand|direct",
+  "s_hugo_hand|reactions|hugo",
+  "s_hugo_hand|reactions|rowan",
+  "s_hugo_pocket|direct",
+  "s_hugo_pocket|reactions|dora",
+  "s_hugo_pocket|reactions|hugo",
+  "s_hugo_shoes|direct",
+  "s_hugo_shoes|reactions|hugo",
+  "s_iou_slips|reactions|clara",
+  "s_iou_slips|reactions|edmund",
+  "s_iou_slips|reactions|hugo",
+  "s_iou_slips|reactions|rowan",
+  "s_knife_owner|concede|s_rowan_sheath",
+  "s_library_keyhole|reactions|clara",
+  "s_library_screen|reactions|clara",
+  "s_medical|text",
+  "s_morning_bell|text",
+  "s_morning_iris|text",
+  "s_notice_quit|direct",
+  "s_notice_quit|reactions|jonah",
+  "s_notice_quit|reactions|rowan",
+  "s_orchid_house|reactions|rowan",
+  "s_piquet_card|direct",
+  "s_piquet_card|reactions|clara",
+  "s_piquet_card|reactions|edmund",
+  "s_piquet_card|reactions|hugo",
+  "s_piquet_card|reactions|rowan",
+  "s_rowan_apron|direct",
+  "s_rowan_apron|reactions|rowan",
+  "s_rowan_orchid_lock|direct",
+  "s_rowan_orchid_lock|reactions|rowan",
+  "s_rowan_sheath|direct",
+  "s_rowan_sheath|reactions|rowan",
+  "s_rowan_soot|reactions|rowan",
+  "s_rowan_twine|direct",
+  "s_rowan_twine|reactions|rowan",
+  "s_saw_bell_clara_manor|direct",
+  "s_saw_bell_clara_manor|reactions|clara",
+  "s_saw_bell_clara_manor|text",
+  "s_saw_clara_edmund_manor|direct",
+  "s_saw_clara_edmund_manor|reactions|edmund",
+  "s_saw_clara_edmund_manor|text",
+  "s_saw_edmund_clara_manor|direct",
+  "s_saw_edmund_clara_manor|reactions|clara",
+  "s_saw_edmund_clara_manor|text",
+  "s_stove_log|reactions|rowan",
+  "s_surface_bell|text",
+  "s_surface_clara|text",
+  "s_surface_dora|text",
+  "s_surface_edmund|text",
+  "s_surface_hugo|text",
+  "s_surface_iris|text",
+  "s_surface_jonah|text",
+  "s_surface_rowan|text",
+  "s_trust_ledger|direct",
+  "s_trust_ledger|reactions|hugo",
+  "s_vent_louvres|reactions|rowan",
+  "s_will_draft|direct",
+  "s_will_draft|reactions|clara",
+  "s_will_draft|reactions|edmund",
+  "s_will_draft|reactions|hugo",
+  "s_will_draft|reactions|rowan",
+  "s_will_draft|reactions|vicar"
+ ],
+ "publication_review": {
+  "version": "publication-review-certificate-v2",
+  "candidate_sha256": "06fc77ac898209c693207b207211a6c0b34e7c150501d3e694ab2f9e12504bf4",
+  "critic_status": "PASS",
+  "critic_issue_count": 0,
+  "critic_issues_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "prompt": {
+   "version": "whole-case-publication-review-v3",
+   "sha256": "ee83e958801862893d6cadaba168fc5851d0114873609d4d4bb06563e90c5768"
+  },
+  "schema": {
+   "version": "whole-case-publication-review-schema-v1",
+   "sha256": "8ad324ac2fc4fe106507aeaa8d5c7fd0ee3104c37a5af11b7e170abbe4934624"
+  },
+  "requested_inference_profile": "us.anthropic.claude-opus-5-5",
+  "request_ids": [
+   "5315c01c-7a50-4e4f-b33f-4aee5e01a2fa",
+   "f0db2e88-5023-405c-b404-15764b5e5340",
+   "0676771e-f543-4d88-ad5c-ac073c28293c",
+   "aa202a51-82f1-4584-8298-cc8a4842fc5e",
+   "741645fb-98c7-4b75-b1a8-46fcdd27a33f",
+   "e274f4d6-7c1a-4636-97fa-086ff2d12cf8",
+   "6a57a387-c9b8-4e98-a6b0-987ec72a5bbc",
+   "f3b6e1d6-1b76-4c67-8aa5-4d998b9ce0e8",
+   "d606a8a2-dd9c-4f25-a053-570841a5af61",
+   "5cfde748-857e-40bd-85eb-3a9cb417ac9b"
+  ],
+  "timestamp": "2026-10-25T19:05:29.685Z",
+  "digest": "5ee86e2379b2945fb48e4359906f29f5074d7394ae036ebbde978338c7568265"
+ },
+ "difficulty": {
+  "v": 1,
+  "score": 11.75,
+  "level": "hard",
+  "features": {
+   "depth": 8,
+   "lies_on_path": 1,
+   "lies_other": 1,
+   "herrings_aimed": 3,
+   "herrings_other": 0,
+   "lenient_motives": 1
+  },
+  "target": "hard"
+ }
+}

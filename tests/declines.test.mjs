@@ -6,7 +6,7 @@ import {registerKernelCase, createSession, dispatch, caseTables} from '../dist/e
 import {prepareCharacterTurn, applyCharacterTurn} from '../dist/character-turn.mjs';
 import {NEUTRAL_LINE} from '../dist/kernel.mjs';
 
-const base = () => JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
+const base = () => JSON.parse(readFileSync(new URL('../dist/cases/archive/2026-10/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
 function setup(declinesFor) {
   const kc = base(), pid = kc.people.map(p => p.id).find(p => p !== kc.victim && p !== kc.setting.roles.constable);
   kc.id += `-declines-${Object.keys(declinesFor(pid)).length}`; kc.declines = declinesFor(pid);

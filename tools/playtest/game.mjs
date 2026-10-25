@@ -77,7 +77,8 @@ export class PlaytestGame {
     const acting = id => Boolean((w.flags.morning?.agendas?.[id] ?? []).some(x => ['pending', 'active'].includes(x.state))
       || String(w.npcs[id]?.travel?.purpose ?? '').startsWith('Morning'));
     const here = Object.entries(w.npcs).filter(([, n]) => n.location === at && !n.travel).map(([id]) => id);
-    const things = (T.LOCATIONS[at]?.objects ?? []).filter(o => !locked.has(o) && present(o))
+    // what the game itself offers here (objectsAt): a watched person's manner travels with them
+    const things = (T.objectsAt ? T.objectsAt(w, at) : T.LOCATIONS[at]?.objects ?? []).filter(o => !locked.has(o) && present(o))
       .map(o => ({id: this.handles.of('t', o), label: T.OBJECTS[o].label, examined: held.has(T.OBJECTS[o].clue)}));
     const questions = Object.fromEntries(here.map(p => [p, [...(T.CASE.topicsFor?.[p] ?? []), ...B.followupOptions(s, p)]
       .map(([topic, label]) => ({id: this.handles.of('q', `${p}|${topic}`), text: label}))]));
@@ -145,7 +146,8 @@ export class PlaytestGame {
         dispatch(s, {type: 'move', to: a.to}); return null;
       case 'examine': {
         const o = this.handles.real(a.thing);
-        if (!o || !(T.LOCATIONS[w.player.location]?.objects ?? []).includes(o) || (w.flags.lockedObjects ?? []).includes(o)) {
+        const offered = T.objectsAt ? T.objectsAt(w, w.player.location) : T.LOCATIONS[w.player.location]?.objects ?? [];
+        if (!o || !offered.includes(o) || (w.flags.lockedObjects ?? []).includes(o)) {
           const here = this.observe().things_here.map(t => `${t.label} (${t.id})`);
           const person = T.PEOPLE[a.thing] ? ` ${T.PEOPLE[a.thing].name} is a person: ask or say something to them.` : '';
           return `There is nothing like that here to examine.${person} ${here.length ? `Things here: ${here.join(', ')}.` : 'There is nothing here left to examine.'}`;

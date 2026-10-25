@@ -244,7 +244,7 @@ test('a menu question the history gives nothing to answer is asked, and answered
   const {registerKernelCase, createSession, dispatch} = await import('../dist/engine.mjs');
   const {prepareCharacterTurn, applyCharacterTurn} = await import('../dist/character-turn.mjs');
   const {NEUTRAL_LINE} = await import('../dist/kernel.mjs');
-  const kc = JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
+  const kc = JSON.parse(readFileSync(new URL('../dist/cases/archive/2026-10/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
   // a case whose history gives the constable no evening (published cases now give everyone one: build the gap here)
   const bell = kc.setting.roles.constable, gone = kc.events.filter(e => e.agent === bell && e.ordinary);
   kc.id += '-no-evening';
@@ -264,7 +264,7 @@ test('a menu question the history gives nothing to answer is asked, and answered
 
 test('the night question gives the evening account first; the morning account is a published account like the evening one', async () => {
   const {registerKernelCase, createSession, dispatch, caseTables} = await import('../dist/engine.mjs');
-  const kc = JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
+  const kc = JSON.parse(readFileSync(new URL('../dist/cases/archive/2026-10/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
   const s = createSession(1, registerKernelCase(kc)), doc = kc.setting.roles.examiner, B = caseTables(s).behavior;
   if (s.world.player.location !== s.world.npcs[doc].location) dispatch(s, {type: 'move', to: s.world.npcs[doc].location});
   dispatch(s, {type: 'ask', person: doc, topic: 'night'});
@@ -282,7 +282,7 @@ test('the night question gives the evening account first; the morning account is
 
 test('questions about last night never give an account of this morning; a repeated question is answered with a reference back', async () => {
   const {registerKernelCase, createSession, dispatch} = await import('../dist/engine.mjs');
-  const kc = JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
+  const kc = JSON.parse(readFileSync(new URL('../dist/cases/archive/2026-10/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
   const s = createSession(1, registerKernelCase(kc));
   const morningIds = new Set(kc.signs.filter(x => x.morning).map(x => x.text));   // the morning summaries
   for (const p of kc.people.map(p => p.id).filter(p => s.world.npcs[p])) {
@@ -301,7 +301,7 @@ test('questions about last night never give an account of this morning; a repeat
 
 test('leads that open together say what opened once, then each its own line', async () => {
   const {registerKernelCase, createSession, dispatch} = await import('../dist/engine.mjs');
-  const kc = JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
+  const kc = JSON.parse(readFileSync(new URL('../dist/cases/archive/2026-10/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
   // three leads behind one key, in one place, with a shared opening line (as publishing writes it)
   const key = kc.signs.find(x => x.kind === 'item' && !x.requires?.length) ?? kc.signs.find(x => !x.requires?.length && x.kind !== 'testimony');
   const leads = kc.signs.filter(x => x.kind !== 'testimony' && x.id !== key.id).slice(0, 3);

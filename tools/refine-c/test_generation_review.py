@@ -126,6 +126,11 @@ class CriticOutcomes(unittest.TestCase):
 class CandidateSelection(unittest.TestCase):
     def setUp(self):
         refine.FORCED_OK.clear()
+        self.models = refine.DRAFT_MODELS
+        refine.DRAFT_MODELS = (refine.MODEL, refine.CRITIC_MODEL)   # two draft models, so siblings differ by model
+
+    def tearDown(self):
+        refine.DRAFT_MODELS = self.models
 
     def generate_case(self, review_for, generation_for=None):
         initial = base()
@@ -134,7 +139,7 @@ class CandidateSelection(unittest.TestCase):
         def seed_json(*args, **kwargs):
             return copy.deepcopy(initial)
 
-        def generation_json(system, user, max_tokens=9000, model=None, schema=None):
+        def generation_json(system, user, max_tokens=9000, model=None, schema=None, **kwargs):
             value = generation_for(user, model)
             return refine.LLMJSONResponse(value, model, (f'generation-{value["story"]}',))
 
@@ -164,11 +169,12 @@ class CandidateSelection(unittest.TestCase):
         step = result['history'][0]
         self.assertTrue(step['accepted'])
         self.assertEqual(step['story'], 'passing')
-        self.assertEqual([c['status'] for c in step['candidates'][:2]], ['UNAVAILABLE', 'PASS'])
-        self.assertFalse(step['candidates'][0]['selected'])
-        self.assertTrue(step['candidates'][1]['selected'])
-        self.assertEqual(step['critic'][0]['request_ids'], ['critic-unavailable'])
-        self.assertIn('generation_request_ids', step['candidates'][0])
+        # drafts alternate between the two models: the story model's are unavailable, the other's passes and is chosen
+        statuses = sorted(c['status'] for c in step['candidates'])
+        self.assertEqual(statuses, ['PASS'] + ['UNAVAILABLE'] * (refine.CANDIDATES - 1))
+        self.assertEqual([c['status'] for c in step['candidates'] if c['selected']], ['PASS'])
+        self.assertIn(['critic-unavailable'], [c['request_ids'] for c in step['critic']])
+        self.assertTrue(all('generation_request_ids' in c for c in step['candidates']))
 
     def test_unavailable_rounds_leave_case_unchanged(self):
         def review(case, candidate_patch):
@@ -179,10 +185,72 @@ class CandidateSelection(unittest.TestCase):
         step = result['history'][0]
         self.assertFalse(step['accepted'])
         self.assertEqual(result['case'], initial)
-        self.assertEqual(len(step['attempts']), 4)
+        self.assertEqual(len(step['attempts']), 2 * refine.CANDIDATES)   # every draft of both rounds
         self.assertTrue(all(errors == [refine.CRITIC_UNAVAILABLE_REASON] for errors in step['attempts']))
         self.assertEqual(result['generation_review']['status'], 'NOT_REVIEWED')
         self.assertFalse(result['generation_review']['final_whole_case_reviewed'])
+
+    def test_a_rejected_draft_is_revised_in_the_same_round_with_its_own_patch(self):
+        prompts = []
+
+        def generate(user, model):
+            prompts.append(user)
+            return patch('revised' if 'THAT PATCH' in user else 'slip')
+
+        def review(case, candidate_patch):
+            ok = candidate_patch['story'] == 'revised'
+            status = refine.CriticStatus.PASS if ok else refine.CriticStatus.FAIL
+            issues = () if ok else ("s_wife: CONTRADICTION: the reading still names the old place",)
+            attempt = refine.CriticAttempt({'verdict': status.value.lower(), 'issues': list(issues)})
+            return refine.CriticOutcome(status, issues, attempt.raw_response, (attempt,))
+
+        _, result = self.generate_case(review, generate)
+        step = result['history'][0]
+        self.assertTrue(step['accepted'])
+        self.assertEqual(step['story'], 'revised')
+        chosen = [c['candidate_id'] for c in step['candidates'] if c['selected']]
+        self.assertTrue(chosen[0].endswith('r') and chosen[0].startswith('1.1.'), chosen)   # round 1, a revision
+        revision = next(p for p in prompts if 'THAT PATCH' in p)
+        self.assertIn('the reading still names the old place', revision)
+        self.assertIn('"story":"slip"', revision)
+
+    def test_passing_drafts_for_different_targets_are_stacked_and_recorded(self):
+        real = refine.certify
+
+        def deeper(case, *a, **k):   # the toy case's depth: one layer for each sign a draft has deepened
+            rep = real(case, *a, **k)
+            n = sum(1 for x in case['signs'] if str(x.get('title', '')).startswith('deep'))
+            return {**rep, 'solve_depth': n, 'threads': {**(rep.get('threads') or {}), 'h_wife': n}}
+
+        def generate(user, model):
+            target = 's_cox' if "REFINE sign 's_cox'" in user else 's_wife'
+            p = patch(f'deep-{target}')
+            p['modify'] = {'signs': {target: {'title': f'deep-{target}'}}}
+            return p
+
+        def review(case, candidate_patch):
+            attempt = refine.CriticAttempt({'verdict': 'pass', 'issues': []})
+            return refine.CriticOutcome(refine.CriticStatus.PASS, (), attempt.raw_response, (attempt,))
+
+        options = [('refine', 's_wife', 'Conceal', 'h_wife', 0), ('refine', 's_cox', 'Fragment', 'h_wife', 0)]
+        initial = base()
+        with tempfile.TemporaryDirectory() as outdir, \
+                mock.patch.object(refine, 'llm_json', side_effect=lambda *a, **k: copy.deepcopy(initial)), \
+                mock.patch.object(refine, 'llm_json_audited', side_effect=lambda system, user, mt=9000, model=None, schema=None, **k:
+                                  refine.LLMJSONResponse(generate(user, model), model, ('g',))), \
+                mock.patch.object(refine, 'critic', side_effect=review), \
+                mock.patch.object(refine, 'certify', side_effect=deeper), \
+                mock.patch.object(refine, 'schedule', return_value=options[0]), \
+                mock.patch.object(refine, 'schedule_options', return_value=options), \
+                mock.patch.object(refine, 'step_laws', return_value=[]):
+            result = refine.run_case('test', 'brief', 1, 5, outdir, lambda _: None)
+        step = result['history'][0]
+        self.assertTrue(step['accepted'])
+        self.assertEqual(len(step['stacked']), 1)
+        self.assertEqual(step['stacked'][0]['story'].split('-')[0], 'deep')
+        self.assertIsNotNone(step['stacked'][0]['critic'])
+        titles = {x['id']: x.get('title') for x in result['case']['signs']}
+        self.assertEqual((titles['s_wife'], titles['s_cox']), ('deep-s_wife', 'deep-s_cox'))   # both applied
 
 
 if __name__ == '__main__':

@@ -9,7 +9,7 @@ sys.path.insert(0, HERE)
 import publish  # noqa: E402
 import refine  # noqa: E402
 
-CASE = os.path.join(HERE, '..', '..', 'dist', 'cases', 'generated', 'mk-live-20261002-235614.json')
+CASE = os.path.join(HERE, '..', '..', 'dist', 'cases', 'archive', '2026-10', 'mk-live-20261002-235614.json')
 
 
 class Declines(unittest.TestCase):

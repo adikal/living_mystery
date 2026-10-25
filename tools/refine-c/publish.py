@@ -1,6 +1,6 @@
 """Publish generated Bellweather cases for the game: for each brief, take the deepest case that the JS kernel
 certifies (across every run), give it a stable id and title, and write dist/cases/generated/{id}.json + index.json."""
-import copy, datetime, glob, json, os, re, subprocess, sys, tempfile
+import copy, datetime, glob, json, os, re, subprocess, sys, tempfile, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import enrich
 import difficulty  # noqa: E402
@@ -48,6 +48,10 @@ PUBLICATION_REVIEW_SCHEMA = {
 PUBLICATION_REVIEW_CHECKS = ('LOCK', 'BOTTLENECK', 'READING', 'CHARACTER', 'LOOSE END', 'GIVEAWAY', 'CONTRADICTION', 'FAIRNESS', 'CRAFT')
 # Blinding removes labels that reveal a requested experimental level. They remain in the candidate hash when present.
 PUBLICATION_REVIEW_BLIND_FIELDS = ('id', 'difficulty', 'difficulty_target', 'publication_review')
+# Author-side text the game never shows the player: the generator's one-paragraph summary of what really happened.
+# Reviewers read it as a player-facing blurb and fail it as a giveaway (Last Train, October 25), and no repair can
+# change it. It stays in the candidate hash; the history it summarises is in the events.
+PUBLICATION_REVIEW_AUTHOR_FIELDS = ('story',)
 # Blurbs state only the certified public premise (who is dead, where they were found). Anything more
 # (a quarrel, a suspicion) would be an uncertified fact the characters could never confirm.
 CASE_TITLES = {
@@ -78,7 +82,7 @@ def publication_candidate_sha256(case):
 def _publication_prompt_case(case):
     """Hide requested-level labels and prior certificates from the reviewer, without changing the bound candidate."""
     candidate = publication_candidate(case)
-    for key in PUBLICATION_REVIEW_BLIND_FIELDS:
+    for key in PUBLICATION_REVIEW_BLIND_FIELDS + PUBLICATION_REVIEW_AUTHOR_FIELDS:
         candidate.pop(key, None)
     return candidate
 
@@ -98,20 +102,87 @@ def _publication_review_shape(raw):
     return (CriticStatus.FAIL, issues) if issues else None
 
 
+# The whole-case review as a panel: one reviewer per group of checks, each asked twice, all at once, and every issue any
+# of them finds is kept. One reviewer asked every question misses what a reviewer asked one question finds (a leaked
+# lock in The Iron Hound), and the same reviewer flags an issue in one run and passes it in the next. Each lens prompt is
+# cut from PUBLICATION_REVIEW_PROMPT (which the certificate binds), so the checks are written once.
+REVIEW_PANEL = os.environ.get('LM_REVIEW_PANEL', '1') == '1'
+REVIEW_VOTES = int(os.environ.get('LM_REVIEW_VOTES', '2'))
+REVIEW_LENSES = (('gates', ('LOCK', 'BOTTLENECK', 'READING')), ('facts', ('CONTRADICTION',)),
+                 ('people', ('CHARACTER', 'LOOSE END')), ('player', ('GIVEAWAY', 'FAIRNESS')), ('craft', ('CRAFT',)))
+_JUDGE_LINE = 'Judge the WHOLE case only for common-sense plausibility, fairness and craft. Fail if any material problem remains:'
+
+
+def lens_prompt(checks):
+    """PUBLICATION_REVIEW_PROMPT narrowed to some of its checks: the same preamble and reply format, only those bullets."""
+    lines = PUBLICATION_REVIEW_PROMPT.split('\n')
+    first = next(i for i, l in enumerate(lines) if l.startswith('- '))
+    last = max(i for i, l in enumerate(lines) if l.startswith('- ') or (l.startswith('  ') and i > first))
+    bullets, current = [], None
+    for l in lines[first:last + 1]:
+        if l.startswith('- '):
+            current = l[2:].split(':', 1)[0]
+        if current in checks:
+            bullets.append(l)
+    head = [l if l != _JUDGE_LINE else
+            (f"Judge the WHOLE case, but only for {', '.join(checks)}: other reviewers check everything else, so report "
+             "nothing else. Fail if any material problem of these kinds remains:") for l in lines[:first]]
+    return '\n'.join(head + bullets + ['Minor, borderline, optional-subplot, stylistic or taste concerns must pass and must not '
+                                        'appear as fail issues.'] + lines[last + 1:])
+
+
 def publication_critic(case):
+    """The whole-case review: the panel of narrow reviewers (REVIEW_PANEL), or the single reviewer."""
+    if not REVIEW_PANEL:
+        return _publication_critic(case, PUBLICATION_REVIEW_PROMPT, 'final-whole-case-publication-critic')
+    import concurrent.futures as cf
+    import refine
+    jobs = [(lens, checks, vote) for lens, checks in REVIEW_LENSES for vote in range(REVIEW_VOTES)]
+    with cf.ThreadPoolExecutor(max_workers=len(jobs)) as pool:
+        futures = [provenance.submit_with_context(pool, _publication_critic, case, lens_prompt(checks), f'whole-case-review:{lens}')
+                   for lens, checks, _ in jobs]
+        outcomes = [f.result() for f in futures]
+    return combine_reviews(outcomes, [f'{lens}.{vote + 1}' for lens, _, vote in jobs])
+
+
+def combine_reviews(outcomes, names):
+    """Every issue any reviewer found (one per record and check); FAIL if any, else UNAVAILABLE if any reviewer could not
+    answer, else PASS."""
+    import refine
+    issues, seen = [], set()
+    for o in outcomes:
+        for issue in o.issues:
+            parts = [p.strip().upper() for p in issue.split(':', 2)]
+            key = tuple(parts[:2])
+            if key not in seen:
+                seen.add(key); issues.append(issue)
+    if issues:
+        status = refine.CriticStatus.FAIL
+    elif any(o.status is not refine.CriticStatus.PASS for o in outcomes):
+        status = refine.CriticStatus.UNAVAILABLE
+    else:
+        status = refine.CriticStatus.PASS
+    return refine.CriticOutcome(status, tuple(issues[:24]), {n: o.raw_response for n, o in zip(names, outcomes)},
+                                tuple(a for o in outcomes for a in o.attempts), tuple(r for o in outcomes for r in o.request_ids),
+                                refine.REVIEW_MODEL)
+
+
+def _publication_critic(case, system, purpose):
     """One typed whole-case review operation; only a reasonless fail receives the normal single semantic retry."""
     import refine
     prompt = json.dumps(_publication_prompt_case(case), ensure_ascii=False, sort_keys=True, separators=(',', ':'))
     attempts = []
     for semantic_attempt in range(2):
         try:
-            response = refine.llm_json_audited(
-                PUBLICATION_REVIEW_PROMPT,
+            # the review model at its own effort, outside any lower effort set for wording (refine.REVIEW_MODEL)
+            with refine.effort(None):
+                response = refine.llm_json_audited(
+                system,
                 prompt,
-                4000,
-                model=refine.CRITIC_MODEL,
+                16000,   # it reads the whole case and thinks first: a small budget comes back empty
+                model=refine.REVIEW_MODEL,
                 schema=PUBLICATION_REVIEW_SCHEMA,
-                audit_metadata={'purpose': 'final-whole-case-publication-critic',
+                audit_metadata={'purpose': purpose,
                                 'semantic_retry': semantic_attempt,
                                 'prompt_version': PUBLICATION_REVIEW_VERSION,
                                 'schema_version': PUBLICATION_REVIEW_SCHEMA_VERSION},
@@ -148,7 +219,19 @@ def publication_critic(case):
                                 request_ids, response.inference_profile)
 
 
-def _certificate(outcome, candidate_hash, timestamp=None):
+def reviewer_descriptor():
+    """What reviewed a case, for its certificate: the panel (its lenses, votes and the hash of every lens prompt) or the
+    single reviewer, and the author-side fields hidden from it. The prompt field alone cannot tell them apart."""
+    import refine
+    if not REVIEW_PANEL:
+        return {'kind': 'single', 'model': refine.REVIEW_MODEL, 'hidden_author_fields': list(PUBLICATION_REVIEW_AUTHOR_FIELDS)}
+    return {'kind': 'panel', 'model': refine.REVIEW_MODEL, 'votes': REVIEW_VOTES,
+            'lenses': {lens: list(checks) for lens, checks in REVIEW_LENSES},
+            'lens_prompts_sha256': provenance.sha256([lens_prompt(c) for _, c in REVIEW_LENSES]),
+            'hidden_author_fields': list(PUBLICATION_REVIEW_AUTHOR_FIELDS)}
+
+
+def _certificate(outcome, candidate_hash, timestamp=None, reviewer=None):
     """Build a public, hash-bound typed certificate without private critic issue text."""
     issue_digest = provenance.sha256(list(outcome.issues))
     certificate = {
@@ -162,9 +245,19 @@ def _certificate(outcome, candidate_hash, timestamp=None):
         'requested_inference_profile': outcome.inference_profile,
         'request_ids': list(outcome.request_ids),
         'timestamp': timestamp or provenance.utc_now(),
+        **({'reviewer': reviewer} if reviewer else {}),
     }
     certificate['digest'] = provenance.sha256(certificate)
     return certificate
+
+
+LAST_REVIEW_ISSUES = {}
+
+
+def _register_judges():
+    import refine
+    refine.FULL_EFFORT.update({VISIBLE, LINES_AGREE, SURFACE_TRUTH, NO_FACT, AGREES, LEAK, SAME, REACT_CHECK,
+                               PUBLICATION_REVIEW_PROMPT, *(lens_prompt(c) for _, c in REVIEW_LENSES), enrich.REVIEW, enrich.KNOW_CHECK})
 
 
 def review_for_publication(case, reviewer=None, timestamp=None, return_outcome=False):
@@ -188,7 +281,8 @@ def review_for_publication(case, reviewer=None, timestamp=None, return_outcome=F
             outcome = publication_critic(case)
         audit.finish(outcome.status.value, '; '.join(outcome.issues) or None,
                      candidate_sha256=candidate_hash, request_ids=list(outcome.request_ids))
-    certificate = _certificate(outcome, candidate_hash, timestamp)
+    certificate = _certificate(outcome, candidate_hash, timestamp, reviewer_descriptor() if reviewer is None else {'kind': 'supplied'})
+    LAST_REVIEW_ISSUES[candidate_hash] = tuple(outcome.issues)   # private findings, for repair in this process only
     case['publication_review'] = certificate
     return (certificate, outcome) if return_outcome else certificate
 
@@ -336,19 +430,128 @@ def _atomic_json(path, value):
     return pubio.atomic_json(path, value)
 
 
+SCRIPTED_GATE = os.environ.get('LM_SCRIPTED_GATE', '1') == '1'
+
+
+def scripted_problems(case):
+    """What scripted players (no model) find wrong with a case as the game will serve it: a hint-following player must
+    solve it, and every testimony hint must give its account (tools/playtest/scripted.mjs). Seconds, and it catches what
+    reviewers pass (a hint that asked the wrong question in The Iron Hound)."""
+    with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as f:
+        json.dump(case, f, ensure_ascii=False)
+    try:
+        out = subprocess.run(['node', f'{ROOT}/tools/playtest/gate.mjs', f.name], capture_output=True, text=True, timeout=300)
+        if out.returncode:
+            return [f'the scripted players could not run: {out.stderr.strip()[-300:]}']
+        return json.loads(out.stdout)['problems']
+    finally:
+        os.unlink(f.name)
+
+
 def _serialized_case(case, strict_publication_review=False):
-    """Round-trip the exact served object and gate that representation before any write."""
+    """Round-trip the exact served object and gate that representation before any write (strictly: also the scripted
+    players)."""
     serialized = json.loads(json.dumps(case, ensure_ascii=False))
     post = gate(serialized, strict_publication_review=strict_publication_review)
     if not post['ok']:
         raise ValueError('the serialized published case failed certification: ' + '; '.join(post['errors'][:3]))
+    if strict_publication_review and SCRIPTED_GATE:
+        import timing
+        with timing.phase('scripted players'):
+            problems = scripted_problems(serialized)
+        if problems:
+            # kept for diagnosis (tools/playtest/gate.mjs <file> replays it); nothing is published
+            kept = os.path.join(HERE, 'runs', 'scripted-rejected', f"{serialized.get('id', 'case')}.json")
+            os.makedirs(os.path.dirname(kept), exist_ok=True)
+            pubio.atomic_json(kept, serialized)
+            raise ValueError('scripted players: ' + '; '.join(problems[:3]) + f' (the candidate is kept at {os.path.relpath(kept, ROOT)})')
     return serialized, post
+
+
+WORDING_FIELDS = ('show', 'confront', 'direct', 'reactions', 'concede')
+PUBLISH_REPAIRS = int(os.environ.get('LM_PUBLISH_REPAIRS', '3'))   # review -> repair -> review rounds at publication
+
+
+WORDING_WORDS = re.compile(r"\b(reactions?|repl(y|ies)|show (line|prompt|text)s?|'show'|'confront'|'direct'|confront(s|ation)?|"
+                           r"conce(de|des|ded|ssion|ssions)|the detective says|detective's line|lines?)\b", re.I)
+
+
+def _wording_issue(x, why):
+    """Whether a review issue on sign x is about what publishing wrote on it: it quotes words from those lines, or it
+    names them (a reaction, a show line, a concession) and the sign has them."""
+    written = ' '.join(json.dumps(x.get(f), ensure_ascii=False) for f in WORDING_FIELDS if x.get(f)).lower()
+    if not written:
+        return False
+    quoted = [q for q in re.findall(r"['\u2018\u201c\"]([^'\u2019\u201d\"]{12,})['\u2019\u201d\"]", why) if len(q.split()) >= 3]
+    if any(q.lower().strip(' .,') in written for q in quoted):
+        return True
+    return bool(WORDING_WORDS.search(why))
+
+
+def repair_wording(case, issues):
+    """What publishing can repair of what a failed review found: only its own words. An evening account it names is
+    written again with the reviewer's reason; a morning account or a sighting it names is dropped (each is optional); a
+    named line or reaction is dropped (play has a fallback). Anything else (a lock, a reading, the story itself) is the
+    structure's, which publishing never touches. Returns (changed, unaddressed issues)."""
+    signs = {x['id']: x for x in case['signs']}
+    rewrite, unaddressed, drop, unword, relabel = {}, [], set(), set(), set()
+    for issue in issues:
+        sid, _, why = str(issue).partition(':')
+        x = signs.get(sid.strip())
+        if not x:
+            unaddressed.append(issue)
+        elif x.get('surface'):
+            # an evening account is publishing's own words: written again with the reviewer's reason
+            rewrite[x['speaker']] = {'text': x['text'], 'rejected_because': why.strip()[:300]}
+        elif x.get('morning') or x.get('sighting'):
+            drop.add(x['id'])
+        elif _wording_issue(x, why):
+            unword.add(x['id'])
+        elif 'surface_checked' in x and not x.get('claim'):
+            relabel.add(x['id'])            # publishing's honest/cover label on a claimless account: judged again
+        else:
+            unaddressed.append(issue)
+    if unaddressed:   # the structure's problem: publishing changes nothing, and the review stands
+        return False, unaddressed
+    changed = bool(drop or unword or relabel or rewrite)
+    for sid in unword | relabel:
+        x = signs[sid]
+        for field in WORDING_FIELDS if sid in unword else ():
+            x.pop(field, None)
+        if x.get('kind') == 'testimony' and not x.get('claim'):
+            x.pop('surface_checked', None); x.pop('surface_why', None)
+    case.setdefault('morning_dropped', []).extend(sorted(d for d in drop if signs[d].get('morning')))
+    if drop:
+        with SIGNS:
+            case['signs'][:] = [x for x in case['signs'] if x['id'] not in drop]
+    if rewrite:
+        add_surface_accounts(case, feedback=rewrite)
+    if changed:
+        mark_surface_truth(case)
+    return changed, unaddressed
 
 
 def _review_gate_rate(case, difficulty_target=None, strict_publication_review=False):
     """The shared publication boundary: review, deterministically gate, rate, and validate the exact serializable
     candidate (strict critic enforcement is opt-in). Writes nothing; callers commit what it returns."""
-    review_for_publication(case)
+    import timing
+    with timing.phase('final review'):
+        certificate = review_for_publication(case)
+    for _ in range(PUBLISH_REPAIRS if strict_publication_review else 0):
+        issues = LAST_REVIEW_ISSUES.get((certificate or {}).get('candidate_sha256'), ())
+        if (certificate or {}).get('critic_status') != 'FAIL' or not issues:
+            break
+        # what publishing wrote can be at fault (a line, a reaction, an evening account): repair that and review once
+        # more. A problem in the structure is not publishing's to repair, and reviewing the same structure again would
+        # only re-roll the verdict: the review stands as it is, and the case is not published.
+        with timing.phase('review repair'):
+            changed, unaddressed = repair_wording(case, issues)
+        if unaddressed:
+            print('  the review found what publishing cannot repair: ' + '; '.join(str(i)[:160] for i in unaddressed[:4]))
+        if unaddressed or not changed:
+            break
+        with timing.phase('final review'):
+            certificate = review_for_publication(case)
     pre = gate(case, strict_publication_review=strict_publication_review)
     if not pre['ok']:
         raise ValueError('the published case failed certification: ' + '; '.join(pre['errors'][:3]))
@@ -566,8 +769,10 @@ def duplicate_questions(case, model=None):
         return {}
     items = {pid: [{'id': f'std{i}', 'question': q} for i, q in enumerate(STANDARD_QUESTIONS)]
              + [{'id': x['id'], 'question': x['ask']} for x in xs] for pid, xs in people.items()}
+    from refine import effort
     try:
-        groups = llm_json(SAME, json.dumps(items), 1200, model=model or CRITIC_MODEL).get('duplicates', {})
+        with effort(None):   # at low effort the judge finds no groups at all (The Iron Hound)
+            groups = llm_json(SAME, json.dumps(items), 1200, model=model or CRITIC_MODEL).get('duplicates', {})
     except Exception:
         return None
     if not isinstance(groups, dict):
@@ -605,6 +810,7 @@ whether they are the culprit. Write 1 to 3 sentences in their voice, about the e
   this morning: never speak of them as able to do anything now (not "ask her", not "she'll tell you").
 - 'tells' is what they also tell the detective when asked more closely. Never contradict it, even where it is untrue (a
   person keeps to their own story). Do not repeat it either: this is the vaguer first answer, without its details.
+- 'keeps_back' is what they admit only later, once evidence presses them: leave it out entirely, without a hint.
 - If 'previous_attempt' is given, it was rejected for the reason stated: write it again without that.
 Return {"accounts": {"<person id>": "<what they say>"}}."""
 
@@ -615,6 +821,11 @@ description: calling a sister a wife is a contradiction), or speak of the victim
 the landlady" when the landlady is dead is a contradiction)? Being vaguer or leaving things out is not a contradiction.
 Return {"verdicts": {"<id>": {"agrees": true | false, "why": "<for a contradiction: what differs>"}}}."""
 
+LEAK = """Each item is a person's first, vague account of their evening in a village mystery, and 'keeps_back': what they
+admit only later, once evidence presses them. Does the account already tell or plainly point to something in keeps_back
+(the act, the object, where they went for it)? Leaving it out, or being merely vague about the evening, is fine.
+Return {"verdicts": {"<id>": {"leaks": true | false, "what": "<the kept-back thing it gives away>"}}}."""
+
 
 def own_statements(case, pid):
     """What a person tells the detective as soon as asked, in the case's own statements (their claims, true or false). Not
@@ -623,7 +834,47 @@ def own_statements(case, pid):
             and not x.get('requires') and not x.get('surface') and not x.get('morning') and not x.get('sighting')]
 
 
-SURFACE_CHECK = 3   # 2: accounts are also checked for who people are (kinship, roles); 3: the victim is dead
+SURFACE_CHECK = 5   # 2: accounts are also checked for who people are (kinship, roles); 3: the victim is dead;
+                    # 5: nothing they keep back is given away (its own focused check)
+
+
+def village_brief(case):
+    """What every writer of a person's words is told about the village: who everyone is, and what everyone knows (the
+    case's public facts). One record, so no phase writes a line against a fact another phase was shown."""
+    return {'who': who_is_who(case), 'public': [x['text'] for x in case['signs'] if x.get('kind') == 'public']}
+
+
+def person_brief(case, pid):
+    """What a writer is told about one person before writing what they say: their voice and attitudes, what they have
+    already told the detective, and what they keep back until pressed."""
+    p = next(q for q in case['people'] if q['id'] == pid)
+    return {'character': p['name'], 'voice': p.get('voice'),
+            'attitudes': [f"{a['mode']}: {a['content']}" for a in case['attitudes'] if a['agent'] == pid],
+            'tells': first_tells(case, pid), 'keep_back': kept_back(case, pid)}
+
+
+def first_tells(case, pid):
+    """Everything a person tells the detective as soon as asked: their evening and morning accounts and every other
+    account that waits on nothing (claimless ones included; own_statements has only those with a claim)."""
+    return [x['text'] for x in case['signs'] if x.get('speaker') == pid and x.get('kind') == 'testimony' and not x.get('requires')
+            and not x.get('sighting') and x.get('text')]
+
+
+def kept_back_events(case, pid):
+    """The ids of the events a person admits only once a clue presses them: the events behind locked clues they speak
+    or that came of their own doings."""
+    evs = {e['id']: e for e in case['events']}
+    mine = lambda e: pid == e.get('agent') or pid in e.get('others', [])
+    ids = {x['source'] for x in case['signs'] if x.get('requires') and x.get('source') in evs
+           and (x.get('speaker') == pid or mine(evs[x['source']]))}
+    return sorted(ids, key=lambda i: evs[i]['start'])
+
+
+def kept_back(case, pid):
+    """What a person admits only once a clue presses them (kept_back_events, as their summaries). Their first account
+    of the evening leaves these out."""
+    evs = {e['id']: e for e in case['events']}
+    return [evs[i]['summary'] for i in kept_back_events(case, pid)]
 
 
 def who_is_who(case):
@@ -635,25 +886,57 @@ def who_is_who(case):
              **({'status': 'the victim: dead since last night'} if p['id'] == victim else {})} for p in case['people']]
 
 
+def _verdicts(raw, keys):
+    """A judge's verdicts, by key. A reply that judges none of the items asked about is a failed reply (asked again by
+    the phase); an item it leaves out simply fails its check, so a missing verdict never passes text."""
+    import refine
+    out = _as_map((raw or {}).get('verdicts', {}))
+    if keys and not any(k in out for k in keys):
+        raise refine.LLMJSONResponseError('the judge returned no verdicts for the items asked about', raw, refine.CRITIC_MODEL)
+    return out
+
+
+def judge(system, payload, keys, max_tokens):
+    """One judge call on the wording model and its verdicts by key, asked once more if it judged none of them."""
+    import refine
+    for attempt in (1, 2):
+        try:
+            return _verdicts(refine.llm_json(system, payload, max_tokens, model=refine.CRITIC_MODEL), keys)
+        except refine.LLMJSONResponseError:
+            if attempt == 2:
+                raise
+
+
 def surface_disagreements(case, signs):
-    """{sign id: why} for evening accounts that contradict their speaker's own statements."""
+    """{sign id: why} for evening accounts that contradict their speaker's own statements, or give away what the speaker
+    admits only once pressed. Two focused questions, asked at once (one judge asked both misses the leak)."""
     from refine import llm_json, CRITIC_MODEL
+    from concurrent.futures import ThreadPoolExecutor
     items = [{'id': x['id'], 'speaker': x['speaker'], 'account': x['text'], 'tells': own_statements(case, x['speaker']), 'who': who_is_who(case)}
              for x in signs]
     if not items:
         return {}
-    out = _as_map(llm_json(AGREES, json.dumps(items), 1500, model=CRITIC_MODEL).get('verdicts', {}))
+    leaks = [{'id': x['id'], 'account': x['text'], 'keeps_back': kept_back(case, x['speaker'])} for x in signs if kept_back(case, x['speaker'])]
+    with ThreadPoolExecutor(2) as pool:
+        agrees = provenance.submit_with_context(pool, judge, AGREES, json.dumps(items), [i['id'] for i in items], 1500)
+        leaked = provenance.submit_with_context(pool, judge, LEAK, json.dumps(leaks), [i['id'] for i in leaks], 1500) if leaks else None
+        out = agrees.result()
+        gave = leaked.result() if leaked else {}
+    checked = {i['id'] for i in leaks}
     bad = {}
     for i in items:
-        v = out.get(i['id'], {})
-        if isinstance(v, dict) and v.get('agrees') is False:
-            bad[i['id']] = str(v.get('why', ''))[:300]
+        v, w = out.get(i['id']), gave.get(i['id'])
+        if not isinstance(v, dict) or v.get('agrees') is not True:
+            bad[i['id']] = str((v or {}).get('why', '') if isinstance(v, dict) else 'not judged')[:300] or 'not judged'
+        elif i['id'] in checked and (not isinstance(w, dict) or w.get('leaks') is not False):
+            bad[i['id']] = ('gives away what they admit only once pressed: ' + str((w or {}).get('what', '') if isinstance(w, dict) else 'not judged'))[:300]
     return bad
 
 
-def add_surface_accounts(case, rounds=2):
+def add_surface_accounts(case, rounds=2, feedback=None):
     """Each person's first account of the evening: true but vague for an innocent, a vague cover for the culprit, and never
-    against what they themselves tell the detective. One that contradicts their statements is rewritten, else dropped."""
+    against what they themselves tell the detective. One that contradicts their statements is rewritten, else dropped.
+    feedback ({person: {'text', 'rejected_because'}}, from a review) rewrites those people's accounts with the reason."""
     from refine import llm_json, CRITIC_MODEL
     import re
     q = case['question']
@@ -664,7 +947,8 @@ def add_surface_accounts(case, rounds=2):
     morning = enrich.day(case, 'morning')
     active = {q for e in case['events'] if e['start'] < morning for q in [e.get('agent'), *e.get('others', [])] if q}
     # accounts already published are checked too (a case published before this check)
-    failed = {}
+    failed = dict(feedback or {})
+    with SIGNS: case['signs'][:] = [x for x in case['signs'] if not (x.get('surface') and x['speaker'] in failed)]
     old = [x for x in case['signs'] if x.get('surface') and x.get('agrees_checked') != SURFACE_CHECK]
     for sid, why in surface_disagreements(case, old).items():
         x = next(y for y in case['signs'] if y['id'] == sid)
@@ -681,7 +965,9 @@ def add_surface_accounts(case, rounds=2):
         if not todo:
             break
         items = [{'id': pid, 'name': people[pid]['name'], 'voice': people[pid].get('voice'), 'culprit': pid == truth,
-                  'events': [e.get('summary') for e in case['events'] if (pid == e.get('agent') or pid in e.get('others', [])) and e['start'] < morning],
+                  'events': [e.get('summary') for e in case['events'] if (pid == e.get('agent') or pid in e.get('others', [])) and e['start'] < morning
+                             and e.get('summary') not in kept_back(case, pid)],
+                  'keeps_back': kept_back(case, pid),
                   'attitudes': [f"{a['mode']}: {a['content']}" for a in case['attitudes'] if a['agent'] == pid],
                   'tells': own_statements(case, pid), 'who': who_is_who(case), **({'previous_attempt': failed[pid]} if pid in failed else {})} for pid in todo]
         out = llm_json(SURFACE, json.dumps(items), 2500, model=CRITIC_MODEL).get('accounts', {})
@@ -812,6 +1098,28 @@ def sighting_candidates(case):
     return out
 
 
+VISIBLE = """Two people in a 1920s English village mystery were at the same place at overlapping times. A place is a whole
+building or area, so being there together does not mean they met: a lodger keeping to her bedroom upstairs is not seen by
+the drinkers in the bar below. From what each was doing, would the first person have seen the second there?
+Return {"verdicts": {"<id>": true | false}}."""
+
+
+def visible(case, cands):
+    """The co-presences in which the first person would really have seen the second (one judgement on the two events)."""
+    from refine import llm_json, presence, CRITIC_MODEL
+    if not cands:
+        return []
+    evs, pres = {e['id']: e for e in case['events']}, presence(case)
+    names = {p['id']: p['name'] for p in case['people']}
+    def doing(pid, pl, lo, hi):
+        return [evs[ev]['summary'] for (s0, e0, pl1, ev) in pres.get(pid, []) if pl1 == pl and s0 < hi and lo < e0 and ev in evs]
+    items = [{'id': f'v{i}', 'first': names.get(a, a), 'first_doing': doing(a, pl, lo, hi), 'second': names.get(b, b),
+              'second_doing': doing(b, pl, lo, hi), 'place': pl, 'when': spoken_about((lo + hi) / 2)}
+             for i, (a, b, pl, lo, hi, _) in enumerate(cands)]
+    out = _as_map(llm_json(VISIBLE, json.dumps(items), 1500, model=CRITIC_MODEL).get('verdicts', {}))
+    return [c for i, c in enumerate(cands) if out.get(f'v{i}') is True]
+
+
 def _solve_shape(case):
     from refine import certify
     r = certify(case, require_backing=True)
@@ -888,6 +1196,17 @@ def add_sightings(case, log=print):
     if unnamed:
         case['signs'] = [x for x in case['signs'] if x not in unnamed]
         log(f'  sightings: {len(unnamed)} did not name whom they saw; written again')
+    # a published sighting from before the visibility judgement is judged now, and dropped if they would not have met
+    old = [x for x in case['signs'] if x.get('sighting') and not x.get('seen_checked')]
+    if old:
+        tup = lambda x: (x['speaker'], x['claim']['person'], x['claim']['place'], x['claim']['from'], x['claim']['to'], x.get('source'))
+        ok = {c[:3] for c in visible(case, [tup(x) for x in old])}
+        unseen = [x for x in old if tup(x)[:3] not in ok]
+        for x in old:
+            x['seen_checked'] = True
+        if unseen:
+            with SIGNS: case['signs'][:] = [x for x in case['signs'] if x not in unseen]
+            log(f'  sightings: {len(unseen)} were of people who would not have seen each other; dropped')
     have = {(x.get('speaker'), (x.get('claim') or {}).get('person')) for x in case['signs'] if x.get('sighting')}
     ok0, shape0 = _solve_shape(case)
     if not ok0:
@@ -895,8 +1214,13 @@ def add_sightings(case, log=print):
     names = {p['id']: p['name'] for p in case['people']}
     truth = enrich.truth_actor(case)
     # someone lying about their own night does not volunteer where they were (a sighting would say it)
-    liars = {x['speaker'] for x in case['signs'] if x.get('kind') == 'testimony' and x.get('deceptive')}
-    cands = [c for c in sighting_candidates(case) if (c[0], c[1]) not in have and c[0] not in liars]
+    # (read from the structure, not from labels other phases may not have written yet: certification's false accounts
+    # and the culprit, who lies about the night); nor does anyone say where they were while doing what they keep back
+    false = set(__import__('refine').certify(case, False).get('false_signs') or [])
+    liars = {truth} | {x['speaker'] for x in case['signs'] if x.get('kind') == 'testimony' and (x.get('deceptive') or x['id'] in false)}
+    hidden = {p['id']: set(kept_back_events(case, p['id'])) for p in case['people']}
+    cands = visible(case, [c for c in sighting_candidates(case) if (c[0], c[1]) not in have and c[0] not in liars
+                           and c[5] not in hidden.get(c[0], ())])
     # people of interest first: suspects, then anyone; a speaker gives at most a few
     suspects = {(h.get('facts') or {}).get('actor') for h in case['question']['candidates']}
     cands.sort(key=lambda c: (c[1] not in suspects, c[0], c[3]))
@@ -905,7 +1229,7 @@ def add_sightings(case, log=print):
         if per.get(a, 0) >= SIGHTINGS_PER_PERSON:
             continue
         sid = f's_saw_{a}_{b}_{pl}'
-        sign = {'id': sid, 'kind': 'testimony', 'speaker': a, 'sighting': True, 'source': ev,
+        sign = {'id': sid, 'kind': 'testimony', 'speaker': a, 'sighting': True, 'seen_checked': True, 'source': ev,
                 'claim': {'pred': 'wasAt', 'person': b, 'place': pl, 'from': lo, 'to': hi},
                 'title': f"{names[a]} saw {names[b]}", 'text': '', 'ask': 'Did you see anyone last night?'}
         case['signs'].append(sign)
@@ -962,24 +1286,38 @@ says aloud when showing it to someone: one or two natural sentences that name wh
   is about, or the owner of a belonging, letter or mark it names), 'to' is that person's id (from 'people') and 'direct' is
   what the detective says TO them, addressing them as "you" ("Dr Marsh says you were at her surgery until ten. Is that
   so?"). Otherwise 'to' is null and there is no 'direct'.
+- 'who' says how each person is addressed: name people exactly that way (two people may share a surname: "Mr Vale"
+  is only the one 'who' calls that).
 - Add no facts that are not in the clue. At most 35 words each. End with a question mark.
 Return {"lines": {"<clue id>": {"show": "...", "confront": "...", "to": "<person id or null>", "direct": "..."}}}."""
 
+REACT_CHECK = """Each item is what a character in a 1920s village mystery says when the detective shows them a clue, with
+what they have already told the detective ('tells'), what they admit only once pressed ('keep_back'), what everyone
+knows ('public'), how the detective came by the clue ('how_found') and the clue itself. Is the reply consistent? It
+fails if it contradicts 'tells', 'public' or 'how_found' (unless the clue itself disproves what they told), gives away
+something in 'keep_back' that neither the clue nor how it was found shows, or names someone by a form of address 'who'
+does not give them, or contradicts 'reading' (what the clue truly shows, when given). A culprit deflecting or
+minimising is fine; so is a reply that says little.
+Return {"verdicts": {"<key>": {"ok": true | false, "why": "<for a failure: what is wrong>"}}}."""
+
 REACT = """You write how characters in a 1920s English village mystery react when the detective shows them a clue.
-Each item gives the character (voice, what they want, fear or hide, what they did that night), the clue, and how the
-character relates to it. Write their spoken reply: one to three sentences in their voice, spoken words only (first
+'village' says who everyone is and what everyone in the village knows ('public'). Each item gives the character (voice,
+what they want, fear or hide, what they did that night, what they have told the detective, what they keep back), the
+clue, how the detective came by it ('how_found'), and how the character relates to it. Write their spoken reply: one to three sentences in their voice, spoken words only (first
 person, no narration or stage directions such as "she laughs"). Rules:
 - React to what the clue actually is, from the character's own position and knowledge.
 - If the clue contradicts something they told the detective, they concede it, giving their real reason if they have one.
 - The culprit never confesses; they deflect or minimise. An innocent keeps their private secret unless the clue exposes it.
 - Add no facts about anyone's whereabouts, times or actions beyond the character's own listed events and the clue.
+- Never contradict 'public', 'how_found' or what they have told the detective ('tells'), unless this clue disproves it.
+- What they 'keep_back' they admit only as far as this clue (or how it was found) already shows it.
 - No clock times or numbers unless they appear in the clue. At most 60 words.
 Return {"reactions": {"<clue id>|<person id>": "..."}}."""
 
 
 def _as_map(value, key_names=('id', 'key'), text_names=('text', 'reaction', 'line', 'reply')):
     """Models return either {id: value} or [{id: .., ...}]: normalise to a dict."""
-    while isinstance(value, dict) and len(value) == 1 and next(iter(value)) in ('lines', 'reactions', 'clues', 'items'):
+    while isinstance(value, dict) and len(value) == 1 and next(iter(value)) in ('lines', 'reactions', 'clues', 'items', 'verdicts', 'accounts'):
         value = next(iter(value.values()))   # models sometimes nest the wrapper key twice
     if isinstance(value, dict):
         return value
@@ -991,6 +1329,16 @@ def _as_map(value, key_names=('id', 'key'), text_names=('text', 'reaction', 'lin
                 v = next((item[n] for n in text_names if n in item), None)
                 out[str(k)] = v if v is not None else item
     return out
+
+
+def in_parallel(work, chunks):
+    """work(chunk) for each chunk at once (the calls of one wording phase), results in chunk order. A phase's single big
+    call was its long pole (show lines 51 s, reactions 69 s in sequential chunks, Last Train, October 25)."""
+    import concurrent.futures as cf
+    if len(chunks) <= 1:
+        return [work(c) for c in chunks]
+    with cf.ThreadPoolExecutor(max_workers=len(chunks)) as pool:
+        return [f.result() for f in [provenance.submit_with_context(pool, work, c) for c in chunks]]
 
 
 def _digits_ok(text, allowed):
@@ -1107,8 +1455,11 @@ def add_show_lines(case, _retry=True):
     names = {p['id']: p['name'] for p in case['people']}
     items = [{'id': x['id'], 'kind': x['kind'], 'title': x.get('title'), 'text': x.get('text'), 'place': x.get('at'),
               'speaker': names.get(x.get('speaker')), 'about': names.get(x.get('about'))} for x in todo]
-    raw = llm_json(SHOW, json.dumps({'people': names, 'clues': items}), 8000, model=CRITIC_MODEL)
-    out = _as_map(raw.get('lines', raw.get('clues', {})))
+    out = {}
+    who = who_is_who(case)
+    for raw in in_parallel(lambda chunk: llm_json(SHOW, json.dumps({'people': names, 'who': who, 'clues': chunk}), 8000, model=CRITIC_MODEL),
+                           [items[i:i + 12] for i in range(0, len(items), 12)]):
+        out.update(_as_map(raw.get('lines', raw.get('clues', {}))))
     n = 0
     for x in todo:
         got = out.get(x['id']) or {}
@@ -1148,6 +1499,7 @@ def add_show_lines(case, _retry=True):
 SURFACE_TRUTH = """For each account in a 1920s village mystery you get what a person tells the detective about their evening or their
 morning, and what they really did (their true events). Decide whether the account is HONEST (true, even if vague or incomplete: leaving things out
 is honest) or a COVER story (it states or clearly implies something false about where they were or what they did).
+'who' says who everyone is: one person may be named several ways (first name, surname, title).
 Return {"verdicts": {"<id>": {"v": "honest" | "cover", "why": "<for a cover story: what in it is false>"}}}."""
 
 
@@ -1172,9 +1524,15 @@ def mark_surface_truth(case):
                          and in_window(x, e)]}
              for x in todo]
     # judged a dozen at a time: one long batch can run out of room and come back with no verdicts at all
+    import concurrent.futures as cf
     out = {}
-    for i in range(0, len(items), 12):
-        out.update(_as_map(llm_json(SURFACE_TRUTH, json.dumps(items[i:i + 12]), 2500, model=CRITIC_MODEL).get('verdicts', {})))
+    batches = [items[i:i + 12] for i in range(0, len(items), 12)]
+    with cf.ThreadPoolExecutor(max_workers=max(1, len(batches))) as pool:
+        who = who_is_who(case)
+        futures = [provenance.submit_with_context(pool, lambda b: llm_json(SURFACE_TRUTH, json.dumps({'who': who, 'accounts': b}), 2500, model=CRITIC_MODEL), b)
+                   for b in batches]
+        for f in futures:
+            out.update(_as_map(f.result().get('verdicts', {})))
     n = 0
     for x in todo:
         got = out.get(x['id'], out.get(x['speaker'], ''))
@@ -1183,8 +1541,9 @@ def mark_surface_truth(case):
             x['surface_why'] = str(got['why'])[:300]
         if v not in ('honest', 'cover'):
             continue
-        # a summary from the culprit is always a cover story; any other account is a lie only where it misstates
-        x['deceptive'] = (x['speaker'] == ta and bool(x.get('surface') or x.get('morning'))) or v == 'cover'
+        # an account is a cover story only where it misstates (the culprit's honest morning is honest; the writer gives
+        # the culprit a cover story where one is needed, and the judge sees it)
+        x['deceptive'] = v == 'cover'
         x['surface_checked'] = v
         n += 1
     return n
@@ -1194,7 +1553,7 @@ CONCEDE = """In a 1920s English village mystery, a character gave the detective 
 or what their words really meant). The detective now shows them a piece of evidence that settles it. Write what the
 character says (1-2 sentences, in their voice): they concede plainly what the evidence shows, as the 'meaning' states,
 perhaps with a word about why they held back. Add no fact beyond 'meaning' and the evidence; no clock times or numbers
-unless they are in the account. Return {"lines": {"<key>": "..."}}."""
+unless they are in the account. Never contradict 'reading' (what the evidence truly shows, when given). Return {"lines": {"<key>": "..."}}."""
 
 
 def add_concessions(case):
@@ -1208,6 +1567,8 @@ def add_concessions(case):
     def meaning(c):
         if c['pred'] == 'wasAt' and c.get('when', 'throughout') == 'throughout':
             return f"{names[c['person']]['name']} was at {places.get(c['place'], c['place'])} from {clock_words(c['from'])} to {clock_words(c['to'])}"
+        if c['pred'] == 'crimeBetween':   # minutes in a JSON claim were read as the wrong hour (Paste Pearls, October 25)
+            return f"the fatal act happened between {clock_words(c['from'])} and {clock_words(c['to'])}"
         return json.dumps(c)
     items, keys = [], []
     for x in case['signs']:
@@ -1219,14 +1580,18 @@ def add_concessions(case):
                 k = f"{x['id']}|{n}"
                 keys.append((x, n, k))
                 items.append({'key': k, 'character': names[x['speaker']]['name'], 'voice': names[x['speaker']].get('voice'),
-                              'account': x['text'], 'meaning': meaning(c), 'evidence': {'title': signs[n].get('title'), 'text': signs[n].get('text')}})
+                              'account': x['text'], 'meaning': meaning(c), 'evidence': {'title': signs[n].get('title'), 'text': signs[n].get('text')},
+                              **({'reading': x['reading']} if x.get('reading') else {})})
     if not items:
         return 0
     out = _as_map(llm_json(CONCEDE, json.dumps(items), 4000, model=CRITIC_MODEL).get('lines', {}))
+    lines = [(x, n, k, str(out.get(k) or '').strip()) for x, n, k in keys]
+    lines = [(x, n, k, line) for x, n, k, line in lines if line and len(line.split()) <= 60 and _digits_ok(line, x.get('text', ''))]
+    ok = replies_that_hold(case, [(k, x['speaker'], line, signs[n], ' '.join(filter(None, [meaning(claim_of(x)), x.get('reading')])))
+                                  for x, n, k, line in lines])
     k_ = 0
-    for x, n, k in keys:
-        line = str(out.get(k) or '').strip()
-        if line and len(line.split()) <= 60 and _digits_ok(line, x.get('text', '')):
+    for x, n, k, line in lines:
+        if k in ok:
             x.setdefault('concede', {})[n] = line; k_ += 1
     return k_
 
@@ -1320,21 +1685,44 @@ def add_reactions(case):
             r.append('they are the culprit')
         return r
     out = {}
-    for i in range(0, len(pairs), 18):
-        chunk = pairs[i:i + 18]
-        items = [{'key': f"{x['id']}|{pid}", 'character': people[pid]['name'], 'voice': people[pid].get('voice'),
-                  'attitudes': [f"{a['mode']}: {a['content']}" for a in case['attitudes'] if a['agent'] == pid],
-                  'their_events': own_events(pid), 'clue': {'kind': x['kind'], 'title': x.get('title'), 'text': x.get('text')},
-                  'relation': relation(x, pid)} for x, pid in chunk]
-        raw = llm_json(REACT, json.dumps(items), 8000, model=CRITIC_MODEL)
+    village = village_brief(case)
+    def work(chunk):
+        items = [{'key': f"{x['id']}|{pid}", **person_brief(case, pid), 'their_events': own_events(pid),
+                  'clue': {'kind': x['kind'], 'title': x.get('title'), 'text': x.get('text')},
+                  **({'how_found': x['unlock']} if x.get('unlock') else {}), 'relation': relation(x, pid)} for x, pid in chunk]
+        return llm_json(REACT, json.dumps({'village': village, 'items': items}), 8000, model=CRITIC_MODEL)
+    for raw in in_parallel(work, [pairs[i:i + 10] for i in range(0, len(pairs), 10)]):
         out.update({k: (v if isinstance(v, str) else (v or {}).get('text', '')) for k, v in _as_map(raw.get('reactions', {})).items()})
-    n = 0
+    written = []
     for x, pid in pairs:
         text = str(out.get(f"{x['id']}|{pid}") or '').strip()
         allowed = ' '.join([x.get('text', '')] + [str(e) for e in own_events(pid)])
         if text and len(text.split()) <= 70 and _digits_ok(text, allowed):
+            written.append((x, pid, text))
+    ok = replies_that_hold(case, [(f"{x['id']}|{pid}", pid, text, x, None) for x, pid, text in written])
+    n = 0
+    for x, pid, text in written:
+        if f"{x['id']}|{pid}" in ok:
             x.setdefault('reactions', {})[pid] = text; n += 1
     return n
+
+
+def replies_that_hold(case, replies):
+    """The keys of the replies that pass their own check: each (key, person, reply, clue, reading) against what the
+    person tells as soon as asked, keeps back, what everyone knows, how the clue was found and what it truly shows. A
+    reply that fails, or that the judge leaves unjudged, does not hold (play falls back to a plain reply)."""
+    village = village_brief(case)
+    def check(chunk):
+        items = [{'key': k, 'reply': text, 'tells': first_tells(case, pid), 'keep_back': kept_back(case, pid),
+                  'clue': {'title': x.get('title'), 'text': x.get('text')}, **({'how_found': x['unlock']} if x.get('unlock') else {}),
+                  **({'reading': reading} if reading else {})}
+                 for k, pid, text, x, reading in chunk]
+        return judge(REACT_CHECK, json.dumps({'public': village['public'], 'who': village['who'], 'items': items}),
+                     [i['key'] for i in items], 3000)
+    verdicts = {}
+    for v in in_parallel(check, [replies[i:i + 12] for i in range(0, len(replies), 12)]):
+        verdicts.update(v)
+    return {k for k, v in verdicts.items() if isinstance(v, dict) and v.get('ok') is True}
 
 
 MEDICAL = """You write the village doctor's findings after examining the body in a 1920s English village mystery. You get
@@ -1377,6 +1765,15 @@ def add_medical(case):
     from refine import llm_json, CRITIC_MODEL
     import enrich
     old = [x for x in case['signs'] if x.get('medical')]
+    # the case's own examination account (a clue the structure placed) is the doctor's word on the body: a second
+    # one would be the same account behind two questions
+    doctor = enrich.role(case, 'examiner')
+    own = any(x.get('kind') == 'testimony' and x.get('speaker') == doctor and not x.get('medical')
+              and (x.get('claim') or {}).get('pred') == 'crimeBetween' for x in case['signs'])
+    if own and any(x.get('kind') == 'testimony' for x in old):
+        with SIGNS:
+            case['signs'][:] = [x for x in case['signs'] if not (x.get('medical') and x.get('kind') == 'testimony')]
+        old = [x for x in case['signs'] if x.get('medical')]
     if old and all(x.get('medical_v') == MEDICAL_V for x in old):
         return 0
     q = case['question']
@@ -1422,14 +1819,13 @@ def add_medical(case):
     with SIGNS:
         case['signs'][:] = [x for x in case['signs'] if not x.get('medical')]
     claim = {'pred': 'crimeBetween', 'from': w0, 'to': w1}
-    doctor = enrich.role(case, 'examiner')
     doctor = doctor if doctor != victim else None
     with SIGNS:
         home = next((p.get('home') for p in case['people'] if p['id'] == doctor), None)
         case['signs'].insert(0, {'id': 's_medical', 'kind': 'record', 'medical': True, 'medical_v': MEDICAL_V, 'source': exam['id'],
                                  'at': home or q['crime']['place'],
                                  'title': 'The doctor\u2019s examination notes', 'text': notes, 'claim': claim})
-        if doctor:
+        if doctor and not own:
             case['signs'].insert(1, {'id': f's_medical_{doctor}', 'kind': 'testimony', 'medical': True, 'medical_v': MEDICAL_V,
                                      'speaker': doctor, 'source': exam['id'], 'claim': claim, 'title': f"{next(p['address'] or p['name'] for p in case['people'] if p['id'] == doctor)} on the body", 'text': says,
                                      'ask': f"Doctor, what did you find when you examined {vaddr}?"})
@@ -1596,6 +1992,89 @@ def prune_people(case):
     return gone
 
 
+def _sightings_and_contradictions(case, log=lambda *a: None):
+    """Who saw whom (read from the history, certified solve-neutral), then the contradictions that makes visible."""
+    return add_sightings(case, log), record_contradictions(case, log)
+
+
+_MISSING = object()
+
+
+def parallel_phases(case, phases, log=print):
+    """Run independent wording phases at once, each on its own copy of the case, and merge what each changed into the
+    case: signs it added or removed, fields it set on signs, and top-level entries (knowledge, moods, declines, events).
+    Phases in one call must write different things; a field two phases both change keeps the later phase's value (and
+    is logged). Each phase gets the usual retry and timing (_phase)."""
+    import concurrent.futures as cf
+    import provenance
+    base = copy.deepcopy(case)
+    copies = [(getattr(ph, '__name__', 'phase'), copy.deepcopy(base)) for ph in phases]
+    with cf.ThreadPoolExecutor(max_workers=len(phases)) as pool:
+        futures = [provenance.submit_with_context(pool, _phase, ph, mine, log=log) for ph, (_, mine) in zip(phases, copies)]
+        for f in futures:
+            f.result()                       # a phase's own error, after its retry, stops the publication
+    return _merge_copies(case, base, copies, log)
+
+
+def _merge_copies(case, base, copies, log):
+    before = {x['id']: x for x in base['signs']}
+    owner = {}
+    for name, res in copies:
+        after = {x['id']: x for x in res['signs']}
+        gone = [i for i in before if i not in after]
+        new = [x for x in res['signs'] if x['id'] not in before]
+        if gone:
+            case['signs'] = [x for x in case['signs'] if x['id'] not in gone]
+        have = {x['id'] for x in case['signs']}
+        # keep where the phase put them: signs it added ahead of every existing one go first, the rest at the end
+        first_old = next((k for k, x in enumerate(res['signs']) if x['id'] in before), len(res['signs']))
+        front = [copy.deepcopy(x) for x in res['signs'][:first_old] if x['id'] not in before and x['id'] not in have]
+        back = [copy.deepcopy(x) for x in new if x['id'] not in have and all(x['id'] != y['id'] for y in front)]
+        case['signs'][:0] = front
+        case['signs'].extend(back)
+        live = {x['id']: x for x in case['signs']}
+        for i, x in after.items():
+            if i not in before or i not in live:
+                continue
+            for k in set(x) | set(before[i]):
+                v = x.get(k, _MISSING)
+                if v != before[i].get(k, _MISSING):
+                    if (i, k) in owner and owner[(i, k)] != name:
+                        log(f'  {name} and {owner[(i, k)]} both changed {i}.{k}; keeping {name}')
+                    owner[(i, k)] = name
+                    if v is _MISSING:
+                        live[i].pop(k, None)
+                    else:
+                        live[i][k] = copy.deepcopy(v)
+        for k in set(res) | set(base):
+            if k == 'signs':
+                continue
+            v = res.get(k, _MISSING)
+            if v != base.get(k, _MISSING):
+                if v is _MISSING:
+                    case.pop(k, None)
+                else:
+                    case[k] = copy.deepcopy(v)
+    return case
+
+
+def _phase(operation, *args, log=print, tries=2):
+    """One wording phase: timed, and run again once when a model reply fails (an empty or unreadable reply is not the
+    case's fault; one failure must not cost the whole publication)."""
+    import refine, timing
+    for attempt in range(1, tries + 1):
+        started = time.time()
+        try:
+            with timing.phase(getattr(operation, '__name__', 'phase')):
+                result = operation(*args)
+            log(f'  {getattr(operation, "__name__", "phase")}: {time.time() - started:.0f}s')
+            return result
+        except (refine.LLMJSONResponseError, ConnectionError, TimeoutError) as error:
+            if attempt == tries:
+                raise
+            log(f'  {getattr(operation, "__name__", "phase")} failed ({type(error).__name__}: {str(error)[:80]}); once more')
+
+
 def enrich_case(case, log=print):
     """Publishing adds only WORDING to a certified case: the history is the only source of facts.
     Questions, evening summaries (claimless, of the speaker's own events), the examination's notes and account (worded
@@ -1610,29 +2089,23 @@ def enrich_case(case, log=print):
     add_ordinary_evenings(case, log)                   # everyone in the case has an evening (certified solve-neutral)
     enrich.add_answer(case)                            # the examination wording depends on the method
     enrich.add_accepted(case)                          # every answer the player's evidence fairly supports
-    # These phases all read or mutate the shared sign list, often across a model call. Keep them ordered so each
-    # phase sees a complete predecessor state. Running in the caller also preserves the active provenance context.
-    for operation in (add_surface_accounts, add_morning_accounts, add_medical, add_concessions,
-                      enrich.add_knowledge, enrich.add_moods, add_show_lines, enrich.add_art):
-        operation(case)
-    for operation, args in ((mark_surface_truth, (case,)),
-                            (add_questions, (case, case.get('synopsis', ''))),
-                            (add_reactions, (case,))):
-        operation(*args)
-    add_sightings(case, log)                           # who saw whom, read from the history, certified solve-neutral
-    record_contradictions(case, log)                   # a contradiction the player can see is one the case records
-    add_declines(case)                                 # in-voice ways to decline, stating no fact
-    add_show_lines(case)                               # lines for accounts added above
-    enrich.add_art(case)                               # pictures for any clue added above
-    enrich.add_unlock_groups(case)                     # leads that open together share one opening line
-    for round_ in range(2):
-        problems = enrich.review_publish(case)
-        if problems:
-            log(f'  review round {round_ + 1}: {len(problems)} lines dropped: ' + '; '.join(f'{k}: {v}' for k, v in list(problems.items())[:4]))
-        if not problems:
-            break
-        add_medical(case); add_concessions(case); add_show_lines(case); add_reactions(case)
-    finish_wording(case)
+    # The wording is written in waves. Within a wave the phases do not depend on each other, so each runs at once on its
+    # own copy of the case and what it wrote is merged back (they write different signs or different fields).
+    import refine
+    with refine.effort('low'):                         # wording needs no long deliberation; the reviews below check it
+        parallel_phases(case, [add_surface_accounts, add_morning_accounts, add_medical, add_concessions,
+                               enrich.add_knowledge, enrich.add_moods, add_declines, _sightings_and_contradictions], log)
+        parallel_phases(case, [mark_surface_truth, lambda c: add_questions(c, c.get('synopsis', '')), add_reactions,
+                               add_show_lines, enrich.add_art], log)
+        _phase(enrich.add_unlock_groups, case, log=log)   # leads that open together share one opening line
+        for round_ in range(2):
+            problems = _phase(enrich.review_publish, case, log=log)
+            if problems:
+                log(f'  review round {round_ + 1}: {len(problems)} lines dropped: ' + '; '.join(f'{k}: {v}' for k, v in list(problems.items())[:4]))
+            if not problems:
+                break
+            parallel_phases(case, [add_medical, add_concessions, add_show_lines, add_reactions], log)
+        _phase(finish_wording, case, log=log)
     return case
 
 
@@ -1792,6 +2265,19 @@ def publish_live(case, brief_entry, stamp, strict_publication_review=False):
     return entry, r
 
 
+def publish_reviewed(case):
+    """Commit a candidate that already passed the strict whole-case review but was stopped by a later gate that has
+    since been fixed (a kept runs/scripted-rejected case): every deterministic gate, the certificate binding and the
+    scripted players are checked again on it as it is, and nothing is reworded."""
+    serialized, post = _serialized_case(case, strict_publication_review=True)
+    r, stamp = post['js'], case['id'].removeprefix('mk-live-')
+    entry = {'id': case['id'], 'file': f"live/{case['id']}.json", 'title': case['title'], 'solveDepth': r['solveDepth'],
+             'blurb': f"{case['synopsis']} Depth {r['solveDepth']}, {len(case['signs'])} clues, {len(case['question']['candidates'])} suspects.",
+             'generated': stamp, 'difficulty': difficulty.index_rating(case['difficulty'])}
+    _commit_live_case(serialized, entry, case.get('premise'))
+    return entry, r
+
+
 def enrich_live(strict_publication_review=False):
     """Re-enrich the indexed live cases through deterministic publication, optionally enforcing a strict critic
     verdict. Files the index no longer lists (truncated away) are left alone. Each case is written only if it is
@@ -1942,3 +2428,6 @@ def main(strict_publication_review=False):
 if __name__ == '__main__':
     strict_review = '--strict-publication-review' in sys.argv
     enrich_live(strict_review) if '--live' in sys.argv else main(strict_review)
+
+
+_register_judges()

@@ -108,5 +108,41 @@
    "score": 11.0,
    "target": "hard"
   }
+ },
+ {
+  "id": "mk-live-20261002-235614",
+  "file": "mk-live-20261002-235614.json",
+  "title": "Paste Pearls at the Pump",
+  "solveDepth": 5,
+  "blurb": "Hugo Vale was found dead at the village square. Depth 5, 27 clues, 4 suspects.",
+  "generated": "20261002-235614",
+  "difficulty": {
+   "level": "medium",
+   "score": 7.5
+  }
+ },
+ {
+  "id": "mk-live-20261003-100726",
+  "file": "mk-live-20261003-100726.json",
+  "title": "The Last Train to Town",
+  "solveDepth": 7,
+  "blurb": "Silas Voss was found dead at Bellweather Halt. Depth 7, 39 clues, 4 suspects.",
+  "generated": "20261003-100726",
+  "difficulty": {
+   "level": "hard",
+   "score": 12.75
+  }
+ },
+ {
+  "id": "mk-live-20261025-114526",
+  "file": "mk-live-20261025-114526.json",
+  "title": "The Iron Hound",
+  "solveDepth": 5,
+  "blurb": "Hugo Vale was found dead at the village square. Depth 5, 42 clues, 4 suspects.",
+  "generated": "20261025-114526",
+  "difficulty": {
+   "level": "medium",
+   "score": 7.25
+  }
  }
 ]

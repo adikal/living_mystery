@@ -1,11 +1,38 @@
 # Living Mystery
 
+<p align="center">
+  <img src="docs/media/teaser.gif" width="720" alt="Living Mystery in motion: a generated case opens, the village doctor answers in her own words and her account becomes evidence, the solver rules out every suspect but one, and the detective makes the accusation.">
+</p>
+
 A detective game in an English village in 1932, where every case is new, every character can be questioned in your
 own words, and the village goes about its morning while you investigate. Language models write the cases, voice the
 characters and decide what people do; a certifying engine makes sure that, whatever they produce, **the case stays
 fair: there is always a way to the one true answer, and nothing anyone says breaks the true history.**
 
 The research behind it is called **SleuthCraft**: certified living mysteries with solver-checked language models.
+
+## See it in action
+
+<table>
+  <tr>
+    <td width="50%"><a href="#watch-the-game"><img src="docs/media/card-game.jpg" alt="Watch the game (2 minutes 10): a case, from the first clue to the accusation"></a></td>
+    <td width="50%"><a href="#watch-how-it-works"><img src="docs/media/card-tech.jpg" alt="Watch how it works (3 minutes 48): language models invent; a solver keeps every case fair"></a></td>
+  </tr>
+</table>
+
+### Watch the game
+
+A case from the first clue to the accusation: a village that moves while the clock runs, characters you question in
+your own words, and evidence that changes what they say (2:10).
+
+https://github.com/user-attachments/assets/3485d92b-dbfc-41f7-b8b3-eecb7f320d9f
+
+### Watch how it works
+
+How a case is written, certified and played: one true history, language models that propose, and code and a Z3 solver
+that must agree on every suspect before a case is published (3:48).
+
+https://github.com/user-attachments/assets/6b6e9098-227f-43f4-95a0-21d040ca66fb
 
 ## Quick start
 

@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {registerKernelCase, createSession, dispatch, caseTables, diagnostics, worldAt, exportSession, importSession} from '../dist/engine.mjs';
 import * as Morning from '../dist/morning.mjs';
 
-const load = () => JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
+const load = () => JSON.parse(readFileSync(new URL('../dist/cases/archive/2026-10/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
 // Red herrings' explanations unmarked: the register book becomes an ordinary concealable clue for Ada (see below).
 const loadWithoutHerrings = () => { const kc = load(); for (const x of kc.signs) delete x.explainedBy; return kc; };
 function setup(kc = load()) {

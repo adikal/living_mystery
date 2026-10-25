@@ -25,3 +25,4 @@ docs/showcase/*
 !docs/showcase/make_titles.py
 !docs/showcase/narration-final.txt
 !docs/showcase/MAKING-OF.md
+!docs/showcase/make_readme_media.py

@@ -695,6 +695,15 @@ export function makeKernelCase(records) {
       if (arr(s.world.flags.lockedObjects).includes(x.id))
         return {id: x.id, levels: ['What you have found points somewhere you have not looked yet.', `Go to ${place(x.at)}.`,
           `At ${place(x.at)}: ${x.unlock || `examine ${String(x.title).toLowerCase()}`}`]};
+      // A person's own manner (a watched behaviour) is examined wherever they are now: the hint names them and where
+      // they are, never the place it was first written down (which may be nowhere: "at the village").
+      const f = OBJECTS[x.id]?.follows;
+      if (f && PEOPLE[f]) {
+        const who = PEOPLE[f].address ?? PEOPLE[f].name, where = s.world.npcs[f]?.travel?.to ?? s.world.npcs[f]?.location;
+        const at = LOCATIONS[where] ? ` at ${place(where)}` : '';
+        return {id: x.id, levels: [`There is still something worth noticing about ${who}.`, `Find ${who}${at} and watch them closely.`,
+          `Examine “${x.title}” when you are with ${who}${at}.`]};
+      }
       return {id: x.id, levels: [
         x.at === here ? 'There is still something here worth your attention.' : `There is still something worth examining at ${place(x.at)}.`,
         `Look around ${place(x.at)} for ${kindWord(x.kind)} you have not examined yet.`,
@@ -908,7 +917,10 @@ export function makeKernelCase(records) {
       // the behaviour to them while holding its explanation
       const herring = signs[clue]?.kind === 'behavior' && signs[clue].about === pid && pid !== truthActor && arr(signs[clue].explainedBy).some(e => signs[e])
         ? signs[clue] : null;
-      const cleared = kc.signs.find(x => x.kind === 'behavior' && x.about === pid && arr(x.explainedBy).includes(clue))
+      // A clue that is itself one of their unexplained oddities (a bandage that also explains a glove) is answered as
+      // that oddity first: turned aside, then its reason when pressed, not as the explanation of the other.
+      const openHerring = herring && !arr(herring.explainedBy).some(e => have.has(e));
+      const cleared = (openHerring ? null : kc.signs.find(x => x.kind === 'behavior' && x.about === pid && arr(x.explainedBy).includes(clue)))
         ?? (herring && arr(herring.explainedBy).some(e => have.has(e)) ? herring : null);
       // the behaviour put to them again after they turned it aside once: pressed, they give the innocent reason
       const askedBefore = herring && s.events.filter(e => e.kind === 'speech' && e.actor === 'player' && e.data?.listener === pid && e.data?.clue === clue).length > 1;
@@ -920,7 +932,9 @@ export function makeKernelCase(records) {
         && !s.world.npcs[pid].beliefs.some(b => b.key === `mk_named_${x.id}`));
       // a clue that comes from this person's own doing (the doctor's own notes; a trace of what they did) draws their
       // own account of it, never a stranger's "I know nothing about that"
-      const own = kc.signs.find(x => x.kind === 'testimony' && x.speaker === pid && earned(s, x.id)
+      // (not for one of their own oddities: put to them, that is turned aside or explained, never answered with a
+      // sighting that happens to come from the same event)
+      const own = !herring && kc.signs.find(x => x.kind === 'testimony' && x.speaker === pid && earned(s, x.id)
         && x.source && x.source === signs[clue].source);
       // the culprit shown something that breaks the account that placed them elsewhere
       const alibiBroken = pid === truthActor && arr(signs[clue].defeats).some(d => claimOf(signs[d])?.person === pid);

@@ -134,9 +134,16 @@ def review_publish(case):
     problems = {k: f"wrong form of address: {', '.join(w)}" for k, v in todo.items()
                 if (w := publish.wrong_addresses(v['text'], publish.history_text(case)))}
     keys = [k for k in todo if k not in problems]
-    for i in range(0, len(keys), 40):
-        chunk = {k: todo[k] for k in keys[i:i + 40]}
-        out = llm_json(REVIEW, json.dumps({**ctx, 'items': chunk}), 4000, model=CRITIC_MODEL).get('problems') or {}
+    # every chunk is reviewed at once
+    import concurrent.futures as cf
+    import provenance
+    chunks = [{k: todo[k] for k in keys[i:i + 20]} for i in range(0, len(keys), 20)]
+    with cf.ThreadPoolExecutor(max_workers=max(1, len(chunks))) as pool:
+        futures = [provenance.submit_with_context(
+            pool, lambda chunk: llm_json(REVIEW, json.dumps({**ctx, 'items': chunk}), 4000, model=CRITIC_MODEL).get('problems') or {}, c)
+            for c in chunks]
+        outs = [f.result() for f in futures]
+    for chunk, out in zip(chunks, outs):
         if isinstance(out, dict):
             problems.update({k: str(v) for k, v in out.items() if k in chunk and not re.search(r'no (clear )?fault|upon reflection|is plausible', str(v), re.I)})
     signs = {x['id']: x for x in case['signs']}

@@ -662,7 +662,7 @@ test('A reply that becomes evidence appears once in the conversation, as the evi
 });
 
 test('Restart reloads a generated case from wherever the case list says it now is (shipped or generated here)',async()=>{
- const records=JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-235614.json',import.meta.url),'utf8'));
+ const records=JSON.parse(readFileSync(new URL('../dist/cases/archive/2026-10/mk-live-20261002-235614.json',import.meta.url),'utf8'));
  const asked=[];const json=(o,ok=true)=>Promise.resolve({ok,status:ok?200:404,json:async()=>o});
  const fetch=async url=>{asked.push(url);
   if(url.endsWith('cases/generated/index.json'))return json([{id:records.id,file:`${records.id}.json`,title:'T'}]);

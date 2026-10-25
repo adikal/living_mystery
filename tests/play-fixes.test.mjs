@@ -55,8 +55,23 @@ for (const f of files) {
     }
   });
 
+  // a red herring whose explanation is opened by putting the behaviour itself to them (the slate shown to the
+  // landlady) is answered with that explanation at once; the others are words only until it is found
+  const openedByIt = b => arr(b.explainedBy).map(e => kc.signs.find(y => y.id === e)).some(y => y?.kind === 'testimony'
+    && y.speaker === b.about && arr(y.requires).length && arr(y.requires).every(r => r === b.id));
+
+  test(`${f}: a red herring that opens its own explanation gives it when put to them`, () => {
+    for (const b of herrings(kc).filter(openedByIt)) {
+      const {s, K} = start(kc);
+      give(s, K, [b.id]);
+      goTo(s, b.about);
+      dispatch(s, {type: 'ask', person: b.about, topic: `why:${b.id}`});
+      assert.ok(arr(b.explainedBy).some(e => K.has(s, e)), `${b.id}: put to them, its explanation is given`);
+    }
+  });
+
   test(`${f}: pressed about a red herring, the person gives its innocent reason (words only)`, () => {
-    for (const b of herrings(kc)) {
+    for (const b of herrings(kc).filter(b => !openedByIt(b))) {
       const {s, K} = start(kc);
       give(s, K, [b.id]);
       goTo(s, b.about);
@@ -163,7 +178,7 @@ test('the fact-checker is given common knowledge and what the person has already
 });
 
 // ---- Paste Pearls at the Pump (play of 25 October): a doctor's kept clues, her expertise, and the dialogue fixes ----
-const PEARLS = ['generated', 'archive/2026-10'].map(d => new URL(`../dist/cases/${d}/mk-live-20261002-235614.json`, import.meta.url))
+const PEARLS = ['archive/2026-10'].map(d => new URL(`../dist/cases/${d}/mk-live-20261002-235614.json`, import.meta.url))
   .find(u => { try { readFileSync(u); return true; } catch { return false; } });
 const pearls = () => JSON.parse(readFileSync(PEARLS, 'utf8'));
 

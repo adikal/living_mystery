@@ -134,6 +134,11 @@ def targets_met(case, report, profile, model=None):
     pil = report.get('pillar_signs') or {}
     if not pil.get('motive') or not pil.get('means'):
         need.append('motive and means evidence')
+    if profile.get('own') and report.get('A'):
+        from refine import cleared_alone
+        alone = cleared_alone(case, report)
+        if len(alone) < profile['own']:
+            need.append(f"{len(alone)} innocents cleared on evidence of their own (< {profile['own']})")
     got = level(score(f, model), model)
     if not need and rank(got, model) < rank(profile['level'], model):
         need.append(f'rates {got}, target {profile["level"]}')

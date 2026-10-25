@@ -29,6 +29,7 @@ class Sightings(unittest.TestCase):
         before = publish._solve_shape(self.case)
         saved = refine.llm_json
         refine.llm_json = lambda system, prompt, *a, **k: ({'problems': {}} if system == enrich.REVIEW else
+                                                          {'verdicts': {i['id']: True for i in json.loads(prompt)}} if system == publish.VISIBLE else
                                                           {'lines': {i['id']: f"I saw {i['saw']} there about ten." for i in json.loads(prompt)}})
         try:
             n = publish.add_sightings(self.case, log=lambda *a: None)
