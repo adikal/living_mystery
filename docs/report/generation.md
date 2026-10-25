@@ -224,7 +224,7 @@ only the evening and morning summaries. Other generated lines are claimless
 and do not enter certification; they are checked mechanically (no times or numbers that are not in the source, length
 limits, no second-person address in third-person lines).
 
-A generated case takes roughly 10 to 20 minutes, dominated by sequential model calls for the first draft and each layer.
+A generated case takes roughly 15 to 35 minutes to generate and publish ([10.19](#10-19-parallel-generation-and-publishing)).
 
 
 ## 10.16 Motive, means and opportunity; the premise deck; the Z3 oracle
@@ -319,3 +319,43 @@ writes. Work that calls a model (re-enrichment, backfill) runs outside the lock,
 unchanged since it was read, and only the cases the index lists. A new case never replaces a published one: a reused
 id is refused. Rebuilding the shipped cases keeps the index entry of a case that failed its gate, or has no certified
 run, as long as its file exists, read from the index as it is at commit time.
+
+
+## 10.19 Parallel generation and publishing
+
+**Status: implemented (October 2026).** The design and its settings are in `docs/generation-and-publishing.md`.
+
+Generation and publishing had become slow for one reason: model calls made one after another, each waiting for the
+last, with a single draft per layer and a single reviewer at the end. A medium case took 40 to 80 minutes and often
+never reached its targets. Both now run many calls at once and check each result as it lands.
+
+**Generation.** Six first drafts are written at once and the first that certifies wins. Each later layer drafts up to
+three options on different threads, all on the story model. Code checks each draft as it arrives and the step critic
+reviews it in parallel with the drafts still being written. A rejected draft is revised once in the same round, given
+its own patch and its own problems, since most rejections are a single slip. The winner is the passing draft that moves
+the case furthest; each other passing draft for a different thread is then applied on top of it, checked again on the
+combined case, and kept if it still passes and moves the case further, so one round often deepens two or three threads.
+A new target asks that innocents be cleared on evidence of their own: an innocent still ruled out once every sign
+pointing at the culprit is set aside. A dedicated step gives an innocent who lacks it an alibi or a witness.
+
+**Publishing.** Wording phases that do not depend on each other run at once on copies of the case, merged back. Every
+writer of a person's words is given the same record: who everyone is, what the village knows, what the person tells as
+soon as asked and what they admit only once pressed. Writers deliberate little; judges, each asked one question
+(does this account contradict, leak, misstate who someone is; would these two have seen each other; does this reaction
+contradict what the person said), deliberate at their own level and fail any item they leave unjudged. The whole-case
+review is a panel of five narrow reviewers, each asked twice, whose issues are combined. Publishing repairs only its own
+words; a problem in the structure stops publication. Before a case is written, a scripted player must solve it by
+following its hints, and every hint about what someone knows must draw that account out.
+
+**Seeing where the time goes.** Every model call is timed by phase and purpose, and each run writes a table of them. A
+call still running past the usual time for its kind gets a second identical request, and the first reply wins.
+
+| Case | Level | Generation | Publishing |
+|---|---|---|---|
+| The Last Train Waits | hard, depth 8 | 22.5 min | 13 min |
+| A Glove in the Square | medium, depth 5 | 11 min | 6.5 min |
+
+Three measurements shaped the design. A judge asked several questions at once missed a leak that the same model,
+asked only about the leak, caught in five seconds. Judges allowed little deliberation passed lines they should have
+caught, while writers lost nothing. And the review model flags an issue in one run and passes it in the next, so the
+focused judges and the scripted player stop what they can before the review reads the case.

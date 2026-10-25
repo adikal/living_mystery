@@ -24,6 +24,11 @@ Rebuild: `python3 make_titles.py && python3 build_product.py` (about 2 min with 
 `VOICE=<name>` picks `narr/<name>/`, `SCORE=<name>` picks `music/<name>.mp3`, and `--plan` prints the timeline
 without rendering.
 
+README media: `python3 make_readme_media.py` makes the README's looping teaser and poster cards (`docs/media/`)
+and 720p re-encodes under GitHub's 10 MB video limit (`web/`). README videos play inline only from a
+`github.com/user-attachments` link, so the re-encodes are uploaded through the GitHub web editor and their links pasted
+into the README.
+
 ## Assets and settings
 
 - **Script.** 10 lines in `narration-final.txt`. Every line describes something on screen at that moment.

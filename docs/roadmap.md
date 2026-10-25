@@ -29,6 +29,14 @@ handed over, experts compare evidence shown to them, figures from the evidence m
 reaction is offered only related accounts. Paste Pearls and The Last Train to Town were regenerated with the same
 premises.
 
+**Parallel generation and publishing (25 October).** Generation and publishing were rebuilt around parallel model
+calls checked as they land ([generation-and-publishing.md](generation-and-publishing.md)): parallel seeds and drafts,
+revision in the round, stacked drafts, a target for innocents cleared on evidence of their own, publishing in parallel
+waves with focused judges, a review panel, repairs limited to publishing's own words, and a scripted-player gate. A
+medium case takes about 11 minutes to generate and 7 to publish. *A Glove in the Square* and *The Last Train Waits*
+replace the two regenerated cases. Next: give every innocent evidence of their own in hard cases, and a regeneration of
+the older menu cases against the new targets.
+
 **A bug track and epoch 3 (5 October).** Invariant detectors and a correctness judge over every recorded game found
 six general bugs, all fixed with tests (hint routes, unrecorded contradictions, place forms and setting roles in the name
 check, spoken times, kinship in evening accounts, verbatim repeats). Epoch 3 on fresh cases rejected one change and kept

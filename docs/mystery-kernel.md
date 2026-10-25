@@ -520,6 +520,7 @@ film studio, lighthouse.
 | 3 | motive + means obligations | 5/5 met every target (depth 5, twist, herring, motive, means); ~10 min/case |
 | 4 | plausibility critic, unlock/reading reasons | 5/5 certified; critic caught real contradictions; ~27 min/case; two cases lost their twist |
 | 5–6 | twist-preservation law; speed work (cached prompts, Sonnet critic, code checks for common critic failures, parallel candidates, richer seed) | stopped early; the richer seed became the bottleneck (~4 min, frequent malformed JSON) |
+| 7 (October) | parallel seeds and drafts, revision in the round, stacked drafts, innocents cleared on evidence of their own; parallel publishing with focused judges, a review panel and a scripted-player gate | medium in about 11 min to generate and 7 to publish, hard in about 22 and 13 ([generation-and-publishing.md](generation-and-publishing.md)) |
 
 Findings:
 - The loop works: code-controlled targeting plus LLM story steps reliably reaches depth 5+ with a certified
@@ -528,8 +529,8 @@ Findings:
   depth grow; targeting individual signs did not.
 - The critic is necessary: about 40% of code-valid steps had common-sense problems code cannot see. Many are
   mechanical (spoken times vs the timeline, a trace placed away from its source) and moved into code.
-- Open: seed reliability and time. Next options: keep the trivial seed (reliable) and parallelize steps, or
-  split the rich seed into smaller calls; use a JSON-schema tool call instead of free-form JSON.
+- Seed reliability and time were settled in run 7: the trivial seed with six drafts at once, and parallel steps.
+  The step drafts now come from the story model only (Sonnet's passed 3 of 41 times, Opus's 50 of 95).
 
 ## 15. Migration plan
 
@@ -608,8 +609,8 @@ is solved only by the truth, rejects every wrong suspect, and survives save/relo
 accusation form, and `tools/refine-c/parity.py` (Python and JS checkers agree on every generated case).
 
 Known gaps: characters know only what the case records (no public facts of the morning, thin reactions to evidence
-that does not concern them); no take/use/combine verbs; no art for new objects; generation takes about 8–10 minutes per
-case; the question is always "who".
+that does not concern them); no take/use/combine verbs; no art for new objects; generation and publishing take about
+15–35 minutes per case; the question is always "who".
 
 ### On-demand generation and hints
 

@@ -141,6 +141,13 @@ Living Mystery is built the other way round.
       └──────────────────────────────┴─────────────── one true history ───────────────┴─────────────────┘
 ```
 
+Generation and publishing run their model calls in parallel and check every result as it lands. At each layer of
+a case three drafts aim at different threads; code and a critic check each, a rejected draft is revised in the same
+round, and passing drafts for different threads are applied together. Publishing writes the case's words in parallel
+waves, has focused judges check each kind of line, and ends with a panel of narrow reviewers and a scripted player
+that must solve the case by following its hints. A medium case takes about 11 minutes to generate and 7 to publish
+([generation and publishing](docs/generation-and-publishing.md)).
+
 The [living technical report](dist/report/index.html) explains each layer; [docs/architecture.md](docs/architecture.md)
 gives the engine contracts.
 
@@ -149,8 +156,8 @@ gives the engine contracts.
 The game server alone is enough for scripted play with the original case, *The Last Bell*, and the six generated cases
 in the menu (retired cases are kept in `dist/cases/archive/`); it makes no model requests. The model proxy adds AI
 characters and the living morning (on Bedrock, the Claude API, the OpenAI API or a compatible one, or a local model),
-the director server adds Z3 checks, and the generator server adds new cases, which take several minutes each and always
-use Bedrock (setup is in the [quick start](#quick-start)). `LM_PROVIDER` sets where every role goes; `LM_ROUTES` sends
+the director server adds Z3 checks, and the generator server adds new cases, which take about 15 to 35 minutes each and
+always use Bedrock (setup is in the [quick start](#quick-start)). `LM_PROVIDER` sets where every role goes; `LM_ROUTES` sends
 single roles elsewhere, for example `LM_ROUTES="checker=anthropic:claude-sonnet-4-5-20250929"`. The proxy's module
 docstring and `server/llm_backends.py` list every setting.
 
@@ -232,7 +239,7 @@ artifact and whether it was present when the batch finished, and every batch end
 
 ## Documentation
 
-- [Technical report](dist/report/index.html) (edition 0.27; [continuous edition](dist/report/complete.html)): the
+- [Technical report](dist/report/index.html) (edition 0.28; [continuous edition](dist/report/complete.html)): the
   connected argument, with diagrams; sources in [docs/report/](docs/report/index.md).
 - [Claims](docs/claims.md): the language of clues (eleven predicates over facts that change with events), how a claim's
   truth is computed in the history, and why reasoning from what the player knows is sound and complete.
@@ -240,6 +247,8 @@ artifact and whether it was present when the batch finished, and every batch end
 - [Self-improvement by playtesting](docs/self-improvement.md): the method, the tools and every result.
 - [The living village](docs/living-village.md): sightings, the morning director and the rules found by playing.
 - [Mystery kernel](docs/mystery-kernel.md): the history's four record types, certification and refinement.
+- [Generating and publishing a case](docs/generation-and-publishing.md): the parallel generation loop, publishing's
+  writers, judges and review panel, the gates, and the timing tools for seeing where a run spends its time.
 - [Character turns](docs/character-turns.md): how a free-text reply is proposed, checked and committed.
 - [Architecture](docs/architecture.md) and [roadmap](docs/roadmap.md).
 - [AGENTS.md](AGENTS.md): where things are and how to test them, for anyone (or any agent) changing the code.
@@ -255,15 +264,15 @@ artifact and whether it was present when the batch finished, and every batch end
 | `dist/character-turn.mjs` | Free-text conversation: the character's perspective, which accounts a question needs, code checks, the fact-checker and fallbacks |
 | `dist/morning.mjs`, `dist/morning-director.mjs` | The living morning and its director with code, model and kernel critics |
 | `dist/ui.mjs`, `dist/styles.css` | The browser interface |
-| `tools/refine-c/` | Case generation (`premise.py`, `refine.py`) and publishing (`publish.py`, `enrich.py`; `publication_io.py` for crash-safe writes and the shared publication lock) |
-| `tools/playtest/` | Agent playtesting, scoring, judging, experiments and the bug track |
+| `tools/refine-c/` | Case generation (`premise.py`, `refine.py`) and publishing (`publish.py`, `enrich.py`; `publication_io.py` for crash-safe writes and the shared publication lock); `timing.py` and `status.py` for where a run spends its time; `regenerate.py` and `repair_live.py` |
+| `tools/playtest/` | Agent playtesting, scoring, judging, experiments and the bug track; `scripted.mjs` and `gate.mjs`, the scripted players publishing must pass |
 
 ## Tests and limits
 
 The tests need Node 20 or later, and `pytest` in the environment (`.venv/bin/pip install pytest`).
 
 ```sh
-npm test                                                   # 365 JavaScript tests
+npm test                                                   # 379 JavaScript tests
 .venv/bin/python -m pytest tests/ -q                       # Python tests: servers, solver, oracle, playtest tools
 (cd tools/refine-c && ../../.venv/bin/python -m pytest -q)  # generation and publishing tests
 (cd tools/refine-c && ../../.venv/bin/python parity.py)     # the Python and JS kernels agree on 443 cases
@@ -272,7 +281,8 @@ npm run docs:check
 
 The guarantees are about the records: solvability, a unique answer, depth, and that what characters say agrees with
 the history as far as the critics can tell. The fact-checker is a model, so a reply can still slip through; hints and
-difficulty are measured on agent players, not yet calibrated against people. Generating a case takes several minutes.
+difficulty are measured on agent players, not yet calibrated against people. Generating and publishing a case takes
+about 20 minutes for a medium case and 35 for a hard one.
 The local client, its saves and the inspector expose the hidden truth; the servers are for local use only.
 
 Publishing is crash-safe: a case is written and read back before the index lists it, under one lock shared by every

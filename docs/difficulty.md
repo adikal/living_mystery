@@ -63,12 +63,16 @@ The difficulty is also an input. "Generate a new case" offers Easy, Medium and H
 |---|---|---|---|
 | solve depth | 3 | 5 | 7 |
 | innocents cleared no earlier than layer / truth clear from layer | 0 / 0 | 2 / 3 | 3 / 4 |
+| innocents cleared on evidence of their own (`own`) | 0 | 2 | 2 |
 | twist | no | yes | yes |
 | red herrings (min–max) / aimed at the obvious suspect | 0–1 / 0 | 1–2 / 0 | 2–3 / 1 |
 | step limit / time budget | 8 / 8 min | 16 / 15 min | 28 / 25 min |
 
 The generator (`refine.run_case(..., profile=)`) explores until `difficulty.targets_met` returns nothing: the
-structural minimums above, motive and means evidence, and a rating at least as hard as the target. The scheduler
+structural minimums above, motive and means evidence, and a rating at least as hard as the target. An innocent is
+cleared on evidence of their own when they are still ruled out once every sign pointing at the culprit is set aside
+(`refine.cleared_alone`); a `clear` step gives one who is not an alibi or a witness
+([generation-and-publishing.md](generation-and-publishing.md)). The scheduler
 follows the profile (no twist step for Easy; herrings up to the profile's maximum, aimed first at the suspect the
 obvious reading points to). Limits: the step limit, the profile's time budget (refinement stops and the case is
 finished as it stands), and the server's hard stop (budget plus 12 minutes for the seed and publishing). Every case

@@ -63,7 +63,9 @@ The user's screenshots are on `~/Desktop` (names contain a narrow no-break space
 | Generated cases in play | `dist/cases/kernel-case.mjs` (records → runtime: history, beliefs, gated clues, accounts, showing evidence, hints, grading) |
 | Characters | `dist/character-turn.mjs` (free-text turns: perspective with character sheet and mood, validation incl. name and spoken-time guards, critic, fallback); `tools/replay-dialogue.mjs` replays a playtest through the proxy |
 | UI | `dist/ui.mjs`, `dist/styles.css` |
-| Generation | `tools/refine-c/premise.py` (premise deck: who, how, why, where; rotation; seed checks), `tools/refine-c/refine.py` (harness, reviewer), `tools/refine-c/publish.py` (`enrich_case` pipeline + `gate`), `tools/refine-c/enrich.py` (answer, loose ends, everyday knowledge, moods, publish review), `server/generator_server.py` |
+| Generation | `tools/refine-c/premise.py` (premise deck: who, how, why, where; rotation; seed checks), `tools/refine-c/refine.py` (harness: parallel drafts, revision in the round, stacking, step critic, `cleared_alone`), `tools/refine-c/publish.py` (`enrich_case` waves, judges, review panel, `repair_wording`, `gate`, scripted-player gate), `tools/refine-c/enrich.py` (answer, loose ends, everyday knowledge, moods, publish review), `server/generator_server.py`. Design and settings: `docs/generation-and-publishing.md` |
+| Run timing | `tools/refine-c/timing.py` (every model call by phase and purpose; `timings.md` in each run; duplicate slow calls), `tools/refine-c/status.py` (the newest run's milestones and timing table) |
+| Regenerating and repairing cases | `tools/refine-c/regenerate.py` (same premise and difficulty; `--from-run`, `--from-kept`), `tools/refine-c/repair_live.py` (bring a published case up to current checks), `tools/refine-c/review_probe.py` (reviewer recall on planted defects), `tools/playtest/gate.mjs` (scripted players on one case) |
 | Cases | `dist/cases/generated/*.json` (the six in the menu), `dist/cases/generated/live/` (generated on this machine, gitignored), `dist/cases/archive/` (retired, not in the menu) |
 | Shared rules | `dist/cases/questions.mjs` (the standard questions; publishing reads them), `dist/places.mjs` (place names mid-sentence); the constable is `CASE.constable` (a setting role), never a fixed id |
 | Playtesting | `tools/playtest/` (`game.mjs` text interface with opaque handles and a private trace; `player.py` agent players with profiles; `run.py` batches, `--plan-from` for paired re-runs (requires `--comparison-registration` and `--registered-arm`; only the registered Arm B is planned from Arm A); `score.py` scorecard and problem records; `judge.py` rubric judge; `report.py` clusters and paired bootstrap comparisons (`--baseline` needs `--comparison-registration` and a passing comparison audit, or `--legacy-descriptive` for a labelled historical description); `replay.mjs` offline check of a dialogue change (`--targets` re-asks given turns); `bugs.mjs` invariant detectors over recorded games; `correctness.py` correctness judge (full transcript, internals, true records); `ledger.jsonl` hypotheses, predictions and results). Method: `docs/self-improvement.md` §6 (observe, explain, predict, design narrowly, test offline, paired experiments one change per arm, conclude) |
@@ -81,6 +83,7 @@ perl -e 'alarm 150; exec @ARGV' node --test --test-timeout=60000 tests/*.test.mj
 .venv/bin/python tools/refine-c/test_sightings.py       # sightings are true and solve-neutral
 .venv/bin/python tools/refine-c/test_surface.py         # evening accounts agree with the speaker's own statements
 .venv/bin/python tools/refine-c/test_questions.py       # questions that reword another are marked same_as
+(cd tools/refine-c && ../../.venv/bin/python -m pytest -q)  # every generation and publishing test (scratch latency history)
 .venv/bin/python tools/refine-c/parity.py               # Python and JS checkers agree on every generated case
 .venv/bin/python scripts/build_report.py --check        # after editing docs/report
 node tools/e2e_dialogue.mjs dist/cases/generated/live/<case>.json   # every character, standard questions, real AI
@@ -96,7 +99,9 @@ the proxy (`prepareCharacterTurn` → `proposeCharacterTurn` → `applyCharacter
 
 - **Saved games keep their case records.** A fix to a published case's content only appears after starting it again
   from Choose a case (or Restart this case, which reloads the file). Code fixes appear on a normal refresh.
-- **Model output shapes vary** (nested wrapper keys, lists instead of maps). Normalise, and retry once on empty output.
+- **Model output shapes vary** (nested wrapper keys, `{"verdicts": {"verdicts": …}}`, lists instead of maps). Normalise (`publish._as_map`), and retry once on empty output.
+- **Judges and writers.** A judge (does this line contradict, leak, misstate?) asks one question, runs at its own effort inside a low-effort phase (register it in `refine.FULL_EFFORT`, as `publish._register_judges` does), and fails an item it leaves unjudged (`publish.judge`). Every writer of a person's words gets `village_brief`, `first_tells` and `kept_back`. Rules about lies read the structure (`certify(...)['false_signs']`), since step-written lies carry no `deceptive` label until publishing writes one.
+- **Publish repairs touch only publishing's words** (`repair_wording`); an issue in the structure stops publication. Do not loop review and repair on an unchanged case: a re-review only re-rolls the verdict.
 - **Anything a player must reason with has to be visible** (time window, traits). Who had an item, or who has a trait, that a culprit
   clue tests is public knowledge recorded in the notebook only once a clue about it is understood (`heldBackPublic`), and
   never added to a person's description; the publish gate refuses public knowledge that would tie a suspect to the
@@ -117,7 +122,8 @@ the proxy (`prepareCharacterTurn` → `proposeCharacterTurn` → `applyCharacter
   source event (or that of what explains it) is caused by an attitude of its subject, so they can say why when pressed.
   The doctor's findings on the body, her notes and the dead man's effects never wait behind another account of hers
   (`roles.examiner_errors`); the step critic re-judges every sign whose gate a step changed (LOCK scope, BOTTLENECK),
-  and the generator publishes only through the strict whole-case review (`LM_STRICT_PUBLICATION_REVIEW=0` to opt out).
+  and the generator publishes only through the strict whole-case review, a panel of narrow reviewers, and the
+  scripted players (`LM_STRICT_PUBLICATION_REVIEW=0` to opt out).
   In play: his briefing names only the doctor in medium and hard cases; nobody may hide a herring's explanation, and the
   doctor hides nothing; an innocent caught lying says why; the closing file explains innocents' lies and unexplained
   herrings; a clue someone keeps goes with them and is handed over (`keeperOf`); shown a clue that needs their own

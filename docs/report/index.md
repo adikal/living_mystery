@@ -151,6 +151,17 @@ Bellweather setting with the original cast, map and art, the generator produced 
 through a bridge (`dist/cases/kernel-case.mjs`) including free-text character dialogue grounded in each character's
 memories and beliefs. See `docs/mystery-kernel.md`.
 
+### Edition 0.28: parallel generation and publishing
+
+Generation and publishing were redesigned around parallel model calls with checks as each result lands
+([10.19](generation.md#10-19-parallel-generation-and-publishing)). Each layer drafts three options on different threads;
+a rejected draft is revised in the same round, and passing drafts for different threads are applied together. A new
+target asks that innocents be cleared on evidence of their own. Publishing writes in parallel waves, gives every writer
+one record of what each person may say, checks each kind of line with a focused judge, and ends with a panel of narrow
+reviewers and a scripted player that must solve the case by its hints. A medium case now takes about 11 minutes to
+generate and 7 to publish, against 40 to 80 minutes before; *A Glove in the Square* and *The Last Train Waits* replace
+the two regenerated menu cases.
+
 ### Edition 0.27: fairness found in human play
 
 Three human plays led to general rules (see [4.9](characters.md#4-9-fairness-rules-from-human-play)). The constable is
