@@ -411,6 +411,10 @@ def structured_delta(before: dict[str, Any], after: dict[str, Any]) -> dict[str,
 
 
 CORPUS_FREEZE = "20261024-235959"   # generation runs and cases after this are not in the paper's corpus
+# the playtest batches in the paper's corpus, as on its evidence date: batches played later (tools/playtest/runs/<new>)
+# are not in it
+PLAYTEST_ARMS = frozenset({"e0-heldout", "e0-train", "e0x-heldout", "e1-heldout", "e1-train", "e2a-heldout", "e2b-heldout",
+                           "e2c-heldout", "e3-base", "e3a", "e3a-train", "e3c", "e3d", "local-gemma"})
 GAME_LOG_FREEZE = "2026-10-13T00:00:00"   # the game log's play sessions in the paper's corpus end on 12 October
 
 
@@ -561,7 +565,8 @@ def inspect_playtests() -> tuple[dict[str, Any], list[Path]]:
     by_arm: Counter[str] = Counter()
     for path in sorted(PLAYTEST_ROOT.glob("**/*.json"), key=relative):
         # Incomplete/new experimental cohorts have their own analyses and must not silently change this historical export.
-        if any(part.startswith("e6-aa-") for part in path.relative_to(PLAYTEST_ROOT).parts):
+        parts = path.relative_to(PLAYTEST_ROOT).parts
+        if any(part.startswith("e6-aa-") for part in parts) or (len(parts) > 1 and parts[0] not in PLAYTEST_ARMS):
             continue
         try:
             value = load_json(path)

@@ -290,3 +290,7 @@ tool that writes published cases (generator, `publish.py`, `backfill.py`, diffic
 publication is finished by the next run; a recovery marker that cannot be trusted is set aside
 (`.publication-transaction.rejected-*.json` in `dist/cases/generated/live/`) with a warning, and the case it names
 stays unlisted.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

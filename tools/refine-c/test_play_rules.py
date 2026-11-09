@@ -103,6 +103,8 @@ class Wording(unittest.TestCase):
                         else 'Mrs Finch fetched me at about twenty to seven, and I examined the body.')
                 return {'accounts': {i['id']: text for i in items}}
             items = items['accounts'] if isinstance(items, dict) else items
+            if system == publish.LEAK:
+                return {'verdicts': {i['id']: {'leaks': False} for i in items}}
             return {'verdicts': {i['id']: {'v': 'honest'} for i in items}}
         refine.llm_json = fake
         publish.add_morning_accounts(case)

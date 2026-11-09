@@ -1,26 +1,28 @@
 [
  {
-  "id": "mk-live-20261003-082807",
-  "file": "mk-live-20261003-082807.json",
-  "title": "Cocoa in the Vestry",
+  "id": "mk-live-20261108-190745",
+  "file": "mk-live-20261108-190745.json",
+  "title": "The Lamp Left Burning",
   "solveDepth": 3,
-  "blurb": "Vera Lacey was found dead at St. Alden’s vestry. Depth 3, 25 clues, 4 suspects.",
-  "generated": "20261003-082807",
+  "blurb": "Vera Lacey was found dead at St. Alden’s vestry. Depth 3, 30 clues, 4 suspects.",
+  "generated": "20261108-190745",
   "difficulty": {
    "level": "easy",
-   "score": 5.25
+   "score": 4.75,
+   "target": "easy"
   }
  },
  {
-  "id": "mk-live-20261002-224855",
-  "file": "mk-live-20261002-224855.json",
-  "title": "Death at Vale Manor",
-  "solveDepth": 5,
-  "blurb": "Clara Vale was found dead at Vale Manor. Depth 5, 28 clues, 4 suspects.",
-  "generated": "20261002-224855",
+  "id": "mk-live-20261108-155618",
+  "file": "mk-live-20261108-155618.json",
+  "title": "The Third Stair",
+  "solveDepth": 6,
+  "blurb": "Clara Vale was found dead at Vale Manor. Depth 6, 40 clues, 4 suspects.",
+  "generated": "20261108-155618",
   "difficulty": {
-   "level": "medium",
-   "score": 7.75
+   "level": "hard",
+   "score": 9.75,
+   "target": "medium"
   }
  },
  {
@@ -28,7 +30,7 @@
   "file": "mk-live-20261025-153949.json",
   "title": "A Glove in the Square",
   "solveDepth": 5,
-  "blurb": "Hugo Vale was found dead at the village square. Depth 5, 41 clues, 4 suspects.",
+  "blurb": "Hugo Vale was found dead at the village square. Depth 5, 40 clues, 4 suspects.",
   "generated": "20261025-153949",
   "difficulty": {
    "level": "medium",
@@ -36,39 +38,42 @@
   }
  },
  {
-  "id": "mk-live-20261002-225824",
-  "file": "mk-live-20261002-225824.json",
-  "title": "Death at the Post Office",
-  "solveDepth": 5,
-  "blurb": "Edmund Vale was found dead at the post office. Depth 5, 38 clues, 4 suspects.",
-  "generated": "20261002-225824",
+  "id": "mk-live-20261108-143345",
+  "file": "mk-live-20261108-143345.json",
+  "title": "A Letter Never Posted",
+  "solveDepth": 7,
+  "blurb": "Edmund Vale was found dead at the post office. Depth 7, 67 clues, 4 suspects.",
+  "generated": "20261108-143345",
   "difficulty": {
    "level": "hard",
-   "score": 8.0
+   "score": 11.5,
+   "target": "hard"
   }
  },
  {
-  "id": "mk-live-20261025-135936",
-  "file": "mk-live-20261025-135936.json",
+  "id": "mk-live-20261108-144216",
+  "file": "mk-live-20261108-144216.json",
   "title": "The Last Train Waits",
-  "solveDepth": 8,
-  "blurb": "Silas Voss was found dead at Bellweather Halt. Depth 8, 53 clues, 4 suspects.",
-  "generated": "20261025-135936",
+  "solveDepth": 7,
+  "blurb": "Silas Voss was found dead at Bellweather Halt. Depth 7, 53 clues, 4 suspects.",
+  "generated": "20261108-144216",
   "difficulty": {
    "level": "hard",
-   "score": 11.75
+   "score": 13.0,
+   "target": "hard"
   }
  },
  {
-  "id": "mk-live-20261003-133036",
-  "file": "mk-live-20261003-133036.json",
+  "id": "mk-live-20261108-121102",
+  "file": "mk-live-20261108-121102.json",
   "title": "A Fall Before Midnight",
-  "solveDepth": 5,
-  "blurb": "The Reverend Thomas Hale was found dead at Vale Manor. Depth 5, 33 clues, 4 suspects.",
-  "generated": "20261003-133036",
+  "solveDepth": 8,
+  "blurb": "The Reverend Thomas Hale was found dead at Vale Manor. Depth 8, 58 clues, 4 suspects.",
+  "generated": "20261108-121102",
   "difficulty": {
    "level": "hard",
-   "score": 8.75
+   "score": 18.5,
+   "target": "hard"
   }
  }
 ]

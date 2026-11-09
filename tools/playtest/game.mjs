@@ -120,7 +120,8 @@ export class PlaytestGame {
     // the living morning, as in the game: one detached round after the action
     if (this.director && this.ai && !this.done) {
       const d = await directMorning(this.s, {endpoint: this.endpoint}).catch(e => ({status: 'error', error: String(e.message)}));
-      private_.director = {status: d.status, plan: d.plan ? Object.keys(d.plan) : [], audit: d.audit ? {code: d.audit.code, solvable: d.audit.solvable} : null};
+      private_.director = {status: d.status, plan: d.plan ? Object.keys(d.plan) : [], audit: d.audit ? {code: d.audit.code, solvable: d.audit.solvable,
+        promptChars: d.audit.promptChars} : null, ...(d.error ? {error: d.error} : {})};
     }
     const news = this.s.events.slice(Math.max(before, this.seen)).filter(e => e.playerText && !['clock', 'command'].includes(e.kind))
       .map(e => ({time: timeLabel(e.minute), speaker: e.kind === 'speech' ? this.T.PEOPLE[e.actor]?.name ?? (e.actor === 'player' ? 'You' : e.actor)

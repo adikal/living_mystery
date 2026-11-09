@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {registerKernelCase, createSession, dispatch, caseTables} from '../dist/engine.mjs';
 
 // a case kept for tests after it left the menu is read from the archive
-const load = f => JSON.parse(readFileSync(new URL(['mk-live-20261002-222517.json', 'mk-live-20261002-235614.json'].includes(f) ? `../dist/cases/archive/2026-10/${f}` : `../dist/cases/generated/${f}`, import.meta.url), 'utf8'));
+const load = f => JSON.parse(readFileSync(new URL(['mk-live-20261002-222517.json', 'mk-live-20261002-235614.json', 'mk-live-20261002-225824.json', 'mk-live-20261002-224855.json'].includes(f) ? `../dist/cases/archive/2026-10/${f}` : `../dist/cases/generated/${f}`, import.meta.url), 'utf8'));
 const truthOf = kc => kc.question.candidates.find(h => h.id === kc.question.truth).facts.actor;
 
 // Collect every reachable clue by examining and asking, in dependency order, with the plain (scripted) actions.
@@ -121,4 +121,13 @@ test('a person knows what they did this morning: their own completed steps are i
   if (s.world.player.location !== s.world.npcs[pid].location) dispatch(s, {type: 'move', to: s.world.npcs[pid].location});
   const t = prepareCharacterTurn(s, {person: pid, text: 'Where have you been this morning?', action: null});
   assert.ok(t.context.character.didToday.some(x => x.did.startsWith('I went to')), JSON.stringify(t.context.character.didToday));
+});
+
+test('a reply labelled clarify that asked nothing does not stop a question back', async () => {
+  const {validateCharacterProposal} = await import('../dist/character-turn.mjs');
+  const history = text => [{speaker: 'player', text: 'But you said you rang?'}, {speaker: 'edmund', text, intent: 'clarify'}];
+  const ticket = text => ({person: 'edmund', context: {character: {conversation: {lastIntent: 'clarify'}, history: history(text)}}});
+  const r = validateCharacterProposal(ticket('I said I tried the exchange and nobody answered.'), {intent: 'clarify'});
+  assert.ok(!/^repeated_clarify/.test(r.reason ?? ''), r.reason);
+  assert.match(validateCharacterProposal(ticket('What do you mean by that?'), {intent: 'clarify'}).reason, /^repeated_clarify/);
 });

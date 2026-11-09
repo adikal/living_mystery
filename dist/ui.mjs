@@ -782,9 +782,8 @@ function renderTour(){
 function maybeOpening(){if(!$('#modal')?.open&&!openingSeen()&&session.world.status!=='solved'&&!session.events.some(e=>e.kind==='command'))openingModal(0);}
 
 function startGenerated(id,title){
-  dlog('case_start',{id,title});
   const fresh=createSession(17,id);
-  cancelCharacter();stopReplay();session=fresh;resetRealized();boardNotes={};healthCache=null;cursor=null;chat=null;chosenClue=null;reasonSuspect=null;detailPanel=null;missedRevealed=false;sceneTransition=null;actionGroup='inspect';mode='game';persist();$('#modal')?.close?.();render();toast(`Case ready: ${title}`);maybeOpening();
+  cancelCharacter();stopReplay();session=fresh;dlog('case_start',{id,title});resetRealized();boardNotes={};healthCache=null;cursor=null;chat=null;chosenClue=null;reasonSuspect=null;detailPanel=null;missedRevealed=false;sceneTransition=null;actionGroup='inspect';mode='game';persist();$('#modal')?.close?.();render();toast(`Case ready: ${title}`);maybeOpening();
 }
 async function genFetch(path,method='GET',payload=null){
   const r=await fetch(`${GENERATOR}${path}`,{method,cache:'no-store',headers:method==='POST'?{'X-Living-Mystery':'generator-v1',...(payload?{'content-type':'application/json'}:{})}:{},...(payload?{body:JSON.stringify(payload)}:{})});

@@ -9,7 +9,7 @@ import case_oracle  # noqa: E402
 
 
 def load():
-    with open(os.path.join(ROOT, 'dist', 'cases', 'generated', 'mk-live-20261002-224855.json')) as f:
+    with open(os.path.join(ROOT, 'dist', 'cases', 'archive', '2026-10', 'mk-live-20261002-224855.json')) as f:
         return json.load(f)
 
 

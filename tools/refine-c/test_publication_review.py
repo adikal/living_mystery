@@ -221,6 +221,7 @@ class EnrichmentPhases(unittest.TestCase):
             mock.patch.object(publish, 'add_sightings', side_effect=operation('sightings')),
             mock.patch.object(publish, 'record_contradictions', side_effect=operation('contradictions')),
             mock.patch.object(publish, 'add_declines', side_effect=operation('declines')),
+            mock.patch.object(publish, 'add_fallback_lines', side_effect=operation('fallbacks')),
             mock.patch.object(publish.enrich, 'add_unlock_groups', side_effect=operation('unlock')),
             mock.patch.object(publish.enrich, 'review_publish', side_effect=operation('review', {})),
             mock.patch.object(publish, 'finish_wording', side_effect=operation('finish')),
@@ -234,7 +235,7 @@ class EnrichmentPhases(unittest.TestCase):
         # structure first, in order; then two waves of independent wording phases (any order within a wave, each on
         # its own copy, merged back); then the serial review and the last pass
         self.assertEqual(names[:4], ['prune', 'evenings', 'answer', 'accepted'])
-        first = {'surface', 'morning', 'medical', 'concessions', 'knowledge', 'moods', 'declines', 'sightings', 'contradictions'}
+        first = {'surface', 'morning', 'medical', 'concessions', 'knowledge', 'moods', 'declines', 'fallbacks', 'sightings', 'contradictions'}
         second = {'truth', 'questions', 'reactions', 'show', 'art'}
         self.assertEqual(set(names[4:4 + len(first)]), first)
         self.assertLess(names.index('sightings'), names.index('contradictions'))

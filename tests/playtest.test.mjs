@@ -6,7 +6,7 @@ import {PlaytestGame} from '../tools/playtest/game.mjs';
 import {hintFollower} from '../tools/playtest/scripted.mjs';
 
 const CASES = ['mk-live-20261002-235614.json', 'mk-live-20261002-224855.json', 'mk-live-20261002-225824.json'];
-const file = f => new URL(['mk-live-20261002-222517.json', 'mk-live-20261002-235614.json'].includes(f) ? `../dist/cases/archive/2026-10/${f}` : `../dist/cases/generated/${f}`, import.meta.url).pathname;
+const file = f => new URL(['mk-live-20261002-222517.json', 'mk-live-20261002-235614.json', 'mk-live-20261002-225824.json', 'mk-live-20261002-224855.json'].includes(f) ? `../dist/cases/archive/2026-10/${f}` : `../dist/cases/generated/${f}`, import.meta.url).pathname;
 
 test('the observation holds only what a person can see: no record ids, no truth, no hidden leads', async () => {
   for (const f of CASES) {

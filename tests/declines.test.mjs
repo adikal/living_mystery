@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {registerKernelCase, createSession, dispatch, caseTables} from '../dist/engine.mjs';
-import {prepareCharacterTurn, applyCharacterTurn} from '../dist/character-turn.mjs';
+import {prepareCharacterTurn, applyCharacterTurn, CHANGE_TACK} from '../dist/character-turn.mjs';
 import {NEUTRAL_LINE} from '../dist/kernel.mjs';
 
 const base = () => JSON.parse(readFileSync(new URL('../dist/cases/archive/2026-10/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
@@ -50,5 +50,6 @@ test('a rejected free-text account choice declines without committing that accou
   assert.ok(!s.world.player.evidence.some(e => e.clue === first.account.accountTopic));
   const again = rejectedChoosing(s, pid, 'And once more?', accounts => accounts.find(a => a.id === first.account.id) ?? accounts[0]);
   assert.equal(again.account.id, first.account.id);
-  assert.equal(again.said, lines[0]);
+  assert.equal(again.said, CHANGE_TACK, 'the same decline twice running becomes a change of tack');
+  assert.ok(!s.world.player.evidence.some(e => e.clue === first.account.accountTopic));
 });

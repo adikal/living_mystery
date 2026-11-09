@@ -144,5 +144,65 @@
    "level": "medium",
    "score": 7.25
   }
+ },
+ {
+  "id": "mk-live-20261003-133036",
+  "file": "mk-live-20261003-133036.json",
+  "title": "A Fall Before Midnight",
+  "solveDepth": 5,
+  "blurb": "The Reverend Thomas Hale was found dead at Vale Manor. Depth 5, 33 clues, 4 suspects.",
+  "generated": "20261003-133036",
+  "difficulty": {
+   "level": "hard",
+   "score": 8.75
+  }
+ },
+ {
+  "id": "mk-live-20261002-225824",
+  "file": "mk-live-20261002-225824.json",
+  "title": "Death at the Post Office",
+  "solveDepth": 5,
+  "blurb": "Edmund Vale was found dead at the post office. Depth 5, 38 clues, 4 suspects.",
+  "generated": "20261002-225824",
+  "difficulty": {
+   "level": "hard",
+   "score": 8.0
+  }
+ },
+ {
+  "id": "mk-live-20261025-135936",
+  "file": "mk-live-20261025-135936.json",
+  "title": "The Last Train Waits",
+  "solveDepth": 8,
+  "blurb": "Silas Voss was found dead at Bellweather Halt. Depth 8, 53 clues, 4 suspects.",
+  "generated": "20261025-135936",
+  "difficulty": {
+   "level": "hard",
+   "score": 11.75
+  }
+ },
+ {
+  "id": "mk-live-20261002-224855",
+  "file": "mk-live-20261002-224855.json",
+  "title": "Death at Vale Manor",
+  "solveDepth": 5,
+  "blurb": "Clara Vale was found dead at Vale Manor. Depth 5, 28 clues, 4 suspects.",
+  "generated": "20261002-224855",
+  "difficulty": {
+   "level": "medium",
+   "score": 7.75
+  }
+ },
+ {
+  "id": "mk-live-20261003-082807",
+  "file": "mk-live-20261003-082807.json",
+  "title": "Cocoa in the Vestry",
+  "solveDepth": 3,
+  "blurb": "Vera Lacey was found dead at St. Alden’s vestry. Depth 3, 25 clues, 4 suspects.",
+  "generated": "20261003-082807",
+  "difficulty": {
+   "level": "easy",
+   "score": 5.25
+  }
  }
 ]

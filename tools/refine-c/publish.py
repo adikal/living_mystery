@@ -256,7 +256,7 @@ LAST_REVIEW_ISSUES = {}
 
 def _register_judges():
     import refine
-    refine.FULL_EFFORT.update({VISIBLE, LINES_AGREE, SURFACE_TRUTH, NO_FACT, AGREES, LEAK, SAME, REACT_CHECK,
+    refine.FULL_EFFORT.update({VISIBLE, LINES_AGREE, SURFACE_TRUTH, NO_FACT, AGREES, LEAK, SAME, REACT_CHECK, PROMISE, SAME_BUT, MEDICAL_AGREES,
                                PUBLICATION_REVIEW_PROMPT, *(lens_prompt(c) for _, c in REVIEW_LENSES), enrich.REVIEW, enrich.KNOW_CHECK})
 
 
@@ -821,9 +821,10 @@ description: calling a sister a wife is a contradiction), or speak of the victim
 the landlady" when the landlady is dead is a contradiction)? Being vaguer or leaving things out is not a contradiction.
 Return {"verdicts": {"<id>": {"agrees": true | false, "why": "<for a contradiction: what differs>"}}}."""
 
-LEAK = """Each item is a person's first, vague account of their evening in a village mystery, and 'keeps_back': what they
-admit only later, once evidence presses them. Does the account already tell or plainly point to something in keeps_back
-(the act, the object, where they went for it)? Leaving it out, or being merely vague about the evening, is fine.
+LEAK = """Each item is a person's first, vague account of their evening or their morning in a village mystery, and
+'keeps_back': what they admit only later, once evidence presses them, and what is still hidden behind what they will say
+then. Does the account already tell or plainly point to something in keeps_back (the act, the object, a detail of it,
+where they went for it)? Leaving it out, or being merely vague, is fine.
 Return {"verdicts": {"<id>": {"leaks": true | false, "what": "<the kept-back thing it gives away>"}}}."""
 
 
@@ -834,8 +835,10 @@ def own_statements(case, pid):
             and not x.get('requires') and not x.get('surface') and not x.get('morning') and not x.get('sighting')]
 
 
-SURFACE_CHECK = 5   # 2: accounts are also checked for who people are (kinship, roles); 3: the victim is dead;
-                    # 5: nothing they keep back is given away (its own focused check)
+SURFACE_CHECK = 6   # 2: accounts are also checked for who people are (kinship, roles); 3: the victim is dead;
+                    # 5: nothing they keep back is given away (its own focused check); 6: nor what is still hidden behind
+                    # their own later account (withheld)
+MORNING_CHECK = 1   # 1: a morning account gives away nothing withheld (the print Pike covered, A Fall Before Midnight)
 
 
 def village_brief(case):
@@ -862,11 +865,15 @@ def first_tells(case, pid):
 
 def kept_back_events(case, pid):
     """The ids of the events a person admits only once a clue presses them: the events behind locked clues they speak
-    or that came of their own doings."""
+    or that came of their own doings, and, for the culprit, the crime itself (never admitted: playtests, November 8, a
+    written reaction had the culprit say he "only talked on the landing" where she fell)."""
     evs = {e['id']: e for e in case['events']}
     mine = lambda e: pid == e.get('agent') or pid in e.get('others', [])
     ids = {x['source'] for x in case['signs'] if x.get('requires') and x.get('source') in evs
            and (x.get('speaker') == pid or mine(evs[x['source']]))}
+    crime = case['question']['crime']['event']
+    if pid == enrich.truth_actor(case) and crime in evs:
+        ids.add(crime)
     return sorted(ids, key=lambda i: evs[i]['start'])
 
 
@@ -875,6 +882,24 @@ def kept_back(case, pid):
     of the evening leaves these out."""
     evs = {e['id']: e for e in case['events']}
     return [evs[i]['summary'] for i in kept_back_events(case, pid)]
+
+
+TOLD_EVENTS = ('discovery', 'examination')   # always told (the morning writer sees them by their type alone)
+
+
+def withheld(case, pid):
+    """What a person's first accounts (evening and morning) must not give away: what they admit only once pressed
+    (kept_back; finding the body and examining it are told, but not what came of them that is still to be found), and
+    every physical clue locked behind an account they themselves give only once pressed (Pike's covered print opens
+    only once he has owned up to the boathouse, so he cannot mention it this morning). A clue that an account they
+    tell freely leads to is a lead, not a secret."""
+    signs, evs = {x['id']: x for x in case['signs']}, {e['id']: e for e in case['events']}
+    held = kept_back_events(case, pid)
+    told = {i for i in held if evs[i].get('type') in TOLD_EVENTS}
+    pressed = lambda r: signs.get(r, {}).get('kind') == 'testimony' and signs[r].get('speaker') == pid and signs[r].get('requires')
+    behind = [x for x in case['signs'] if x.get('kind') not in ('testimony', 'public') and x.get('text') and x.get('requires')
+              and (x.get('source') in told or any(pressed(r) for r in x['requires']))]
+    return [evs[i]['summary'] for i in held if i not in told] + [f"{x.get('title') or 'a clue'}: {x['text']}" for x in behind]
 
 
 def who_is_who(case):
@@ -916,21 +941,30 @@ def surface_disagreements(case, signs):
              for x in signs]
     if not items:
         return {}
-    leaks = [{'id': x['id'], 'account': x['text'], 'keeps_back': kept_back(case, x['speaker'])} for x in signs if kept_back(case, x['speaker'])]
     with ThreadPoolExecutor(2) as pool:
         agrees = provenance.submit_with_context(pool, judge, AGREES, json.dumps(items), [i['id'] for i in items], 1500)
-        leaked = provenance.submit_with_context(pool, judge, LEAK, json.dumps(leaks), [i['id'] for i in leaks], 1500) if leaks else None
+        leaked = provenance.submit_with_context(pool, leaks, case, signs)
         out = agrees.result()
-        gave = leaked.result() if leaked else {}
-    checked = {i['id'] for i in leaks}
+        gave = leaked.result()
     bad = {}
     for i in items:
-        v, w = out.get(i['id']), gave.get(i['id'])
+        v = out.get(i['id'])
         if not isinstance(v, dict) or v.get('agrees') is not True:
             bad[i['id']] = str((v or {}).get('why', '') if isinstance(v, dict) else 'not judged')[:300] or 'not judged'
-        elif i['id'] in checked and (not isinstance(w, dict) or w.get('leaks') is not False):
-            bad[i['id']] = ('gives away what they admit only once pressed: ' + str((w or {}).get('what', '') if isinstance(w, dict) else 'not judged'))[:300]
+        elif i['id'] in gave:
+            bad[i['id']] = gave[i['id']]
     return bad
+
+
+def leaks(case, signs):
+    """{sign id: why} for first accounts (evening or morning) that give away what their speaker withholds. An account
+    the judge leaves unjudged fails (a missing verdict never passes text)."""
+    items = [{'id': x['id'], 'account': x['text'], 'keeps_back': withheld(case, x['speaker'])} for x in signs if withheld(case, x['speaker'])]
+    if not items:
+        return {}
+    gave = judge(LEAK, json.dumps(items), [i['id'] for i in items], 1500)
+    return {i['id']: ('gives away what they admit only once pressed: ' + str((w or {}).get('what', '') if isinstance(w, dict) else 'not judged'))[:300]
+            for i in items for w in [gave.get(i['id'])] if not isinstance(w, dict) or w.get('leaks') is not False}
 
 
 def add_surface_accounts(case, rounds=2, feedback=None):
@@ -970,7 +1004,7 @@ def add_surface_accounts(case, rounds=2, feedback=None):
                   'keeps_back': kept_back(case, pid),
                   'attitudes': [f"{a['mode']}: {a['content']}" for a in case['attitudes'] if a['agent'] == pid],
                   'tells': own_statements(case, pid), 'who': who_is_who(case), **({'previous_attempt': failed[pid]} if pid in failed else {})} for pid in todo]
-        out = llm_json(SURFACE, json.dumps(items), 2500, model=CRITIC_MODEL).get('accounts', {})
+        out = _accounts(llm_json(SURFACE, json.dumps(items), 2500, model=CRITIC_MODEL), todo)
         new = []
         for pid in todo:
             text = str(out.get(pid, '')).strip()
@@ -1021,10 +1055,13 @@ def add_morning_accounts(case, rounds=3):
     crime = case['question']['crime']['event']
     # what the writer may see: the person's own morning events that are not the source of any clue (the discovery and the
     # examination always), so the account cannot reveal evidence it was never shown
+    # (nor what they admit only once pressed)
     sources = {x.get('source') for x in case['signs']}
+    held = {pid: set(kept_back_events(case, pid)) for pid in people}
     own = lambda pid: sorted([e for e in case['events'] if (pid == e.get('agent') or pid in (e.get('others') or []))
                               and morning <= e['start'] < start and e['id'] != crime
-                              and (e.get('type') in ('discovery', 'examination') or e['id'] not in sources)], key=lambda e: e['start'])
+                              and (e.get('type') in ('discovery', 'examination') or (e['id'] not in sources and e['id'] not in held[pid]))],
+                             key=lambda e: e['start'])
     # The discovery and the examination are always told, but what they produced that the detective must still find
     # (the notebook from the pockets) is not: the writer sees them by their type alone, and code rejects a line that
     # names a clue still to be found.
@@ -1034,6 +1071,16 @@ def add_morning_accounts(case, rounds=3):
     said = lambda e: (f"{'found the body' if e.get('type') == 'discovery' else 'examined the body'}"
                       if e['id'] in locked_sources else e.get('summary'))
     n, failed = 0, {}
+    # accounts already published are checked too (a case published before the check): one that gives away what its
+    # speaker withholds is written again with the reason
+    old = [x for x in case['signs'] if x.get('morning') and x.get('leak_checked') != MORNING_CHECK]
+    gave = {**leaks(case, old), **{x['id']: x.get('surface_why') or 'an innocent account that is not true' for x in old
+                                   if x['speaker'] != truth and x.get('surface_checked') == 'cover'}}
+    failed.update({x['speaker']: {'text': x['text'], 'not_true_because': gave[x['id']]} for x in old if x['id'] in gave})
+    with SIGNS: case['signs'][:] = [x for x in case['signs'] if x['id'] not in gave]
+    for x in old:
+        if x['id'] not in gave:
+            x['leak_checked'] = MORNING_CHECK
     for _ in range(rounds):
         have = {x['speaker'] for x in case['signs'] if x.get('morning')}
         todo = [pid for pid in people if pid != victim and pid not in have and own(pid)
@@ -1045,11 +1092,14 @@ def add_morning_accounts(case, rounds=3):
                   **({'previous_attempt': failed[pid]} if pid in failed else {}),
                   # only the culprit needs to know what to hide
                   'hides': [a['content'] for a in case['attitudes'] if a['agent'] == pid] if pid == truth else []} for pid in todo]
-        out = llm_json(MORNING, json.dumps(items), 2500, model=CRITIC_MODEL).get('accounts', {})
+        out = _accounts(llm_json(MORNING, json.dumps(items), 2500, model=CRITIC_MODEL), todo)
         named = {}
         for pid in todo:
             text = str(out.get(pid, '')).strip()
-            if text and enrich.mentions_clue(text, nouns):
+            # a word of what they were given to tell is theirs to say ("the foot of the terrace steps" where the body lay,
+            # though a print by the steps is still to be found)
+            given = {w for e in own(pid) for w in re.findall(r'[a-z]+', str(said(e)).lower())}
+            if text and enrich.mentions_clue(text, {n for n in nouns if n not in given}):
                 named[pid] = {'text': text, 'not_true_because': 'it names something the detective has yet to find; leave it out'}
                 continue
             if text and not re.search(r'\d', text) and len(text.split()) <= 80:
@@ -1058,9 +1108,16 @@ def add_morning_accounts(case, rounds=3):
                                                      'text': text, 'ask': 'What did you do this morning?'})
                 n += 1
         mark_surface_truth(case)
-        # an innocent's morning that is not honest is the wording's fault, not a lie with a reason: rewrite, then drop
-        bad = [x['id'] for x in case['signs'] if x.get('morning') and x['speaker'] != truth and x.get('surface_checked') == 'cover']
-        failed = {**named, **{x['speaker']: {'text': x['text'], 'not_true_because': x.get('surface_why', '')} for x in case['signs'] if x['id'] in bad}}
+        # an innocent's morning that is not honest is the wording's fault, not a lie with a reason: rewrite, then drop;
+        # anyone's that gives away what they withhold, likewise
+        fresh = [x for x in case['signs'] if x.get('morning') and x['speaker'] in todo]
+        gave = leaks(case, fresh)
+        bad = [x['id'] for x in fresh if x['id'] in gave or (x['speaker'] != truth and x.get('surface_checked') == 'cover')]
+        failed = {**named, **{x['speaker']: {'text': x['text'], 'not_true_because': gave.get(x['id']) or x.get('surface_why', '')}
+                              for x in fresh if x['id'] in bad}}
+        for x in fresh:
+            if x['id'] not in bad:
+                x['leak_checked'] = MORNING_CHECK
         case['signs'] = [x for x in case['signs'] if x['id'] not in bad]
         if _ == rounds - 1 and bad:
             case.setdefault('morning_dropped', []).extend(bad)
@@ -1288,16 +1345,21 @@ says aloud when showing it to someone: one or two natural sentences that name wh
   so?"). Otherwise 'to' is null and there is no 'direct'.
 - 'who' says how each person is addressed: name people exactly that way (two people may share a surname: "Mr Vale"
   is only the one 'who' calls that).
+- Each line is said to one person (show: a third person; confront: the speaker or the person behaving; direct: 'to').
+  "You" and "your" mean that listener only, and "your" only for what the clue shows is theirs. Only 'confront' may
+  refer to what the listener told the detective: the others cannot know the listener has said anything yet.
 - Add no facts that are not in the clue. At most 35 words each. End with a question mark.
 Return {"lines": {"<clue id>": {"show": "...", "confront": "...", "to": "<person id or null>", "direct": "..."}}}."""
 
 REACT_CHECK = """Each item is what a character in a 1920s village mystery says when the detective shows them a clue, with
 what they have already told the detective ('tells'), what they admit only once pressed ('keep_back'), what everyone
-knows ('public'), how the detective came by the clue ('how_found') and the clue itself. Is the reply consistent? It
-fails if it contradicts 'tells', 'public' or 'how_found' (unless the clue itself disproves what they told), gives away
-something in 'keep_back' that neither the clue nor how it was found shows, or names someone by a form of address 'who'
-does not give them, or contradicts 'reading' (what the clue truly shows, when given). A culprit deflecting or
-minimising is fine; so is a reply that says little.
+knows ('public'), how the detective came by the clue ('how_found') and the clue itself (for an account, 'said_by' is who
+told it). Is the reply consistent? It fails if it contradicts 'tells', 'public' or 'how_found' (unless the clue itself
+disproves what they told), gives away something in 'keep_back' that neither the clue nor how it was found shows, or
+names someone by a form of address 'who' does not give them, or contradicts 'reading' (what the clue truly shows, when
+given), or gets wrong who did or said what in the clue (taking another person's act or words as the character's own: "I
+posted it myself" of a letter someone else posted). A culprit deflecting or minimising is fine; so is a reply that says
+little.
 Return {"verdicts": {"<key>": {"ok": true | false, "why": "<for a failure: what is wrong>"}}}."""
 
 REACT = """You write how characters in a 1920s English village mystery react when the detective shows them a clue.
@@ -1331,6 +1393,15 @@ def _as_map(value, key_names=('id', 'key'), text_names=('text', 'reaction', 'lin
     return out
 
 
+def _accounts(raw, todo):
+    """{person id: text} from a writer's reply. Asked for one person, a model sometimes returns the text itself in place
+    of the map (A Fall Before Midnight's repair, November 8)."""
+    out = (raw or {}).get('accounts', raw) if isinstance(raw, dict) else raw
+    if isinstance(out, str):
+        return {todo[0]: out} if len(todo) == 1 else {}
+    return {k: v for k, v in _as_map(out, text_names=('text', 'account', 'reply')).items() if isinstance(v, str)}
+
+
 def in_parallel(work, chunks):
     """work(chunk) for each chunk at once (the calls of one wording phase), results in chunk order. A phase's single big
     call was its long pole (show lines 51 s, reactions 69 s in sequential chunks, Last Train, October 25)."""
@@ -1347,11 +1418,33 @@ def _digits_ok(text, allowed):
     return all(d in have for d in re.findall(r'\d+', text))
 
 
-LINES_AGREE = """For each clue of a 1920s village mystery you get its text and the lines the detective says about it: 'show'
-(putting it to someone else) and 'confront' (putting a person's own account back to them). Does each line say only what
+LINES_AGREE = """For each clue of a 1920s village mystery you get its text, whose account or behaviour it is ('speaker',
+'about'), and the lines the detective says about it: 'show' (said to a third person), 'confront' (said to the speaker of
+an account or the person behaving) and 'direct' (said to 'to', the person the clue concerns). Does each line say only what
 the text says (it may be shorter, and may name the speaker)? A line that adds or changes a fact (a place, a time, a
-person, an action, another account's content) does not agree.
-Return {"verdicts": {"<id>": {"agrees": true | false, "why": "<for a disagreement: what differs>"}}}."""
+person, an action, another account's content) does not agree. Nor does a line that gets wrong who said or did what for
+its listener: "you" or "your" for anyone but that listener ("You told me..." said to someone who is not the speaker; "your
+letter" for someone else's), or, outside 'confront', anything the listener is supposed to have told the detective.
+Return {"verdicts": {"<id>": {"agrees": true | false, "why": "<for a disagreement: which line, and what differs>"}}}."""
+
+# The version of the line check: lines checked under an earlier one are checked again (version 2 added who each line
+# is said to, after a 'direct' line put Pike's account to Miss Vale as her own, A Fall Before Midnight, November 8).
+LINES_CHECK_VERSION = 2
+
+
+def lines_key(x):
+    """What a clue's lines were checked against: its text, under the current line check."""
+    return text_key(f"lines-v{LINES_CHECK_VERSION}|{x.get('text')}")
+
+
+# A line said to someone other than an account's speaker that gives the account to its listener ("You told me...").
+_LISTENER_SAID = re.compile(r"\byou('ve| have| had| now)? (told|said|say|mentioned|claimed|claim)\b", re.I)
+
+
+def misaddressed(x, key, line):
+    """True when a line about an account gives the account to its listener: 'show' and 'direct' are said to someone who
+    did not give it (only 'confront' is said to its speaker)."""
+    return x.get('kind') == 'testimony' and key in ('show', 'direct') and bool(_LISTENER_SAID.search(str(line or '')))
 
 
 TITLES = ('Mr', 'Mrs', 'Miss', 'Dr', 'Constable', 'Reverend')
@@ -1417,32 +1510,39 @@ def text_key(text):
     return hashlib.sha1(str(text or '').encode()).hexdigest()[:12]
 
 
-def check_lines(case):
+def check_lines(case, final=False):
     """Lines written for a clue's text are kept only while they say what the text says: lines not yet checked against
     the current text are checked, and dropped if they add or change a fact, so add_show_lines writes them again.
-    Returns the number dropped."""
+    final: the last check, after which nothing is written again: a line the judge left unjudged is dropped too (a
+    missing verdict never passes text; the game then uses its plain line for that clue). Returns the number dropped."""
     from refine import llm_json, CRITIC_MODEL
     n = 0
-    for x in case['signs']:                            # a form of address no one answers to: written again
-        if any(wrong_addresses(x.get(k), f"{x.get('text')} {history_text(case)}") for k in ('show', 'confront', 'direct')):
+    for x in case['signs']:     # a form of address no one answers to, or an account given to its listener: written again
+        if any(wrong_addresses(x.get(k), f"{x.get('text')} {history_text(case)}") or misaddressed(x, k, x.get(k))
+               for k in ('show', 'confront', 'direct')):
             for k in ('show', 'confront', 'direct', 'lines_for'):
                 x.pop(k, None)
             n += 1
-    todo = [x for x in case['signs'] if (x.get('show') or x.get('confront')) and x.get('lines_for') != text_key(x.get('text'))]
+    todo = [x for x in case['signs'] if (x.get('show') or x.get('confront') or x.get('direct')) and x.get('lines_for') != lines_key(x)]
     if not todo:
         return n
-    items = [{'id': x['id'], 'text': x.get('text'), **{k: x[k] for k in ('show', 'confront') if x.get(k)}} for x in todo]
-    out = _as_map(llm_json(LINES_AGREE, json.dumps(items), 4000, model=CRITIC_MODEL).get('verdicts', {}))
+    names = {p['id']: p['name'] for p in case['people']}
+    items = [{'id': x['id'], 'text': x.get('text'), **{k: names.get(x.get(k)) for k in ('speaker', 'about', 'to') if names.get(x.get(k))},
+              **{k: x[k] for k in ('show', 'confront', 'direct') if x.get(k)}} for x in todo]
+    out = {}
+    for raw in in_parallel(lambda chunk: llm_json(LINES_AGREE, json.dumps(chunk), 4000, model=CRITIC_MODEL),
+                           [items[i:i + 20] for i in range(0, len(items), 20)]):
+        out.update(_as_map(raw.get('verdicts', {})))
     for x in todo:
         v = out.get(x['id'])
-        if not isinstance(v, dict):
+        if not isinstance(v, dict) and not final:
             continue                                   # no verdict: checked again next time
-        if v.get('agrees') is False:
+        if not isinstance(v, dict) or v.get('agrees') is False:
             for k in ('show', 'confront', 'direct'):
                 x.pop(k, None)
             n += 1
         else:
-            x['lines_for'] = text_key(x.get('text'))
+            x['lines_for'] = lines_key(x)
     return n
 
 
@@ -1477,8 +1577,10 @@ def add_show_lines(case, _retry=True):
             subject = None
         direct = str(got.get('direct') or '').strip()
         x['to'] = subject
-        if subject and direct.endswith('?') and len(direct.split()) <= 40 and _digits_ok(direct, x.get('text', '')) and not wrong_addresses(direct, x.get('text')):
+        if subject and direct.endswith('?') and len(direct.split()) <= 40 and _digits_ok(direct, x.get('text', '')) \
+                and not wrong_addresses(direct, x.get('text')) and not misaddressed(x, 'direct', direct):
             x['direct'] = direct; n += 1
+            x.pop('lines_for', None)
         for key in ('show', 'confront'):
             if x.get(key):
                 continue
@@ -1486,7 +1588,7 @@ def add_show_lines(case, _retry=True):
             if key == 'confront' and x['kind'] not in ('behavior', 'testimony'):
                 continue
             # a line said to a third person must not address the speaker or subject as "you"
-            if key == 'show' and x['kind'] in ('behavior', 'testimony') and re.search(r"^you\b|\byou('ve| have| had)? (told|said|mentioned|claimed|were|went)\b|\byour\b", line, re.I):
+            if key == 'show' and x['kind'] in ('behavior', 'testimony') and (misaddressed(x, key, line) or re.search(r"^you\b|\byou('ve| have| had)? (told|said|mentioned|claimed|were|went)\b|\byour\b", line, re.I)):
                 continue
             if line.endswith('?') and len(line.split()) <= 40 and _digits_ok(line, x.get('text', '')) and not wrong_addresses(line, x.get('text')):
                 x[key] = line; n += 1
@@ -1654,6 +1756,7 @@ def involved_pairs(case):
 
 def add_reactions(case):
     from refine import llm_json, CRITIC_MODEL
+    check_reactions(case)              # reactions from an earlier check are judged again first (those dropped are written again)
     pairs = involved_pairs(case)
     if not pairs:
         return 0
@@ -1704,6 +1807,33 @@ def add_reactions(case):
     for x, pid, text in written:
         if f"{x['id']}|{pid}" in ok:
             x.setdefault('reactions', {})[pid] = text; n += 1
+    for x, pid, _text in written:       # what is on the clue now has been judged under the current check
+        if f"{x['id']}|{pid}" in ok:
+            x['reactions_checked'] = REACT_CHECK_VERSION
+    return n
+
+
+# The version of the reaction check: reactions checked under an earlier one are checked again (2: who did or said what in
+# the clue, after the postmistress took the squire's unanswered call as her own, A Fall Before Midnight, November 8;
+# 3: the culprit keeps back the crime itself).
+REACT_CHECK_VERSION = 3
+
+
+def check_reactions(case):
+    """Written reactions not yet checked under the current reaction check are checked, and dropped if they do not hold
+    (add_reactions writes them again). Returns the number dropped."""
+    todo = [(f"{x['id']}|{pid}", pid, text, x, None) for x in case['signs'] if x.get('reactions_checked') != REACT_CHECK_VERSION
+            for pid, text in (x.get('reactions') or {}).items()]
+    if not todo:
+        return 0
+    ok = replies_that_hold(case, todo)
+    n = 0
+    for x in {id(t[3]): t[3] for t in todo}.values():
+        gone = [pid for pid in x['reactions'] if f"{x['id']}|{pid}" not in ok]
+        for pid in gone:
+            del x['reactions'][pid]
+        n += len(gone)
+        x['reactions_checked'] = REACT_CHECK_VERSION
     return n
 
 
@@ -1712,9 +1842,11 @@ def replies_that_hold(case, replies):
     person tells as soon as asked, keeps back, what everyone knows, how the clue was found and what it truly shows. A
     reply that fails, or that the judge leaves unjudged, does not hold (play falls back to a plain reply)."""
     village = village_brief(case)
+    names = {p['id']: p['name'] for p in case['people']}
     def check(chunk):
         items = [{'key': k, 'reply': text, 'tells': first_tells(case, pid), 'keep_back': kept_back(case, pid),
-                  'clue': {'title': x.get('title'), 'text': x.get('text')}, **({'how_found': x['unlock']} if x.get('unlock') else {}),
+                  'clue': {'title': x.get('title'), 'text': x.get('text'), **({'said_by': names[x['speaker']]} if names.get(x.get('speaker')) else {})},
+                  **({'how_found': x['unlock']} if x.get('unlock') else {}),
                   **({'reading': reading} if reading else {})}
                  for k, pid, text, x, reading in chunk]
         return judge(REACT_CHECK, json.dumps({'public': village['public'], 'who': village['who'], 'items': items}),
@@ -1726,20 +1858,32 @@ def replies_that_hold(case, replies):
 
 
 MEDICAL = """You write the village doctor's findings after examining the body in a 1920s English village mystery. You get
-what really happened (the fatal event), whether death came at once or hours later (delayed), and the method type.
+what really happened (the fatal event), whether death came at once or some time after it (delayed), and the method type.
 Write two short texts:
 - 'notes': the doctor's written examination notes (2-3 sentences).
 - 'says': what the doctor says aloud when asked about the body (1-2 sentences, in her voice).
 Use these placeholders exactly and write no clock times or numbers yourself:
   {death}  - when death occurred (only if delayed is true)
-  {window} - when the fatal act happened: the blow, the fall, or (if delayed) when the poison was taken
-If delayed is true, say he died around {death} and that the poison (or cause) was taken some hours earlier, {window}.
+  {window} - when the fatal act happened: the blow, the fall, or (if delayed) when the poison was taken or the cause began
+If delayed is true, say he died around {death} and that the poison was taken (or the cause began) earlier, {window},
+as the time such a cause takes to work allows (a doctor reasons back from the death; she cannot read the hour of a dose
+from the body itself).
 If delayed is false, say death occurred {window}. Never say "shortly before death" for a delayed death.
 State the cause only in general terms (e.g. 'a heavy blow to the back of the head', 'a poison taken by mouth'); never
 name or describe a specific weapon, substance, container or owner, and never name anyone but the deceased.
+'her_accounts' is what the doctor has already said about the body: agree with it (the cause, what she found, how sure
+she is of the time) and add nothing it does not support. If 'previous_attempt' is given, it was judged to disagree with
+her accounts for the reason stated: write it again without that.
 Return {"notes": "...", "says": "..."}."""
 
-MEDICAL_V = 2
+MEDICAL_AGREES = """A village doctor's examination notes and words ('medical') and what she has already said about the body
+('her_accounts'). Do they disagree: a different cause, a different detail of the body or of what was found on it, a
+different time of death, or more certainty about the time than her accounts allow? Saying less is not a disagreement.
+Return {"verdicts": {"medical": {"agrees": true | false, "why": "<for a disagreement: what differs>"}}}."""
+
+MEDICAL_V = 4   # 3: a death after the window is delayed however short the gap (a poison that took forty minutes was
+                #    worded as death in the window, against the death event: regeneration reviews, November 8);
+                # 4: one doctor, one set of findings: the notes keep to her own accounts (their window, what she found)
 
 NUM = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen',
        'fourteen', 'quarter', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty', 'twenty-one', 'twenty-two',
@@ -1758,11 +1902,12 @@ def clock_words(minute):
 
 def add_medical(case):
     """The body's examination: cause (in general terms), when death came and when the fatal act happened. The
-    time claim equals the question's crime window, so it rules nobody out beyond what certification already
-    assumed; it makes that window known to the player, which alibis need. For a delayed death (poison) the doctor
-    gives the time of death and places the fatal dose hours earlier, in the window."""
+    time claim is the question's crime window, or the doctor's own true word on it when the case already has one (one
+    doctor, one set of findings); either way certification checks it like any record. It makes the window known to the
+    player, which alibis need. For a delayed death (poison) the doctor
+    gives the time of death and places the fatal dose (or the cause) earlier, in the window."""
     import re
-    from refine import llm_json, CRITIC_MODEL
+    from refine import llm_json, CRITIC_MODEL, claim_true
     import enrich
     old = [x for x in case['signs'] if x.get('medical')]
     # the case's own examination account (a clue the structure placed) is the doctor's word on the body: a second
@@ -1785,12 +1930,26 @@ def add_medical(case):
     vname = next((p['name'] for p in case['people'] if p['id'] == victim), 'the deceased')
     vaddr = next((p.get('address') or p['name'] for p in case['people'] if p['id'] == victim), 'the body')
     w0, w1 = q['crime']['window']
+    # One doctor, one set of findings: when the case already has her word on the body, the notes keep to it. Her own
+    # time of death is the notes' window (regeneration reviews, November 8: her account put death between ten and twenty
+    # past eleven, the notes between twenty to eleven and ten past), and the writer is held to what she said.
+    her = [x for x in case['signs'] if x.get('kind') == 'testimony' and x.get('speaker') == doctor and not x.get('medical')
+           and x.get('text')]
+    # only her true word: a doctor who lies (one who is a suspect may) never makes a record of the lie
+    timed = next(((x['claim']['from'], x['claim']['to']) for x in her if (x.get('claim') or {}).get('pred') == 'crimeBetween'
+                  and isinstance(x['claim'].get('from'), (int, float)) and isinstance(x['claim'].get('to'), (int, float))
+                  and doctor != enrich.truth_actor(case) and claim_true(case, x['claim'])), None)
+    if timed:
+        w0, w1 = timed
+    her_accounts = [x['text'] for x in her]
     death = next((e for e in case['events'] if (e.get('type') == 'death' or e.get('kind') == 'death') and e.get('agent') == victim), None)
-    delayed = bool(death and death['start'] - crime['end'] > 45)
+    delayed = bool(death and death['start'] > max(w1, crime['end']))   # death after the fatal act's window
     method = (case.get('answer') or {}).get('method')
+    failed = None
     for _ in range(3):
         out = llm_json(MEDICAL, json.dumps({'fatal_event': crime.get('summary'), 'delayed': delayed, 'method': method,
-                                            'victim': vname}), 800, model=CRITIC_MODEL)
+                                            'victim': vname, 'her_accounts': her_accounts,
+                                            **({'previous_attempt': failed} if failed else {})}), 800, model=CRITIC_MODEL)
         notes, says = str(out.get('notes') or '').strip(), str(out.get('says') or '').strip()
         if not notes or not says or '{window}' not in says or (delayed and '{death}' not in says) or re.search(r'\d', notes + says):
             continue
@@ -1805,6 +1964,12 @@ def add_medical(case):
         others = [w for p in case['people'] if p['id'] != victim for w in p['name'].replace('Dr ', '').split() if w not in mine]
         if any(re.search(rf'\b{re.escape(w)}\b', notes + says) for w in others):
             continue
+        if her_accounts:
+            v = judge(MEDICAL_AGREES, json.dumps({'medical': {'notes': notes, 'says': says}, 'her_accounts': her_accounts}),
+                      ['medical'], 600).get('medical')
+            if not isinstance(v, dict) or v.get('agrees') is not True:
+                failed = {'notes': notes, 'says': says, 'disagrees_because': str((v or {}).get('why', 'not judged'))[:300]}
+                continue
         break
     else:   # the model's text failed the checks three times: the doctor's findings are written by code
         cause = {'poison': 'a poison taken by mouth', 'blow': 'a heavy blow to the head', 'fall': 'injuries from a fall',
@@ -1812,7 +1977,7 @@ def add_medical(case):
                  'gas': 'breathing gas or fumes', 'staged': 'injuries made to look like an accident'}.get(method, 'unnatural causes')
         span = f"between {clock_words(w0)} and {clock_words(w1)}"
         if delayed:
-            says = f"Death came at about {clock_words(death['start'])}, from {cause}, but it was taken some hours before that, {span}."
+            says = f"Death came at about {clock_words(death['start'])}, from {cause}; from the time such a cause takes to work, it began {span}."
         else:
             says = f"Death was from {cause}, and it occurred {span}."
         notes = f"Examination of the deceased shows {cause}. " + says
@@ -1982,6 +2147,56 @@ def add_declines(case):
     return n
 
 
+FALLBACKS = """For each person in a 1920s English village mystery you get their voice and character, and whether they are
+the culprit. In their own voice and manner, at most 18 words each, write:
+- 'pressed': two different ways of telling the detective, who keeps asking about something they have already answered,
+  that they have answered as best they can and will look at anything the detective has to show them;
+- 'minimise' (only for the culprit; otherwise an empty list): two different ways of brushing off being caught out in
+  something they said: they may have had it wrong, it proves nothing, and they have nothing more to say about it.
+Each must state no fact at all: no place, time, person, event, object or reason that is a fact, and no denial.
+Return {"lines": {"<id>": {"pressed": ["...", "..."], "minimise": [...]}}}."""
+FALLBACKS_VERSION = 1
+
+
+def add_fallback_lines(case):
+    """case['pressed'][pid] and case['minimise'][culprit]: the play's last-resort lines, in each person's voice, for being
+    pressed again on what they have answered and (the culprit) for being caught in an untrue account with nothing written
+    for it. Fact-free like the declines: code rejects digits and names, a model drops any line that states a fact; play
+    has plain lines for anyone left without."""
+    from refine import llm_json, CRITIC_MODEL
+    import premise
+    if case.get('fallbacks_version') == FALLBACKS_VERSION:
+        return 0
+    setting = {q['id']: q for q in premise.SETTING.get('people', [])}
+    truth = enrich.truth_actor(case) if case.get('question') else None
+    roles = (case.get('setting') or {}).get('roles') or {}
+    people = [p['id'] for p in case['people'] if p['id'] != enrich.victim_of(case)]
+    people += [r for r in roles.values() if r not in people]
+    items = [{'id': pid, 'name': setting.get(pid, {}).get('name', pid), 'voice': setting.get(pid, {}).get('voice'),
+              'role': setting.get(pid, {}).get('role'), 'culprit': pid == truth} for pid in people]
+    out = _field(llm_json(FALLBACKS, json.dumps(items), 3000, model=CRITIC_MODEL), 'lines')
+    names = {w.lower() for q in setting.values() for w in str(q.get('name', '')).split() + [str(q.get('address', '')).split()[-1] if q.get('address') else '']
+             if len(w) > 2 and w not in ('The', 'Reverend')}
+    fine = lambda x: isinstance(x, str) and x.strip() and not re.search(r'\d', x) and len(x.split()) <= 18 \
+        and not any(re.search(r'\b' + re.escape(w) + r'\b', x.lower()) for w in names)
+    lines = {kind: {pid: [x.strip() for x in (_field(_field(out, pid) or {}, kind) or []) if fine(x)]
+                    for pid in people if kind == 'pressed' or pid == truth} for kind in ('pressed', 'minimise')}
+    flat = {f'{kind}|{pid}': ls for kind, by in lines.items() for pid, ls in by.items() if ls}
+    if not flat:
+        return 0
+    verdicts = _field(llm_json(NO_FACT, json.dumps(flat), 2000, model=CRITIC_MODEL), 'verdicts')
+    n = 0
+    for kind in ('pressed', 'minimise'):
+        case[kind] = {}
+        for pid, ls in lines[kind].items():
+            ok = _field(verdicts, f'{kind}|{pid}')
+            kept = [x for x, v in zip(ls, ok if isinstance(ok, list) else []) if v is True or str(v).lower() == 'true']
+            if kept:
+                case[kind][pid] = kept; n += 1
+    case['fallbacks_version'] = FALLBACKS_VERSION
+    return n
+
+
 def prune_people(case):
     """People the true history never mentions have nothing true to say about the night, so they are not part of the
     case (premise.involved, the same definition the generator's evening rule uses). Returns the ids removed."""
@@ -2094,7 +2309,9 @@ def enrich_case(case, log=print):
     import refine
     with refine.effort('low'):                         # wording needs no long deliberation; the reviews below check it
         parallel_phases(case, [add_surface_accounts, add_morning_accounts, add_medical, add_concessions,
-                               enrich.add_knowledge, enrich.add_moods, add_declines, _sightings_and_contradictions], log)
+                               enrich.add_knowledge, enrich.add_moods, add_declines, add_fallback_lines,
+                               _sightings_and_contradictions], log)
+        _phase(remove_promises, case, log=log)         # accounts final before the lines and reactions written for them
         parallel_phases(case, [mark_surface_truth, lambda c: add_questions(c, c.get('synopsis', '')), add_reactions,
                                add_show_lines, enrich.add_art], log)
         _phase(enrich.add_unlock_groups, case, log=log)   # leads that open together share one opening line
@@ -2109,6 +2326,89 @@ def enrich_case(case, log=print):
     return case
 
 
+PROMISE = """Each item is something a person in a 1920s English village mystery tells the detective; 'clues' lists everything
+the detective can find or be given in this case. Does the item offer the detective a thing to have, be shown or look at
+(an object, a sample, a note, an envelope: "I've put them in an envelope for you", "I'll show you later") that is none of
+the clues? Mentioning a thing is fine; offering it is the fault.
+Return {"verdicts": {"<id>": {"offers": true | false, "what": "<for an offer: the thing offered>"}}}."""
+
+REWORD = """Each item is an account a person in a 1920s English village mystery gives the detective, and 'drop': an offer in it
+of something the detective will never be given. Rewrite the account without that offer. Keep everything else it says
+(every fact, time, place, person and finding) and its voice and manner; add nothing.
+Return {"accounts": {"<id>": "<the account without the offer>"}}."""
+
+SAME_BUT = """Each item has an account ('before'), a rewrite ('after') and the offer the rewrite was to leave out ('drop'). Does
+the rewrite say everything the account says except that offer, and nothing it does not say?
+Return {"verdicts": {"<id>": {"same": true | false, "why": "<for a difference: what changed>"}}}."""
+PROMISE_CHECK = 1
+
+
+def remove_promises(case):
+    """No account offers the detective something the case never gives them (playtest, November 8: the doctor said "I've
+    put them in an envelope for you", and no envelope existed, so every answer to "where is it?" was invented). Each
+    account not yet checked is judged; one that offers such a thing is reworded without the offer, kept only if a second
+    judge finds it says the same otherwise. Wording only: claims are untouched. Returns the number reworded."""
+    from refine import llm_json, CRITIC_MODEL
+    todo = [x for x in case['signs'] if x.get('kind') == 'testimony' and x.get('text') and x.get('promise_checked') != PROMISE_CHECK]
+    if not todo:
+        return 0
+    clues = sorted({x.get('title') for x in case['signs'] if x.get('kind') not in ('testimony', 'public') and x.get('title')})
+    verdicts = judge(PROMISE, json.dumps({'clues': clues, 'items': [{'id': x['id'], 'text': x['text']} for x in todo]}),
+                     [x['id'] for x in todo], 2000)
+    offers = {x['id']: str(verdicts[x['id']].get('what') or 'the offer') for x in todo
+              if isinstance(verdicts.get(x['id']), dict) and verdicts[x['id']].get('offers') is True}
+    for x in todo:                                       # judged and offering nothing: checked
+        v = verdicts.get(x['id'])
+        if isinstance(v, dict) and v.get('offers') is False:
+            x['promise_checked'] = PROMISE_CHECK
+    if not offers:
+        return 0
+    by = {x['id']: x for x in todo}
+    out = _accounts(llm_json(REWORD, json.dumps([{'id': i, 'account': by[i]['text'], 'drop': w} for i, w in offers.items()]),
+                             2500, model=CRITIC_MODEL), list(offers))
+    new = {i: str(out.get(i) or '').strip() for i in offers if str(out.get(i) or '').strip()}
+    if not new:
+        return 0
+    same = judge(SAME_BUT, json.dumps([{'id': i, 'before': by[i]['text'], 'after': t, 'drop': offers[i]} for i, t in new.items()]),
+                 list(new), 2000)
+    n = 0
+    for i, t in new.items():
+        if isinstance(same.get(i), dict) and same[i].get('same') is True:
+            by[i]['text'] = t; by[i]['promise_checked'] = PROMISE_CHECK; n += 1
+    return n
+
+
+def start_place(case, pid):
+    """Where a person is when the investigation starts, as play places them (kernel-case.mjs): where they were watched
+    behaving oddly, else the place of their latest event since the morning began, else their home."""
+    places = {p['id'] for p in (case.get('setting') or {}).get('places', [])} or None
+    ok = lambda pl: pl and (places is None or pl in places)
+    watched = next((x['at'] for x in case['signs'] if x.get('kind') == 'behavior' and x.get('about') == pid and ok(x.get('at'))), None)
+    if watched:
+        return watched
+    morning = enrich.day(case, 'morning')
+    mine = [e for e in case['events'] if (e.get('agent') == pid or pid in (e.get('others') or [])) and morning is not None
+            and e['start'] >= morning and ok(e.get('place'))]
+    if mine:
+        return max(enumerate(mine), key=lambda p: (p[1]['start'], p[0]))[1]['place']   # the last on a tie, as play
+    return next((p.get('home') for p in case['people'] if p['id'] == pid), None) or \
+        next((p.get('home') for p in enrich.SETTING.get('people', []) if p['id'] == pid), None)
+
+
+def place_accounts(case):
+    """An account is told wherever its speaker is, so its record names the place they are when the investigation starts
+    (regeneration reviews, November 8: the doctor's findings were set at the scene she had left, which the review read as
+    a clue no one could reach). Play does not use an account's place; the record only says where it is told. Returns the
+    number moved."""
+    n = 0
+    for x in case['signs']:
+        if x.get('kind') == 'testimony' and x.get('speaker'):
+            where = start_place(case, x['speaker'])
+            if where and x.get('at') != where:
+                x['at'] = where; n += 1
+    return n
+
+
 def finish_wording(case, rounds=3):
     """Last over the wording, after every step that writes it: lines that do not say what their clue says are written
     again (each line is kept only once checked against its clue's text), and forms of address no one answers to are put
@@ -2117,6 +2417,8 @@ def finish_wording(case, rounds=3):
         if not check_lines(case):
             break
         add_show_lines(case)
+    check_lines(case, final=True)                      # what the last round wrote is checked too, and kept only if it agrees
+    place_accounts(case)
     return correct_addresses(case)
 
 

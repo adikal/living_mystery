@@ -337,7 +337,7 @@ test('every account with no prerequisite can be reached from the Talk menu alone
 
 test('"Did you see anyone last night?" gives the sightings one at a time, and no other night question gives them', async () => {
   const {registerKernelCase, createSession, dispatch, caseTables} = await import('../dist/engine.mjs');
-  const kc = JSON.parse(readFileSync(new URL('../dist/cases/generated/mk-live-20261002-225824.json', import.meta.url), 'utf8'));
+  const kc = JSON.parse(readFileSync(new URL('../dist/cases/archive/2026-10/mk-live-20261002-225824.json', import.meta.url), 'utf8'));
   const s = createSession(1, registerKernelCase(kc)), T = caseTables(s);
   const pid = kc.signs.find(x => x.sighting).speaker, mine = kc.signs.filter(x => x.sighting && x.speaker === pid).map(x => x.text);
   assert.ok(T.CASE.topicsFor[pid].some(([t]) => t === 'seen'));

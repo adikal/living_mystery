@@ -6,7 +6,7 @@
 //      depends on it), so at least one playable solution remains
 // What fails is dropped (that person keeps to their routine); what passes is installed as an event and replays exactly.
 import {runtimeFor, copy, exportSession, diagnostics} from './engine.mjs';
-import {llmConfig, parseJsonLoose} from './llm.mjs';
+import {llmConfig, parseJsonLoose, promptLimit} from './llm.mjs';
 import * as Morning from './morning.mjs';
 
 export const EVERY = 15;          // minutes of game time between plans
@@ -27,8 +27,29 @@ Return ONLY JSON: {"agendas": {"<person id>": [steps]}, "why": "<one short line>
 
 export const LINE_CRITIC = `You check what people say to each other in a village mystery. Each item gives the speaker, whom they speak to, what they say, and the knowledge it rests on: all of it is what the speaker knows, and telling it to someone who has not heard it yet is the point (that is how news travels). Reject an item if it states a fact not in that knowledge, claims to know something the speaker could not know, or tells a lie better than the speaker's own story. Each item also lists what the speaker knows privately (their secrets, their reasons, what they did and arranged): reject an item that reveals or hints at any of it, even to a confidant, because whatever is said is passed on. Repeating, paraphrasing, guessing aloud, worrying, or asking are fine. Return ONLY JSON: {"verdicts": {"<id>": {"ok": true|false, "why": "<short>"}}}.`;
 
-// Everything the model sees: the story, each person's knowledge with ids, the map, where everyone is.
-export function context(s) {
+// The most the director's prompt may hold, in characters: what the proxy accepts (its /health max_prompt_chars, 32000
+// for character-v1 in server/llm_proxy.py), less room for the revision round, which adds the first plan and its faults.
+// A long morning outgrew it (A Fall Before Midnight, November 8: three rounds refused from 10:00, and the village stood
+// still).
+export const REVISION_ROOM = 6000;   // a plan of up to 1500 tokens and the faults found in it
+export const PROMPT_CHARS = 32000 - REVISION_ROOM;   // the budget against the proxy's default
+const KEEP = [Infinity, 16, 10, 6, 3, 1, 0];   // what is kept of each person's growing lists, tried in turn
+
+// Everything the model sees: the story, each person's knowledge with ids, the map, where everyone is. It fits the
+// prompt: when the whole morning would not, each person keeps the newest of what they may say and of what came of the
+// earlier plans (with a count of what was left out). Only the model's view shrinks: the critics check every step
+// against the person's whole knowledge, and a step can cite only what the model was shown.
+export function context(s, extra = {}, budget = PROMPT_CHARS) {
+  let ctx;
+  for (const keep of KEEP) {
+    ctx = {...fullContext(s, keep), ...extra};
+    if (JSON.stringify(ctx).length <= budget) return ctx;
+  }
+  return ctx;
+}
+const newest = (list, keep) => list.length <= keep ? list : [{id: 'k_earlier', text: `(${list.length - keep} earlier, left out)`}, ...list.slice(list.length - keep)];
+
+function fullContext(s, keep) {
   const r = runtimeFor(s), kc = s.world.caseRecords, ctx = r.behavior.morningCtx;
   const now = s.world.minute, actors = Morning.actors(s, kc, ctx.roles, ctx.victim);
   const people = Object.fromEntries(Object.keys(s.world.npcs).map(pid => {
@@ -42,13 +63,14 @@ export function context(s) {
     const stakes = [told ? `questioned ${told} time(s)` : 'not yet questioned', ...(near.length ? [`the detective has been where these of theirs lie: ${near.join(', ')}`] : [])];
     return [pid, {name: p.name, role: p.role, voice: p.voice, at: a.travel ? `walking to ${a.travel.to}` : a.location, stakes,
       canAct: actors.includes(pid), concealable: Morning.concealable(s, kc, pid).map(id => ({id, what: r.CLUES[id]?.title, at: kc.signs.find(x => x.id === id)?.at})),
-      private: k.private, sayable: k.sayable}];
+      private: k.private, sayable: newest(k.sayable, keep)}];
   }));
   const places = Object.fromEntries(Object.entries(ctx.places).map(([id, l]) => [id, {name: l.name, walk: Object.fromEntries(Object.keys(ctx.places).map(o => [o, ctx.distance(id, o)]))}]));
   const detective = {at: s.world.player.location, found: s.world.player.evidence.map(e => r.CLUES[e.clue]?.title)};
   // what came of the plans so far this morning (so the next plan moves on rather than repeating itself)
   const earlier = Object.fromEntries(Object.entries(s.world.flags.morning?.agendas ?? {}).map(([pid, st]) =>
-    [pid, st.map(x => `${x.kind}${x.with ? ' ' + x.with : ''} at ${x.place}${x.say ? `: “${x.say}”` : ''}${x.clue ? ' ' + x.clue : ''} (${x.state}${x.why ? ', ' + x.why : ''})`)]));
+    [pid, newest(st, keep).map(x => x.id === 'k_earlier' ? x.text
+      : `${x.kind}${x.with ? ' ' + x.with : ''} at ${x.place}${x.say ? `: “${x.say}”` : ''}${x.clue ? ' ' + x.clue : ''} (${x.state}${x.why ? ', ' + x.why : ''})`)]));
   return {now, until: now + Morning.HORIZON, trigger: Morning.significant(s, kc, ctx) ?? null, victim: ctx.people[ctx.victim]?.name ?? ctx.victim, constable: ctx.roles.constable, detective,
     earlierThisMorning: earlier, places, people};
 }
@@ -120,7 +142,9 @@ export async function directMorning(session, {fetchImpl = globalThis.fetch, sign
   const reason = since >= EVERY ? 'time' : since >= SOONEST ? Morning.significant(session, session.world.caseRecords, r.behavior.morningCtx) : null;
   if (!reason) return {status: 'not_needed'};
   if (session.world.minute < (session.world.caseRecords.setting?.day?.start ?? 0)) return {status: 'not_needed'};
-  const base = exportSession(session), ctxt = context(session);
+  const budget = (await promptLimit(endpoint, fetchImpl)) - REVISION_ROOM;
+  const base = exportSession(session), ctxt = context(session, {}, budget), size = JSON.stringify(ctxt).length;
+  if (size > budget) return {status: 'error', error: `director context too large (${size} characters)`, audit: {trigger: reason, promptChars: size}};
   const call = async (role, system, prompt, max_tokens) => {
     const res = await fetchImpl(endpoint, {method: 'POST', signal, headers: {'content-type': 'application/json', 'X-Living-Mystery': 'character-v1'},
       body: JSON.stringify({role, system, prompt: JSON.stringify(prompt), max_tokens})});
@@ -141,14 +165,14 @@ export async function directMorning(session, {fetchImpl = globalThis.fetch, sign
     const first = Morning.check(session, session.world.caseRecords, r.behavior.morningCtx, proposal);
     if (first.errors.length) {
       audit.revised = first.errors;   // recorded first, so a failed revision call still says what it was mending
-      proposal = await Promise.race([call('director', DIRECTOR_PROMPT, {...ctxt, previous_attempt: proposal, rejected: first.errors}, 1500), timer]);
+      proposal = await Promise.race([call('director', DIRECTOR_PROMPT, context(session, {previous_attempt: proposal, rejected: first.errors}, budget + REVISION_ROOM), 1500), timer]);
     }
     result = await Promise.race([criticise(session, proposal, {lineCritic: items => call('line_critic', LINE_CRITIC, items, 800)}), timer]);
-    audit = {trigger: reason, why: proposal.why ?? '', ...(audit.revised ? {revised: audit.revised} : {}), ...result.audit};
+    audit = {trigger: reason, why: proposal.why ?? '', promptChars: size, ...(audit.revised ? {revised: audit.revised} : {}), ...result.audit};
   } catch (e) {
     if (signal?.aborted || exportSession(session) !== base) return {status: 'stale'};
     const error = String(e instanceof Error ? e.message : e).slice(0, 200);
-    return {status: 'error', error, audit: {error, trigger: reason, ...(audit.revised ? {revised: audit.revised} : {})}};
+    return {status: 'error', error, audit: {error, trigger: reason, promptChars: size, ...(audit.revised ? {revised: audit.revised} : {})}};
   } finally {
     clearTimeout(timeoutId);
   }

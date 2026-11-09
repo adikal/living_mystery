@@ -380,6 +380,23 @@ export function makeKernelCase(records) {
     // an account of something that happened this morning (its source event): the fact-checker is told so
     const eveningFirst = (a, b) => fromMorning(a) - fromMorning(b);   // the evening first, then what came from the morning
     const historySource = (s, eid) => s.world.flags.history?.[eid] ?? null;
+    // an account's words inside a reference back ("As I told you: ..."), without the quotation marks some are written in
+    const unquoted = t => String(t ?? '').trim().replace(/^[“"]([\s\S]*)[”"]$/, '$1');
+    // The events an account rests on: its source, or, for a claimless summary of the evening or the morning, the
+    // speaker's own events of that part of the day. Two accounts that rest on one event both people took part in (Pike
+    // fetching the constable) are about the same thing, seen from each side.
+    const takesPart = (e, pid) => e.agent === pid || arr(e.others).includes(pid);
+    function restsOn(x) {
+      if (x.source) return [x.source];
+      if (!x.surface && !x.morning) return [];
+      const morning = Boolean(x.morning);
+      return kc.events.filter(e => takesPart(e, x.speaker) && e.id !== kc.question?.crime?.event
+        && (morning ? e.start >= DAY_MORNING && e.start < START : e.start < DAY_MORNING)).map(e => e.id);
+    }
+    // What an account stands for when another's statement is set against it: itself and, for an evening summary, the
+    // speaker's first statements of the evening that it sums up (they are checked to agree with it).
+    const standsFor = x => [x.id, ...(x.surface ? kc.signs.filter(y => y.kind === 'testimony' && y.speaker === x.speaker
+      && claimOf(y) && !y.surface && !y.morning && !y.sighting && !arr(y.requires).length && !fromMorning(y)).map(y => y.id) : [])];
 
     function seedSession(s) {
       // Execute the true history: each event is committed at its minute and remembered by everyone present.
@@ -752,7 +769,7 @@ export function makeKernelCase(records) {
         if (next) {
           const ev = K.speech(s, pid, next.text, cause, {topic, intent: 'Pass on what I heard', claims: [], sourceEvents: [next.id], deceptionFlexible: false});
           K.believe(s, pid, `mk_news_${next.id}`, `I told the detective: ${next.text}`, .99, 'observation', ev, true);
-        } else K.speech(s, pid, heard.length ? `As I told you: ${heard.at(-1).text}` : NEUTRAL, cause, {topic, intent: 'Recap', claims: []});
+        } else K.speech(s, pid, heard.length ? `As I told you: ${unquoted(heard.at(-1).text)}` : NEUTRAL, cause, {topic, intent: 'Recap', claims: []});
         K.advance(s, 2, cause);
         return;
       }
@@ -761,13 +778,13 @@ export function makeKernelCase(records) {
         const seen = accounts(s, pid).filter(x => x.sighting);
         const next = seen.find(x => !K.has(s, x.id));
         if (next) give(next);
-        else K.speech(s, pid, seen.length ? `As I told you: ${seen.map(x => x.text).join(' ')}` : NEUTRAL, cause, {topic, intent: 'Recap', claims: []});
+        else K.speech(s, pid, seen.length ? `As I told you: ${seen.map(x => unquoted(x.text)).join(' ')}` : NEUTRAL, cause, {topic, intent: 'Recap', claims: []});
         K.advance(s, 2, cause);
         return;
       }
       if (topic === 'morning') {
         const m = morningAccount(s, pid);
-        if (K.has(s, m.id)) K.speech(s, pid, `As I told you: ${m.text}`, cause, {topic, intent: 'Recap', claims: [], deceptionFlexible: Boolean(m.deceptive)});
+        if (K.has(s, m.id)) K.speech(s, pid, `As I told you: ${unquoted(m.text)}`, cause, {topic, intent: 'Recap', claims: [], deceptionFlexible: Boolean(m.deceptive)});
         else give(m);
         K.advance(s, 2, cause);
         return;
@@ -794,7 +811,7 @@ export function makeKernelCase(records) {
           const told = night.find(x => K.has(s, x.id) && !x.surface) ?? night.find(x => K.has(s, x.id)) ?? night[0];
           const admitted = s.world.npcs[pid].beliefs.find(b => b.key === `mk_admitted_${told.id}`);
           // once a story has been admitted untrue, the reference back is to what was admitted, never the old story
-          K.speech(s, pid, admitted ? `As I have admitted: ${admitted.text}` : `As I told you: ${told.text}`, cause,
+          K.speech(s, pid, admitted ? `As I have admitted: ${unquoted(admitted.text)}` : `As I told you: ${unquoted(told.text)}`, cause,
             {topic, intent: 'Recap', claims: [], deceptionFlexible: !admitted && night.some(x => x.deceptive)});
         }
         else K.speech(s, pid, eveningAccount(pid), cause, {topic, intent: 'Say little', claims: []});
@@ -842,6 +859,8 @@ export function makeKernelCase(records) {
       const why = arr(kc.attitudes).filter(a => arr(testimony?.because).includes(a.id));
       return why.length > 0 && why.every(a => ['believes', 'knows'].includes(a.mode));
     }
+    // a line that gives an account to its listener (as publish.misaddressed): said only to the account's own speaker
+    const LISTENER_SAID = /\byou('ve| have| had| now)? (told|said|say|mentioned|claimed|claim)\b/i;
     function presentLine(s, pid, clue) {
       const x = signs[clue];
       if (!x) return 'Take a look at this. What do you make of it?';
@@ -850,11 +869,12 @@ export function makeKernelCase(records) {
       // said to the person the clue concerns: addressed to them, never about them in the third person
       const madeBy = kc.events.find(e => e.id === x.source)?.agent;
       if (pid === (x.kind === 'testimony' ? claimOf(x)?.person : x.about ?? x.to) || pid === x.to || (pid === madeBy && x.kind !== 'testimony')) {
-        if (x.direct && pid === x.to) return x.direct;
+        // an account put to the person it is about is the speaker's, never the listener's own ("You told me...")
+        if (x.direct && pid === x.to && !(x.kind === 'testimony' && LISTENER_SAID.test(x.direct))) return x.direct;
         if (x.kind === 'testimony') return `${PEOPLE[x.speaker]?.name ?? 'Someone'} has told me something about you. Is that right?`;
         return `I found ${lower(x.title)}. Can you tell me about it?`;
       }
-      if (x.show) return x.show;
+      if (x.show && !(x.kind === 'testimony' && LISTENER_SAID.test(x.show))) return x.show;
       if (x.kind === 'testimony') return `${PEOPLE[x.speaker]?.name ?? 'Someone'} told me something about last night. What do you make of it?`;
       if (x.kind === 'behavior') return `I noticed ${lower(x.title)}. Why would ${PEOPLE[x.about]?.name ?? 'they'} behave like that?`;
       if (x.kind === 'document' || x.kind === 'record') return `I found ${lower(x.title)}. Read it, and tell me what you make of it.`;
@@ -936,6 +956,19 @@ export function makeKernelCase(records) {
       // sighting that happens to come from the same event)
       const own = !herring && kc.signs.find(x => x.kind === 'testimony' && x.speaker === pid && earned(s, x.id)
         && x.source && x.source === signs[clue].source);
+      // Put another person's account, they point to a statement of theirs already told that the case records as showing
+      // it untrue, before any reaction written for them (that was judged against what they tell first, not this; one not
+      // yet told is not volunteered: it waits for its own evidence). With nothing else to say to it, they answer with
+      // their own account of an event they both took part in (the constable shown Pike's morning tells of being fetched).
+      const shared = new Set(signs[clue].kind === 'testimony' && signs[clue].speaker !== pid
+        ? restsOn(signs[clue]).filter(e => takesPart(kc.events.find(v => v.id === e) ?? {}, pid)) : []);
+      const notConceded = x => !s.world.npcs[pid].beliefs.some(b => b.key === `mk_conceded_${x.id}`);
+      const alongside = kc.signs.filter(x => x.kind === 'testimony' && x.speaker === pid && earned(s, x.id) && notConceded(x)
+        && restsOn(x).some(e => shared.has(e)));
+      const sideBySide = alongside.find(x => !K.has(s, x.id)) ?? alongside[0];
+      const against = signs[clue].kind === 'testimony' && signs[clue].speaker !== pid ? standsFor(signs[clue]) : [];
+      const contradicting = kc.signs.find(y => y.kind === 'testimony' && y.speaker === pid && K.has(s, y.id) && notConceded(y)
+        && arr(y.defeats).some(d => against.includes(d)));
       // the culprit shown something that breaks the account that placed them elsewhere
       const alibiBroken = pid === truthActor && arr(signs[clue].defeats).some(d => claimOf(signs[d])?.person === pid);
       const written = signs[clue].reactions?.[pid];   // written for this person when the case was generated
@@ -951,8 +984,11 @@ export function makeKernelCase(records) {
         const concession = mistaken(caught)
           ? `Oh — then I had it wrong. ${why} I only went by what I was told at the time.`.replace(/\s+/g, ' ')
           : `…That is not what I told you, I know. ${why || 'I was mistaken.'} I will not pretend otherwise now.`.replace(/\s+/g, ' ');
-        text = pid === truthActor ? written || concession : concession;
-        intent = 'Concede';
+        // The culprit never gives the reasons behind the lie (they are the crime's): with no reaction written for this
+        // clue, they minimise (playtests, November 8: the postmistress, shown the unanswered call, told of the terrace
+        // and the letter once her written deflection was found faulty and dropped)
+        text = pid === truthActor ? written || arr(kc.minimise?.[pid])[0] || '…I may have had that wrong. It proves nothing, and I have nothing more to say about it.' : concession;
+        intent = pid === truthActor && !written ? 'Deflect' : 'Concede';
         K.believe(s, pid, `mk_conceded_${caught.id}`, `My account (${caught.title || caught.id}) has been shown to be untrue: ${text}`, .99, 'observation', heard, true);
         K.believe(s, pid, `mk_admitted_${caught.id}`, text, .99, 'observation', heard, true);   // the words, for references back
       } else if (cleared) {
@@ -985,7 +1021,7 @@ export function makeKernelCase(records) {
         if (!told) K.believe(s, pid, `mk_explained_${herring.id}`, `The detective knows the innocent reason for my behaviour: ${text}`, .99, 'observation', heard, true);
         intent = 'Admit an innocent secret';
       } else if (admitted) {
-        text = `As I have admitted: ${admitted.text}`; intent = 'Stand by the concession';
+        text = `As I have admitted: ${unquoted(admitted.text)}`; intent = 'Stand by the concession';
       } else if (alibiBroken && written) {
         text = written; intent = 'Deflect';
       } else if (finding && pid !== truthActor && (have.has(finding.id) || (earned(s, finding.id) && !goneSet(s).has(finding.id)) || !written)) {
@@ -1004,6 +1040,15 @@ export function makeKernelCase(records) {
           K.advance(s, 4, cause);
           return;
         } else text = 'That would want setting beside what I found, and I cannot do that for you yet.';
+      } else if (contradicting) {
+        text = `That is not how I know it. As I told you: ${unquoted(contradicting.text)}`;
+        intent = 'Set my own account against it';
+      } else if (!written && sideBySide && !K.has(s, sideBySide.id)) {
+        giveAccount(s, pid, sideBySide, heard);
+        K.advance(s, 4, cause);
+        return;
+      } else if (!written && sideBySide) {
+        text = `As I told you: ${unquoted(sideBySide.text)}`; intent = 'Answer from my own experience';
       } else {
         text = written || relationReply(pid, clue);
       }
@@ -1164,9 +1209,17 @@ export function makeKernelCase(records) {
       const used = s.events.filter(e => e.kind === 'speech' && e.actor === pid && lines.includes(e.data?.assertion)).length;
       return lines[used % lines.length];
     }
-    const isDecline = (pid, text) => text === NEUTRAL || arr(kc.declines?.[pid]).includes(text);
+    // Records of a person's own making that the detective may look at now and has not yet found (the doctor's notes at
+    // her surgery): they know where these are and may say so (playtest, November 8: asked where her envelope of fibres
+    // was, the doctor could only guess). Never the culprit's, never anything still locked or taken away.
+    const ownThings = (s, pid) => pid === truthActor ? [] : kc.signs.filter(x => ['record', 'document'].includes(x.kind)
+      && kc.events.find(e => e.id === x.source)?.agent === pid && earned(s, x.id) && !K.has(s, x.id) && LOCATIONS[x.at])
+      .map(x => ({title: x.title, where: LOCATIONS[x.at].name}));
+    // pressed again on what they have answered: one of their own lines (published) that they have not just said
+    const pressedFor = (pid, recent = []) => arr(kc.pressed?.[pid]).find(t => !recent.includes(t)) ?? null;
+    const isDecline = (pid, text) => text === NEUTRAL || arr(kc.declines?.[pid]).includes(text) || arr(kc.pressed?.[pid]).includes(text);
     return {morningCtx, seedSession, afterAction, decide, canAsk, ask, present, presentLine, checkCase, caseStatus, pillarsHeld,
-      followupOptions, freeTextTopics, canonicalTopic, nightAccount, claimDetails, hints, declineFor, isDecline, innocentReason, pressed, parseCommand, reconcileKnowledge() {},
+      followupOptions, freeTextTopics, canonicalTopic, nightAccount, claimDetails, hints, declineFor, pressedFor, ownThings, isDecline, innocentReason, pressed, parseCommand, reconcileKnowledge() {},
       commandLabel: a => `${a.type} ${a.person ?? a.object ?? a.to ?? ''}`, caseHealth: () => []};
   }
   return {CASE, LOCATIONS, PEOPLE, CLUES, OBJECTS, model, baseWorld, createBehavior, SUSPECTS: suspects,

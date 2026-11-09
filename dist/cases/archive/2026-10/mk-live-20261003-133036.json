@@ -1033,29 +1033,29 @@
    "title": "Clara Vale on the evening",
    "text": "We dined and sat rather late over Edmund's business with the glebe field, and once that was done I confess my head was aching dreadfully, so I went up and did not come down again until all the shouting this morning. I am afraid there is very little else to tell.",
    "ask": "Where were you last night?",
-   "agrees_checked": 3,
+   "agrees_checked": 6,
    "surface_why": "She claims she went up with a headache and stayed in her room all night, but she actually slipped out to secretly meet Jonah at the boathouse, then crept back in and had to scrub river mud off her shoes afterward - she was not in her room the whole time.",
    "surface_checked": "cover",
    "to": null,
    "show": "Clara Vale says she dined late over Edmund's glebe field business, then went up with a headache and didn't come down until the shouting this morning. Do you know if that's true?",
    "confront": "You told me you dined late over the glebe field business, then went up with a headache and stayed there until the shouting this morning. Is that the whole of it?",
-   "lines_for": "5d2a41f3ffce"
+   "lines_for": "7fd3a16c4ba4"
   },
   {
    "id": "s_morning_rowan",
    "kind": "testimony",
    "speaker": "rowan",
    "morning": true,
-   "deceptive": true,
+   "deceptive": false,
    "title": "Rowan Pike on the morning",
-   "text": "On my morning rounds, about half past six, I come upon the vicar lying dead at the foot of the terrace steps. I noticed a small print by him and set a seed tray over it before I raised the alarm. About twenty-five to seven I roused Edmund and Clara, then at quarter to seven I fetched Constable Bell from the square, and about ten to seven I fetched Dr Marsh from her surgery.",
+   "text": "On my morning rounds, about half past six, I come upon the vicar lying dead at the foot of the terrace steps, and I raised the alarm sharpish. About twenty-five to seven I roused Edmund and Clara, then at quarter to seven I fetched Constable Bell from the square, and about ten to seven I fetched Dr Marsh from her surgery.",
    "ask": "What did you do this morning?",
+   "surface_checked": "honest",
+   "leak_checked": 1,
    "to": null,
-   "show": "Rowan Pike says that on his morning rounds he found the vicar dead at the foot of the terrace steps, and covered a small print nearby before raising the alarm. Does that match what you know?",
-   "confront": "You told me you found the vicar dead at the terrace steps and covered a small print nearby before raising the alarm. Is that the whole of it?",
-   "surface_why": "He frames his night as glasshouse puttering followed by going home to bed before his morning rounds, omitting that he was actually at the river setting eel lines, lost one snagged in the reeds, returned before dawn to push it deeper under the boathouse boards, and hung up wet waders - he conceals hi",
-   "surface_checked": "cover",
-   "lines_for": "d6b89a5f44ab"
+   "show": "Rowan Pike says he found the vicar dead at the foot of the terrace steps on his morning round, and raised the alarm straight away. Does that match what you know?",
+   "confront": "You told me you found the vicar dead at the foot of the terrace steps about half past six, then roused the house and fetched help. Is that the whole of it?",
+   "lines_for": "9b52bdaf516f"
   },
   {
    "id": "s_morning_edmund",
@@ -1070,7 +1070,8 @@
    "to": null,
    "show": "Edmund Vale says Rowan roused him and Clara at about twenty-five to seven, and that he knows nothing of the morning before that. Does that match what you recall?",
    "confront": "You told me Rowan roused you and Clara at about twenty-five to seven, and that you knew nothing more of the morning. Is that the whole of it?",
-   "lines_for": "de805ad3a548"
+   "lines_for": "4a4d6d9380f1",
+   "leak_checked": 1
   },
   {
    "id": "s_morning_clara",
@@ -1085,7 +1086,8 @@
    "to": null,
    "confront": "You said Rowan roused you and Edmund at about twenty-five to seven, and that you knew nothing of the hours before. Is that so?",
    "show": "Clara Vale says Rowan roused her and Edmund at about twenty-five to seven, but she knows nothing of the hours before. Does that match what you know?",
-   "lines_for": "f9dccde845e3"
+   "lines_for": "e1255653c31d",
+   "leak_checked": 1
   },
   {
    "id": "s_surface_jonah",
@@ -1094,14 +1096,15 @@
    "surface": true,
    "deceptive": true,
    "title": "Jonah Reed on the evening",
-   "text": "I'm at the boathouse the whole evening, mending my nets by the lamp, and I stop there through the night, for it's no trouble to a river man to sleep where he works.",
+   "text": "I spend the evening mending my nets, as a river man does, and turn in for the night when the lamp gives out. Nothing more in it than that.",
    "ask": "Where were you last night?",
+   "agrees_checked": 6,
+   "surface_why": "He claims nothing happened beyond mending nets and turning in, but in truth he secretly met Clara Vale at the boathouse that evening—an omission that amounts to a false denial ('nothing more in it than that').",
    "surface_checked": "cover",
    "to": null,
-   "show": "Jonah Reed says he spent the whole evening at the boathouse mending his nets, and slept there through the night. Do you know if that's true?",
-   "confront": "You told me you were at the boathouse mending nets all evening and slept there through the night. Is that the whole of it?",
-   "agrees_checked": 3,
-   "lines_for": "81fb33128e73"
+   "show": "Jonah Reed says he spent the evening mending his nets and turned in when his lamp gave out. Do you know if that's true?",
+   "confront": "You told me you spent the evening mending nets and went to bed when your lamp failed. Is that the whole of it?",
+   "lines_for": "7bb2d462dc16"
   },
   {
    "id": "s_surface_dora",
@@ -1116,8 +1119,8 @@
    "to": null,
    "show": "Dorothy Pruett says she was at the post office sorting mail all evening and never left the board. Can you confirm that?",
    "confront": "You told me you were sorting mail at the post office and never left the board the whole evening. Is that so?",
-   "agrees_checked": 3,
-   "lines_for": "d2ee2dc4d965"
+   "agrees_checked": 6,
+   "lines_for": "d6c5fd832683"
   },
   {
    "id": "s_surface_edmund",
@@ -1126,14 +1129,15 @@
    "surface": true,
    "deceptive": false,
    "title": "Edmund Vale on the evening",
-   "text": "We dined, and Hale and I had words in the study that settled nothing. After he left I sat up alone smoking and tried to put a call through on the telephone, but the exchange never answered, so I gave it up and went to bed.",
+   "text": "We dined, and Hale and I had words in the study that settled nothing between us. After he left I sat up a good while smoking alone before I turned in for the night.",
    "ask": "Where were you last night?",
+   "agrees_checked": 6,
+   "surface_why": "He leaves out the failed trunk call to the exchange, but everything he states—dinner, the argument, smoking alone, going to bed—is true; omission of a minor detail isn't a false claim.",
    "surface_checked": "honest",
    "to": null,
-   "show": "Edmund Vale says he and the Reverend Hale argued in the study after dinner, and that afterward he sat alone smoking and tried the telephone before giving up and going to bed. Does that match what you know?",
-   "confront": "You told me you and Hale had words in the study, then you sat alone smoking and tried the telephone before going to bed. Is that the whole of it?",
-   "agrees_checked": 3,
-   "lines_for": "0b63061bfd10"
+   "show": "Edmund Vale says he dined and had words with the vicar in the study, then sat up smoking alone before turning in. Do you know if that's so?",
+   "confront": "You told me you dined, had words with the vicar in the study, then sat up smoking alone before bed. Is that the whole of it?",
+   "lines_for": "f4cce82fea08"
   },
   {
    "id": "s_surface_bell",
@@ -1148,8 +1152,8 @@
    "to": null,
    "show": "Arthur Bell says he had a quiet evening at home on the square, as usual, before going to bed. Do you know anything that contradicts that?",
    "confront": "You said you spent a quiet evening at home on the square, as usual, before going to bed. Is that the whole of it?",
-   "agrees_checked": 3,
-   "lines_for": "b0a09205c7d7"
+   "agrees_checked": 6,
+   "lines_for": "757f1c6d6ae1"
   },
   {
    "id": "s_surface_iris",
@@ -1164,54 +1168,55 @@
    "to": null,
    "show": "Dr Marsh says she was at the surgery writing up her notes before retiring for the night. Does that match what you recall?",
    "confront": "You told me you were at the surgery writing up your notes before retiring for the night. Is that so?",
-   "agrees_checked": 3,
-   "lines_for": "0fd4f5e4005f"
+   "agrees_checked": 6,
+   "lines_for": "676d8c7c1b68"
   },
   {
    "id": "s_surface_rowan",
    "kind": "testimony",
    "speaker": "rowan",
    "surface": true,
-   "deceptive": true,
+   "deceptive": false,
    "title": "Rowan Pike on the evening",
-   "text": "I was down by the water seeing to a bit of my own business after dark, same as most evenings, and then home to my bed. Nothing more to tell than that.",
+   "text": "I was about my glasshouses most of the evening, same as always, then home and off to bed. Nothing much else to tell of it.",
    "ask": "Where were you last night?",
-   "surface_checked": "cover",
+   "agrees_checked": 6,
+   "surface_why": "He omits the eel lines and the one lost in the reeds, but his vague account of glasshouse work and going home to bed doesn't contradict what actually happened.",
+   "surface_checked": "honest",
    "to": null,
-   "show": "Rowan Pike says he was down by the water after dark on business of his own, as most evenings, then home to bed. Do you know anything more about that?",
-   "confront": "You told me you were down by the water on business of your own, same as most evenings, then home to bed. Is that the whole of it?",
-   "agrees_checked": 3,
-   "lines_for": "99ee581ff1dc"
+   "show": "Rowan Pike says he spent most of the evening about his glasshouses before going home to bed. Do you know if that's true?",
+   "confront": "You told me you were about your glasshouses most of the evening, then home to bed. Is that the whole of it?",
+   "lines_for": "e5a945690344"
   },
   {
    "id": "s_medical",
    "kind": "record",
    "medical": true,
-   "medical_v": 0,
+   "medical_v": 2,
    "source": "e_examination",
    "at": "surgery",
    "title": "The doctor’s examination notes",
-   "text": "Examination of the Reverend Thomas Hale reveals a severe skull fracture consistent with a heavy impact against a hard, unyielding surface, with accompanying bruising to the limbs suggesting a fall from height. There is no evidence of any blow struck by a weapon, nor any trace of poisoning. Death occurred between ten past ten and half past ten, and I judge it to have been swift, likely within moments of impact.",
+   "text": "Examination of the deceased shows injuries from a fall. Death was from injuries from a fall, and it occurred between ten past ten and half past ten.",
    "claim": {
     "pred": "crimeBetween",
     "from": 1330,
     "to": 1350
    },
-   "reactions": {
-    "dora": "That's for the doctor to say, not me. Dreadful business, a man of the cloth falling like that in the dark. I'm sure I know nothing more about it than she's just told you.",
-    "bell": "Aye, that's as I found him and reported it—broken on the stone, no weapon mark anywhere about. Nasty tumble for a man his age, in the dark on them steps.",
-    "iris": "That's precisely what I observed and wrote down. A fall, nothing more sinister in the medical evidence—the fracture and the bruising both point the same way, and death came quickly upon it."
-   },
    "to": null,
-   "show": "The doctor's notes show the Reverend Hale died of a skull fracture from a fall from height, between ten past and half past ten, with no sign of a weapon or poison. Does that accord with what you observed?",
-   "art": "notes",
-   "lines_for": "a09d35b2cc17"
+   "show": "The doctor's examination shows the vicar died of injuries from a fall, between ten past ten and half past ten that night. Does that square with what you saw?",
+   "lines_for": "2b0389cb2aa0",
+   "reactions": {
+    "bell": "Aye, that's what the doctor found — neck broken from the fall down those steps, between ten past and half past ten. Matches what I saw when I went through his pockets myself.",
+    "dora": "Ten past to half past, you say? Well, I was at the board sorting mail all evening, same as ever, so that's no business of mine.",
+    "iris": "Yes, that's my finding exactly — a fall, neck broken, death between ten past and half past ten. I stand by my notes."
+   },
+   "reactions_checked": 3
   },
   {
    "id": "s_medical_iris",
    "kind": "testimony",
    "medical": true,
-   "medical_v": 0,
+   "medical_v": 2,
    "speaker": "iris",
    "source": "e_examination",
    "claim": {
@@ -1220,12 +1225,12 @@
     "to": 1350
    },
    "title": "Dr Marsh on the body",
-   "text": "The poor Reverend died between ten past ten and half past ten - his injuries are entirely consistent with a fall onto stone, striking his head upon landing. There's no sign of any weapon or poison at play here, just the terrible force of that fall.",
+   "text": "Death was from injuries from a fall, and it occurred between ten past ten and half past ten.",
    "ask": "Doctor, what did you find when you examined Mr Hale?",
    "to": null,
-   "show": "Dr Marsh says the Reverend died between ten past and half past ten from a fall onto stone, with no weapon or poison involved. Can you confirm that's what you found?",
-   "confront": "You told me the Reverend died between ten past and half past ten from a fall onto stone, with no weapon or poison involved. Is that the whole of it?",
-   "lines_for": "e377edebfecf"
+   "show": "Dr Marsh says death came from injuries from a fall, occurring between ten past ten and half past ten. Do you agree with that finding?",
+   "confront": "You told me death was from injuries from a fall, between ten past ten and half past ten. Is that your settled conclusion?",
+   "lines_for": "907c6451dc53"
   },
   {
    "id": "s_morning_bell",
@@ -1240,7 +1245,8 @@
    "to": null,
    "confront": "You told me Rowan fetched you at quarter to seven, and that you were present when Dr Marsh found the neck broken from a fall down the stone steps. Is that the whole of it?",
    "show": "Arthur Bell says Rowan fetched him from the square at quarter to seven, and he was there when Dr Marsh found the neck broken from a fall down the stone steps. Does that match what you know?",
-   "lines_for": "2c986d6d054a"
+   "lines_for": "8f0720fa91a2",
+   "leak_checked": 1
   },
   {
    "id": "s_morning_iris",
@@ -1255,7 +1261,8 @@
    "to": null,
    "confront": "You told me Rowan fetched you at about ten to seven, and that at five past seven you examined the body and found the neck broken from a fall down the stone steps. Is that the whole of it?",
    "show": "Dr Marsh says Rowan fetched her from her surgery and that when she examined the body she found the neck broken from a fall down the stone steps. Does that square with what you saw?",
-   "lines_for": "c05bca37dbb1"
+   "lines_for": "5ce9550d0e7b",
+   "leak_checked": 1
   },
   {
    "id": "s_print",
@@ -1279,7 +1286,8 @@
    "reactions": {
     "dora": "A print, you say. Half the village walks that path, Inspector, and small shoes are hardly a rarity among the women hereabouts. I'm sure I couldn't tell you whose it is."
    },
-   "lines_for": "40660d6f6f9e"
+   "lines_for": "009864f9048e",
+   "reactions_checked": 3
   },
   {
    "id": "s_rowan",
@@ -1307,15 +1315,16 @@
     "s_clara"
    ],
    "to": "clara",
-   "direct": "You told me you were fishing by the boathouse and saw Miss Vale go down near ten and not return till eleven. Is that the whole of it?",
-   "show": "Pike says he was fishing by the boathouse that night and saw Miss Vale go down the path just before ten and not come back up till near eleven. Does that match what you know?",
-   "confront": "You told me you were fishing by the boathouse and saw Miss Vale go down near ten and not return till eleven. Is that the whole of it?",
    "reactions": {
     "dora": "Pike's business with his lines is his own affair, not mine. I've told you plainly where I was all evening, and I don't see what his eel-fishing has to do with me.",
     "clara": "Pike is mistaken about the hour, I think, though I will not quarrel with a man over his eel lines. Very well — I did go down to the boathouse, but it was only to walk, and I came in and went straight to bed. I'd rather have told you myself than had it dragged out by a poacher's lantern."
    },
-   "same_as": "night",
-   "lines_for": "af23c48be17a"
+   "show": "Rowan Pike admits the eel lines by the boathouse are his, fished without the squire's leave, and says he saw someone come down the path just before ten and not leave till near eleven. Do you know anything of that?",
+   "confront": "You've told me those eel lines by the boathouse are yours, fished without the squire's knowledge. Is that the whole of it?",
+   "reactions_checked": 3,
+   "direct": "Pike says he saw you go down to the boathouse just before ten and not come back up till near eleven, well clear of those steps. Is that so?",
+   "lines_for": "dfe1a02e8663",
+   "same_as": "night"
   },
   {
    "id": "s_clara",
@@ -1338,8 +1347,8 @@
    "to": null,
    "show": "Miss Vale says she went up with a headache at ten and didn't come down again till the shouting this morning. Does that square with what you saw?",
    "confront": "You told me you went up with a headache at ten and stayed there till the shouting this morning. Is that the whole of it?",
-   "same_as": "night",
-   "lines_for": "cda9bf4d880d"
+   "lines_for": "4af9a74adbe5",
+   "same_as": "night"
   },
   {
    "id": "s_jonah",
@@ -1353,10 +1362,13 @@
    ],
    "ask": "Where were you last night, Mr Reed?",
    "to": null,
-   "same_as": "night",
-   "show": "Jonah Reed told me the river's quiet of a night and that nobody came down to the boathouse. Do you know if that's true?",
-   "lines_for": "a0d49ec05fb8",
-   "confront": "You told me nobody comes down to the boathouse of a night, and that nobody came. Is that the whole of it?"
+   "deceptive": true,
+   "surface_why": "He claims nobody came to the boathouse that night, but Clara secretly met him there.",
+   "surface_checked": "cover",
+   "show": "Jonah Reed says he spent the night mending nets at the boathouse and that nobody came down there at all. Can you confirm that?",
+   "confront": "You told me you were mending nets all night and that nobody came down to the boathouse. Is that the whole of it?",
+   "lines_for": "a2ce62ca641e",
+   "same_as": "night"
   },
   {
    "id": "s_jonah_admits",
@@ -1387,14 +1399,15 @@
     "s_jonah"
    ],
    "to": "clara",
-   "direct": "You now say Miss Vale sat with you by your stove from before ten till near eleven, nowhere near the steps. Is that the truth of it this time?",
-   "show": "Reed now says Miss Vale came down to his boathouse before ten, sat by his stove talking, and went back up near eleven, well clear of those steps. Can you confirm that's true?",
-   "confront": "You now say Miss Vale sat with you by your stove from before ten till near eleven, nowhere near the steps. Is that the truth of it this time?",
    "reactions": {
     "clara": "Yes. I told you a falsehood about the headache, Inspector, because I did not wish Edmund—or anyone—to know I go down to the boathouse. Mr Reed speaks the truth; I was with him, nothing more.",
     "dora": "That's Mr Reed's business and none of mine, and I'm sure I don't see what it has to do with the post office. I was at my board all evening, sorting the bags, same as always. I'll not be drawn into tittle-tattle about who sat where by whose stove."
    },
-   "lines_for": "77118171234e"
+   "show": "Jonah Reed now says a woman came down to the boathouse a little before ten, sat talking with him by the stove, and went back up near eleven, nowhere near the terrace steps. Does that match what you saw?",
+   "confront": "You've now told me a woman sat with you by the stove from before ten till near eleven, and never went near those steps. Is that the whole of it?",
+   "reactions_checked": 3,
+   "direct": "Reed says you came down to his boathouse a little before ten, sat talking by his stove, and left near eleven, nowhere near those steps. Is that right?",
+   "lines_for": "c9c5f57ec01a"
   },
   {
    "id": "s_edmund",
@@ -1409,8 +1422,11 @@
    "to": null,
    "confront": "You told me the vicar left by the garden door past ten after your words over the glebe field, and you sat with a cigar before bed. Is that the whole of it?",
    "show": "Edmund Vale says the vicar dined with him, they had words over the glebe field, and the vicar left by the garden door about five past ten while he sat alone with a cigar. Do you know if that's true?",
-   "same_as": "night",
-   "lines_for": "2637f3cf79a1"
+   "lines_for": "4f1484323570",
+   "deceptive": true,
+   "surface_why": "He claims the vicar left by the garden door around 10:05 after dinner, but in truth the vicar and Edmund continued arguing in the study afterward; he also omits the phone call and burning the note, implying a simpler, false sequence of events.",
+   "surface_checked": "cover",
+   "same_as": "night"
   },
   {
    "id": "s_dora",
@@ -1433,8 +1449,8 @@
    "to": null,
    "show": "Miss Pruett says she was at the post office all evening sorting the morning bags and never went out after dark. Can you confirm she keeps those hours?",
    "confront": "You told me you were sorting bags at the post office all evening and never went out after dark. Is that the whole of it?",
-   "same_as": "night",
-   "lines_for": "309c0e481cc2"
+   "lines_for": "5ae92ad8a137",
+   "same_as": "night"
   },
   {
    "id": "s_call",
@@ -1463,10 +1479,12 @@
    "to": null,
    "show": "Mr Vale says he tried a trunk call to London at half past ten and got no answer from the exchange before giving up for bed. Does that tally with what you know?",
    "confront": "You told me you tried a trunk call to London at half past ten and gave it up when no one answered. Is that the whole of it?",
-   "reactions": {
-    "dora": "Well — yes, I did try the exchange, half past ten or thereabouts, a private matter, and nothing came of it. That doesn't mean I was gadding about; I was at the office the whole time, trunk call or no trunk call. You'll not make a wanderer of me over a dead line."
-   },
-   "lines_for": "d9520745ca69"
+   "reactions": {},
+   "lines_for": "3c1f0706fd78",
+   "deceptive": false,
+   "surface_why": "Matches the true events of the trunk call attempt and going to bed.",
+   "surface_checked": "honest",
+   "reactions_checked": 2
   },
   {
    "id": "s_key",
@@ -1479,9 +1497,12 @@
    "to": null,
    "show": "Constable Bell found a small brass key stamped 'St A. V.' in the dead man's waistcoat pocket. Do you know what lock that key fits?",
    "reactions": {
-    "bell": "Found that on him myself, right in the waistcoat pocket. Church key, by the look of the stamp—'St A. V.' Vicar'd have had cause to carry it, I'd think, nothing stranger than that."
+    "bell": "Found that on him myself, right in the waistcoat pocket. Church key, by the look of the stamp—'St A. V.' Vicar'd have had cause to carry it, I'd think, nothing stranger than that.",
+    "edmund": "A key? St A. V. — St Alden's Vicarage, I'd wager. No notion how it came to be on him, nor why it should concern me.",
+    "clara": "St Alden's Vicarage, by the look of it. I couldn't say how he came to have it on him — that's hardly a household matter."
    },
-   "lines_for": "246db975ddfa"
+   "lines_for": "1222462eaaa5",
+   "reactions_checked": 3
   },
   {
    "id": "s_notebook",
@@ -1502,12 +1523,13 @@
    },
    "art": "notebook",
    "to": "dora",
-   "direct": "Your notebook says you'd warned D.P. that the steaming must stop by Friday or you'd write to the Postmaster General. What came of that?",
-   "show": "The vicar's notebook records a third complaint of letters coming resealed, and a warning given to someone with the initials D.P. that the steaming must stop by Friday. Do you know anything about that warning?",
    "reactions": {
     "dora": "That's a wicked thing to put in a dead man's book, and I'll not have my character blackened by it. The vicar had his fancies about the post, same as some folk have fancies about their neighbours, Inspector, and I never once laid a steaming kettle near another soul's letters."
    },
-   "lines_for": "d5af7ac64994"
+   "direct": "I've read the vicar's notebook. He writes that letters to the Lodge come back resealed, and warns you plainly that the steaming must stop by Friday. Is that true?",
+   "show": "I've read the vicar's notebook, where he writes of letters to the Lodge coming back resealed and warns 'D.P.' that the steaming must stop by Friday. Do you know anything of that?",
+   "lines_for": "53d806082d49",
+   "reactions_checked": 3
   },
   {
    "id": "s_line",
@@ -1526,9 +1548,10 @@
    "direct": "I found your eel line with its float notched 'R.P.' tangled in the netting, still baited. Can you tell me how it got there?",
    "show": "In the netting at the boathouse I found a tarred eel line, baited still, with a cork float notched 'R.P.' Can you tell me whose line that is?",
    "reactions": {
-    "rowan": "Aye, that's mine right enough—notched it myself. Lost it in the dark setting lines, same as I told you, nothing more to it than a careless hand and bad light."
+    "rowan": "Aye, that's mine. R.P., same as I notch 'em all. Lost that one in the dark packing up, didn't fancy wading for it twice."
    },
-   "lines_for": "13315f5d43a3"
+   "lines_for": "0dd802f80a17",
+   "reactions_checked": 3
   },
   {
    "id": "s_tangle",
@@ -1547,7 +1570,8 @@
    "reactions": {
     "rowan": "That's my doing, Inspector, shoving it back under the boards with Jonah's netting so it wouldn't be found lying about loose. Didn't want the Squire hearing I fish his water, that's all there is to it."
    },
-   "lines_for": "f5208cd41abf"
+   "lines_for": "c877eb0c5485",
+   "reactions_checked": 3
   },
   {
    "id": "s_netting",
@@ -1565,7 +1589,10 @@
    "to": null,
    "show": "Reed says the netting scrap is his own from that night's mending, but any line tangled with it must have been pushed in later, out of his sight. Does that match what happened?",
    "confront": "You told me the netting scrap is yours from that night, but any line tangled with it was pushed in later, out of your sight. Is that the whole of it?",
-   "lines_for": "531d42e2a6c9"
+   "lines_for": "7ef31581169d",
+   "deceptive": false,
+   "surface_why": "Matches the true events: Jonah did mend nets that night, and the line was indeed added later without his knowledge.",
+   "surface_checked": "honest"
   },
   {
    "id": "s_clara_scrub",
@@ -1583,11 +1610,13 @@
    "direct": "I saw you at the scullery sink scrubbing a small grey suede shoe, which you dropped into the bucket when you noticed me. Can you tell me about that?",
    "confront": "I saw you at the scullery sink scrubbing a grey suede shoe, and you dropped it into the bucket the moment you saw me. Why were you cleaning it in such a hurry?",
    "reactions": {
-    "clara": "I'd rather not discuss my shoes, Inspector, if you don't mind. A lady may clean her own things in her own scullery without it being made a matter for the police."
+    "clara": "I'd rather not discuss my shoes, Inspector, if you don't mind. A lady may clean her own things in her own scullery without it being made a matter for the police.",
+    "edmund": "Good lord, Clara, scrubbing shoes at this hour? I shan't ask — a man learns not to pry into his sister's housekeeping fancies."
    },
    "show": "I saw Miss Vale at the scullery sink scrubbing a small grey suede shoe, which she dropped into the bucket and said nothing when she noticed me. Do you know anything about that shoe?",
-   "lines_for": "e56522c81e3d",
-   "watch": true
+   "lines_for": "273c3595d200",
+   "watch": true,
+   "reactions_checked": 3
   },
   {
    "id": "s_clara_shoes",
@@ -1606,9 +1635,11 @@
    "show": "These damp grey suede shoes have fine silt and duckweed in the welts, with no trace of the dark garden loam from the terrace border. Can you tell me where these were worn?",
    "reactions": {
     "clara": "Yes, those are mine. The silt is from the river path, not the terrace border—I was at the boathouse that night, as Mr Reed will tell you, and nowhere near where the vicar fell.",
-    "jonah": "That's river silt off my own bank, plain as anything—duckweed and reed, not garden dirt. She was down with me by the water, nowhere near those steps, and I'll say so to anyone who asks."
+    "edmund": "Pond silt and reed, is it? I'm sure Clara has her reasons, whatever they are — it's nothing to do with me or the house.",
+    "jonah": "That's river silt and duckweed off my own bank, right enough. She came down to the boathouse that night, and I'll say plain she was with me there, nothing more owed to anyone for it."
    },
-   "lines_for": "1dfe92950411"
+   "lines_for": "0ab06dca2393",
+   "reactions_checked": 3
   },
   {
    "id": "s_phone_note",
@@ -1626,9 +1657,11 @@
    "direct": "I found this half-burnt note in your grate naming a Holborn number, a Mr Gage, and the word 'Vale.' Can you tell me what that note concerned?",
    "show": "In the study grate I found a half-burnt note reading 'Trunk: Holborn 2271, Mr Gage, re Vale,' with the rest burnt away and spent matches on the hearth. Do you know who wrote that note or what it concerned?",
    "reactions": {
-    "edmund": "That's my hand, yes, and my business with my own agent, nothing to do with Hale's death. A man's entitled to burn his private correspondence without the whole county reading it over his shoulder."
+    "edmund": "That's my hand, yes, and my business with my own agent, nothing to do with Hale's death. A man's entitled to burn his private correspondence without the whole county reading it over his shoulder.",
+    "clara": "I know nothing of my brother's telephone calls or his ashes, I'm afraid — that's his study, and his business entirely, not mine to explain."
    },
-   "lines_for": "e962f94d158e"
+   "lines_for": "31a8f8a182ea",
+   "reactions_checked": 3
   },
   {
    "id": "s_rowan_saw",
@@ -1643,7 +1676,10 @@
    "to": null,
    "show": "Pike says that when he went for the constable, he saw the squire kneeling at the study grate striking matches, though no fire was laid. Can you tell me what Mr Vale was doing there?",
    "confront": "You told me you saw the squire kneeling at the study grate striking matches with no fire laid. Can you tell me more of what you saw?",
-   "lines_for": "e1cc083e69a6"
+   "lines_for": "052403de0626",
+   "deceptive": false,
+   "surface_why": "Accurately reports what he witnessed — Edmund kneeling at the grate striking matches — consistent with Edmund burning the note.",
+   "surface_checked": "honest"
   },
   {
    "id": "s_pad",
@@ -1660,9 +1696,10 @@
    "to": null,
    "show": "The telephone pad shows an impression reading 'NO ANSWER. Try 8 a.m.' with its top sheet torn away, and a burnt-down cigar end in the tray. Do you know who tore that sheet off and why?",
    "reactions": {
-    "edmund": "Yes, that's my note of the call—no answer from the exchange, as I told you, and I went up to bed none the wiser. Hardly a hanging matter, a cold cigar and an unanswered trunk line."
+    "edmund": "Well. Yes. I tried the exchange at half past ten on a trunk call, London, my own business and none of the parish's. Nobody answered, I gave it up, burnt the note after - a man's entitled to burn his own scribblings, I should think."
    },
-   "lines_for": "3c403f932ff9"
+   "lines_for": "15921ed881c2",
+   "reactions_checked": 3
   },
   {
    "id": "s_waders",
@@ -1676,9 +1713,10 @@
    "direct": "Your waders here are wet with river silt to the thigh, with tarred twine caught in the buckle and duckweed flecks. Can you tell me how they got that wet?",
    "show": "In the potting shed I found a pair of waders wet to the thigh with river silt, tarred twine caught in a buckle, and duckweed flecks. Can you tell me whose waders these are and how they got so wet?",
    "reactions": {
-    "rowan": "Aye, them's mine, and wet because I was down clearing weed from the old mill race, same as I do most nights. That twine's off my eel lines, nowt odd in that. A man can't help a puddle on a brick floor, can he."
+    "rowan": "Them's mine, wet because I was down clearing weed from the old mill race, nothing more to it. Twine catches on everything down there, no mystery in that."
    },
-   "lines_for": "d98a8f900f0a"
+   "lines_for": "900d7ef2d235",
+   "reactions_checked": 3
   },
   {
    "id": "s_rowan_sluice",
@@ -1705,7 +1743,7 @@
    "to": null,
    "show": "Pike says his waders were wet from clearing weed off the old mill race at first light, same as every spring, before his rounds up at the house. Does that account match what you know?",
    "confront": "You told me your waders were wet from clearing the mill race at first light before your rounds. Is that the whole of it?",
-   "lines_for": "3c2108173994"
+   "lines_for": "897ecd0a00a4"
   },
   {
    "id": "s_saw_edmund_clara_manor",
@@ -1727,11 +1765,10 @@
    "to": "clara",
    "direct": "Edmund Vale says he saw you at Vale Manor at quarter to eight. Is that so?",
    "show": "Edmund Vale says he saw Clara Vale at Vale Manor at quarter to eight. Do you know if that's true?",
-   "lines_for": "3a93506dd9d1",
+   "lines_for": "bb8c8319acd6",
    "confront": "You told me you saw Clara Vale at Vale Manor at quarter to eight. Is that the whole of it?",
-   "reactions": {
-    "clara": "Yes, that is quite right, Edmund. We dined together as usual, and I remember the hour well enough myself. I don't see what more there is to say about it."
-   }
+   "reactions": {},
+   "reactions_checked": 2
   },
   {
    "id": "s_saw_edmund_vicar_manor",
@@ -1753,7 +1790,7 @@
    "to": "vicar",
    "direct": "Edmund Vale says he saw you at Vale Manor at quarter to eight. Is that so?",
    "show": "Edmund Vale says he saw Mr Hale at Vale Manor at quarter to eight. Do you know if that's true?",
-   "lines_for": "b14e6c3bb7bf",
+   "lines_for": "4eed9b88cbd4",
    "confront": "You told me you saw Mr Hale at Vale Manor at quarter to eight. Is that the whole of it?"
   },
   {
@@ -1765,7 +1802,14 @@
     "pred": "crimeBetween",
     "from": 1330,
     "to": 1350
-   }
+   },
+   "to": null,
+   "show": "I understand the vicar died sometime between ten past ten and half past ten that night. Does that fit with what you know?",
+   "lines_for": "b5fb57630a8b",
+   "reactions": {
+    "dora": "That's the hour given, and I've nothing to add to it. I was at my board the whole evening, as I've said."
+   },
+   "reactions_checked": 3
   },
   {
    "id": "pub_trait_clara_shoe",
@@ -1777,7 +1821,17 @@
     "person": "clara",
     "trait": "shoe",
     "value": "small"
-   }
+   },
+   "to": "clara",
+   "direct": "I see you wear small shoes. Can you tell me about that?",
+   "show": "I've noticed Clara Vale wears small shoes. Had you noticed that yourself?",
+   "lines_for": "524931bc26c4",
+   "reactions": {
+    "dora": "I wouldn't know the size of Miss Vale's shoes, nor why it should concern me. I was at the post office all evening, as I've told you plainly enough.",
+    "clara": "I do, yes, a small foot runs in the family. I don't see what my shoes have to do with anything, Inspector.",
+    "edmund": "Small feet, yes, always has had, since she was a girl. I don't see what that's to do with Hale lying dead on my steps."
+   },
+   "reactions_checked": 3
   },
   {
    "id": "pub_trait_dora_shoe",
@@ -1789,7 +1843,15 @@
     "person": "dora",
     "trait": "shoe",
     "value": "small"
-   }
+   },
+   "to": "dora",
+   "direct": "I see you wear small shoes. Can you tell me about that?",
+   "show": "I've noticed Dorothy Pruett wears small shoes. Had you noticed that yourself?",
+   "lines_for": "c66ce3a72680",
+   "reactions": {
+    "dora": "I have a small foot, as does half the village, I shouldn't wonder. I don't see what my shoes have to do with the vicar's death."
+   },
+   "reactions_checked": 3
   },
   {
    "id": "pub_trait_edmund_shoe",
@@ -1801,7 +1863,17 @@
     "person": "edmund",
     "trait": "shoe",
     "value": "large"
-   }
+   },
+   "to": "edmund",
+   "direct": "I see you wear large shoes. Can you tell me about that?",
+   "show": "I've noticed Edmund Vale wears large shoes. Had you noticed that yourself?",
+   "lines_for": "65193f342ab4",
+   "reactions": {
+    "dora": "Large shoes, is it? Well, mine are small, as anyone in the village will tell you, and I never stirred from the post office board all evening, sorting the morning bags as I always do.",
+    "clara": "That is quite true, my brother has always worn large boots, it has nothing to do with me, I'm sure. I went up with my headache and stayed there, as I've told you.",
+    "edmund": "Yes, large shoes, always have been, and I don't see what my feet have to do with any of this. I sat up with my cigar and went to bed, as I've said."
+   },
+   "reactions_checked": 3
   },
   {
    "id": "pub_trait_jonah_shoe",
@@ -1813,7 +1885,16 @@
     "person": "jonah",
     "trait": "shoe",
     "value": "large"
-   }
+   },
+   "to": "jonah",
+   "direct": "I see you wear large shoes. Can you tell me about that?",
+   "show": "I've noticed Jonah Reed wears large shoes. Had you noticed that yourself?",
+   "lines_for": "26d2466efec9",
+   "reactions": {
+    "jonah": "Large feet, aye, always have been. Runs in my family, nothing more to make of it.",
+    "dora": "Big boots don't interest me, Constable. I was at the post office sorting bags, same as every night, and that's all I can tell you."
+   },
+   "reactions_checked": 3
   }
  ],
  "premise": {

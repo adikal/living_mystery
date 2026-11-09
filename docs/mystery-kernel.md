@@ -637,7 +637,11 @@ the person again in their own words.
 - **Showing evidence.** Each clue carries a spoken `show` line written at publish time (a third-person line for accounts
   and behaviour, which names the speaker or subject) and a `confront` line said to that person. Characters involved in a
   clue get a written `reactions[person]`. Fallbacks are templates by clue kind and by the listener's relation (took part,
-  subject, was at that place, uninvolved; the culprit deflects).
+  subject, was at that place, uninvolved; the culprit deflects). The line said to the person an account is about
+  (`direct`) keeps the account its speaker's: one that says "You told me..." to anyone but the speaker is never used.
+  Shown another person's account with nothing written for them, a listener answers with their own account of an event
+  they both took part in (the constable shown the groundsman's morning tells of being fetched by him), or, when a
+  statement of theirs already told is recorded as showing it untrue, says so; one not yet told is kept back.
 - **Concessions.** A false account the speaker believed is conceded as a mistake; one given to protect someone as a lie.
 - **The doctor's examination.** Every case gets examination notes and an account from Dr Marsh: cause of death in general
   terms and the time window the certification already assumes (so depth and verdicts are unchanged). Spoken times are

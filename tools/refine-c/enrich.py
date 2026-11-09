@@ -191,10 +191,14 @@ STOP = {'the', 'with', 'from', 'behind', 'under', 'along', 'into', 'about', 'not
 
 
 def clue_nouns(case):
-    """Content words of every physical clue's title: text written for play must not mention them (they are to be found)."""
-    names = {w.lower() for p in case['people'] for w in p['name'].split()}
+    """Content words of every physical clue's title: text written for play must not mention them (they are to be found).
+    Words that name a person (their name, role or form of address: "the vicar's notebook" is not the vicar) are not clue
+    words, and a possessive is its word ("vicar's" is "vicar")."""
+    setting = {p['id']: p for p in SETTING.get('people', [])}
+    names = {w.lower() for p in case['people'] for f in (p['name'], setting.get(p['id'], {}).get('role'), setting.get(p['id'], {}).get('address'))
+             for w in re.sub(r"[^A-Za-z ]", ' ', str(f or '')).split()}
     titles = [x.get('title') for x in case['signs'] if x['kind'] != 'testimony' and x.get('title')]
-    return {w for t in titles for w in (re.sub(r"[^a-z]", '', x.lower()) for x in str(t).split())
+    return {w for t in titles for w in (re.sub(r"[^a-z]", '', re.sub(r"[’']s$", '', x.lower())) for x in str(t).split())
             if len(w) > 3 and w not in STOP and w not in names}
 
 

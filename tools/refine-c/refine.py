@@ -1055,7 +1055,8 @@ Fail the step if any of these hold:
 - READING: a 'reading' reason does not actually make sense of the clue
 - CHARACTER: a character acts against their established attitudes or knowledge, or with no believable reason
 - LOOSE END: a sign names or implicates a person (holds a key, was seen, owns an item) and nothing in the case explains
-  it, so an innocent looks guilty for a reason the case never resolves
+  it, so an innocent looks guilty for a reason the case never resolves; or a sign's words offer the detective something
+  (an envelope, a sample, "I'll show you later") that no sign in the case is, so the detective can never have it
 - GIVEAWAY: a sign's text names the culprit or announces what it proves, instead of being a neutral observation
 - CONTRADICTION: the step contradicts something already established in the case
 - ALLY: the constable lies, hides, moves or tampers with evidence, or withholds what he knows or keeps until the detective
@@ -1258,8 +1259,61 @@ def history_errors(case):
     import premise as P
     import roles
     unb = unbacked_accounts(case)
-    return P.morning_errors(case) + P.evening_errors(case) + roles.ally_errors(case) + roles.examiner_errors(case) + roles.herring_errors(case) + ([f"accounts not backed by the true history (an event the speaker took part in or saw, or a 'knows' "
+    return P.morning_errors(case) + P.evening_errors(case) + roles.ally_errors(case) + roles.examiner_errors(case) + roles.herring_errors(case) + claim_time_errors(case) + ([f"accounts not backed by the true history (an event the speaker took part in or saw, or a 'knows' "
                                       f"attitude of theirs cited in 'because'): {unb}; back each one, or drop it"] if unb else [])
+
+
+_HOURS = {w: i + 1 for i, w in enumerate('one two three four five six seven eight nine ten eleven twelve'.split())}
+_PAST = {'five': 5, 'ten': 10, 'a quarter': 15, 'quarter': 15, 'twenty': 20, 'twenty-five': 25, 'twenty five': 25, 'half': 30}
+_HOUR = r'(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|\d{1,2})'
+
+
+def spoken_times(text):
+    """(phrase, minutes past 12 on a twelve-hour clock) for every clock time in a text: "twenty past nine", "a quarter
+    to ten", "nine o'clock", "9.30", "midnight"."""
+    import re
+    hour = lambda h: _HOURS.get(h.lower()) if not h.isdigit() else int(h)
+    out, t = [], str(text or '')
+    for m in re.finditer(rf"\b(five|ten|a quarter|quarter|twenty-five|twenty five|twenty|half)( minutes)? (past|to|after) {_HOUR}\b", t, re.I):
+        h, k = hour(m.group(4)), _PAST[m.group(1).lower()]
+        if h and h <= 24:
+            out.append((m.group(0), ((h % 12) * 60 + (k if m.group(3).lower() != 'to' else -k)) % 720))
+    for m in re.finditer(rf"\b{_HOUR} o['’]?clock\b", t, re.I):
+        h = hour(m.group(1))
+        if h and h <= 24:
+            out.append((m.group(0), (h % 12) * 60))
+    for m in re.finditer(r"\b(\d{1,2})[.:](\d{2})\b", t):
+        if int(m.group(1)) <= 24 and int(m.group(2)) < 60:
+            out.append((m.group(0), ((int(m.group(1)) % 12) * 60 + int(m.group(2))) % 720))
+    for m in re.finditer(r"\bmidnight\b", t, re.I):
+        out.append((m.group(0), 0))
+    return out
+
+
+def claim_time_errors(case, slack=10):
+    """The doctor's word on when it happened gives, in its words, the time its claim gives: a span she states ("between
+    twenty past nine and a quarter to ten") in an account of hers claiming when the crime happened lies within the
+    claim's window, to the nearest ten minutes (regeneration, November 8: she said "she died between twenty past nine and
+    a quarter to ten" over a claim of 20:20-21:30). Other times she gives are what she observed ("still warm at twenty past
+    eleven") and are not checked; nor is anyone else's account (a witness may quote a time to dismiss it)."""
+    import re
+    import enrich
+    doctor = enrich.role(case, 'examiner')
+    time = r"(?:(?:five|ten|a quarter|quarter|twenty-five|twenty five|twenty|half)(?: minutes)? (?:past|to|after) " + _HOUR + \
+        r"|" + _HOUR + r" o['’]?clock|\d{1,2}[.:]\d{2}|midnight)"
+    errs = []
+    for x in case.get('signs', []):
+        c = x.get('claim') or {}
+        if x.get('kind') != 'testimony' or x.get('speaker') != doctor or c.get('pred') != 'crimeBetween' \
+                or not all(isinstance(c.get(k), (int, float)) for k in ('from', 'to')):
+            continue
+        for span in re.finditer(rf"\bbetween ({time}) and ({time})", str(x.get('text') or ''), re.I):
+            for phrase, m in spoken_times(span.group(0)):
+                if not any(c['from'] - slack <= m + 720 * k <= c['to'] + slack for k in range(4)):
+                    errs.append(f"{x['id']}: its words say \"{span.group(0)}\", outside its own claim (crime between "
+                                f"{hm(c['from'])} and {hm(c['to'])}); make the words give the claim's times, or the claim the words'")
+                    break
+    return errs
 
 
 def setting_errors(case):

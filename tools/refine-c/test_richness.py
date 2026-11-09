@@ -11,7 +11,7 @@ import refine  # noqa: E402
 
 GEN = os.path.join(HERE, '..', '..', 'dist', 'cases', 'generated')
 HOUND = json.load(open(os.path.join(GEN, '..', 'archive', '2026-10', 'mk-live-20261025-114526.json')))   # off the menu: none cleared alone
-POST_OFFICE = json.load(open(os.path.join(GEN, 'mk-live-20261002-225824.json')))
+POST_OFFICE = json.load(open(os.path.join(GEN, '..', 'archive', '2026-10', 'mk-live-20261002-225824.json')))
 
 
 class OwnEvidence(unittest.TestCase):

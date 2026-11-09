@@ -81,6 +81,7 @@ TEMPERATURE = float(os.environ.get("LM_TEMPERATURE", "0.7"))
 
 _MAX_BODY = 20_000
 _MAX_FIELD = 6_000
+CHARACTER_FIELD_CAP = 32_000   # system or prompt of a character-v1 request; advertised at /health as max_prompt_chars
 _MAX_TOKENS_CAP = 512
 SOCKET_TIMEOUT = 30   # seconds per socket read or write on a client connection
 
@@ -139,7 +140,7 @@ def _error_record(exc):
 
 
 def validate_payload(payload, profile="dialogue-v2"):
-    field_cap = 32000 if profile == "character-v1" else _MAX_FIELD
+    field_cap = CHARACTER_FIELD_CAP if profile == "character-v1" else _MAX_FIELD
     token_cap = 1500 if profile == "character-v1" else _MAX_TOKENS_CAP
     if not isinstance(payload, dict) or not {"system", "prompt", "max_tokens"} <= set(payload) <= {"system", "prompt", "max_tokens", "temperature", "role"}:
         raise ValueError("Expected system, prompt, max_tokens (optional temperature, role)")
@@ -199,7 +200,8 @@ class Handler(BaseHTTPRequestHandler):
             return
         if self.path.rstrip("/") in ("", "/health"):
             self._send(200, {"ok": True, "routes": {role: str(r) for role, r in ROUTES.items()}, "region": REGION,
-                             "temperature": TEMPERATURE, "turn_timeout_ms": turn_timeout_ms(ROUTES)})
+                             "temperature": TEMPERATURE, "turn_timeout_ms": turn_timeout_ms(ROUTES),
+                             "max_prompt_chars": CHARACTER_FIELD_CAP})
         else:
             self._send(404, {"error": "not_found"})
 

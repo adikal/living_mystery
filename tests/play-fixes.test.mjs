@@ -251,3 +251,126 @@ test('a question built on a clue quotes its title', () => {
   const labels = B.followupOptions(s, 'iris').map(([, l]) => l);
   assert.ok(labels.includes('Now that I have seen ‘Under the glove’, what can you tell me?'), labels.join(' | '));
 });
+
+test('a free question about what the person has already told, whose replies are all rejected, is answered with its recap', async () => {
+  // November 8 playtests: one reply in ten was a stock "nothing to tell" to a question about the person's own story
+  for (const f of files) {
+    const kc = load(f), {s} = start(kc);
+    const told = kc.signs.find(x => x.kind === 'testimony' && x.surface && x.speaker !== caseTables(s).CASE.constable);
+    if (!told) continue;
+    goTo(s, told.speaker);
+    dispatch(s, {type: 'ask', person: told.speaker, topic: 'night'});
+    const before = lastWords(s, told.speaker);
+    const t = prepareCharacterTurn(s, {person: told.speaker, text: 'Are you quite certain of that? Think carefully, please.'});
+    const a = t.context.accounts.find(x => x.statement.includes(before) || /^As I told you/.test(x.statement));
+    if (!a) continue;
+    const p = {plan: null, intent: a.deceptive ? 'deceive' : 'answer', account: a.id, utterance: 'Something embellished beyond the account.',
+      claims: a.claims, sources: a.sources, trust: 'unchanged', belief: 'remember_only', engagement: 'continue', rationale: 'Answer.'};
+    const reject = async (_url, init) => ({ok: true, json: async () => ({text: JSON.parse(init.body).system === CHARACTER_CRITIC
+      ? '{"verdict":"reject","violations":["embellished"]}' : JSON.stringify(p)})});
+    const r = await proposeCharacterTurn(t, {store: activeStore(), fetchImpl: reject});
+    assert.equal(r.proposal, null);
+    const held = s.world.player.evidence.length;
+    applyCharacterTurn(s, t, r);
+    const said = lastWords(s, told.speaker);
+    assert.match(said, /^As I (told you|have admitted)/, 'a reference back, marked as one');
+    assert.equal(s.world.player.evidence.length, held, 'nothing new enters the notebook');
+    const plain = t => t.replace(/^As I told you:\s*/, '').replace(/[“”"]/g, '');
+    assert.ok(plain(said).includes(plain(before)) && !caseTables(s).behavior.isDecline(told.speaker, said), `${f}: ${said}`);
+    return;
+  }
+  assert.fail('no case had a told evening account to refer back to');
+});
+
+test('the constable remembers his verdict on an accusation: it is in his side of the conversation', () => {
+  const kc = load(files[0]), {s, T} = start(kc), c = T.CASE.constable;
+  goTo(s, c);
+  const innocent = kc.question.candidates.map(actorOf).find(p => p && p !== culprit(kc));
+  dispatch(s, {type: 'accuse', suspect: innocent, method: kc.answer?.method, motive: kc.answer?.motive});
+  const verdict = s.events.findLast(e => e.kind === 'rejected' && e.data?.speaker === c);
+  assert.ok(verdict, 'the accusation was turned down');
+  const t = prepareCharacterTurn(s, {person: c, text: 'Why did you say that?'});
+  const said = t.context.character.history.findLast(h => h.speaker === c);
+  assert.ok(said.text.includes(verdict.data.reason), said.text);
+});
+
+test('pressed again on what they have already answered, a person changes tack instead of repeating themselves', async () => {
+  const {CHANGE_TACK} = await import('../dist/character-turn.mjs');
+  const kc = load(files[0]);
+  delete kc.pressed;                               // the plain line: the case's own lines are tested below
+  const {s} = start(kc);
+  const told = kc.signs.find(x => x.kind === 'testimony' && x.surface && x.speaker !== caseTables(s).CASE.constable);
+  goTo(s, told.speaker);
+  dispatch(s, {type: 'ask', person: told.speaker, topic: 'night'});
+  const before = lastWords(s, told.speaker);
+  const reject = p => async (_url, init) => ({ok: true, json: async () => ({text: JSON.parse(init.body).system === CHARACTER_CRITIC
+    ? '{"verdict":"reject","violations":["embellished"]}' : JSON.stringify(p)})});
+  const replies = [];
+  for (let i = 0; i < 3; i++) {
+    const t = prepareCharacterTurn(s, {person: told.speaker, text: `Are you quite certain? (${i})`});
+    const a = t.context.accounts.find(x => x.statement.includes(before) || /^As I told you/.test(x.statement));
+    assert.ok(a, 'the account told is still available');
+    const p = {plan: null, intent: a.deceptive ? 'deceive' : 'answer', account: a.id, utterance: 'Something embellished.',
+      claims: a.claims, sources: a.sources, trust: 'unchanged', belief: 'remember_only', engagement: 'continue', rationale: 'x'};
+    applyCharacterTurn(s, t, await proposeCharacterTurn(t, {store: activeStore(), fetchImpl: reject(p)}));
+    replies.push(lastWords(s, told.speaker));
+  }
+  assert.ok(replies.includes(CHANGE_TACK), replies.join(' | '));
+  assert.ok(replies.every((r, i) => i === 0 || r !== replies[i - 1]), 'never the same words twice running');
+});
+
+
+test('pressed again, a person changes tack in their own published words when the case has them', async () => {
+  const kc = load(files[0]);
+  const told = kc.signs.find(x => x.kind === 'testimony' && x.surface && x.speaker !== kc.setting?.roles?.constable);
+  kc.pressed = {[told.speaker]: ['Answered that, I have. Show me something and we will talk.', 'Nothing new there, unless you have something to show me.']};
+  const {s} = start(kc);
+  goTo(s, told.speaker);
+  dispatch(s, {type: 'ask', person: told.speaker, topic: 'night'});
+  const before = lastWords(s, told.speaker), replies = [];
+  for (let i = 0; i < 3; i++) {
+    const t = prepareCharacterTurn(s, {person: told.speaker, text: `Are you quite sure? (${i})`});
+    const a = t.context.accounts.find(x => x.statement.includes(before) || /^As I told you/.test(x.statement));
+    const p = {plan: null, intent: a.deceptive ? 'deceive' : 'answer', account: a.id, utterance: 'Something embellished.',
+      claims: a.claims, sources: a.sources, trust: 'unchanged', belief: 'remember_only', engagement: 'continue', rationale: 'x'};
+    const reject = async (_url, init) => ({ok: true, json: async () => ({text: JSON.parse(init.body).system === CHARACTER_CRITIC
+      ? '{"verdict":"reject","violations":["embellished"]}' : JSON.stringify(p)})});
+    applyCharacterTurn(s, t, await proposeCharacterTurn(t, {store: activeStore(), fetchImpl: reject}));
+    replies.push(lastWords(s, told.speaker));
+  }
+  assert.ok(replies.some(r => kc.pressed[told.speaker].includes(r)), replies.join(' | '));
+});
+
+test('a person may say where a record of their own making is, if the detective may look at it now', async () => {
+  // November 8 play: asked where her envelope of fibres was, the doctor could only guess; her notes lie at her surgery
+  const {validateCharacterProposal} = await import('../dist/character-turn.mjs');
+  const kc = load('mk-live-20261108-121102.json'), {s, T} = start(kc), doctor = kc.setting.roles.examiner;
+  goTo(s, doctor);
+  const t = prepareCharacterTurn(s, {person: doctor, text: 'Where are your notes on the body?'});
+  const notes = t.context.ownThings?.find(x => /notes/i.test(x.title));
+  assert.ok(notes, JSON.stringify(t.context.ownThings));
+  const reply = {plan: null, intent: 'answer', account: null, utterance: `They are at ${notes.where}, with the rest of my papers.`, claims: [], sources: [],
+    trust: 'unchanged', belief: 'remember_only', engagement: 'continue', rationale: 'x'};
+  assert.ok(!/no_account_fact/.test(validateCharacterProposal(t, {...reply, intent: 'clarify'}).reason ?? ''), 'naming where it is is allowed');
+  const culprit = actorOf(kc.question.candidates.find(c => c.id === kc.question.truth));
+  assert.deepEqual(T.behavior.ownThings(s, culprit), [], 'never the culprit');
+});
+
+test('a reference back quotes the part of the account the question is about', async () => {
+  const kc = load('mk-live-20261108-121102.json'), doctor = kc.setting.roles.examiner;
+  const exam = kc.signs.find(x => x.id === 's_exam');
+  exam.text = `${exam.text.replace(/[”"]$/, '')} I've put them in an envelope for you.`;   // a long account, one sentence asked about
+  const {s} = start(kc);
+  goTo(s, doctor);
+  dispatch(s, {type: 'ask', person: doctor, topic: exam.id});
+  const t = prepareCharacterTurn(s, {person: doctor, text: 'Where is the envelope?'});
+  const a = t.context.accounts.find(x => x.statement.includes('envelope'));
+  const p = {plan: null, intent: 'answer', account: a.id, utterance: 'On my desk.', claims: a.claims, sources: a.sources,
+    trust: 'unchanged', belief: 'remember_only', engagement: 'continue', rationale: 'x'};
+  const reject = async (_url, init) => ({ok: true, json: async () => ({text: JSON.parse(init.body).system === CHARACTER_CRITIC
+    ? '{"verdict":"reject","violations":["invented"]}' : JSON.stringify(p)})});
+  applyCharacterTurn(s, t, await proposeCharacterTurn(t, {store: activeStore(), fetchImpl: reject}));
+  const said = lastWords(s, doctor);
+  assert.match(said, /^As I told you: .*envelope/);
+  assert.ok(said.length < exam.text.length / 2, said);
+});

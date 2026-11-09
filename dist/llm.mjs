@@ -6,17 +6,24 @@ export function setLlmConfig({endpoint,enabled,reasoning},store){try{const s=saf
 // How long to wait for a whole character turn, as the proxy advertises for its models (local models are slower).
 // Synchronous, so a turn never waits on it: the first call per endpoint asks the proxy in the background, and until
 // the answer arrives (or if the proxy cannot say) the Bedrock default applies.
-const DEFAULT_TURN_MS=45000,timeouts=new Map();
-export function turnTimeout(store,fetchImpl=globalThis.fetch){
-  const {endpoint}=llmConfig(store);
+// The same answer gives the longest prompt the proxy accepts (max_prompt_chars), which the morning director fits.
+const DEFAULT_TURN_MS=45000,DEFAULT_PROMPT_CHARS=32000,timeouts=new Map();
+function proxyLimits(endpoint,fetchImpl){
   if(!timeouts.has(endpoint)){
-    const entry={ms:DEFAULT_TURN_MS};timeouts.set(endpoint,entry);
-    entry.ready=Promise.resolve().then(()=>fetchImpl(new URL('health',endpoint))).then(r=>r.json())
-      .then(h=>{if(Number.isFinite(h.turn_timeout_ms))entry.ms=h.turn_timeout_ms;}).catch(()=>{});
+    const entry={ms:DEFAULT_TURN_MS,promptChars:DEFAULT_PROMPT_CHARS};timeouts.set(endpoint,entry);
+    // a proxy that never answers must not hold anyone up: the defaults stand after a few seconds
+    const signal=typeof AbortSignal!=='undefined'&&AbortSignal.timeout?AbortSignal.timeout(3000):undefined;
+    entry.ready=Promise.resolve().then(()=>fetchImpl(new URL('health',endpoint),signal?{signal}:undefined)).then(r=>r.json())
+      .then(h=>{if(Number.isFinite(h.turn_timeout_ms))entry.ms=h.turn_timeout_ms;if(Number.isFinite(h.max_prompt_chars))entry.promptChars=h.max_prompt_chars;}).catch(()=>{});
   }
-  return timeouts.get(endpoint).ms;
+  return timeouts.get(endpoint);
 }
+export function turnTimeout(store,fetchImpl=globalThis.fetch){return proxyLimits(llmConfig(store).endpoint,fetchImpl).ms;}
 export const turnTimeoutKnown=store=>timeouts.get(llmConfig(store).endpoint)?.ready;
+// the longest prompt the proxy at this endpoint accepts (its default until it has said)
+export async function promptLimit(endpoint,fetchImpl=globalThis.fetch){
+  const entry=proxyLimits(endpoint,fetchImpl);await entry.ready;return entry.promptChars;
+}
 export function llmActive(store){const c=llmConfig(store);try{const u=new URL(c.endpoint);return c.enabled&&['http:','https:'].includes(u.protocol)&&!u.username&&!u.password}catch{return false}}
 
 export const REALIZATION_VERSION=3;

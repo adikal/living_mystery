@@ -101,7 +101,9 @@ case unsolvable.
   UI after every committed action when AI is on: every fifteen game minutes, or after five when something significant
   happened (`morning.significant`: the detective shows someone a clue, finds one that concerns someone who can act
   other than its own speaker, or draws a concession). The code critic's reasons go back to the director once, so a
-  fault is mended rather than only cut. A plan starts when it is made. The newest judgement wins: someone re-planned
+  fault is mended rather than only cut. The prompt fits what the proxy accepts (its `/health` `max_prompt_chars`, less
+  room for that revision): over a long morning each person keeps the newest of what they may say and of the earlier
+  plans, with a count of what was left out. A plan starts when it is made. The newest judgement wins: someone re-planned
   whose new steps all fail keeps nothing of the earlier plan. Going where one already is, or only staying put, is no
   plan. A finished agenda leaves the person where they are.
 - **The map shows where people are** in generated cases (someone walking is shown at where they are going, marked

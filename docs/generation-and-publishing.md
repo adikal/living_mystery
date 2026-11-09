@@ -92,14 +92,23 @@ medium, `JUDGE_EFFORT`): at low effort they passed what they should catch. Each 
 | Judge | Asks |
 |---|---|
 | `AGREES` | does an evening account contradict what its speaker says, or who people are? |
-| `LEAK` | does it give away something the speaker keeps back? |
+| `LEAK` | does an evening or morning account give away what its speaker withholds: what they admit only once pressed, or a clue locked behind an account they give only once pressed? |
 | `SURFACE_TRUTH` | is a claimless account honest or a cover story (knowing who is who)? |
 | `VISIBLE` | being at the same place, would one person really have seen the other? |
-| `REACT_CHECK` | does a reaction or concession contradict what the person said, keeps back, everyone knows, how the clue was found or what it shows? |
-| `LINES_AGREE`, `SAME` | do show lines say what their clue says; do two questions ask the same thing? |
+| `REACT_CHECK` | does a reaction or concession contradict what the person said, keeps back, everyone knows, how the clue was found or what it shows, or take another person's act or words as the character's own? |
+| `PROMISE`, `SAME_BUT` | does an account offer the detective something no clue in the case is (it is reworded without the offer); does the rewording say the same otherwise? |
+| `MEDICAL_AGREES` | do the doctor's notes agree with what she has already said about the body (cause, findings, how sure she is of the time)? |
+| `LINES_AGREE`, `SAME` | do the detective's lines (show, confront, direct) say what their clue says, to the right listener; do two questions ask the same thing? |
+
+One doctor has one set of findings: when the case already has her account of the body, her examination notes take its
+time window and are held to it. Every account is placed where its speaker is when the investigation starts (play tells
+it wherever they are). Each person also gets fact-free last-resort lines in their own voice (`add_fallback_lines`): for
+being pressed again on what they have answered and, for the culprit, for brushing off being caught out.
 
 A judge reply that judges none of its items is asked again once (`judge`); an item it leaves unjudged fails its check.
-A line that fails is dropped (play has a fallback) or written again with the reason.
+A line that fails is dropped (play has a fallback) or written again with the reason. Each check has a version
+(`SURFACE_CHECK`, `MORNING_CHECK`, `LINES_CHECK_VERSION`, `REACT_CHECK_VERSION`): a stricter check bumps it, published accounts and lines
+are checked again by `repair_live.py`, and `test_menu_current.py` fails while a menu case is behind.
 
 **Review panel.** The whole-case review is five narrow reviewers (`REVIEW_LENSES`: gates, facts, people, the player's
 information, craft), each asked `REVIEW_VOTES` (2) times, all at once on the review model; every issue any of them
@@ -149,6 +158,7 @@ records each request with the token budget and effort level actually sent, and w
 .venv/bin/python tools/refine-c/regenerate.py <case.json> --from-run tools/refine-c/runs/live-<stamp>   # publish a finished run
 .venv/bin/python tools/refine-c/regenerate.py <case.json> --from-kept tools/refine-c/runs/scripted-rejected/<id>.json
 .venv/bin/python tools/refine-c/repair_live.py <published.json> [--dry-run]   # bring a published case up to current checks
+.venv/bin/python tools/refine-c/repair_live.py <published.json> --wording-only   # a case from before the whole-case review: wording only, written if it certifies as before
 .venv/bin/python tools/refine-c/review_probe.py [--runs 2] [--mode panel|single|both]   # reviewer recall on planted defects
 node tools/playtest/gate.mjs <case.json>                                       # the scripted players on one case
 ```

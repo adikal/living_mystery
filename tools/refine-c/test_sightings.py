@@ -10,7 +10,7 @@ import publish  # noqa: E402
 import refine  # noqa: E402
 import enrich  # noqa: E402
 
-CASE = os.path.join(HERE, '..', '..', 'dist', 'cases', 'generated', 'mk-live-20261002-225824.json')
+CASE = os.path.join(HERE, '..', '..', 'dist', 'cases', 'archive', '2026-10', 'mk-live-20261002-225824.json')
 
 
 class Sightings(unittest.TestCase):

@@ -909,12 +909,14 @@
    "title": "Hugo Vale on the evening",
    "text": "Oh, deadly dull evening, I'm afraid - stuck at dinner with Uncle Edmund and Mr Voss droning on about the estate while Aunt Clara kept us all civil. Felt like it dragged on forever, old thing, and I was glad enough to get up to bed after.",
    "ask": "Where were you last night?",
-   "agrees_checked": 3,
+   "agrees_checked": 6,
    "surface_checked": "honest",
    "to": null,
    "show": "Hugo Vale says he spent the evening at dinner with Edmund Vale, Silas Voss, and Clara Vale, then went straight up to bed. Do you know if that's true?",
-   "lines_for": "6d2da570e860",
-   "confront": "You told me you were at dinner with your uncle and Mr Voss, with your aunt keeping things civil, and went up to bed after. Is that the whole of it?"
+   "lines_for": "2ffff012ded3",
+   "confront": "You told me you were at dinner with your uncle and Mr Voss, with your aunt keeping things civil, and went up to bed after. Is that the whole of it?",
+   "promise_checked": 1,
+   "at": "manor"
   },
   {
    "id": "s_surface_ada",
@@ -923,15 +925,17 @@
    "surface": true,
    "deceptive": true,
    "title": "Ada Finch on the evening",
-   "text": "Oh, just the usual, love - behind the bar most the evening, pulling pints and having a bit of a natter till I locked up at midnight. I did pop out back once or twice to see to the cellar and such, and left a little something for Mrs Lacey, but nothing to speak of really - just an ordinary night at the Rook.",
+   "text": "Oh, just an ordinary night at the Rook, love - behind the bar most the evening with the usual lot in, and I locked up round midnight same as always. I did see poor Mrs Lacey briefly, cheerful enough, before she went up - terrible to think of it now.",
    "ask": "Where were you last night?",
-   "agrees_checked": 3,
-   "surface_why": "She frames it as 'nothing to speak of, just an ordinary night' while hiding that she drugged a cocoa jug with rat powder, delivered it to Vera as a 'peace offering' and watched her drink it, then tampered with Vera's watch, left a pleading note under her door, and scalded/hid evidence of the jug - t",
+   "agrees_checked": 6,
+   "surface_why": "Ada claims an ordinary night and only a brief cheerful sighting of Vera, omitting that she poisoned Vera's cocoa, watched her drink it, tampered with her watch to fake a time, and left a pleading note - her account falsely implies nothing unusual happened.",
    "surface_checked": "cover",
    "to": null,
-   "show": "Ada Finch says she was behind the bar at the Rook until midnight, stepping out now and then for the cellar, and left something for Mrs Lacey. Do you know if that's true?",
-   "lines_for": "e36abd344e4d",
-   "confront": "You told me you were behind the bar till midnight, popping out for the cellar now and then, and left something for Mrs Lacey. Is that the whole of it?"
+   "show": "Ada Finch says it was an ordinary night at the Rook - she was behind the bar till midnight and saw Mrs Lacey briefly, cheerful, before she went up. Do you know if that's true?",
+   "confront": "You told me it was an ordinary night at the Rook, that you were behind the bar till midnight, and that you saw Mrs Lacey briefly before she went up. Is that the whole of it?",
+   "lines_for": "9c5bd43d54e9",
+   "promise_checked": 1,
+   "at": "inn"
   },
   {
    "id": "s_surface_edmund",
@@ -942,12 +946,14 @@
    "title": "Edmund Vale on the evening",
    "text": "I had Voss in to dine on estate business, with my sister and nephew at the table, and afterward he and I settled to cards before he took the guest room for the night. A perfectly ordinary evening, as it happens, and nothing more worth telling.",
    "ask": "Where were you last night?",
-   "agrees_checked": 3,
+   "agrees_checked": 6,
    "to": null,
    "show": "Edmund Vale says he had Voss in to dine on estate business, with his sister and nephew present, then played cards before Voss stayed the night. Do you know if that's true?",
    "confront": "You told me Voss dined with you on estate business, that your sister and nephew were at the table, and you two played cards before he took the guest room. Is that the whole of it?",
    "surface_checked": "honest",
-   "lines_for": "1e09cd78c747"
+   "lines_for": "629660d2f8eb",
+   "promise_checked": 1,
+   "at": "manor"
   },
   {
    "id": "s_surface_dora",
@@ -958,12 +964,14 @@
    "title": "Dorothy Pruett on the evening",
    "text": "I was at the post office seeing to the day's accounts, if you must know. I went through the stamp ledger and tidied the parcel shelves before I locked up, as I like everything straight for the morning rush, and then I went home to bed.",
    "ask": "Where were you last night?",
-   "agrees_checked": 3,
+   "agrees_checked": 6,
    "surface_checked": "honest",
    "to": null,
    "show": "Dorothy Pruett says she was at the post office doing the day's accounts and tidying up before going home to bed. Do you know if that's true?",
    "confront": "You told me you were at the post office seeing to the accounts and tidying up before going home to bed. Is that the whole of it?",
-   "lines_for": "2997d342d85f"
+   "lines_for": "60133a0326bd",
+   "promise_checked": 1,
+   "at": "post"
   },
   {
    "id": "s_surface_vicar",
@@ -974,13 +982,15 @@
    "title": "The Reverend Thomas Hale on the evening",
    "text": "Oh, last evening? I was in the vestry a good while, I'm afraid, going through the old hymn books and scratching out some thoughts for Sunday's sermon. One does lose track of the hour when wrestling with a text, you know, and I daresay I stayed on with my little notes until I was quite ready to turn in.",
    "ask": "Where were you last night?",
-   "agrees_checked": 3,
+   "agrees_checked": 6,
    "surface_why": "He implies he spent the evening only on hymn books/sermon notes and went to bed, omitting and contradicting the fact that he opened the vestry, found Vera's dead body, ran to tell Constable Bell, and stayed while Dr Marsh examined the body.",
    "surface_checked": "cover",
    "to": null,
    "show": "The Reverend Thomas Hale says he was in the vestry going through hymn books and working on his sermon notes until he turned in. Do you know if that's true?",
    "confront": "You told me you were in the vestry working on hymn books and sermon notes until you turned in. Is that the whole of it?",
-   "lines_for": "25877e59b356"
+   "lines_for": "82a3c2f707f2",
+   "promise_checked": 1,
+   "at": "vestry"
   },
   {
    "id": "s_morning_iris",
@@ -995,7 +1005,10 @@
    "to": null,
    "confront": "You say Bell woke you about twenty past six to tell you of the death, and that by half past six you were examining the body with Bell and the vicar looking on. Is that right?",
    "show": "Dr Marsh says Bell woke her about twenty past six and that by half past she was examining the body with Bell and the vicar looking on. Does that match what you recall?",
-   "lines_for": "ef96034fb4ed"
+   "lines_for": "65e5470d36b2",
+   "leak_checked": 1,
+   "promise_checked": 1,
+   "at": "vestry"
   },
   {
    "id": "s_morning_vicar",
@@ -1008,9 +1021,12 @@
    "ask": "What did you do this morning?",
    "surface_checked": "honest",
    "to": null,
-   "confront": "You say you opened the vestry at six and found Vera dead beside the register, fetched me at ten past six, and stood by at half past six while Dr Marsh examined her. Is that the whole of it?",
-   "show": "The vicar says he found Vera lying dead in the vestry at six, fetched Bell by ten past, and stood with him at half past while Dr Marsh examined her. Does that fit what you remember?",
-   "lines_for": "4c2531fb88a9"
+   "leak_checked": 1,
+   "show": "The Reverend Hale says he found Vera Lacey dead in the vestry at six and fetched Constable Bell by ten past. Does that match what you know?",
+   "confront": "You told me you found her dead at six and went for Constable Bell by ten past, then stood with him for Dr Marsh's examination. Is that the whole of it?",
+   "lines_for": "f4447cf20e38",
+   "promise_checked": 1,
+   "at": "vestry"
   },
   {
    "id": "s_morning_bell",
@@ -1025,13 +1041,16 @@
    "to": null,
    "confront": "You told me the vicar came to you at ten past six, that you woke Dr Marsh by twenty past, and that you both stood by at half past while she examined the body. Is that the whole of it?",
    "show": "Constable Bell says the vicar fetched him at ten past six, and that he woke Dr Marsh soon after before the two of them stood by in the vestry while she examined the body. Does that match what you recall?",
-   "lines_for": "b7e17c973b01"
+   "lines_for": "c674fe18f1db",
+   "leak_checked": 1,
+   "promise_checked": 1,
+   "at": "vestry"
   },
   {
    "id": "s_medical",
    "kind": "record",
    "medical": true,
-   "medical_v": 2,
+   "medical_v": 4,
    "source": "e_exam",
    "at": "surgery",
    "title": "The doctor’s examination notes",
@@ -1042,21 +1061,21 @@
     "to": 1300
    },
    "reactions": {
-    "bell": "Mouth, eh? Nasty business. Doctor said poison, and there's an end of it — fits what I saw well enough.",
-    "iris": "That's my finding, yes — poison taken by mouth, and the window of death as I gave it. I stand by the notes exactly as written.",
-    "ada": "Oh, that's a dreadful thing to read, love. Poor Mrs Lacey — poisoned, and right there in the vestry of all places. Makes my stomach turn just hearing it.",
-    "vicar": "Dear me. Poison, by her own mouth taken — in the vestry, where I open the door each morning for prayer. It rather puts the whole business beyond doubting now, doesn't it."
+    "bell": "Poison, by mouth, between five to nine and twenty to ten - well, that's plain enough from what Dr Marsh found. Doesn't square with a woman still cheerful at twenty to eleven, does it. I'll be asking a few more questions on the strength of it.",
+    "iris": "Yes, that's my finding exactly as I wrote it - poison taken by mouth, death between five to nine and twenty to ten. I stand by my examination; there's no ambiguity in it.",
+    "vicar": "Oh dear - poison, and so early in the evening. I had thought... well, never mind what I thought, it's not for me to question Dr Marsh's skill. It only makes the whole business sadder, that someone meant her such harm.",
+    "ada": "Poison, is it - well, that's a shock, love, truly. I couldn't say how or when, I was behind my bar the whole evening same as always, and Mrs Lacey came in cheerful as anything near eleven, so I don't know what to make of that time you've given me."
    },
+   "reactions_checked": 3,
    "to": null,
-   "show": "The doctor's notes show the deceased was poisoned by mouth, sometime between five to nine and twenty to ten. Does that time fit with what you saw?",
-   "art": "notes",
-   "lines_for": "5f311ad7965f"
+   "show": "The doctor's examination notes show the deceased was poisoned by mouth, sometime between five to nine and twenty to ten. Does that time mean anything to you?",
+   "lines_for": "867e7345231a"
   },
   {
    "id": "s_medical_iris",
    "kind": "testimony",
    "medical": true,
-   "medical_v": 2,
+   "medical_v": 4,
    "speaker": "iris",
    "source": "e_exam",
    "claim": {
@@ -1067,11 +1086,12 @@
    "title": "Dr Marsh on the body",
    "text": "Death was from a poison taken by mouth, and it occurred between five to nine and twenty to ten.",
    "ask": "Doctor, what did you find when you examined Mrs Lacey?",
+   "promise_checked": 1,
    "to": null,
-   "show": "Dr Marsh tells me death came from a poison taken by mouth, between five to nine and twenty to ten. Does that match what you observed?",
-   "confront": "You've told me death was from a poison taken by mouth, between five to nine and twenty to ten. Is there anything more you can add?",
-   "same_as": "night",
-   "lines_for": "5bbea05b7240"
+   "show": "Dr Marsh says the poison was taken by mouth, and death occurred between five to nine and twenty to ten. Does that time fit with what you know?",
+   "confront": "You told me the poison was taken by mouth, and death occurred between five to nine and twenty to ten. Is that your full and considered opinion?",
+   "lines_for": "be5db530d184",
+   "at": "vestry"
   },
   {
    "id": "s_surface_iris",
@@ -1084,10 +1104,12 @@
    "ask": "Where were you last night?",
    "to": null,
    "surface_checked": "cover",
-   "agrees_checked": 3,
+   "agrees_checked": 6,
    "show": "Dr Marsh says she spent the whole evening alone at her surgery doing paperwork, with no callers. Do you know if that's true?",
-   "lines_for": "2cac5c4f56b7",
-   "confront": "You told me you were alone at your surgery all evening with no callers. Is that the whole of it?"
+   "lines_for": "081173fbbfbc",
+   "confront": "You told me you were alone at your surgery all evening with no callers. Is that the whole of it?",
+   "promise_checked": 1,
+   "at": "vestry"
   },
   {
    "id": "s_surface_bell",
@@ -1100,25 +1122,31 @@
    "ask": "Where were you last night?",
    "to": null,
    "surface_checked": "cover",
-   "agrees_checked": 3,
+   "agrees_checked": 6,
    "show": "Constable Bell says he walked his usual round of the square and saw nothing out of order before turning in. Do you know if that's true?",
-   "lines_for": "31f459773539",
-   "confront": "You told me you walked your usual round and saw nothing out of order. Is that the whole of it?"
+   "lines_for": "28261cc692c5",
+   "confront": "You told me you walked your usual round and saw nothing out of order. Is that the whole of it?",
+   "promise_checked": 1,
+   "at": "vestry"
   },
   {
    "id": "s_surface_jonah",
    "kind": "testimony",
    "speaker": "jonah",
    "surface": true,
-   "deceptive": false,
+   "deceptive": true,
    "title": "Jonah Reed on the evening",
-   "text": "I take my usual pint at the Rook, same as any night. Ada went out the back with a jug covered over, and came back after a bit – nothing I thought twice on at the time.",
+   "text": "Had my usual pint at the Rook, same as any evening, and sat quiet in my corner till I'd had enough of it. Nothing out of the way that I recall, before I went on home to bed.",
    "ask": "Where were you last night?",
-   "surface_checked": "honest",
+   "agrees_checked": 6,
+   "surface_why": "Jonah claims nothing out of the way happened, but he actually saw Ada slip out back with a covered jug and return - a clearly notable event he conceals, falsely implying an uneventful evening.",
+   "surface_checked": "cover",
    "to": null,
-   "show": "Jonah Reed says Ada Finch went out the back of the Rook with a covered jug and came back after a bit, nothing he thought twice on. Can you tell me about that?",
-   "agrees_checked": 3,
-   "lines_for": "4765c5cc57d4"
+   "show": "Jonah Reed says he had his usual pint at the Rook, sat quiet in his corner, and noticed nothing out of the way before going home to bed. Do you know if that's true?",
+   "confront": "You told me you had your usual pint at the Rook, sat quiet in your corner, and noticed nothing out of the way before going home. Is that the whole of it?",
+   "lines_for": "5ab3b6a90de2",
+   "promise_checked": 1,
+   "at": "boathouse"
   },
   {
    "id": "s_surface_rowan",
@@ -1133,8 +1161,10 @@
    "to": null,
    "show": "Rowan Pike says he was down at the glasshouses most of the night tending the stoves, and saw no one else about. Does that fit with what you know?",
    "confront": "You said you were down at the glasshouses most of the night tending the stoves and saw no one else. Is that the whole of it?",
-   "agrees_checked": 3,
-   "lines_for": "3f21e2f2e5e4"
+   "agrees_checked": 6,
+   "lines_for": "ce71190a266b",
+   "promise_checked": 1,
+   "at": "greenhouse"
   },
   {
    "id": "s_surface_silas",
@@ -1149,8 +1179,10 @@
    "to": null,
    "show": "Mr Voss says he dined with the Vales on estate business, then played cards with Edmund and took the guest room rather than walk home in the cold. Does that match what you saw?",
    "confront": "You said you dined with the Vales, played cards with Edmund, and took the guest room. Is that the whole of it?",
-   "agrees_checked": 3,
-   "lines_for": "e39e47d7cdbb"
+   "agrees_checked": 6,
+   "lines_for": "7a130e6ed8fa",
+   "promise_checked": 1,
+   "at": "vestry"
   },
   {
    "id": "s_surface_clara",
@@ -1163,10 +1195,12 @@
    "ask": "Where were you last night?",
    "to": null,
    "surface_checked": "cover",
-   "agrees_checked": 3,
+   "agrees_checked": 6,
    "show": "Clara Vale says they dined at home with Edmund, Silas, and Hugo over estate matters, then she retired early with a book and saw no one else. Does that match what you know?",
-   "lines_for": "4a8dc2ffb69e",
-   "confront": "You told me you dined at home with Edmund, Silas, and Hugo over estate matters, then retired early with a book and saw no one else the rest of the evening. Is that the whole of it?"
+   "lines_for": "0c337528e1b6",
+   "confront": "You told me you dined at home with Edmund, Silas, and Hugo over estate matters, then retired early with a book and saw no one else the rest of the evening. Is that the whole of it?",
+   "promise_checked": 1,
+   "at": "post"
   },
   {
    "id": "s_mug",
@@ -1189,7 +1223,8 @@
    "reactions": {
     "ada": "A mug, under the press? Can't think how that got there, love — must've been left from some other time. I scald all mine proper and hang them straight back, you ask anyone."
    },
-   "lines_for": "94010fca2c75"
+   "lines_for": "9f9e78f8762b",
+   "reactions_checked": 3
   },
   {
    "id": "s_hugo",
@@ -1214,23 +1249,27 @@
    "reactions": {
     "edmund": "Half ten, was it? Well, Hugo's not wrong — I do go on about drainage when the mood takes me. Dull evening, but an honest one, Inspector."
    },
-   "same_as": "night",
-   "lines_for": "f399f7be165a"
+   "lines_for": "0a8f4c3d0a80",
+   "reactions_checked": 3,
+   "promise_checked": 1
   },
   {
    "id": "s_clara",
    "kind": "testimony",
    "title": "Miss Vale's evening",
    "text": "\"We dined at half past seven, my brother, my nephew, Mr Voss and I. Mrs Lacey was not a subject I raised. She had a habit of questioning our servants, which I did not care for.\"",
-   "at": "manor",
+   "at": "post",
    "speaker": "clara",
    "source": "e_dinner",
    "ask": "Where were you last night, Miss Vale?",
    "to": null,
    "show": "Miss Vale says she dined at half past seven with her brother, nephew, and Mr Voss, and never raised Mrs Lacey, whose habit of questioning the servants she disliked. Does that match what you remember?",
    "confront": "You told me you dined at half past seven with your brother, nephew, and Mr Voss, and never spoke of Mrs Lacey, whose questioning of your servants you disliked. Is that the whole of it?",
-   "same_as": "night",
-   "lines_for": "7520e558bcad"
+   "lines_for": "cdee3d35d8fb",
+   "deceptive": false,
+   "surface_checked": "honest",
+   "promise_checked": 1,
+   "same_as": "night"
   },
   {
    "id": "s_edmund",
@@ -1244,23 +1283,29 @@
    "to": null,
    "confront": "You told me you dined at your own table with Mr Voss, who stayed for cards, and that you and Mrs Lacey had words in the square last week. Is that the whole of it?",
    "show": "Mr Vale says Mr Voss came to dine on estate business and stayed for cards, and admits he and Mrs Lacey had words in the square last week. Did you know of that quarrel?",
-   "same_as": "night",
-   "lines_for": "c2041e2a62da"
+   "lines_for": "c0fff25998b0",
+   "deceptive": false,
+   "surface_checked": "honest",
+   "promise_checked": 1,
+   "same_as": "night"
   },
   {
    "id": "s_silas",
    "kind": "testimony",
    "title": "Mr Voss's evening",
    "text": "\"I dined at the manor and stayed for cards, then slept in the guest room. Mea culpa, the hour was late. My office is in the vestry, of course, but I never went near it last night.\"",
-   "at": "manor",
+   "at": "vestry",
    "speaker": "silas",
    "source": "e_cards",
    "ask": "Where were you last night, Mr Voss?",
    "to": null,
    "show": "Mr Voss says he dined at the manor, stayed for cards, slept in the guest room, and never went near his vestry office last night. Does that match what you understand?",
    "confront": "You told me you dined at the manor, stayed for cards, slept in the guest room, and never went near your vestry office last night. Is that the whole of it?",
-   "same_as": "night",
-   "lines_for": "1c1919a5d9d8"
+   "lines_for": "7e60569e613d",
+   "deceptive": false,
+   "surface_checked": "honest",
+   "promise_checked": 1,
+   "same_as": "night"
   },
   {
    "id": "s_ada_alibi",
@@ -1283,15 +1328,16 @@
    "to": null,
    "show": "Mrs Finch says she was behind her bar from six till midnight, that Jonah Reed can confirm it, and that Mrs Lacey called in about twenty to eleven for a candle, cheerful as anything. Does that fit what you know?",
    "confront": "You told me you were behind your bar from six till midnight, with Jonah Reed to vouch for you, and that Mrs Lacey came in about twenty to eleven for a candle. Is that the whole of it?",
-   "same_as": "night",
-   "lines_for": "acbeac9300f8"
+   "lines_for": "36830fb12a94",
+   "promise_checked": 1,
+   "same_as": "night"
   },
   {
    "id": "s_jonah",
    "kind": "testimony",
    "title": "Mr Reed at the bar",
    "text": "\"I am at the bar from eight. The missus takes a covered jug out the back, a bit after twenty to nine. Bar is quiet without her. She is back near twenty past, cheeks red from the cold.\"",
-   "at": "inn",
+   "at": "boathouse",
    "speaker": "jonah",
    "source": "e_jonah_drink",
    "requires": [
@@ -1308,8 +1354,12 @@
    "reactions": {
     "ada": "Oh — well, Jonah's got his times a bit muddled, love, bless him, he does like his pint. I was out the back a moment with the cocoa jug, that's all, same as any evening."
    },
-   "same_as": "night",
-   "lines_for": "948c76d63cf1"
+   "lines_for": "bfc03345446e",
+   "deceptive": false,
+   "surface_checked": "honest",
+   "reactions_checked": 3,
+   "promise_checked": 1,
+   "same_as": "night"
   },
   {
    "id": "s_watch",
@@ -1327,9 +1377,12 @@
    "to": null,
    "show": "I found Mrs Lacey's silver pocket watch by her hand, its glass starred and the hands stopped at twenty past eleven. Do you know how that happened?",
    "reactions": {
-    "ada": "Her poor watch, stopped and all — must've knocked it falling, the dear soul. Twenty past eleven, you say? Well, there you are then, just as I said, late in the evening."
+    "ada": "Her poor watch, stopped and all — must've knocked it falling, the dear soul. Twenty past eleven, you say? Well, there you are then, just as I said, late in the evening.",
+    "silas": "Twenty past eleven, you say? By then I was at cards with Edmund, and glad of the guest room after. A curious detail, but not one that touches my own evening, quod erat demonstrandum.",
+    "vicar": "Oh dear—twenty past eleven, you say? That's well after I'd gone to my notes and long before I ever opened the vestry this morning. I confess I can make nothing of it, except that it was not I who was with her at such an hour."
    },
-   "lines_for": "f1cdbba0f20f"
+   "lines_for": "a994d7efd295",
+   "reactions_checked": 3
   },
   {
    "id": "s_exam",
@@ -1363,7 +1416,8 @@
     "vicar": "Half past eight to ten o'clock — Lord have mercy, that's hours before ever I found her. I had thought it later, in my foolishness, but I bow to the doctor's judgement.",
     "ada": "Oh, Doctor, surely not — I had the bar full of regulars that whole stretch of the evening, pulling pints as usual, love. Watches can crack and go wrong, can't they, lying about on a cold floor like that. I don't know what to say, really I don't, it's given me ever such a turn."
    },
-   "lines_for": "58b8ec583674"
+   "lines_for": "c8d062c4a33e",
+   "reactions_checked": 3
   },
   {
    "id": "s_notebook",
@@ -1390,7 +1444,8 @@
     "rowan": "Aye, that's me. Robert Finch, long dead and buried under glass and good manure, and glad of it. The watchman's death weren't my doing, whatever Mrs F. thought she had to tell you — but you'll wire Grieve regardless, I don't doubt."
    },
    "show": "A notebook found in the back bedroom at the Rook names Rowan Pike as Robert Finch, wanted since a watchman's death at a Deptford warehouse in 1921, and says his sister keeps the inn. Did you know of this?",
-   "lines_for": "65c82f3bfaa1"
+   "lines_for": "72e267d097c9",
+   "reactions_checked": 3
   },
   {
    "id": "s_plea",
@@ -1414,9 +1469,12 @@
    "direct": "This note, signed A.F., begs Mrs Lacey to leave him be and offers to find whatever she wanted rather than have her send a wire. Did you write this?",
    "show": "I found a note folded into the parish register, signed A.F., begging Mrs Lacey to leave someone be and not send a wire, offering to find whatever she wanted. Do you know anything of this note?",
    "reactions": {
-    "ada": "Aye, that's my hand, and I'm not ashamed of it. I begged her plain as day, love — a woman's allowed to beg for her own flesh and blood."
+    "ada": "Aye, that's my hand, and I'm not ashamed of it. I begged her plain as day, love — a woman's allowed to beg for her own flesh and blood.",
+    "silas": "That note is not mine, nor my hand - 'A.F.' speaks for itself, does it not? I'll say only that I knew nothing of such a plea when I slept at the manor that night.",
+    "vicar": "Oh - oh my. I had not noticed that tucked in among the baptisms, truly. Poor Ada, if that is her hand - I would never have thought her capable of pleading so, though I suppose we none of us know the weight another carries."
    },
-   "lines_for": "524cecaabc0e"
+   "lines_for": "d191998aa6fa",
+   "reactions_checked": 3
   },
   {
    "id": "s_clara_post",
@@ -1433,12 +1491,15 @@
    "direct": "You were waiting outside the post office at half past seven, pale as paper, asking about letters from Mrs Lacey and the registered-post book. Why?",
    "reactions": {
     "clara": "I went to the post office, yes. A woman may ask after her own correspondence without it being made a confession, Inspector.",
-    "dora": "I told the Inspector just as I'm telling you now — Miss Vale was waiting before I'd even got the door open, and asking after Mrs Lacey's post most particular. I don't forget a thing like that."
+    "dora": "I told the Inspector just as I'm telling you now — Miss Vale was waiting before I'd even got the door open, and asking after Mrs Lacey's post most particular. I don't forget a thing like that.",
+    "edmund": "White as paper, was she? I can't speak to my sister's errands at the post office, only that my evening was spent at my own table with Voss and the cards, same as I told you.",
+    "hugo": "Aunt Clara at the post office, pale as a ghost? Lord, news to me, old thing - I was stuck at dinner counting Uncle Edmund's drainage speech, not watching Aunt Clara's comings and goings."
    },
    "show": "Miss Pruett says Miss Vale was waiting at the post office at half past seven, pale as paper, asking about any letters or wires from Mrs Lacey and who'd looked at the registered-post book. Do you know why?",
    "confront": "You were waiting outside the post office at half past seven, pale as paper, asking about letters from Mrs Lacey and the registered-post book. Why?",
-   "lines_for": "781167f86cee",
-   "watch": true
+   "lines_for": "c3a88e0e7fbd",
+   "watch": true,
+   "reactions_checked": 3
   },
   {
    "id": "s_regbook",
@@ -1461,11 +1522,14 @@
    "reactions": {
     "ada": "That's none of my business, love, nor the detective's rightly — folks' money troubles are their own affair. I only pour the drinks and mind my till.",
     "hugo": "Ha — well, there it is in black and white, isn't it. Look, a chap gets a bit keen on the horses now and then, no crime in that, and Clara's a brick about it, always has been. Mrs Lacey minding other people's business at the counter, though, that's a bit much.",
-    "clara": "Yes. I pay Hugo's debts quietly because Edmund need not know every foolishness his brother commits, and I'll thank you not to make a scandal of ordinary family kindness. As for Mrs Lacey, I merely wished to know what she'd been saying about us."
+    "clara": "Yes. I pay Hugo's debts quietly because Edmund need not know every foolishness his brother commits, and I'll thank you not to make a scandal of ordinary family kindness. As for Mrs Lacey, I merely wished to know what she'd been saying about us.",
+    "dora": "Yes, I keep my books straight, and I remember Mrs Lacey standing at that very counter while I entered it. I noted it down because it's my business to notice who's behind whom, nothing more.",
+    "edmund": "That's my sister's affair, not mine, and I'll not have you reading estate papers like a penny novel. If Clara's been sending money off for Hugo's debts, that's family business and none of yours—or that Lacey woman's either, prying at the counter."
    },
    "direct": "This book shows you've been sending ten pounds a month to a turf accountant on Hugo's behalf. Why have you been doing that?",
    "show": "This registered-post book shows monthly ten-pound postal orders sent by C. Vale to a turf accountant, re H. Vale, with a note that a Mrs L. stood behind at the counter last Tuesday. Were you that woman?",
-   "lines_for": "fde2f4c7181e"
+   "lines_for": "af37f9e44a8a",
+   "reactions_checked": 3
   },
   {
    "id": "s_hooks",
@@ -1484,7 +1548,8 @@
    "reactions": {
     "ada": "An empty hook? Well, I daresay one's gone for mending, or got broke, love — I can't account for every mug in that passage, now can I."
    },
-   "lines_for": "0a26cd27aea5"
+   "lines_for": "583f66a07e4a",
+   "reactions_checked": 3
   },
   {
    "id": "s_saw_silas_edmund_manor",
@@ -1507,10 +1572,13 @@
    "direct": "Silas Voss says he saw you at Vale Manor at quarter to eight. Is that so?",
    "show": "Silas Voss says he saw Edmund Vale at Vale Manor at quarter to eight. Do you know if that's true?",
    "confront": "You told me you saw Edmund Vale at Vale Manor at quarter to eight. Is that the whole of it?",
-   "lines_for": "28ee70da0d48",
+   "lines_for": "7405cd06642a",
    "reactions": {
     "edmund": "Of course he saw me — I was dining with the man, at my own table, discussing my own estate. I don't see what's remarkable in a solicitor noticing his client in his own house."
-   }
+   },
+   "reactions_checked": 3,
+   "promise_checked": 1,
+   "at": "vestry"
   },
   {
    "id": "s_saw_silas_hugo_manor",
@@ -1532,10 +1600,13 @@
    "to": "hugo",
    "direct": "Silas Voss says he saw you at Vale Manor at quarter to eight. Is that so?",
    "show": "Silas Voss says he saw Hugo Vale at Vale Manor at quarter to eight. Do you know if that's true?",
-   "lines_for": "28ee70da0d48",
+   "lines_for": "7405cd06642a",
    "reactions": {
     "hugo": "Quarter to eight, sure, sounds about right — I was propping up my chair at Edmund's table like a good little brother, bored stiff through all that estate talk."
-   }
+   },
+   "reactions_checked": 3,
+   "promise_checked": 1,
+   "at": "vestry"
   },
   {
    "id": "s_saw_hugo_edmund_manor",
@@ -1555,13 +1626,16 @@
    "ask": "Did you see anyone last night?",
    "deceptive": false,
    "to": "edmund",
-   "direct": "You were seen at Vale Manor at quarter to eight. Can you confirm that?",
-   "show": "Hugo Vale says Edmund Vale was at Vale Manor at quarter to eight. Can you confirm that's where he was?",
-   "lines_for": "cc6f78aebe1d",
-   "confront": "You told me you were at Vale Manor at quarter to eight. Is that correct?",
    "reactions": {
-    "edmund": "Naturally Hugo saw me — he was sitting right across from me at dinner while Silas droned on about the estate. Nothing strange in a brother confirming what's plain as day."
-   }
+    "edmund": "Quarter to eight, was it? That sounds right enough - Hugo was at the table with us for dinner same as I said, nothing in that to trouble you."
+   },
+   "show": "Hugo Vale says he saw Edmund Vale at Vale Manor at quarter to eight. Does that match what you know?",
+   "confront": "You say you saw Edmund Vale at Vale Manor at quarter to eight. Is that the whole of it?",
+   "direct": "Hugo Vale says he saw you at Vale Manor at quarter to eight. Is that so?",
+   "lines_for": "76596c422bc3",
+   "reactions_checked": 3,
+   "promise_checked": 1,
+   "at": "manor"
   },
   {
    "id": "s_saw_edmund_hugo_manor",
@@ -1581,13 +1655,16 @@
    "ask": "Did you see anyone last night?",
    "deceptive": false,
    "to": "hugo",
-   "direct": "You were seen at Vale Manor at quarter to eight. Can you confirm that?",
-   "show": "Edmund Vale says Hugo Vale was at Vale Manor at quarter to eight. Can you confirm that's where he was?",
-   "lines_for": "cc6f78aebe1d",
-   "confront": "You told me you were at Vale Manor at quarter to eight. Is that correct?",
    "reactions": {
     "hugo": "Yeah, that's right, Edmund was there glowering over his wine the whole time, holding court with Silas about rents and leases. Dullest quarter hour of my life, if you want the honest truth."
-   }
+   },
+   "show": "Edmund Vale says he saw Hugo Vale at Vale Manor at quarter to eight. Does that match what you know?",
+   "confront": "You say you saw Hugo Vale at Vale Manor at quarter to eight. Is that the whole of it?",
+   "direct": "Edmund Vale says he saw you at Vale Manor at quarter to eight. Is that so?",
+   "lines_for": "76596c422bc3",
+   "reactions_checked": 3,
+   "promise_checked": 1,
+   "at": "manor"
   },
   {
    "id": "pub_window",
@@ -1601,7 +1678,14 @@
    },
    "defeats": [
     "s_watch"
-   ]
+   ],
+   "to": null,
+   "show": "We've established that Vera Lacey died between a quarter to nine and twenty to ten. Does that time matter to you?",
+   "lines_for": "2e7d27216350",
+   "reactions": {
+    "ada": "Between nine and half past, you say? Well, I was behind my bar the whole evening, love, same as always, with Jonah propped up at the end of it - ask him yourself. I can't help what the hour turns out to be, only tell you what I saw."
+   },
+   "reactions_checked": 3
   },
   {
    "id": "pub_holders_rook_mug",
@@ -1614,7 +1698,14 @@
     "people": [
      "ada"
     ]
-   }
+   },
+   "to": null,
+   "show": "Only Ada Finch has ever had the Rook & Lantern mug. Do you know of anyone else who might have carried one?",
+   "lines_for": "f87d9371fecd",
+   "reactions": {
+    "ada": "Oh, that mug - aye, it's mine, love, always has been, nobody else'd dare touch it behind my bar. Doesn't mean a thing though, does it, half the village has had a cup from it over the years one way or another. I really couldn't say more than that."
+   },
+   "reactions_checked": 3
   }
  ],
  "premise": {
@@ -1955,5 +2046,57 @@
    }
   ]
  },
- "claims_version": 2
+ "claims_version": 2,
+ "pressed": {
+  "ada": [
+   "Love, I've told you all I know, truly - show me whatever you've got, go on.",
+   "I've answered as best I can, dear, and I'll gladly look at anything you fancy showing me."
+  ],
+  "clara": [
+   "I have answered that to the best of my ability. Do show me whatever you wish.",
+   "You have my answer already; I am quite willing to examine anything you present."
+  ],
+  "edmund": [
+   "I've told you all I'm going to, man. Show me what you like, then.",
+   "You've had my answer. Bring whatever evidence you think you have, go on."
+  ],
+  "silas": [
+   "I have answered that query as fully as circumstance permits; do present your materials.",
+   "My response stands as given. You may, of course, show me anything further."
+  ],
+  "rowan": [
+   "Told you what I know already. Show me whatever it is, then.",
+   "Said my piece on that. Bring it on, I'll look at it."
+  ],
+  "jonah": [
+   "Answered that. Show me what you've got, if you must.",
+   "Said all I've got to say on it. Go on, show me."
+  ],
+  "hugo": [
+   "Look, I've said my bit already, haven't I? Show me whatever you're waving about.",
+   "Already told you, mate! Go on then, flash your evidence, I'll have a look."
+  ],
+  "bell": [
+   "Answered that already. Show me what you've got and we'll see.",
+   "Said my piece on it. Bring whatever you like, I'll look."
+  ],
+  "iris": [
+   "I've given you my account fully. Show me whatever evidence you have.",
+   "That stands as my answer. I'm willing to review anything you bring."
+  ],
+  "vicar": [
+   "I have answered as honestly as I am able; do show me what troubles you.",
+   "My answer remains as given, truly. I shall gladly consider whatever you present."
+  ],
+  "dora": [
+   "I have stated my answer precisely once already. Do show me your evidence, then.",
+   "That answer stands as recorded. I am quite prepared to examine anything further."
+  ]
+ },
+ "fallbacks_version": 1,
+ "minimise": {
+  "ada": [
+   "Well, I've nothing more to say on it, dear - a muddle proves nothing at all."
+  ]
+ }
 }

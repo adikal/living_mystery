@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {registerKernelCase, createSession, dispatch, caseTables, exportSession, diagnostics} from '../dist/engine.mjs';
-import {context, criticise, stillSolvable, directMorning, DIRECTOR_PROMPT} from '../dist/morning-director.mjs';
+import {context, criticise, stillSolvable, directMorning, DIRECTOR_PROMPT, PROMPT_CHARS} from '../dist/morning-director.mjs';
 import * as Morning from '../dist/morning.mjs';
 
 const load = () => JSON.parse(readFileSync(new URL('../dist/cases/archive/2026-10/mk-live-20261002-235614.json', import.meta.url), 'utf8'));
@@ -303,4 +303,17 @@ test('an intentional empty plan advances cadence without replacing prior agendas
   assert.equal(s.world.flags.morning.last, s.world.minute);
   assert.deepEqual(s.world.flags.morning.agendas[b], prior);
   assert.equal((await directMorning(s, {fetchImpl: proxy(() => ({agendas: {}, why: 'quiet'})), endpoint: 'x', timeoutMs: 20})).status, 'not_needed');
+});
+
+test('a long morning still fits the director\'s prompt: each person keeps the newest of what they may say', () => {
+  const {s, a} = questioned();
+  for (let i = 0; i < 120; i++)
+    s.events.push({id: `long${i}`, kind: 'speech', actor: a, title: 'test', data: {listener: 'player', assertion: `Reply ${i}: ${'and so on, '.repeat(30)}`}});
+  const c = context(s), said = c.people[a].sayable;
+  assert.ok(JSON.stringify(c).length <= PROMPT_CHARS, `${JSON.stringify(c).length} characters`);
+  assert.ok(said.some(x => x.id === 'k_said_long119'), 'the newest is kept');
+  assert.ok(!said.some(x => x.id === 'k_said_long0'));
+  assert.match(said[0].text, /earlier, left out/);
+  const short = context(questioned().s);
+  assert.ok(!Object.values(short.people).some(p => p.sayable?.some(x => x.id === 'k_earlier')), 'a short morning is shown whole');
 });

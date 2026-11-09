@@ -121,6 +121,14 @@ class ProxyTests(unittest.TestCase):
         self.assertEqual(h.results[0][0], 200)
         h = self.handler(host=f"unrelated.example:{proxy.PORT}");h.path = "/health";h.do_GET()
         self.assertEqual(h.results[0][0], 403)
+    def test_health_advertises_the_character_prompt_cap(self):
+        # the morning director fits its prompt to this (dist/morning-director.mjs)
+        h = self.handler();h.path = "/health";h.do_GET()
+        self.assertEqual(h.results[0][1]["max_prompt_chars"], proxy.CHARACTER_FIELD_CAP)
+        payload = {"system": "s", "prompt": "x" * proxy.CHARACTER_FIELD_CAP, "max_tokens": 10, "role": "director"}
+        self.assertEqual(proxy.validate_payload(payload, "character-v1")["prompt"], payload["prompt"])
+        with self.assertRaises(ValueError):
+            proxy.validate_payload({**payload, "prompt": payload["prompt"] + "x"}, "character-v1")
     def test_invalid_payloads_fail_before_model(self):
         for payload in [[], {"prompt":"x"}, {"system":"x","prompt":"x","max_tokens":-1}, {"system":"x","prompt":"x","max_tokens":True}, {"system":"x","prompt":"x"*6001,"max_tokens":80}]:
             h=self.handler(payload=payload);h.do_POST();self.assertEqual(h.results[0][0],400)
@@ -490,3 +498,4 @@ class OpenAITests(unittest.TestCase):
         self.assertNotIn("sk-proj-test0123456789abcdef", str(ctx.exception))
 
 if __name__ == '__main__': unittest.main()
+

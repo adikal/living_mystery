@@ -6,10 +6,11 @@ import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+import enrich  # noqa: E402
 import publish  # noqa: E402
 import refine  # noqa: E402
 
-CASE = os.path.join(HERE, '..', '..', 'dist', 'cases', 'generated', 'mk-live-20261003-133036.json')
+CASE = os.path.join(HERE, '..', '..', 'dist', 'cases', 'archive', '2026-10', 'mk-live-20261003-133036.json')
 
 
 class Surface(unittest.TestCase):
@@ -122,7 +123,9 @@ class FromTheIronHound(unittest.TestCase):
         self.assertEqual(write['keeps_back'], back)
         self.assertFalse(set(back) & set(write['events']), 'the writer is not handed what she keeps back as her evening')
         check = next(i for system, items in seen if system == publish.LEAK for i in items if i['id'] == 's_surface_dora')
-        self.assertEqual(check['keeps_back'], back, 'a focused check asks whether the account gives that away')
+        self.assertEqual(check['keeps_back'][:len(back)], back, 'a focused check asks whether the account gives that away')
+        self.assertTrue(any('iron hound' in w.lower() for w in check['keeps_back'][len(back):]),
+                        'and whether it gives away a clue still locked behind her own later account')
         # and the old wording is caught by that check on its own, without a reviewer
         leaky = dict(next(x for x in self.fresh['signs'] if x['id'] == 's_surface_dora'), text=self.LEAKY)
         self.assertIn('s_surface_dora', publish.surface_disagreements(self.fresh, [leaky]))
@@ -172,7 +175,12 @@ class FromTheIronHound(unittest.TestCase):
         self.assertEqual(efforts, [None])
     def test_reaction_writers_see_what_the_village_knows_and_how_the_clue_was_found(self):
         seen = []
-        refine.llm_json = lambda system, prompt, *a, **k: (seen.append(json.loads(prompt)) or {'reactions': {}})
+        def fake(system, prompt, *a, **k):
+            if system == publish.REACT_CHECK:      # the reactions already written are judged again first
+                return {'verdicts': {i['key']: {'ok': True} for i in json.loads(prompt)['items']}}
+            seen.append(json.loads(prompt))
+            return {'reactions': {}}
+        refine.llm_json = fake
         publish.add_reactions(self.case)
         self.assertTrue(seen)
         self.assertTrue(any('sitting-room door' in f for f in seen[0]['village']['public']), 'the hound lives in her locked room')
@@ -278,6 +286,80 @@ class FromTheIronHound(unittest.TestCase):
             publish._verdicts({'verdicts': {}}, ['a', 'b'])
         # a reply that wraps its verdicts twice is read as it means
         self.assertEqual(publish._verdicts({'verdicts': {'verdicts': {'a': {'ok': True}}}}, ['a']), {'a': {'ok': True}})
+
+
+class FromAFallBeforeMidnight(unittest.TestCase):
+    """November 8 play: Pike's morning told of the print he covered, which opens only once he owns up to the boathouse."""
+    PATH = os.path.join(HERE, '..', '..', 'dist', 'cases', 'archive', '2026-10', 'mk-live-20261003-133036.json')
+    LEAKY = 'On my rounds I found the vicar dead. I noticed a small print by him and set a seed tray over it.'
+
+    def setUp(self):
+        self.case = json.load(open(self.PATH))
+        self.saved = refine.llm_json
+
+    def tearDown(self):
+        refine.llm_json = self.saved
+
+    def test_the_culprit_keeps_back_the_crime_itself(self):
+        crime = self.case['question']['crime']['event']
+        self.assertIn(crime, publish.kept_back_events(self.case, enrich.truth_actor(self.case)))
+        self.assertFalse(any(crime in publish.kept_back_events(self.case, p['id']) for p in self.case['people']
+                             if p['id'] not in (enrich.truth_actor(self.case), enrich.victim_of(self.case))))
+
+    def test_a_clue_locked_behind_their_own_account_is_withheld(self):
+        held = publish.withheld(self.case, 'rowan')
+        self.assertTrue(any('seed tray' in w for w in held), held)
+        self.assertFalse(any('seed tray' in w for w in publish.withheld(self.case, 'edmund')))
+
+    def test_a_published_morning_that_gives_it_away_is_written_again(self):
+        x = next(x for x in self.case['signs'] if x.get('morning') and x['speaker'] == 'rowan')
+        x.update(text=self.LEAKY, surface_checked='honest', deceptive=False)
+        for y in self.case['signs']:
+            y.pop('leak_checked', None)
+        seen = []
+        def fake(system, prompt, *a, **k):
+            items = json.loads(prompt); seen.append((system, items))
+            if system == publish.LEAK:
+                return {'verdicts': {i['id']: {'leaks': 'seed tray' in i['account'], 'what': 'the covered print'} for i in items}}
+            if system == publish.SURFACE_TRUTH:
+                return {'verdicts': {i['id']: {'v': 'honest'} for i in items['accounts']}}
+            return {'accounts': {i['id']: 'I found the vicar on my rounds and fetched the constable.' for i in items}}
+        refine.llm_json = fake
+        publish.add_morning_accounts(self.case)
+        write = next(i for system, items in seen if system == publish.MORNING for i in items if i['id'] == 'rowan')
+        self.assertIn('covered print', write['previous_attempt']['not_true_because'])
+        x = next(x for x in self.case['signs'] if x.get('morning') and x['speaker'] == 'rowan')
+        self.assertNotIn('seed tray', x['text'])
+        self.assertEqual(x['leak_checked'], publish.MORNING_CHECK)
+
+
+class ReactionsAreRecheckedUnderTheCurrentCheck(unittest.TestCase):
+    """November 8 playtests: the postmistress, shown the squire's account of his unanswered call, said "I did try the
+    exchange", a reaction written before the check asked who did what."""
+    PATH = os.path.join(HERE, '..', '..', 'dist', 'cases', 'archive', '2026-10', 'mk-live-20261003-133036.json')
+
+    def setUp(self):
+        self.saved = refine.llm_json
+
+    def tearDown(self):
+        refine.llm_json = self.saved
+
+    def test_an_old_reaction_is_judged_again_and_dropped_if_it_does_not_hold(self):
+        case = json.load(open(self.PATH))
+        call = next(x for x in case['signs'] if x['id'] == 's_call')
+        call['reactions'] = {'dora': 'Well, yes, I did try the exchange, a private matter.'}
+        call.pop('reactions_checked', None)
+        seen = []
+        def fake(system, prompt, *a, **k):
+            items = json.loads(prompt)['items']; seen.extend(items)
+            return {'verdicts': {i['key']: {'ok': 'I did try' not in i['reply']} for i in items}}
+        refine.llm_json = fake
+        self.assertGreaterEqual(publish.check_reactions(case), 1)
+        self.assertNotIn('dora', call.get('reactions', {}))
+        self.assertEqual(call['reactions_checked'], publish.REACT_CHECK_VERSION)
+        self.assertEqual(next(i for i in seen if i['key'] == 's_call|dora')['clue']['said_by'], 'Edmund Vale')
+        refine.llm_json = lambda *a, **k: self.fail('checked once per version')
+        publish.check_reactions(case)
 
 
 if __name__ == '__main__':
